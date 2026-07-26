@@ -1,0 +1,11 @@
+build/
+.cache/
+*.user
+compile_commands.json
+.flatpak-builder/
+*.deb
+*.AppImage
+build-appimage/
+build-flatpak/
+AppDir/
+linuxdeploy*.AppImage

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=leolink
+GenericName=Camera Viewer
+Comment=Watch and record Reolink cameras
+Comment[de]=Reolink-Kameras ansehen und aufzeichnen
+GenericName[de]=Kamera-Betrachter
+Keywords=camera;surveillance;cctv;reolink;rtsp;onvif;nvr;ipcam;security;
+Exec=leolink %U
+Icon=@APP_ID@
+Terminal=false
+Categories=AudioVideo;Video;Player;
+StartupNotify=true
+StartupWMClass=leolink
+X-GNOME-UsesNotifications=true

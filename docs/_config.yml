@@ -1,0 +1,16 @@
+# GitHub Pages configuration for the leolink handbook.
+title: leolink
+description: A native Linux client for Reolink cameras
+theme: jekyll-theme-cayman
+
+# The application's Help menu links straight at these pages, so the paths must
+# stay stable: index.md → /, protocol.md → /protocol.html
+permalink: /:basename.html
+
+exclude:
+  - _config.yml
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge

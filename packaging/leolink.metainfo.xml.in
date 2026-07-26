@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>@APP_ID@</id>
+
+  <name>leolink</name>
+  <summary>Watch and record Reolink cameras</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <developer id="io.github.tombueng">
+    <name>leolink contributors</name>
+  </developer>
+
+  <description>
+    <p>
+      leolink shows the live picture from Reolink IP cameras on Linux. It speaks
+      the camera's own protocols directly — the HTTP API, RTSP and ONVIF on the
+      local network, and Reolink's P2P service for cameras that are somewhere
+      else. On the local network nothing is sent to any third party.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Several cameras at once in a grid you arrange yourself, where a camera
+          may cover more than one cell</li>
+      <li>Per-camera volume and mute, so one noisy room does not drown the rest</li>
+      <li>Motion alerts pushed by the camera over ONVIF instead of constant polling</li>
+      <li>Records on motion to your own disk, which works even when the camera
+          has no SD card fitted</li>
+      <li>Runs a command of your choice when a camera sees something</li>
+      <li>Event log with the captured stills and recordings, filterable per camera</li>
+      <li>Finds cameras on the network by ONVIF discovery</li>
+      <li>Hardware-accelerated decoding through libmpv</li>
+      <li>Choice of RTSP or the lower-latency HTTP-FLV transport</li>
+      <li>Passwords can be kept outside the config file by way of a helper command</li>
+      <li>English and German</li>
+    </ul>
+    <p>
+      Tested against an RLC-410W. Other Reolink models speak the same protocols
+      and the application asks each camera at start-up what it can do, so
+      unsupported features are simply hidden.
+    </p>
+    <p>
+      leolink is an independent project and is not affiliated with, endorsed by
+      or supported by Reolink.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">@APP_ID@.desktop</launchable>
+
+  <url type="homepage">https://tombueng.github.io/leolink/</url>
+  <url type="bugtracker">https://github.com/tombueng/leolink/issues</url>
+  <url type="help">https://tombueng.github.io/leolink/</url>
+  <url type="vcs-browser">https://github.com/tombueng/leolink</url>
+
+  <!-- TODO before submitting to Flathub: screenshots are effectively required
+       there, and none exist yet. They must not show a real camera feed; use
+       freely licensed footage through a camera entry with the "custom URL"
+       transport, then capture the window. -->
+
+
+  <categories>
+    <category>AudioVideo</category>
+    <category>Video</category>
+    <category>Network</category>
+  </categories>
+
+  <keywords>
+    <keyword>camera</keyword>
+    <keyword>surveillance</keyword>
+    <keyword>CCTV</keyword>
+    <keyword>Reolink</keyword>
+    <keyword>RTSP</keyword>
+    <keyword>ONVIF</keyword>
+  </keywords>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+
+  <recommends>
+    <display_length compare="ge">768</display_length>
+  </recommends>
+
+  <!-- No user-generated content, no ads, no in-app purchases. -->
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="@PROJECT_VERSION@" date="2026-07-26">
+      <description>
+        <p>First release.</p>
+        <ul>
+          <li>Multi-camera grid with per-camera volume</li>
+          <li>ONVIF motion alerts</li>
+          <li>Snapshots and full-screen view</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

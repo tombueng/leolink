@@ -1,0 +1,57 @@
+MIT License
+
+Copyright (c) 2026 leolink contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Third-party components
+======================
+
+leolink links against libraries that carry their own terms. The MIT licence
+above covers leolink's own source code; it does not and cannot relicense
+anything below.
+
+Qt 6
+    LGPL-3.0-or-later, also available commercially. leolink links Qt
+    dynamically, which is what LGPL-3 asks of a differently-licensed
+    application.
+
+libmpv
+    LGPL-2.1-or-later when built with GPL components disabled,
+    GPL-2.0-or-later otherwise. Distribution packages generally ship the GPL
+    build.
+
+    This matters for binaries, not for source. An MIT-licensed program linked
+    against a GPL library forms a combined work that must be conveyed under the
+    GPL — but leolink's own source stays MIT either way, and anyone is free to
+    take it and link it against something else.
+
+    The Flatpak in packaging/flatpak builds libmpv itself and can therefore
+    pick the LGPL configuration.
+
+libass, libplacebo
+    ISC and LGPL-2.1-or-later respectively; built as part of the Flatpak.
+
+Protocol documentation
+    The Baichuan notes in docs/protocol.md build on reverse engineering
+    published by the neolink project (github.com/thirtythreeforty/neolink,
+    maintained at github.com/QuantumEntangledAndy/neolink). No code was taken
+    from it.

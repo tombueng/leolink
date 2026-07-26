@@ -1,0 +1,126 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and package
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
+            qt6-tools-dev qt6-tools-dev-tools \
+            libmpv-dev \
+            desktop-file-utils appstream
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      # Malformed metadata is rejected by software centres at submission time.
+      # Catching it here is far cheaper than finding out from Flathub.
+      - name: Validate desktop entry and AppStream data
+        run: cmake --build build --target validate-metadata
+
+      - name: Check translations are current
+        run: |
+          cmake --build build --target update_translations
+          if ! git diff --quiet translations/; then
+            echo "::warning::Translation files are out of date."
+            echo "Run: cmake --build build --target update_translations"
+            echo "then: python3 tools/fill_german.py"
+            git diff --stat translations/
+          fi
+
+      - name: Build .deb and .rpm
+        run: |
+          sudo apt-get install -y rpm
+          cd build && cpack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: leolink-packages
+          path: |
+            build/*.deb
+            build/*.rpm
+          if-no-files-found: error
+
+  appimage:
+    name: AppImage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
+            qt6-tools-dev qt6-tools-dev-tools libmpv-dev \
+            libfuse2t64 wget file
+
+      - name: Build and stage
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          DESTDIR=$PWD/AppDir cmake --install build
+
+      # linuxdeploy pulls in Qt and libmpv so the result runs on any
+      # reasonably current distribution without installing anything.
+      - name: Package
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
+          export QMAKE=/usr/lib/qt6/bin/qmake6
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage \
+            --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/scalable/apps/io.github.tombueng.leolink.svg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: leolink-appimage
+          path: '*.AppImage'
+          if-no-files-found: error
+
+  flatpak:
+    name: Flatpak manifest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Full flatpak-builder runs take ~20 minutes because they build Qt from
+      # the SDK. The manifest is linted on every push; the actual bundle is
+      # built on release only.
+      - name: Lint manifest
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak
+          python3 - <<'EOF'
+          import sys, json
+          try:
+              import yaml
+          except ImportError:
+              sys.exit(0)
+          with open("packaging/flatpak/io.github.tombueng.leolink.yml") as f:
+              manifest = yaml.safe_load(f)
+          required = ["app-id", "runtime", "runtime-version", "sdk", "command", "modules"]
+          missing = [k for k in required if k not in manifest]
+          if missing:
+              sys.exit(f"manifest is missing: {', '.join(missing)}")
+          print(f"manifest ok: {manifest['app-id']}")
+          EOF
