@@ -15,7 +15,9 @@ class QTimer;
 
 namespace leolink {
 
+class AudioDetector;
 class EventDispatcher;
+class MotionDetector;
 class Recorder;
 class EventLog;
 class MotionWatcher;
@@ -40,6 +42,9 @@ private slots:
     void toggleFullscreenTile(const QString &cameraId);
     void onVolumeChanged(const QString &cameraId, int volume, bool muted);
     void onMotionChanged(const QString &cameraId, bool active);
+    /// Sound is reported as its own event type but takes the same path as
+    /// motion — recording, actions and the log all treat it alike.
+    void onSoundChanged(const QString &cameraId, bool active);
     void onRecordToggled(const QString &cameraId, bool recording);
     void toggleRecordAll();
 
@@ -52,6 +57,9 @@ private:
     void applyLayout();
     void teardownGrid();
     void startWatchers();
+    /// Raises an event of `type`, whatever noticed it.
+    void raiseEvent(const CameraConfig &camera, const QString &type,
+                    const QString &message, bool active);
     void applyChrome();
     void showFirstRunHint();
     /// Right-click menu on the camera area. This is the escape hatch: with the
@@ -84,7 +92,9 @@ private:
     QLabel *m_placeholder{nullptr};
 
     QHash<QString, VideoTile *> m_tiles;
-    QHash<QString, MotionWatcher *> m_watchers;
+    QHash<QString, MotionWatcher *> m_watchers;      ///< ONVIF, camera-side
+    QHash<QString, MotionDetector *> m_detectors;    ///< picture analysed here
+    QHash<QString, AudioDetector *> m_listeners;
     /// Per camera: stops the recording once motion has stayed clear long enough.
     QHash<QString, QTimer *> m_stopTimers;
     /// One ffmpeg process per camera being recorded, keyed by camera id.

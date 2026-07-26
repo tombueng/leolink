@@ -392,6 +392,117 @@ GERMAN: dict[str, str] = {
         "Jede Adresse, die libmpv öffnen kann — für Kameras anderer Hersteller, "
         "einen NVR-Stream oder eine lokale Datei.",
 
+    # ── detectors ──
+    "ffmpeg is not installed, so motion detection is unavailable.":
+        "ffmpeg ist nicht installiert, Bewegungserkennung daher nicht möglich.",
+    "ffmpeg is not installed, so sound detection is unavailable.":
+        "ffmpeg ist nicht installiert, Geräuscherkennung daher nicht möglich.",
+    "Motion detection stopped: %1": "Bewegungserkennung beendet: %1",
+    "Sound detection stopped: %1": "Geräuscherkennung beendet: %1",
+    "Could not start ffmpeg for motion detection.":
+        "ffmpeg für die Bewegungserkennung ließ sich nicht starten.",
+    "Could not start ffmpeg for sound detection.":
+        "ffmpeg für die Geräuscherkennung ließ sich nicht starten.",
+    "Sound detected": "Geräusch erkannt",
+    "%1 at %2": "%1 bei %2",
+    "Detection": "Erkennung",
+    "Motion comes from": "Bewegung meldet",
+    "The camera reports it (ONVIF)": "Die Kamera selbst (ONVIF)",
+    "leolink watches the picture": "leolink beobachtet das Bild",
+    "Either of the two": "Beides",
+    "Do not watch": "Nicht überwachen",
+    "Cameras that report motion themselves cost nothing to watch.\n\n"
+    "Analysing the picture here works with any camera, including ones that "
+    "report nothing, but opens a second connection to the sub stream for each.":
+        "Kameras, die Bewegung selbst melden, kosten nichts.\n\n"
+        "Die Bildanalyse hier funktioniert mit jeder Kamera, auch mit solchen, "
+        "die nichts melden — öffnet aber je Kamera eine zweite Verbindung zum "
+        "Substream.",
+    "Motion zones…": "Bewegungszonen…",
+    "Choose which parts of the picture are watched. Only applies when leolink "
+    "analyses the picture itself.":
+        "Legt fest, welche Bildbereiche überwacht werden. Gilt nur, wenn "
+        "leolink das Bild selbst analysiert.",
+    "Sensitivity": "Empfindlichkeit",
+    "How much a spot in the picture must change to count. Higher notices more, "
+    "including shadows and rain.":
+        "Wie stark sich eine Bildstelle ändern muss, damit sie zählt. Höher "
+        "erkennt mehr — auch Schatten und Regen.",
+    "Minimum area": "Mindestfläche",
+    " ‰": " ‰",
+    "How much of the watched area must change before it counts as motion. 20‰ "
+    "is two percent of the picture — roughly a person at middle distance.":
+        "Wie viel der überwachten Fläche sich ändern muss, damit es als "
+        "Bewegung gilt. 20 ‰ sind zwei Prozent des Bildes — etwa eine Person "
+        "auf mittlerer Entfernung.",
+    "Raise an event on sound": "Bei Geräuschen ein Ereignis auslösen",
+    "Needs a camera with a microphone. Opens another connection to the sub "
+    "stream.":
+        "Setzt ein Mikrofon in der Kamera voraus. Öffnet eine weitere "
+        "Verbindung zum Substream.",
+    "Sound above": "Geräusch lauter als",
+    " dB": " dB",
+    "-60 dB is close to silence, -20 dB a raised voice nearby.":
+        "-60 dB ist nahezu still, -20 dB eine erhobene Stimme in der Nähe.",
+    "Hold for": "Nachhalten",
+    "Keeps the event up after the noise stops, so one bark is not reported "
+    "four times.":
+        "Hält das Ereignis nach dem Geräusch noch aufrecht, damit ein Bellen "
+        "nicht viermal gemeldet wird.",
+
+    # ── zone editor ──
+    "%1 — motion zones": "%1 — Bewegungszonen",
+    "no picture available": "kein Bild verfügbar",
+    "Drag over the picture to choose what is watched. Darkened areas are "
+    "ignored — useful for a road at the edge of view, a tree that moves in the "
+    "wind, or a neighbour's doorway.":
+        "Über das Bild ziehen, um den überwachten Bereich festzulegen. "
+        "Abgedunkelte Flächen werden ignoriert — praktisch für eine Straße am "
+        "Bildrand, einen Baum im Wind oder die Haustür des Nachbarn.",
+    "Watch all": "Alles überwachen",
+    "Ignore all": "Alles ignorieren",
+    "Invert": "Umkehren",
+    "Fetching a picture from %1…": "Hole ein Bild von %1…",
+    "No picture: %1 — the zones can still be set.":
+        "Kein Bild: %1 — die Zonen lassen sich trotzdem festlegen.",
+
+    # ── recordings on the camera ──
+    "Recordings on the &camera…": "Aufnahmen auf der &Kamera…",
+    "Browse what is stored on the camera's own SD card.":
+        "Zeigt, was auf der SD-Karte der Kamera liegt.",
+    "Which camera": "Welche Kamera",
+    "Show recordings from": "Aufnahmen anzeigen von",
+    "%1 — recordings on the camera": "%1 — Aufnahmen auf der Kamera",
+    "Search": "Suchen",
+    "From": "Von",
+    "to": "bis",
+    "Main stream": "Hauptstream",
+    "Sub stream": "Substream",
+    "Start": "Beginn",
+    "Length": "Dauer",
+    "Size": "Größe",
+    "File": "Datei",
+    "Play": "Abspielen",
+    "Download…": "Herunterladen…",
+    "Pick a period and press Search. Recordings only exist if the camera has "
+    "an SD card fitted.":
+        "Zeitraum wählen und auf Suchen drücken. Aufnahmen gibt es nur, wenn "
+        "eine SD-Karte in der Kamera steckt.",
+    "Asking %1…": "Frage %1…",
+    "Nothing found in that period. Either nothing was recorded, or the camera "
+    "has no SD card.":
+        "In diesem Zeitraum nichts gefunden. Entweder wurde nichts "
+        "aufgezeichnet, oder die Kamera hat keine SD-Karte.",
+    "No session with the camera — search first.":
+        "Keine Sitzung mit der Kamera — bitte zuerst suchen.",
+    "No player": "Kein Abspieler",
+    "mpv was not found. The recording is at:\n\n%1":
+        "mpv wurde nicht gefunden. Die Aufnahme liegt unter:\n\n%1",
+    "Save recording": "Aufnahme speichern",
+    "Cannot write to %1.": "Nach %1 lässt sich nicht schreiben.",
+    "Saved to %1": "Gespeichert unter %1",
+    "Download failed: %1": "Herunterladen fehlgeschlagen: %1",
+
     # ── errors from the camera ──
     "File format not recognised.": "Dateiformat nicht erkannt.",
     "Invalid input.": "Ungültige Eingabe.",
@@ -438,6 +549,7 @@ PLURALS: dict[str, list[str]] = {
     "Saved %n snapshot(s)": ["%n Standbild gespeichert",
                              "%n Standbilder gespeichert"],
     "Found %n device(s)…": ["%n Gerät gefunden…", "%n Geräte gefunden…"],
+    "%n recording(s) found.": ["%n Aufnahme gefunden.", "%n Aufnahmen gefunden."],
 }
 
 

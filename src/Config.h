@@ -47,6 +47,24 @@ struct CameraConfig {
     /// Legacy single-command field, kept so older configurations still work.
     /// Migrated into `actions` on load.
     QString motionCommand;
+    // ── how motion is noticed ───────────────────────────────────────────────
+    /// "camera" trusts the camera's own ONVIF events, "local" analyses the
+    /// picture here, "both" accepts either, "off" ignores motion entirely.
+    ///
+    /// Local analysis exists for cameras that report nothing — older firmware,
+    /// other makers, or a model with detection switched off — and costs one
+    /// extra sub-stream connection per camera.
+    QString motionSource{QStringLiteral("camera")};
+    /// 144 characters of '1'/'0' over a 16x9 grid. Empty means watch it all.
+    QString motionZones;
+    int motionSensitivity{5};    ///< 1 (blunt) … 10 (twitchy)
+    int motionMinArea{20};       ///< per mille of the watched area, 20 = 2%
+
+    /// Raise events on sound as well. Needs a camera with a microphone.
+    bool audioDetection{false};
+    double audioThresholdDb{-35.0};
+    int audioHoldSeconds{3};
+
     /// Record to disk while motion lasts. This is done on the PC from the live
     /// stream, so it works on cameras with no SD card fitted.
     bool recordOnMotion{false};

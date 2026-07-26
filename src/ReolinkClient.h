@@ -1,6 +1,7 @@
 // Reolink CGI API (port 80/443) — login, device info, snapshots.
 #pragma once
 
+#include <QDateTime>
 #include <QJsonObject>
 #include <QObject>
 #include <QString>
@@ -21,6 +22,19 @@ namespace leolink {
 /// Both mean "hide the feature", never "retry".
 ///
 /// See docs/protocol.md for the full command surface.
+/// One recording held on the camera's SD card.
+struct Recording {
+    QString name;        ///< the camera's own file name, used to fetch it
+    QDateTime start;
+    QDateTime end;
+    qint64 size{0};
+    QString streamType;  ///< "main" or "sub"
+
+    qint64 durationSeconds() const {
+        return start.isValid() && end.isValid() ? start.secsTo(end) : 0;
+    }
+};
+
 class ReolinkClient : public QObject {
     Q_OBJECT
 
@@ -47,6 +61,23 @@ public:
     /// returned, so the pattern is read, edit, write.
     void applySection(const QString &command, const QJsonObject &param);
 
+    /// Lists what is on the SD card between two times.
+    ///
+    /// Cameras with no card answer -17, which is reported as such rather than
+    /// as a mysterious failure — it is the single most common reason this
+    /// returns nothing.
+    void searchRecordings(const QDateTime &from, const QDateTime &to,
+                          const QString &streamType = QStringLiteral("main"),
+                          int channel = 0);
+
+    /// URL that streams a recording straight from the camera, for handing to a
+    /// player. Requires a valid session, so call after any other request.
+    QUrl playbackUrl(const Recording &recording) const;
+    /// URL that downloads it as a file.
+    QUrl downloadUrl(const Recording &recording) const;
+
+    bool hasSession() const { return !m_token.isEmpty(); }
+
     static QString describeError(int rspCode);
 
 signals:
@@ -57,6 +88,7 @@ signals:
     void sectionReady(const QString &command, const QJsonObject &value,
                       const QJsonObject &ranges);
     void sectionApplied(const QString &command);
+    void recordingsReady(const QList<Recording> &recordings);
     void snapshotReady(const QByteArray &jpeg);
     void failed(const QString &reason);
 

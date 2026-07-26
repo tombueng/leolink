@@ -80,9 +80,36 @@ the camera.
 
 **Cameras… → Events.**
 
-Motion comes from the camera over ONVIF. leolink holds a long poll open and the
-camera answers when something happens, so this is a request every few seconds
-rather than one per second.
+### Who notices the motion
+
+*The camera reports it* uses ONVIF and costs nothing — the camera was watching
+anyway. This is right for any Reolink with motion detection switched on.
+
+*leolink watches the picture* analyses the video here instead. Use it for
+cameras that report nothing: older firmware, other makers, or a camera whose
+own detection is off. It opens a second connection to the sub stream and
+compares successive frames at 160x90 — small enough to watch many cameras at
+once, and quite enough to notice a person.
+
+*Either of the two* accepts whichever speaks first.
+
+**Motion zones** apply to the local detector. Drag over the picture to choose
+what is watched; darkened areas are ignored. Worth doing for a road at the edge
+of view, a tree that moves in the wind, or a neighbour's doorway — those are
+what produce alerts nobody wants at three in the morning.
+
+**Sensitivity** is how much a spot must change to count at all.
+**Minimum area** is how much of the watched picture must change before it is
+called motion; 20‰ is two percent, roughly a person at middle distance. For
+reference, a still camera measures around 0.3‰ from sensor noise alone, and
+busy traffic around 60‰.
+
+### Sound
+
+A camera with a microphone can raise events on noise. The threshold is in dBFS:
+-60 dB is close to silence, -35 dB the default, -20 dB a raised voice nearby.
+*Hold for* keeps the event up after the noise stops so one bark is not reported
+four times.
 
 ### Recording
 
@@ -141,6 +168,20 @@ MQTT is a fire-and-forget publisher: connect, publish, disconnect. No TLS — us
 it on a trusted network or point it at a local broker that bridges onward.
 
 ---
+
+## Recordings on the camera
+
+**File → Recordings on the camera…**
+
+Cameras with an SD card record on their own, and this browses what is there:
+pick a period, search, then play or download.
+
+If every search comes back saying the subsystem is unavailable, the camera has
+no card in it — that is what its error -17 means, and it is by far the most
+common reason this shows nothing.
+
+Playback opens in mpv rather than in a tile. A recording has a timeline, and a
+viewer built for live pictures has no scrubbing or seeking to offer it.
 
 ## The event log
 
@@ -213,18 +254,21 @@ tile stays black.
 
 ## Known limits
 
-**Playback from an SD card** is not implemented. The commands exist in the
-camera API and are documented in the [protocol notes](protocol.md), but the
-development camera has no card fitted, so nothing here has been tested against
-real recordings.
+**Playback from an SD card** is implemented but never tested against a card.
+The development camera has none fitted, so every search answers -17 and there
+was nothing to check the file listing or the download against. The commands
+come from the documented API — see the [protocol notes](protocol.md) — and the
+dialog reports what the camera actually said, so a first run with a card in
+should show plainly where reality differs.
 
 **P2P access by UID** is implemented from the protocol description and has never
 run against a P2P-capable camera. `leolink --baichuan-p2p <UID>` reports each
 step. If you have such a camera, that output attached to an
 [issue](https://github.com/tombueng/leolink/issues) would be very welcome.
 
-**Motion and audio detection performed by leolink itself**, with drawable zones,
-for cameras that report nothing on their own — planned, not built.
+**Two-way audio** is not implemented. The vendor's SDK can do it and the
+protocol notes describe where it lives, but the development camera has no
+speaker.
 
 ---
 

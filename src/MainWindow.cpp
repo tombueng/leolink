@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QGridLayout>
+#include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
@@ -27,7 +28,10 @@
 #include "EventLog.h"
 #include "EventLogDialog.h"
 #include "SoundPlayer.h"
+#include "AudioDetector.h"
+#include "MotionDetector.h"
 #include "MotionWatcher.h"
+#include "PlaybackBrowser.h"
 #include "Recorder.h"
 #include "SettingsDialog.h"
 #include "VideoTile.h"
@@ -125,6 +129,35 @@ void MainWindow::buildMenus()
     connect(eventLogAction, &QAction::triggered, this, [this] {
         EventLogDialog dialog(m_config, m_eventLog, this);
         dialog.exec();
+    });
+
+    auto *cameraRecordings = fileMenu->addAction(tr("Recordings on the &camera…"));
+    cameraRecordings->setToolTip(
+        tr("Browse what is stored on the camera's own SD card."));
+    connect(cameraRecordings, &QAction::triggered, this, [this] {
+        const QList<CameraConfig> cameras = m_config.active();
+        if (cameras.isEmpty()) {
+            statusBar()->showMessage(tr("No cameras configured"), 5000);
+            return;
+        }
+        // With one camera there is nothing to choose; with several, ask.
+        CameraConfig chosen = cameras.first();
+        if (cameras.size() > 1) {
+            QStringList names;
+            for (const CameraConfig &c : cameras)
+                names << c.label();
+            bool ok = false;
+            const QString picked = QInputDialog::getItem(
+                this, tr("Which camera"), tr("Show recordings from"),
+                names, 0, false, &ok);
+            if (!ok)
+                return;
+            const int index = names.indexOf(picked);
+            if (index >= 0)
+                chosen = cameras.at(index);
+        }
+        PlaybackBrowser browser(chosen, this);
+        browser.exec();
     });
 
     auto *openRecordings = fileMenu->addAction(tr("Open &recordings folder"));
@@ -365,6 +398,18 @@ void MainWindow::teardownGrid()
     }
     m_watchers.clear();
 
+    for (auto *detector : std::as_const(m_detectors)) {
+        detector->stop();
+        detector->deleteLater();
+    }
+    m_detectors.clear();
+
+    for (auto *listener : std::as_const(m_listeners)) {
+        listener->stop();
+        listener->deleteLater();
+    }
+    m_listeners.clear();
+
     for (auto *timer : std::as_const(m_stopTimers))
         timer->deleteLater();
     m_stopTimers.clear();
@@ -466,11 +511,47 @@ void MainWindow::startWatchers()
         return;
 
     for (const CameraConfig &camera : m_config.active()) {
-        auto *watcher = new MotionWatcher(this);
-        connect(watcher, &MotionWatcher::motionChanged,
-                this, &MainWindow::onMotionChanged);
-        watcher->watch(camera);
-        m_watchers.insert(camera.id, watcher);
+        const QString source = camera.motionSource;
+        const bool useCamera = source == QLatin1String("camera") ||
+                               source == QLatin1String("both");
+        const bool useLocal = source == QLatin1String("local") ||
+                              source == QLatin1String("both");
+
+        if (useCamera) {
+            auto *watcher = new MotionWatcher(this);
+            connect(watcher, &MotionWatcher::motionChanged,
+                    this, &MainWindow::onMotionChanged);
+            watcher->watch(camera);
+            m_watchers.insert(camera.id, watcher);
+        }
+
+        if (useLocal && MotionDetector::available()) {
+            auto *detector = new MotionDetector(this);
+            const QString id = camera.id;
+            connect(detector, &MotionDetector::motionChanged, this,
+                    [this, id](bool active) { onMotionChanged(id, active); });
+            connect(detector, &MotionDetector::failed, this,
+                    [this](const QString &why) {
+                        statusBar()->showMessage(why, 10000);
+                    });
+            detector->start(camera, camera.motionZones,
+                            camera.motionSensitivity, camera.motionMinArea);
+            m_detectors.insert(camera.id, detector);
+        }
+
+        if (camera.audioDetection && AudioDetector::available()) {
+            auto *listener = new AudioDetector(this);
+            const QString id = camera.id;
+            connect(listener, &AudioDetector::soundChanged, this,
+                    [this, id](bool active) { onSoundChanged(id, active); });
+            connect(listener, &AudioDetector::failed, this,
+                    [this](const QString &why) {
+                        statusBar()->showMessage(why, 10000);
+                    });
+            listener->start(camera, camera.audioThresholdDb,
+                            camera.audioHoldSeconds);
+            m_listeners.insert(camera.id, listener);
+        }
     }
 }
 
@@ -720,6 +801,54 @@ void MainWindow::raiseForEvent()
     activateWindow();
 }
 
+void MainWindow::raiseEvent(const CameraConfig &camera, const QString &type,
+                            const QString &message, bool active)
+{
+    if (!active) {
+        // Tell the outside world it is over: a webhook or MQTT consumer needs
+        // the falling edge to close its own state.
+        dispatchActions(camera, false, QString(), QString());
+        if (camera.recordOnMotion)
+            scheduleRecordingStop(camera);
+        return;
+    }
+
+    // Continuing activity cancels a pending stop, so one event stays one file.
+    if (auto *timer = m_stopTimers.value(camera.id))
+        timer->stop();
+
+    if (camera.recordOnMotion)
+        beginMotionRecording(camera);
+
+    auto *tile = m_tiles.value(camera.id);
+    const QString recording = activeRecording(camera.id);
+
+    EventEntry entry;
+    entry.time = QDateTime::currentDateTime();
+    entry.cameraId = camera.id;
+    entry.cameraName = camera.label();
+    entry.type = type;
+    entry.message = message;
+    entry.videoPath = recording;
+    entry.imagePath = captureEventStill(camera);
+    m_eventLog->append(entry);
+
+    if (m_config.flashOnMotion && tile)
+        tile->flashAlert(m_config.flashMilliseconds);
+    if (m_config.soundOnMotion)
+        m_sound->play(m_config.effectiveSoundFile());
+
+    // Actions last, so they can refer to the still and the recording.
+    dispatchActions(camera, true, recording, entry.imagePath);
+
+    statusBar()->showMessage(tr("%1 at %2").arg(message, camera.label()), 8000);
+    if (m_tray && !isVisible())
+        m_tray->showMessage(message, camera.label(),
+                            QSystemTrayIcon::Information, 5000);
+    if (m_config.raiseOnMotion)
+        raiseForEvent();
+}
+
 void MainWindow::onMotionChanged(const QString &cameraId, bool active)
 {
     if (auto *tile = m_tiles.value(cameraId))
@@ -729,52 +858,22 @@ void MainWindow::onMotionChanged(const QString &cameraId, bool active)
     if (!camera)
         return;
 
-    if (active) {
-        // Fresh motion cancels a pending stop, so one continuous event does
-        // not get chopped into several files.
-        if (auto *timer = m_stopTimers.value(cameraId))
-            timer->stop();
+    // With "both" sources, either can raise the event and either can clear it.
+    // Whichever speaks first wins; a second report of the same state is a
+    // no-op because the tile and the recorder are already in that state.
+    raiseEvent(*camera, QStringLiteral("motion"), tr("Motion detected"), active);
+}
 
-        if (camera->recordOnMotion)
-            beginMotionRecording(*camera);
+void MainWindow::onSoundChanged(const QString &cameraId, bool active)
+{
+    if (auto *tile = m_tiles.value(cameraId))
+        tile->setMotionActive(active);
 
-        auto *tile = m_tiles.value(cameraId);
-        const QString recording = activeRecording(cameraId);
+    const CameraConfig *camera = cameraById(cameraId);
+    if (!camera)
+        return;
 
-        EventEntry entry;
-        entry.time = QDateTime::currentDateTime();
-        entry.cameraId = camera->id;
-        entry.cameraName = camera->label();
-        entry.type = QStringLiteral("motion");
-        entry.message = tr("Motion detected");
-        entry.videoPath = recording;
-        entry.imagePath = captureEventStill(*camera);
-        m_eventLog->append(entry);
-
-        if (m_config.flashOnMotion) {
-            if (tile)
-                tile->flashAlert(m_config.flashMilliseconds);
-        }
-        if (m_config.soundOnMotion)
-            m_sound->play(m_config.effectiveSoundFile());
-
-        // Actions run last so they can refer to the still and the recording.
-        dispatchActions(*camera, true, recording, entry.imagePath);
-
-        statusBar()->showMessage(tr("Motion at %1").arg(camera->label()), 8000);
-        if (m_tray && !isVisible()) {
-            m_tray->showMessage(tr("Motion detected"), camera->label(),
-                                QSystemTrayIcon::Information, 5000);
-        }
-        if (m_config.raiseOnMotion)
-            raiseForEvent();
-    } else {
-        // Tell the outside world it is over too — a webhook or MQTT consumer
-        // needs the falling edge to close its own state.
-        dispatchActions(*camera, false, QString(), QString());
-        if (camera->recordOnMotion)
-            scheduleRecordingStop(*camera);
-    }
+    raiseEvent(*camera, QStringLiteral("sound"), tr("Sound detected"), active);
 }
 
 // ── actions ─────────────────────────────────────────────────────────────────

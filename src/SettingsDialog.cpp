@@ -21,6 +21,8 @@
 #include <QVBoxLayout>
 
 #include "Discovery.h"
+#include "MotionDetector.h"
+#include "ZoneEditor.h"
 #include "ReolinkClient.h"
 
 namespace leolink {
@@ -300,6 +302,87 @@ QWidget *SettingsDialog::buildEventTab()
 {
     auto *page = new QWidget(this);
 
+    // ── how each camera is watched ──────────────────────────────────────────
+    m_motionSource = new QComboBox(page);
+    m_motionSource->addItem(tr("The camera reports it (ONVIF)"),
+                            QStringLiteral("camera"));
+    m_motionSource->addItem(tr("leolink watches the picture"),
+                            QStringLiteral("local"));
+    m_motionSource->addItem(tr("Either of the two"), QStringLiteral("both"));
+    m_motionSource->addItem(tr("Do not watch"), QStringLiteral("off"));
+    m_motionSource->setToolTip(
+        tr("Cameras that report motion themselves cost nothing to watch.\n\n"
+           "Analysing the picture here works with any camera, including ones "
+           "that report nothing, but opens a second connection to the sub "
+           "stream for each."));
+
+    m_zonesButton = new QPushButton(tr("Motion zones…"), page);
+    m_zonesButton->setToolTip(
+        tr("Choose which parts of the picture are watched. Only applies when "
+           "leolink analyses the picture itself."));
+    connect(m_zonesButton, &QPushButton::clicked,
+            this, &SettingsDialog::onEditZones);
+
+    m_sensitivity = new QSpinBox(page);
+    m_sensitivity->setRange(1, 10);
+    m_sensitivity->setToolTip(
+        tr("How much a spot in the picture must change to count. Higher "
+           "notices more, including shadows and rain."));
+
+    m_minArea = new QSpinBox(page);
+    m_minArea->setRange(1, 500);
+    m_minArea->setSuffix(tr(" ‰"));
+    m_minArea->setToolTip(
+        tr("How much of the watched area must change before it counts as "
+           "motion. 20‰ is two percent of the picture — roughly a person at "
+           "middle distance."));
+
+    // Only meaningful when the picture is analysed here.
+    auto syncLocal = [this] {
+        const QString source = m_motionSource->currentData().toString();
+        const bool local = source == QLatin1String("local") ||
+                           source == QLatin1String("both");
+        m_zonesButton->setEnabled(local);
+        m_sensitivity->setEnabled(local);
+        m_minArea->setEnabled(local);
+    };
+    connect(m_motionSource, &QComboBox::currentIndexChanged, this, syncLocal);
+
+    m_audioDetection = new QCheckBox(tr("Raise an event on sound"), page);
+    m_audioDetection->setToolTip(
+        tr("Needs a camera with a microphone. Opens another connection to the "
+           "sub stream."));
+
+    m_audioThreshold = new QSpinBox(page);
+    m_audioThreshold->setRange(-90, 0);
+    m_audioThreshold->setSuffix(tr(" dB"));
+    m_audioThreshold->setToolTip(
+        tr("-60 dB is close to silence, -20 dB a raised voice nearby."));
+
+    m_audioHold = new QSpinBox(page);
+    m_audioHold->setRange(0, 120);
+    m_audioHold->setSuffix(tr(" s"));
+    m_audioHold->setToolTip(
+        tr("Keeps the event up after the noise stops, so one bark is not "
+           "reported four times."));
+
+    connect(m_audioDetection, &QCheckBox::toggled, this, [this](bool on) {
+        m_audioThreshold->setEnabled(on);
+        m_audioHold->setEnabled(on);
+    });
+
+    auto *detectForm = new QFormLayout;
+    detectForm->addRow(tr("Motion comes from"), m_motionSource);
+    detectForm->addRow(QString(), m_zonesButton);
+    detectForm->addRow(tr("Sensitivity"), m_sensitivity);
+    detectForm->addRow(tr("Minimum area"), m_minArea);
+    detectForm->addRow(QString(), m_audioDetection);
+    detectForm->addRow(tr("Sound above"), m_audioThreshold);
+    detectForm->addRow(tr("Hold for"), m_audioHold);
+
+    auto *detectBox = new QGroupBox(tr("Detection"), page);
+    detectBox->setLayout(detectForm);
+
     m_showMotion = new QCheckBox(
         tr("Watch cameras for motion (ONVIF push)"), page);
     m_showMotion->setChecked(m_config.showMotion);
@@ -365,9 +448,11 @@ QWidget *SettingsDialog::buildEventTab()
 
     auto *layout = new QVBoxLayout(page);
     layout->addWidget(globalBox);
+    layout->addWidget(detectBox);
     layout->addWidget(cameraBox);
     layout->addWidget(note);
     layout->addStretch(1);
+    syncLocal();
     return page;
 }
 
@@ -537,6 +622,16 @@ void SettingsDialog::loadIntoForm(const CameraConfig &c)
     m_rowSpan->setValue(c.rowSpan);
     m_colSpan->setValue(c.colSpan);
 
+    m_motionSource->setCurrentIndex(
+        qMax(0, m_motionSource->findData(c.motionSource)));
+    m_zones = c.motionZones;
+    m_sensitivity->setValue(c.motionSensitivity);
+    m_minArea->setValue(c.motionMinArea);
+    m_audioDetection->setChecked(c.audioDetection);
+    m_audioThreshold->setValue(int(c.audioThresholdDb));
+    m_audioHold->setValue(c.audioHoldSeconds);
+    m_audioThreshold->setEnabled(c.audioDetection);
+    m_audioHold->setEnabled(c.audioDetection);
     m_motionCommand->setText(c.motionCommand);
     m_recordOnMotion->setChecked(c.recordOnMotion);
     m_recordTrailing->setValue(c.recordTrailingSeconds);
@@ -568,6 +663,13 @@ void SettingsDialog::storeFromForm()
     c.rowSpan = m_rowSpan->value();
     c.colSpan = m_colSpan->value();
 
+    c.motionSource = m_motionSource->currentData().toString();
+    c.motionZones = m_zones;
+    c.motionSensitivity = m_sensitivity->value();
+    c.motionMinArea = m_minArea->value();
+    c.audioDetection = m_audioDetection->isChecked();
+    c.audioThresholdDb = m_audioThreshold->value();
+    c.audioHoldSeconds = m_audioHold->value();
     c.motionCommand = m_motionCommand->text();
     c.recordOnMotion = m_recordOnMotion->isChecked();
     c.recordTrailingSeconds = m_recordTrailing->value();
@@ -709,6 +811,19 @@ void SettingsDialog::onScan()
             m_discovery, &Discovery::stop);
 
     m_discovery->start(4000);
+}
+
+void SettingsDialog::onEditZones()
+{
+    storeFromForm();
+    if (m_current < 0 || m_current >= m_config.cameras.size())
+        return;
+
+    ZoneEditor editor(m_config.cameras.at(m_current), m_zones, this);
+    if (editor.exec() == QDialog::Accepted) {
+        m_zones = editor.mask();
+        m_config.cameras[m_current].motionZones = m_zones;
+    }
 }
 
 void SettingsDialog::onAccept()

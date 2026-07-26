@@ -15,8 +15,10 @@ software is involved.
 - **Several cameras at once** in a grid you arrange yourself. A camera can cover
   more than one cell (2×1, 1×2, 2×2 …), or be placed automatically.
 - **Volume and mute per camera**, because eight rooms at once is not a feature.
-- **Motion alerts pushed by the camera** over ONVIF — a long poll, not a request
-  every second.
+- **Motion alerts** either from the camera over ONVIF, or worked out here from
+  the picture — for cameras that report nothing. The local detector takes
+  drawable zones, so a tree in the wind or a neighbour's door can be left out.
+- **Sound detection** with a threshold in dBFS, for what the picture misses.
 - **Records to your own disk** — on motion or at the press of a button. Works
   on cameras with no SD card, because the recording happens here. A separate
   ffmpeg process copies the stream through without re-encoding, so quality is
@@ -31,6 +33,7 @@ software is involved.
 - **Finds cameras** on the network by ONVIF discovery.
 - **Fits the desktop**: follows the system light/dark palette, tray icon,
   hideable menu bar and window decoration for wall displays.
+- **Recordings on the camera's SD card**: search by period, play, download.
 - **Any RTSP source**, not only Reolink — the custom-URL transport takes
   anything libmpv can open.
 - **English and German.**
@@ -139,11 +142,18 @@ Packaging: `.deb`, `.rpm`, AppImage and Flatpak all build. The Flatpak
 compiles libplacebo, libass and libmpv from source against the KDE runtime and
 picks libmpv's LGPL configuration, so the bundle does not impose GPL terms.
 
-Not yet verified, because the test camera cannot: **playback from an SD card**
-(none fitted) and the **P2P path** (no P2P-capable camera here). The P2P lookup
-is implemented from the protocol description and reports every step — if you
-have such a camera, `leolink --baichuan-p2p <UID>` and an issue with the output
-would be genuinely useful.
+The local motion detector was checked against both a busy scene and a still
+one: traffic footage changed 6.3% of watched pixels on average, a static camera
+0.00% with a peak of 0.03%. The default threshold of 15‰ sits between the two
+with room to spare.
+
+Not yet verified, because the test camera cannot: **playback from the SD card**
+(none fitted, so every search answers -17) and the **P2P path** (no P2P-capable
+camera here). Both are implemented from the documented protocol and report what
+the camera actually said rather than guessing, so a first run on real hardware
+should show plainly where reality differs. If you have such a camera,
+`leolink --baichuan-p2p <UID>` and an issue with the output would be genuinely
+useful.
 
 Missing before a Flathub submission: **screenshots**. They must not show a real
 camera feed; add a camera with the custom-URL transport pointing at freely

@@ -237,6 +237,101 @@ void ReolinkClient::applySection(const QString &command, const QJsonObject &para
     [this](const QString &e) { emit failed(e); });
 }
 
+namespace {
+
+/// The camera splits time into fields rather than sending a timestamp.
+QJsonObject toCameraTime(const QDateTime &when)
+{
+    QJsonObject o;
+    o[QStringLiteral("year")] = when.date().year();
+    o[QStringLiteral("mon")] = when.date().month();
+    o[QStringLiteral("day")] = when.date().day();
+    o[QStringLiteral("hour")] = when.time().hour();
+    o[QStringLiteral("min")] = when.time().minute();
+    o[QStringLiteral("sec")] = when.time().second();
+    return o;
+}
+
+QDateTime fromCameraTime(const QJsonObject &o)
+{
+    if (o.isEmpty())
+        return {};
+    return QDateTime(QDate(o.value(QStringLiteral("year")).toInt(),
+                           o.value(QStringLiteral("mon")).toInt(),
+                           o.value(QStringLiteral("day")).toInt()),
+                     QTime(o.value(QStringLiteral("hour")).toInt(),
+                           o.value(QStringLiteral("min")).toInt(),
+                           o.value(QStringLiteral("sec")).toInt()));
+}
+
+} // namespace
+
+void ReolinkClient::searchRecordings(const QDateTime &from, const QDateTime &to,
+                                     const QString &streamType, int channel)
+{
+    login([this, from, to, streamType, channel] {
+        QJsonObject search;
+        search[QStringLiteral("channel")] = channel;
+        search[QStringLiteral("streamType")] = streamType;
+        // onlyStatus 0 asks for the file list itself; 1 would return only
+        // which days have anything, which is a useful optimisation for a
+        // calendar view but not for this.
+        search[QStringLiteral("onlyStatus")] = 0;
+        search[QStringLiteral("StartTime")] = toCameraTime(from);
+        search[QStringLiteral("EndTime")] = toCameraTime(to);
+
+        QJsonObject param;
+        param[QStringLiteral("Search")] = search;
+
+        post(QStringLiteral("Search"), param,
+             [this](const QJsonObject &value) {
+                 const QJsonObject result =
+                     value.value(QStringLiteral("SearchResult")).toObject();
+                 QList<Recording> recordings;
+                 const QJsonArray files =
+                     result.value(QStringLiteral("File")).toArray();
+                 for (const QJsonValue &v : files) {
+                     const QJsonObject o = v.toObject();
+                     Recording recording;
+                     recording.name = o.value(QStringLiteral("name")).toString();
+                     recording.size =
+                         qint64(o.value(QStringLiteral("size")).toDouble());
+                     recording.start = fromCameraTime(
+                         o.value(QStringLiteral("StartTime")).toObject());
+                     recording.end = fromCameraTime(
+                         o.value(QStringLiteral("EndTime")).toObject());
+                     recording.streamType =
+                         o.value(QStringLiteral("type")).toString();
+                     if (!recording.name.isEmpty())
+                         recordings.append(recording);
+                 }
+                 emit recordingsReady(recordings);
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+QUrl ReolinkClient::playbackUrl(const Recording &recording) const
+{
+    QUrl url = apiUrl(QStringLiteral("Playback"));
+    QUrlQuery q(url.query());
+    q.addQueryItem(QStringLiteral("source"), recording.name);
+    q.addQueryItem(QStringLiteral("output"), recording.name);
+    url.setQuery(q);
+    return url;
+}
+
+QUrl ReolinkClient::downloadUrl(const Recording &recording) const
+{
+    QUrl url = apiUrl(QStringLiteral("Download"));
+    QUrlQuery q(url.query());
+    q.addQueryItem(QStringLiteral("source"), recording.name);
+    q.addQueryItem(QStringLiteral("output"), recording.name);
+    url.setQuery(q);
+    return url;
+}
+
 void ReolinkClient::fetchSnapshot()
 {
     login([this] {

@@ -212,6 +212,15 @@ Config Config::load()
             c.actions.runCommand = true;
             c.useGlobalActions = false;
         }
+        c.motionSource = o.value(QStringLiteral("motionSource"))
+                             .toString(QStringLiteral("camera"));
+        c.motionZones = o.value(QStringLiteral("motionZones")).toString();
+        c.motionSensitivity = o.value(QStringLiteral("motionSensitivity")).toInt(5);
+        c.motionMinArea = o.value(QStringLiteral("motionMinArea")).toInt(20);
+        c.audioDetection = o.value(QStringLiteral("audioDetection")).toBool(false);
+        c.audioThresholdDb =
+            o.value(QStringLiteral("audioThresholdDb")).toDouble(-35.0);
+        c.audioHoldSeconds = o.value(QStringLiteral("audioHoldSeconds")).toInt(3);
         c.recordOnMotion = o.value(QStringLiteral("recordOnMotion")).toBool(false);
         c.recordTrailingSeconds =
             o.value(QStringLiteral("recordTrailingSeconds")).toInt(15);
@@ -250,6 +259,13 @@ bool Config::save() const
         o[QStringLiteral("useGlobalActions")] = c.useGlobalActions;
         o[QStringLiteral("actions")] = actionsToJson(c.actions);
         o[QStringLiteral("motionCommand")] = c.motionCommand;
+        o[QStringLiteral("motionSource")] = c.motionSource;
+        o[QStringLiteral("motionZones")] = c.motionZones;
+        o[QStringLiteral("motionSensitivity")] = c.motionSensitivity;
+        o[QStringLiteral("motionMinArea")] = c.motionMinArea;
+        o[QStringLiteral("audioDetection")] = c.audioDetection;
+        o[QStringLiteral("audioThresholdDb")] = c.audioThresholdDb;
+        o[QStringLiteral("audioHoldSeconds")] = c.audioHoldSeconds;
         o[QStringLiteral("recordOnMotion")] = c.recordOnMotion;
         o[QStringLiteral("recordTrailingSeconds")] = c.recordTrailingSeconds;
         arr.append(o);

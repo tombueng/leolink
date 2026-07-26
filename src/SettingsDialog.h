@@ -34,6 +34,7 @@ private slots:
     void onRemove();
     void onTest();
     void onScan();
+    void onEditZones();
     void onAccept();
     void refreshGridPreview();
 
@@ -79,6 +80,17 @@ private:
     QTableWidget *m_gridPreview{nullptr};
 
     // Event tab
+    QComboBox *m_motionSource{nullptr};
+    QPushButton *m_zonesButton{nullptr};
+    QSpinBox *m_sensitivity{nullptr};
+    QSpinBox *m_minArea{nullptr};
+    QCheckBox *m_audioDetection{nullptr};
+    QSpinBox *m_audioThreshold{nullptr};
+    QSpinBox *m_audioHold{nullptr};
+    /// Held here rather than in a widget: the zone editor is modal and the
+    /// mask has nowhere else to live between opening it and saving.
+    QString m_zones;
+
     QLineEdit *m_motionCommand{nullptr};
     QCheckBox *m_recordOnMotion{nullptr};
     QSpinBox *m_recordTrailing{nullptr};
