@@ -279,6 +279,24 @@ GERMAN: dict[str, str] = {
     "The player did not connect.": "Der Player hat sich nicht verbunden.",
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
+    # ── what newer cameras can tell apart ──
+    "What it recognises": "Was sie erkennt",
+    "People": "Personen",
+    "Vehicles": "Fahrzeuge",
+    "Animals": "Tiere",
+    "Faces": "Gesichter",
+    "Any movement": "Jede Bewegung",
+    "Continuous": "Durchgehend",
+    "This camera keeps a separate week for each kind of event. Which one?":
+        "Diese Kamera führt für jede Ereignisart eine eigene Woche. Welche?",
+    "Push notifications": "Push-Benachrichtigungen",
+    "Folder": "Ordner",
+    "The camera is not answering requests just now. It does this when it has "
+    "had too many at once; it recovers on its own after a moment.":
+        "Die Kamera beantwortet gerade keine Anfragen. Das macht sie, wenn sie "
+        "zu viele auf einmal bekommen hat; nach einem Moment geht es von selbst "
+        "wieder.",
+
     # ── detection, plainly separated ──
     "Camera-side detection": "Erkennung in der Kamera",
     "Where it looks": "Wo sie hinschaut",

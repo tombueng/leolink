@@ -213,7 +213,19 @@ int main(int argc, char *argv[])
             std::fprintf(stderr, "no camera configured\n");
             return 1;
         }
-        auto *dialog = new leolink::CameraSettingsDialog(config.active().first());
+        // LEOLINK_DIALOG_HOST picks which camera, since the interesting one is
+        // usually the odd one out rather than the first.
+        leolink::CameraConfig subject = config.active().first();
+        const QString wanted = qEnvironmentVariable("LEOLINK_DIALOG_HOST");
+        if (!wanted.isEmpty()) {
+            for (const leolink::CameraConfig &camera : config.active()) {
+                if (camera.host == wanted) {
+                    subject = camera;
+                    break;
+                }
+            }
+        }
+        auto *dialog = new leolink::CameraSettingsDialog(subject);
         dialog->show();
         // Long enough for every section to have come back. Six seconds was not,
         // and the report then described a dialog that was still filling in.

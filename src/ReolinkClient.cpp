@@ -21,6 +21,9 @@ namespace {
 /// device on the same network, short enough that one which has vanished does
 /// not hold up closing the window.
 constexpr int kLogoutWaitMs = 700;
+
+/// How long to leave a camera alone after it has refused a request outright.
+constexpr int kBackOffMs = 3000;
 } // namespace
 
 ReolinkClient::ReolinkClient(QObject *parent)
@@ -186,11 +189,71 @@ void ReolinkClient::postRaw(const QString &command, const QJsonObject &param,
 
 void ReolinkClient::pump()
 {
-    while (m_inFlight < kMaxInFlight && !m_queue.isEmpty()) {
+    if (m_queue.isEmpty())
+        return;
+
+    // A camera that has just said "not now" gets a moment's peace.
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (m_backOffUntil > now) {
+        if (!m_backOffPending) {
+            m_backOffPending = true;
+            QTimer::singleShot(int(m_backOffUntil - now), this, [this] {
+                m_backOffPending = false;
+                pump();
+            });
+        }
+        return;
+    }
+
+    // Pacing, once a camera has shown it needs it.
+    if (m_paceMs > 0 && m_inFlight > 0) {
+        const qint64 due = m_lastSentAt + m_paceMs;
+        if (due > now) {
+            if (!m_backOffPending) {
+                m_backOffPending = true;
+                QTimer::singleShot(int(due - now), this, [this] {
+                    m_backOffPending = false;
+                    pump();
+                });
+            }
+            return;
+        }
+    }
+
+    while (m_inFlight < m_maxInFlight && !m_queue.isEmpty()) {
         const std::function<void()> next = m_queue.takeFirst();
         ++m_inFlight;
+        m_lastSentAt = QDateTime::currentMSecsSinceEpoch();
         next();
+        if (m_paceMs > 0)
+            break;   // one at a time while the camera is being careful
     }
+}
+
+void ReolinkClient::noteRefusal()
+{
+    m_goodRun = 0;
+    if (m_maxInFlight > 1 || m_paceMs == 0) {
+        m_maxInFlight = 1;
+        m_paceMs = 250;
+        LEO_INFO(Api, m_camera.label(),
+                 QStringLiteral("The camera is refusing requests — slowing to "
+                                "one at a time, %1 ms apart").arg(m_paceMs));
+    }
+}
+
+void ReolinkClient::noteSuccess()
+{
+    if (m_maxInFlight >= kMaxInFlight && m_paceMs == 0)
+        return;
+    if (++m_goodRun < kSuccessesToRelax)
+        return;
+    m_goodRun = 0;
+    m_paceMs = 0;
+    m_maxInFlight = qMin(kMaxInFlight, m_maxInFlight + 1);
+    LEO_DEBUG(Api, m_camera.label(),
+              QStringLiteral("Answering happily again — up to %1 at a time")
+                  .arg(m_maxInFlight));
 }
 
 void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
@@ -246,6 +309,47 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
         } pumper{this};
 
         if (reply->error() != QNetworkReply::NoError) {
+            const int status =
+                reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+            // 502 and 503 are answers, not network faults. Newer Reolink
+            // firmware returns them instead of a JSON error whenever it is
+            // unhappy — too many sessions, a parameter it did not expect, a
+            // request while it is busy. A Duo 2 was reduced to answering 502 to
+            // everything, including Login, by a burst of read-only queries.
+            //
+            // Treated as "come back later": the request is not retried, the
+            // message says what to do, and the queue is held off for a moment
+            // so a dialog full of requests does not keep hammering a camera
+            // that has already said it has had enough.
+            if (status == 502 || status == 503) {
+                m_lastErrorCode = kCameraOverloaded;
+                m_backOffUntil = QDateTime::currentMSecsSinceEpoch() + kBackOffMs;
+                noteRefusal();
+                LEO_WARN(Api, m_camera.label(),
+                         QStringLiteral("← %1 HTTP %2 after %3 ms — the camera "
+                                        "is refusing requests; holding off %4 ms")
+                             .arg(command).arg(status).arg(elapsed).arg(kBackOffMs));
+
+                // Asked again once, after the pause. "Not now" is not "no", and
+                // a single early refusal was otherwise enough to leave the
+                // whole dialog empty: the requests behind it went through
+                // perfectly well, but the one that was turned away never came
+                // back.
+                if (mayRetry) {
+                    LEO_DEBUG(Api, m_camera.label(),
+                              QStringLiteral("Will ask for %1 again once the "
+                                             "camera has caught its breath")
+                                  .arg(command));
+                    postRaw(command, param, onOk, onErr, action, false);
+                    return;
+                }
+                onErr(tr("The camera is not answering requests just now. It does "
+                         "this when it has had too many at once; it recovers on "
+                         "its own after a moment."));
+                return;
+            }
+
             const QString message =
                 tr("Cannot reach %1: %2").arg(m_camera.host, reply->errorString());
             LEO_WARN(Api, m_camera.label(),
@@ -306,6 +410,7 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
             return;
         }
 
+        noteSuccess();
         LEO_DEBUG(Api, m_camera.label(),
                   QStringLiteral("← %1 ok after %2 ms, %3 bytes")
                       .arg(command).arg(elapsed).arg(raw.size()));

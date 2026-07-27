@@ -234,6 +234,7 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     alarmParam[QStringLiteral("channel")] = 0;
     alarmParam[QStringLiteral("type")] = QStringLiteral("md");
     m_client->fetchSection(QStringLiteral("GetAlarm"), alarmParam);
+    m_client->fetchSection(QStringLiteral("GetMdAlarm"), alarmParam);
     m_client->fetchSection(QStringLiteral("GetMask"), channel);
 }
 
@@ -1078,9 +1079,15 @@ SectionEditor *CameraSettingsDialog::addSection(QWidget *page,
         param[QStringLiteral("channel")] = 0;
     m_sectionParams.insert(command, param);
 
-    // GetIsp → "Isp": the reply wraps the section under the command name minus
-    // its verb, and the same name goes back in the Set.
-    m_sectionWrappers.insert(command, command.mid(3));
+    // GetIsp → "Isp": usually the reply wraps the section under the command
+    // name minus its verb. Usually. A Duo 2 answers GetAudioAlarmV20 with
+    // "Audio" and GetAiCfg with "AiDetectType", so the name is only a guess
+    // until the camera has answered — onSectionReady() replaces it with the key
+    // the reply actually used, and that is what the Set is built from.
+    QString wrapper = command.mid(3);
+    if (wrapper.endsWith(QLatin1String("V20")))
+        wrapper.chop(3);
+    m_sectionWrappers.insert(command, wrapper);
 
     connect(editor, &SectionEditor::edited, this,
             [this] { m_applyButton->setEnabled(true); });
@@ -1217,6 +1224,17 @@ void CameraSettingsDialog::buildDetectionTab()
     sensLayout->addWidget(sensNote);
     sensLayout->addWidget(m_sensitivityTable);
 
+    // A Duo 2 answers with {dog_cat, face, people, vehicle}; a model with
+    // fewer talents simply reports fewer of them, and the form follows.
+    layout->addWidget(addSection(page, QStringLiteral("GetAiCfg"),
+                                 tr("What it recognises"),
+                                 {
+                                     {QStringLiteral("people"), tr("People"), {}, {}},
+                                     {QStringLiteral("vehicle"), tr("Vehicles"), {}, {}},
+                                     {QStringLiteral("dog_cat"), tr("Animals"), {}, {}},
+                                     {QStringLiteral("face"), tr("Faces"), {}, {}},
+                                 }));
+
     m_alarmBox = new QGroupBox(tr("Camera-side detection"), page);
     auto *alarmLayout = new QVBoxLayout(m_alarmBox);
     alarmLayout->addWidget(areaBox);
@@ -1248,10 +1266,21 @@ void CameraSettingsDialog::onAlarmReady(const QJsonObject &alarm)
     m_detectionScheduleButton->setEnabled(
         alarm.contains(QStringLiteral("schedule")));
 
+    // Two shapes again. Newer firmware carries both an old `sens` array and a
+    // `newSens.sens` one with an enable flag per band, and says which it obeys
+    // through `useNewSens`. Editing the one it ignores would look like the
+    // setting had no effect.
+    m_usesNewSens = alarm.value(QStringLiteral("useNewSens")).toInt() != 0 &&
+                    alarm.contains(QStringLiteral("newSens"));
+
     // Sensitivity bands, exactly as many as the camera reports — models differ,
     // and inventing a fifth row would be rejected on write.
     m_loadingAlarm = true;
-    const QJsonArray bands = alarm.value(QStringLiteral("sens")).toArray();
+    const QJsonArray bands =
+        m_usesNewSens
+            ? alarm.value(QStringLiteral("newSens")).toObject()
+                   .value(QStringLiteral("sens")).toArray()
+            : alarm.value(QStringLiteral("sens")).toArray();
     m_sensitivityTable->setRowCount(bands.size());
     for (int row = 0; row < bands.size(); ++row) {
         const QJsonObject band = bands.at(row).toObject();
@@ -1318,22 +1347,86 @@ void CameraSettingsDialog::onEditDetectionArea()
 void CameraSettingsDialog::onEditDetectionSchedule()
 {
     QJsonObject schedule = m_alarm.value(QStringLiteral("schedule")).toObject();
-    QString table = schedule.value(QStringLiteral("table")).toString();
-    if (table.size() != ScheduleGrid::kCells)
-        table = QString(ScheduleGrid::kCells, QLatin1Char('1'));
+    if (editSchedule(schedule,
+                     tr("%1 — when to watch").arg(m_camera.label()),
+                     tr("Hours in which the camera raises motion events. "
+                        "Outside them it still sees, but says nothing."))) {
+        m_alarm[QStringLiteral("schedule")] = schedule;
+        m_alarmDirty = true;
+        m_applyButton->setEnabled(true);
+    }
+}
 
-    ScheduleDialog dialog(
-        tr("%1 — when to watch").arg(m_camera.label()),
-        tr("Hours in which the camera raises motion events. Outside them it "
-           "still sees, but says nothing."),
-        table, kScheduleFirstDay, this);
+QString CameraSettingsDialog::describeAlarmType(const QString &key)
+{
+    // The camera's own names for what it can tell apart.
+    if (key == QLatin1String("MD"))         return tr("Any movement");
+    if (key == QLatin1String("TIMING"))     return tr("Continuous");
+    if (key == QLatin1String("AI_PEOPLE"))  return tr("People");
+    if (key == QLatin1String("AI_VEHICLE")) return tr("Vehicles");
+    if (key == QLatin1String("AI_DOG_CAT")) return tr("Animals");
+    if (key == QLatin1String("AI_FACE"))    return tr("Faces");
+    return key;
+}
+
+bool CameraSettingsDialog::editSchedule(QJsonObject &schedule,
+                                        const QString &title,
+                                        const QString &explanation)
+{
+    // Two shapes, again. Older firmware keeps one week of hours; a Duo 2 keeps
+    // one per kind of thing it can recognise — movement, people, vehicles,
+    // animals — so "when to watch" is a question that needs asking once per
+    // type. Rather than invent a screen full of grids, the type is chosen
+    // first and the same editor used for each.
+    const QJsonValue table = schedule.value(QStringLiteral("table"));
+
+    if (table.isObject()) {
+        const QJsonObject byType = table.toObject();
+        QStringList keys = byType.keys();
+        if (keys.isEmpty())
+            return false;
+
+        QStringList labels;
+        for (const QString &key : std::as_const(keys))
+            labels << describeAlarmType(key);
+
+        bool ok = false;
+        const QString chosen = QInputDialog::getItem(
+            this, title,
+            tr("This camera keeps a separate week for each kind of event. "
+               "Which one?"),
+            labels, 0, false, &ok);
+        if (!ok)
+            return false;
+        const int index = labels.indexOf(chosen);
+        if (index < 0)
+            return false;
+        const QString key = keys.at(index);
+
+        QString week = byType.value(key).toString();
+        if (week.size() != ScheduleGrid::kCells)
+            week = QString(ScheduleGrid::kCells, QLatin1Char('1'));
+
+        ScheduleDialog dialog(QStringLiteral("%1 — %2").arg(title, chosen),
+                              explanation, week, kScheduleFirstDay, this);
+        if (dialog.exec() != QDialog::Accepted)
+            return false;
+
+        QJsonObject updated = byType;
+        updated[key] = dialog.table();
+        schedule[QStringLiteral("table")] = updated;
+        return true;
+    }
+
+    QString week = table.toString();
+    if (week.size() != ScheduleGrid::kCells)
+        week = QString(ScheduleGrid::kCells, QLatin1Char('1'));
+
+    ScheduleDialog dialog(title, explanation, week, kScheduleFirstDay, this);
     if (dialog.exec() != QDialog::Accepted)
-        return;
-
+        return false;
     schedule[QStringLiteral("table")] = dialog.table();
-    m_alarm[QStringLiteral("schedule")] = schedule;
-    m_alarmDirty = true;
-    m_applyButton->setEnabled(true);
+    return true;
 }
 
 void CameraSettingsDialog::buildMobileTab()
@@ -1500,23 +1593,15 @@ QSize CameraSettingsDialog::mainStreamSize() const
 void CameraSettingsDialog::onEditRecordingSchedule()
 {
     QJsonObject schedule = m_recording.value(QStringLiteral("schedule")).toObject();
-    QString table = schedule.value(QStringLiteral("table")).toString();
-    if (table.size() != ScheduleGrid::kCells)
-        table = QString(ScheduleGrid::kCells, QLatin1Char('1'));
-
-    ScheduleDialog dialog(
-        tr("%1 — when to record").arg(m_camera.label()),
-        tr("Hours in which the camera records to its own card. This needs a "
-           "card fitted; recording to this computer is set under "
-           "Cameras → Events and works without one."),
-        table, kScheduleFirstDay, this);
-    if (dialog.exec() != QDialog::Accepted)
-        return;
-
-    schedule[QStringLiteral("table")] = dialog.table();
-    m_recording[QStringLiteral("schedule")] = schedule;
-    m_recordingDirty = true;
-    m_applyButton->setEnabled(true);
+    if (editSchedule(schedule,
+                     tr("%1 — when to record").arg(m_camera.label()),
+                     tr("Hours in which the camera records to its own card. "
+                        "This needs a card fitted; recording to this computer "
+                        "is set under Cameras → Events and works without one."))) {
+        m_recording[QStringLiteral("schedule")] = schedule;
+        m_recordingDirty = true;
+        m_applyButton->setEnabled(true);
+    }
 }
 
 QJsonObject CameraSettingsDialog::collectAlarm() const
@@ -1548,7 +1633,10 @@ QJsonObject CameraSettingsDialog::collectAlarm() const
     else
         alarm.remove(QStringLiteral("action"));
 
-    QJsonArray bands = alarm.value(QStringLiteral("sens")).toArray();
+    QJsonObject newSens = alarm.value(QStringLiteral("newSens")).toObject();
+    QJsonArray bands = m_usesNewSens
+                           ? newSens.value(QStringLiteral("sens")).toArray()
+                           : alarm.value(QStringLiteral("sens")).toArray();
     for (int row = 0; row < m_sensitivityTable->rowCount() &&
                       row < bands.size(); ++row) {
         QJsonObject band = bands.at(row).toObject();
@@ -1568,7 +1656,12 @@ QJsonObject CameraSettingsDialog::collectAlarm() const
 
         bands[row] = band;
     }
-    alarm[QStringLiteral("sens")] = bands;
+    if (m_usesNewSens) {
+        newSens[QStringLiteral("sens")] = bands;
+        alarm[QStringLiteral("newSens")] = newSens;
+    } else {
+        alarm[QStringLiteral("sens")] = bands;
+    }
     return alarm;
 }
 
@@ -1576,6 +1669,18 @@ void CameraSettingsDialog::buildRecordingTab()
 {
     auto *page = new QWidget(this);
     auto *layout = new QVBoxLayout(page);
+
+    // Older firmware: GetRec. Newer: GetRecV20. Both are asked for; the one
+    // this camera does not have answers -9 and stays hidden.
+    layout->addWidget(addSection(page, QStringLiteral("GetRecV20"),
+                                 tr("Recording to the camera's card"),
+                                 {
+                                     {QStringLiteral("overwrite"), tr("Overwrite when full"), {}, {}},
+                                     {QStringLiteral("preRec"), tr("Record before the event"), {}, {}},
+                                     {QStringLiteral("postRec"), tr("Keep recording after"), {}, {}},
+                                     {QStringLiteral("packTime"), tr("File length"), {}, {}},
+                                     {QStringLiteral("enable"), tr("Switched on"), {}, {}},
+                                 }));
 
     layout->addWidget(addSection(page, QStringLiteral("GetRec"),
                                  tr("Recording to the camera's card"),
@@ -1618,6 +1723,34 @@ void CameraSettingsDialog::buildAlertTab()
 {
     auto *page = new QWidget(this);
     auto *layout = new QVBoxLayout(page);
+
+    layout->addWidget(addSection(page, QStringLiteral("GetEmailV20"), tr("E-mail"),
+                                 {
+                                     {QStringLiteral("smtpServer"), tr("Server"), {}, {}},
+                                     {QStringLiteral("smtpPort"), tr("Port"), {}, {}},
+                                     {QStringLiteral("userName"), tr("User"), {}, {}},
+                                     {QStringLiteral("password"), tr("Password"), {}, {}},
+                                     {QStringLiteral("ssl"), tr("Encrypted"), {}, {}},
+                                     {QStringLiteral("interval"), tr("Not more often than"), {}, {}},
+                                     {QStringLiteral("attachment"), tr("Attach"), {}, {}},
+                                     {QStringLiteral("enable"), tr("Switched on"), {}, {}},
+                                 }, false));
+
+    layout->addWidget(addSection(page, QStringLiteral("GetFtpV20"), tr("FTP upload"),
+                                 {
+                                     {QStringLiteral("server"), tr("Server"), {}, {}},
+                                     {QStringLiteral("port"), tr("Port"), {}, {}},
+                                     {QStringLiteral("userName"), tr("User"), {}, {}},
+                                     {QStringLiteral("password"), tr("Password"), {}, {}},
+                                     {QStringLiteral("remoteDir"), tr("Folder"), {}, {}},
+                                     {QStringLiteral("enable"), tr("Switched on"), {}, {}},
+                                 }, false));
+
+    layout->addWidget(addSection(page, QStringLiteral("GetPushV20"),
+                                 tr("Push notifications"),
+                                 {
+                                     {QStringLiteral("enable"), tr("Switched on"), {}, {}},
+                                 }, false));
 
     layout->addWidget(addSection(page, QStringLiteral("GetEmail"), tr("E-mail"),
                                  {
@@ -1776,11 +1909,21 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
                     ranges.value(QStringLiteral("Mask")).toObject());
         return;
     }
-    if (command == QLatin1String("GetAlarm")) {
-        onAlarmReady(value.value(QStringLiteral("Alarm")).toObject());
+    // Two spellings of the same section. Older firmware has GetAlarm and
+    // answers -9 to GetMdAlarm; a Duo 2 on 2024 firmware does the reverse.
+    // Whichever answers is the one this camera uses, and the write goes back
+    // under the same name.
+    if (command == QLatin1String("GetAlarm") ||
+        command == QLatin1String("GetMdAlarm")) {
+        const QString key = command == QLatin1String("GetAlarm")
+                                ? QStringLiteral("Alarm")
+                                : QStringLiteral("MdAlarm");
+        m_alarmCommand = command;
+        onAlarmReady(value.value(key).toObject());
         return;
     }
-    if (command == QLatin1String("GetRec")) {
+    if (command == QLatin1String("GetRec") ||
+        command == QLatin1String("GetRecV20")) {
         // Kept whole for the schedule; the plain fields are also shown by the
         // generated section of the same name, and both write back the same
         // structure — see onApply, which merges them.
@@ -1850,7 +1993,21 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
     }
 
     if (SectionEditor *editor = m_sections.value(command)) {
-        const QString wrapper = m_sectionWrappers.value(command);
+        // Whatever the camera called it. The reply holds exactly one section,
+        // and reading its name from the reply is the only way to be right on
+        // every firmware: a Duo 2 answers GetAudioAlarmV20 with "Audio" and
+        // GetAiCfg with "AiDetectType", neither of which can be derived from
+        // the command. The name is also what the matching Set is built from,
+        // so guessing it wrong would write to a section that does not exist.
+        QString wrapper = m_sectionWrappers.value(command);
+        if (value.size() == 1 && !value.contains(wrapper)) {
+            const QString actual = value.keys().first();
+            LEO_DEBUG(Api, m_camera.label(),
+                      QStringLiteral("%1 wraps its section in \"%2\", not "
+                                     "\"%3\"").arg(command, actual, wrapper));
+            wrapper = actual;
+            m_sectionWrappers.insert(command, actual);
+        }
         editor->populate(value.value(wrapper).toObject(),
                          ranges.value(wrapper).toObject());
         return;
@@ -1954,7 +2111,8 @@ void CameraSettingsDialog::onApply()
         // the plain fields, and the schedule screen for the week of hours. The
         // form starts from what the camera sent and so would carry the old
         // schedule back; merging the edited one in keeps both.
-        if (it.key() == QLatin1String("GetRec") && m_recordingDirty) {
+        if ((it.key() == QLatin1String("GetRec") ||
+             it.key() == QLatin1String("GetRecV20")) && m_recordingDirty) {
             section[QStringLiteral("schedule")] =
                 m_recording.value(QStringLiteral("schedule"));
         }
@@ -1978,10 +2136,14 @@ void CameraSettingsDialog::onApply()
     // not show, and handing them all back on every Apply is a good way to
     // overwrite a setting nobody touched.
     if (m_alarmDirty && !m_alarm.isEmpty()) {
+        const bool isMd = m_alarmCommand == QLatin1String("GetMdAlarm");
         QJsonObject param;
-        param[QStringLiteral("Alarm")] = collectAlarm();
+        param[isMd ? QStringLiteral("MdAlarm") : QStringLiteral("Alarm")] =
+            collectAlarm();
         ++m_pending;
-        m_client->applySection(QStringLiteral("SetAlarm"), param);
+        m_client->applySection(isMd ? QStringLiteral("SetMdAlarm")
+                                    : QStringLiteral("SetAlarm"),
+                               param);
     }
     if (m_pending == 0) {
         m_status->setText(tr("Nothing to write."));

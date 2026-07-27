@@ -206,6 +206,11 @@ private:
     CameraConfig m_camera;
     QString m_token;
     int m_lastErrorCode{0};
+    /// Not one of the camera's own codes: our own marker for an HTTP-level
+    /// refusal, so callers can tell it from a firmware that lacks a command.
+    static constexpr int kCameraOverloaded = -1000;
+    qint64 m_backOffUntil{0};
+    bool m_backOffPending{false};
 
     /// Requests that arrived while a login was still in flight. A camera hands
     /// out a session per Login, so exactly one may ever be outstanding.
@@ -233,8 +238,31 @@ private:
     /// embedded device is not a bad default in any case.
     QList<std::function<void()>> m_queue;
     int m_inFlight{0};
+
+    /// How many at once, adjusted to what this camera can stand.
+    ///
+    /// Cameras differ enormously. An RLC-410W on 2023 firmware answers four at
+    /// a time without complaint; a Duo 2 on 2024 firmware returns HTTP 502 to
+    /// almost everything when the settings dialog asks for thirty sections,
+    /// even at four. Fixing a number that suits both means picking the slowest,
+    /// which would make every other camera crawl.
+    ///
+    /// So it adapts, and it starts careful: one request at a time until this
+    /// camera has shown it can take more, opening up to four after a few clean
+    /// answers and dropping straight back to one the moment it balks. Starting
+    /// at four cost the Duo 2 its first thirteen requests every time — there is
+    /// no way to know in advance which sort of camera is on the other end, so
+    /// the polite assumption is the right one.
     static constexpr int kMaxInFlight = 4;
+    static constexpr int kSuccessesToRelax = 3;
+    int m_maxInFlight{1};
+    int m_goodRun{0};
+    /// Minimum gap between requests, non-zero only after a camera has balked.
+    int m_paceMs{0};
+    qint64 m_lastSentAt{0};
     void pump();
+    void noteRefusal();
+    void noteSuccess();
 };
 
 } // namespace leolink

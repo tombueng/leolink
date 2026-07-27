@@ -104,6 +104,11 @@ private:
     QJsonObject collectImage() const;
     QJsonObject collectAlarm() const;
     void refreshMaskSummary();
+    /// Edits a schedule in place, asking which kind of event first on the
+    /// cameras that keep one week per kind. Returns true if anything changed.
+    bool editSchedule(QJsonObject &schedule, const QString &title,
+                      const QString &explanation);
+    static QString describeAlarmType(const QString &key);
     /// Resolution the camera's own pixel coordinates refer to.
     QSize mainStreamSize() const;
 
@@ -132,6 +137,11 @@ private:
     /// whole: Set* replaces the structure, and a field left out is a field
     /// reset.
     QJsonObject m_alarm;
+    /// Which spelling this camera answered to: GetAlarm or GetMdAlarm.
+    QString m_alarmCommand;
+    /// Newer firmware keeps the bands under newSens and says so with
+    /// useNewSens; editing the other copy would have no effect.
+    bool m_usesNewSens{false};
     bool m_alarmDirty{false};
     /// Stops the table's own signals from marking the dialog dirty while it is
     /// being filled.
