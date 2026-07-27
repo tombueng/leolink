@@ -662,11 +662,14 @@ void SettingsDialog::loadIntoForm(const CameraConfig &c)
     m_password->setText(c.password);
     m_passwordCommand->setText(c.passwordCommand);
     m_uid->setText(c.uid);
-    m_stream->setCurrentIndex(c.stream == QLatin1String("main") ? 1 : 0);
-    m_transport->setCurrentIndex(
-        c.transport == QLatin1String("custom") ? 2
-        : c.transport == QLatin1String("flv")  ? 1
-                                               : 0);
+    // Selected by the value each entry carries, not by counting positions.
+    // The old version hardcoded the indices, so adding the Baichuan entry in
+    // the middle silently made every "custom" camera display as Baichuan —
+    // and it would have written that back on the next save.
+    const int stream = m_stream->findData(c.stream);
+    m_stream->setCurrentIndex(stream >= 0 ? stream : 0);
+    const int transport = m_transport->findData(c.transport);
+    m_transport->setCurrentIndex(transport >= 0 ? transport : 0);
     m_customUrl->setText(c.customUrl);
     m_customUrl->setEnabled(c.transport == QLatin1String("custom"));
     m_https->setChecked(c.https);

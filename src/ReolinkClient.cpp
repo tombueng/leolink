@@ -166,23 +166,23 @@ QUrl ReolinkClient::apiUrl(const QString &command, bool withToken) const
 void ReolinkClient::post(const QString &command, const QJsonObject &param,
                          const std::function<void(const QJsonObject &)> &onOk,
                          const std::function<void(const QString &)> &onErr,
-                         int action, bool mayRetry)
+                         int action, int retriesLeft)
 {
     // Most callers want the value and nothing else.
     postRaw(command, param,
             [onOk](const QJsonObject &entry) {
                 onOk(entry.value(QStringLiteral("value")).toObject());
             },
-            onErr, action, mayRetry);
+            onErr, action, retriesLeft);
 }
 
 void ReolinkClient::postRaw(const QString &command, const QJsonObject &param,
                             const std::function<void(const QJsonObject &)> &onOk,
                             const std::function<void(const QString &)> &onErr,
-                            int action, bool mayRetry)
+                            int action, int retriesLeft)
 {
-    m_queue.append([this, command, param, onOk, onErr, action, mayRetry] {
-        sendNow(command, param, onOk, onErr, action, mayRetry);
+    m_queue.append([this, command, param, onOk, onErr, action, retriesLeft] {
+        sendNow(command, param, onOk, onErr, action, retriesLeft);
     });
     pump();
 }
@@ -259,7 +259,7 @@ void ReolinkClient::noteSuccess()
 void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                             const std::function<void(const QJsonObject &)> &onOk,
                             const std::function<void(const QString &)> &onErr,
-                            int action, bool mayRetry)
+                            int action, int retriesLeft)
 {
     QJsonObject entry;
     entry[QStringLiteral("cmd")] = command;
@@ -295,8 +295,8 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
     QNetworkReply *reply = m_net->post(req, payload);
 
     connect(reply, &QNetworkReply::finished, this,
-            [this, reply, startedAt, command, param, onOk, onErr, action, mayRetry,
-             tokenUsed] {
+            [this, reply, startedAt, command, param, onOk, onErr, action,
+             retriesLeft, tokenUsed] {
         reply->deleteLater();
         const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
 
@@ -336,12 +336,13 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                 // whole dialog empty: the requests behind it went through
                 // perfectly well, but the one that was turned away never came
                 // back.
-                if (mayRetry) {
+                if (retriesLeft > 0) {
                     LEO_DEBUG(Api, m_camera.label(),
                               QStringLiteral("Will ask for %1 again once the "
-                                             "camera has caught its breath")
-                                  .arg(command));
-                    postRaw(command, param, onOk, onErr, action, false);
+                                             "camera has caught its breath "
+                                             "(%2 attempt(s) left)")
+                                  .arg(command).arg(retriesLeft));
+                    postRaw(command, param, onOk, onErr, action, retriesLeft - 1);
                     return;
                 }
                 onErr(tr("The camera is not answering requests just now. It does "
@@ -379,7 +380,7 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
             // turned into a permanent failure: every later request reused the
             // dead token and the camera looked unreachable. One silent retry
             // with a fresh session is what the user would do by hand.
-            if (mayRetry && !tokenUsed.isEmpty() &&
+            if (retriesLeft > 0 && !tokenUsed.isEmpty() &&
                 (rspCode == -6 || rspCode == -27)) {
                 LEO_INFO(Api, m_camera.label(),
                          QStringLiteral("Session refused during %1, logging in "
@@ -390,8 +391,9 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                 // failures reported for one expired session.
                 if (m_token == tokenUsed)
                     m_token.clear();
-                login([this, command, param, onOk, onErr, action] {
-                          postRaw(command, param, onOk, onErr, action, false);
+                login([this, command, param, onOk, onErr, action, retriesLeft] {
+                          postRaw(command, param, onOk, onErr, action,
+                                  retriesLeft - 1);
                       },
                       onErr);
                 return;

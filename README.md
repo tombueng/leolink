@@ -51,6 +51,45 @@ software is involved.
   report as it stands.
 - **English and German.**
 
+## What it looks like
+
+Real screenshots of the application running. The camera tiles play freely
+licensed photographs rather than anybody's front door — see
+[docs/screenshots/CREDITS.md](docs/screenshots/CREDITS.md) for where those come
+from and what was blurred.
+
+![Four cameras in a grid](docs/screenshots/01-grid.png)
+
+### Settings
+
+| | |
+|---|---|
+| ![Cameras](docs/screenshots/settings-01-cameras.png) | ![Layout](docs/screenshots/settings-02-layout.png) |
+| **Cameras** — address, credentials, stream and transport | **Layout** — the grid, and which cell a camera occupies |
+| ![Events](docs/screenshots/settings-03-events.png) | ![Window](docs/screenshots/settings-04-window.png) |
+| **Events** — what counts as motion and what happens then | **Window** — chrome, tray, language, decoding, diagnostics |
+
+### Camera settings
+
+Everything here is built from what the camera itself reports, so a model that
+cannot do something simply does not show it.
+
+| | |
+|---|---|
+| ![Video](docs/screenshots/camera-01-video.png) | ![Picture](docs/screenshots/camera-02-picture.png) |
+| **Video** — resolution, rate, bitrate, profile, microphone | **Picture** — brightness, contrast, day/night, infrared |
+| ![Overlay](docs/screenshots/camera-03-overlay.png) | ![Detection](docs/screenshots/camera-04-detection.png) |
+| **Overlay** — on-screen text, and the privacy areas the camera blanks | **Detection** — where it looks, when it reports, how readily it triggers |
+| ![Recording](docs/screenshots/camera-05-recording.png) | ![Alerts](docs/screenshots/camera-06-alerts.png) |
+| **Recording** — to the camera's own card, and when | **Alerts** — e-mail, FTP, push, siren and spotlight where fitted |
+| ![Time](docs/screenshots/camera-07-time.png) | ![Users](docs/screenshots/camera-08-users.png) |
+| **Time** — clock, time zone, NTP | **Users** — add, remove, change passwords |
+| ![Network](docs/screenshots/camera-09-network.png) | ![Mobile data](docs/screenshots/camera-10-mobile-data.png) |
+| **Network** — link, addresses, ports, Wi-Fi | **Mobile data** — SIM and modem, on cameras that have one |
+| ![Maintenance](docs/screenshots/camera-11-maintenance.png) | |
+| **Maintenance** — condition, firmware, storage, and what this camera supports | |
+
+
 ## Requirements
 
 Qt 6.4 or newer and libmpv. `ffmpeg` on PATH is needed for recording — without

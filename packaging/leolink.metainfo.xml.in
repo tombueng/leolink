@@ -53,10 +53,27 @@
   <url type="help">https://tombueng.github.io/leolink/</url>
   <url type="vcs-browser">https://github.com/tombueng/leolink</url>
 
-  <!-- TODO before submitting to Flathub: screenshots are effectively required
-       there, and none exist yet. They must not show a real camera feed; use
-       freely licensed footage through a camera entry with the "custom URL"
-       transport, then capture the window. -->
+  <!-- Screenshots of the application actually running. The tiles play freely
+       licensed CC0 photographs through the custom-URL transport rather than a
+       real camera feed; see docs/screenshots/CREDITS.md. -->
+  <screenshots>
+    <screenshot type="default">
+      <caption>Four cameras at once, in a grid you arrange yourself</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/01-grid.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Motion, recording and what happens when a camera sees something</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-03-events.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Changing the camera's own encoder settings</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-01-video.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Where the camera looks, when it reports, and how readily it triggers</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-04-detection.png</image>
+    </screenshot>
+  </screenshots>
 
 
   <categories>

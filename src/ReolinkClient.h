@@ -182,7 +182,7 @@ private:
     void post(const QString &command, const QJsonObject &param,
               const std::function<void(const QJsonObject &value)> &onOk,
               const std::function<void(const QString &error)> &onErr,
-              int action = 0, bool mayRetry = true);
+              int action = 0, int retriesLeft = kRetries);
     /// As post(), but hands the whole reply entry over rather than only its
     /// `value` — needed wherever the `range` document matters. Everything
     /// shares this one path so that logging, the retry when a session expires
@@ -190,12 +190,12 @@ private:
     void postRaw(const QString &command, const QJsonObject &param,
                  const std::function<void(const QJsonObject &entry)> &onOk,
                  const std::function<void(const QString &error)> &onErr,
-                 int action = 0, bool mayRetry = true);
+                 int action = 0, int retriesLeft = kRetries);
     /// Actually puts a request on the wire. Only pump() calls this.
     void sendNow(const QString &command, const QJsonObject &param,
                  const std::function<void(const QJsonObject &entry)> &onOk,
                  const std::function<void(const QString &error)> &onErr,
-                 int action, bool mayRetry);
+                 int action, int retriesLeft);
     /// Hands the session back. Cameras allow only a handful at once, and one
     /// that is merely dropped stays occupied until its lease runs out.
     void releaseSession();
@@ -254,6 +254,11 @@ private:
     /// no way to know in advance which sort of camera is on the other end, so
     /// the polite assumption is the right one.
     static constexpr int kMaxInFlight = 4;
+    /// How many times a request is worth repeating when the camera says "not
+    /// now" or the session has lapsed. One was not enough: a Duo 2 refused the
+    /// same two sections on the first attempt and on the retry, and the
+    /// settings page for them came up empty.
+    static constexpr int kRetries = 3;
     static constexpr int kSuccessesToRelax = 3;
     int m_maxInFlight{1};
     int m_goodRun{0};

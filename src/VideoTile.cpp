@@ -278,6 +278,12 @@ void VideoTile::buildUi()
 
     m_status = new QLabel(tr("connecting…"), bar);
     m_status->setStyleSheet(mutedStyle(palette()));
+    // It must be allowed to shrink. Without this the label insists on its full
+    // width, the layout gives it to it, and the text runs under the buttons —
+    // "sub stre" with the rest behind the speaker icon. setStatusText() elides
+    // the text to whatever width it actually ends up with.
+    m_status->setMinimumWidth(0);
+    m_status->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     row->addWidget(m_status, 1);
 
     m_signal = new SignalIndicator(bar);
@@ -541,8 +547,11 @@ void VideoTile::beginPlayback()
                       m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec,
                       m_lowLatency ? QStringLiteral("yes") : QStringLiteral("no")));
     m_surface->play(playbackUrl());
-    setStatusText(m_config.stream == QLatin1String("main") ? tr("main stream")
-                                                           : tr("sub stream"));
+    setStatusText(m_config.transport == QLatin1String("custom")
+                      ? tr("custom stream")
+                      : (m_config.stream == QLatin1String("main")
+                             ? tr("main stream")
+                             : tr("sub stream")));
     m_infoTimer->start();
     m_lastFrameCount = 0;
     m_stalledChecks = 0;
@@ -556,6 +565,7 @@ void VideoTile::beginPlayback()
 void VideoTile::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
+    updateStatusLabel();
     if (m_spinner && m_spinner->isVisible())
         m_spinner->setGeometry(m_surface->geometry());
 }
@@ -725,8 +735,25 @@ void VideoTile::setLinkType(const QString &activeLink)
 
 void VideoTile::setStatusText(const QString &text)
 {
-    if (m_status)
-        m_status->setText(text);
+    m_statusText = text;
+    updateStatusLabel();
+}
+
+void VideoTile::updateStatusLabel()
+{
+    if (!m_status)
+        return;
+    // Elided to whatever room is left, so a narrow tile shows "main stream ·
+    // 2560x1440 · …" rather than running the text under the buttons and
+    // cutting it off mid-letter.
+    const int room = m_status->width();
+    const QString elided =
+        m_status->fontMetrics().elidedText(m_statusText, Qt::ElideRight, room);
+    // A single letter followed by an ellipsis reads as a fault rather than as
+    // shortening. Below that, nothing at all is tidier — the whole text is in
+    // the tooltip either way.
+    m_status->setText(elided.size() >= 8 ? elided : QString());
+    m_status->setToolTip(m_statusText);
 }
 
 void VideoTile::expectDisruption(int seconds)
@@ -848,10 +875,15 @@ void VideoTile::refreshStreamInfo()
         return;   // nothing playing yet; leave the "connecting" text alone
 
     // The stream name stays first: it is the one thing that says *which*
-    // stream this is, and the numbers underneath mean little without it.
+    // stream this is, and the numbers underneath mean little without it. A
+    // camera reached by a URL of one's own has no main or sub stream to speak
+    // of, and calling it one is simply wrong.
     QStringList parts;
-    parts << (m_config.stream == QLatin1String("main") ? tr("main stream")
-                                                       : tr("sub stream"));
+    if (m_config.transport == QLatin1String("custom"))
+        parts << tr("custom stream");
+    else
+        parts << (m_config.stream == QLatin1String("main") ? tr("main stream")
+                                                           : tr("sub stream"));
     parts << QStringLiteral("%1×%2").arg(info.width).arg(info.height);
     if (info.fps > 0.0)
         parts << tr("%1 fps").arg(info.fps, 0, 'f', info.fps < 10 ? 1 : 0);

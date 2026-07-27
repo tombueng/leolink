@@ -119,6 +119,8 @@ private:
 
     void beginPlayback();
     void refreshStreamInfo();
+    /// Re-elides the status line to the room the layout has left it.
+    void updateStatusLabel();
     void checkAlive();
 
     CameraConfig m_config;
@@ -149,6 +151,8 @@ private:
     QTimer *m_flashTimer{nullptr};
     QLabel *m_title{nullptr};
     QLabel *m_status{nullptr};
+    /// The full text, before eliding — kept so a resize can redo it.
+    QString m_statusText;
     QLabel *m_motion{nullptr};
     /// Shown when the stream is arriving damaged, so a poor link is visible
     /// rather than being mistaken for a broken application.

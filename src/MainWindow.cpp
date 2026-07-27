@@ -20,6 +20,8 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSet>
+#include <QTabWidget>
+#include <QThread>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QSystemTrayIcon>
@@ -113,6 +115,104 @@ MainWindow::MainWindow(QWidget *parent)
     applyChrome();
     rebuildGrid();
     startWatchers();
+
+    // LEOLINK_SCREENSHOT=<dir> saves a picture of the window and quits. Grabbed
+    // through Qt rather than off the X server: under a software renderer only
+    // whichever tile happened to have repainted last comes out, and the rest
+    // are black. Asking Qt to draw the window renders every widget on demand,
+    // including the video surfaces.
+    const QString shotDir = qEnvironmentVariable("LEOLINK_SCREENSHOT");
+    if (!shotDir.isEmpty()) {
+        const int delay =
+            qEnvironmentVariableIntValue("LEOLINK_SCREENSHOT_DELAY") > 0
+                ? qEnvironmentVariableIntValue("LEOLINK_SCREENSHOT_DELAY") * 1000
+                : 20000;
+        const QString which = qEnvironmentVariable("LEOLINK_SCREENSHOT_OF");
+        QTimer::singleShot(delay, this, [this, shotDir, which] {
+            QDir().mkpath(shotDir);
+
+            // Dialogs are plain widgets and grab cleanly, video surfaces are
+            // not — so a dialog can be captured anywhere, including on a
+            // virtual display with no graphics card behind it.
+            // Every page of a tabbed dialog, one file each. Handy for the
+            // handbook, and the only way to see at a glance that a change has
+            // not quietly ruined a screen nobody opens often.
+            auto shootTabs = [&shotDir](QDialog &dialog, const QString &prefix) {
+                dialog.show();
+                QApplication::processEvents();
+                auto *tabs = dialog.findChild<QTabWidget *>();
+                if (!tabs) {
+                    dialog.grab().save(shotDir + QStringLiteral("/%1.png").arg(prefix));
+                    return;
+                }
+                for (int i = 0; i < tabs->count(); ++i) {
+                    tabs->setCurrentIndex(i);
+                    QApplication::processEvents();
+                    QThread::msleep(120);
+                    QApplication::processEvents();
+                    QString name = tabs->tabText(i);
+                    name.remove(QLatin1Char('&'));
+                    name.replace(QRegularExpression(QStringLiteral("[^\\w]+")),
+                                 QStringLiteral("-"));
+                    const QString path = QStringLiteral("%1/%2-%3-%4.png")
+                                             .arg(shotDir, prefix)
+                                             .arg(i + 1, 2, 10, QLatin1Char('0'))
+                                             .arg(name.toLower());
+                    dialog.grab().save(path);
+                    std::fprintf(stderr, "screenshot: %s\n", qPrintable(path));
+                }
+            };
+
+            if (which == QLatin1String("settings")) {
+                SettingsDialog dialog(m_config, this);
+                dialog.resize(900, 760);
+                shootTabs(dialog, QStringLiteral("settings"));
+                QApplication::quit();
+                return;
+            }
+            if (which.startsWith(QLatin1String("camera:"))) {
+                const QString host = which.mid(7);
+                for (const CameraConfig &camera : m_config.active()) {
+                    if (camera.host != host)
+                        continue;
+                    CameraSettingsDialog dialog(camera, this);
+                    dialog.resize(760, 720);
+                    // Long enough for the camera to have answered every
+                    // section; an empty form makes a poor illustration.
+                    QTimer::singleShot(40000, this, [&dialog, &shootTabs] {
+                        shootTabs(dialog, QStringLiteral("camera"));
+                        QApplication::quit();
+                    });
+                    dialog.exec();
+                    return;
+                }
+                std::fprintf(stderr, "no camera at %s\n", qPrintable(host));
+                QApplication::quit();
+                return;
+            }
+            if (which == QLatin1String("diagnostics")) {
+                DiagnosticsDialog dialog(this);
+                dialog.resize(900, 620);
+                dialog.show();
+                QApplication::processEvents();
+                dialog.grab().save(shotDir + QStringLiteral("/diagnostics.png"));
+                std::fprintf(stderr, "screenshot: diagnostics.png\n");
+                QApplication::quit();
+                return;
+            }
+
+            // A repaint first, so every surface has something current in it.
+            for (auto *tile : std::as_const(m_tiles))
+                tile->update();
+            QApplication::processEvents();
+            const QPixmap shot = grab();
+            const QString path = shotDir + QStringLiteral("/window.png");
+            std::fprintf(stderr, "screenshot: %s (%dx%d)\n", qPrintable(path),
+                         shot.width(), shot.height());
+            shot.save(path);
+            QApplication::quit();
+        });
+    }
 
     const QString selfTest = qEnvironmentVariable("LEOLINK_SELFTEST");
     std::fprintf(stderr, "selftest env = '%s'\n", qPrintable(selfTest));

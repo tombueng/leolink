@@ -280,6 +280,7 @@ GERMAN: dict[str, str] = {
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
     # ── talking back through the camera ──
+    "custom stream": "eigener Stream",
     "Speak through the camera": "Über die Kamera sprechen",
     "Stop speaking": "Sprechen beenden",
     "Play through %1": "Über %1 abspielen",
