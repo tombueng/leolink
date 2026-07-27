@@ -24,6 +24,7 @@ class ReolinkClient;
 class EventLog;
 class MotionWatcher;
 class SoundPlayer;
+class TalkSession;
 class VideoTile;
 
 class MainWindow : public QMainWindow {
@@ -50,6 +51,13 @@ private slots:
     /// Really stops the application, from wherever Quit was chosen.
     void quitApplication();
     void onRecordToggled(const QString &cameraId, bool recording);
+    void onTalkToggled(const QString &cameraId, bool talking);
+
+private:
+    /// Finds out which cameras have a speaker, so only those get the button.
+    void askAboutSpeakers();
+
+private slots:
     void toggleRecordAll();
 
 private:
@@ -129,6 +137,8 @@ private:
     QHash<QString, Recorder *> m_recorders;
     /// One client per camera, kept alive to poll the Wi-Fi strength.
     QHash<QString, ReolinkClient *> m_statusClients;
+    /// One per camera currently being spoken through.
+    QHash<QString, TalkSession *> m_talkers;
     QTimer *m_statusTimer{nullptr};
 
     EventLog *m_eventLog{nullptr};

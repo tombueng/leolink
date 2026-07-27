@@ -42,6 +42,7 @@
 #include "Recorder.h"
 #include "ReolinkClient.h"
 #include "SettingsDialog.h"
+#include "TalkSession.h"
 #include "VideoTile.h"
 
 namespace leolink {
@@ -562,6 +563,8 @@ void MainWindow::rebuildGrid()
 
     for (auto *tile : std::as_const(m_tiles))
         tile->start();
+
+    askAboutSpeakers();
 
     // Every half minute is plenty: signal strength drifts, it does not jump,
     // and each poll is a login plus one request on a small embedded device.
@@ -1129,6 +1132,78 @@ void MainWindow::openSettings()
     // they were simply never asked.
     reconcileGrid(previous);
     reconcileWatchers(watched);
+}
+
+void MainWindow::askAboutSpeakers()
+{
+    // Each camera is asked once, and only RTSP can answer: the CGI interface
+    // has no question for "have you a loudspeaker", and a model name is a
+    // guess. The probe sends nothing — it asks, reads the answer and hangs up.
+    for (const CameraConfig &camera : m_config.active()) {
+        const QString id = camera.id;
+        auto *probe = new TalkSession(this);
+        connect(probe, &TalkSession::available, this,
+                [this, id, probe](bool yes) {
+                    if (auto *tile = m_tiles.value(id))
+                        tile->setTalkAvailable(yes);
+                    probe->deleteLater();
+                });
+        probe->probe(camera);
+    }
+}
+
+void MainWindow::onTalkToggled(const QString &cameraId, bool talking)
+{
+    VideoTile *tile = m_tiles.value(cameraId);
+    const CameraConfig *camera = cameraById(cameraId);
+    if (!tile || !camera)
+        return;
+
+    if (!talking) {
+        if (TalkSession *session = m_talkers.take(cameraId)) {
+            session->stop();
+            session->deleteLater();
+        }
+        tile->setTalking(false);
+        return;
+    }
+
+    // What to send. A microphone is the obvious thing and comes next; a sound
+    // file is what can be tested without standing in front of the machine, and
+    // is what an announcement usually is anyway.
+    const QString file = QFileDialog::getOpenFileName(
+        this, tr("Play through %1").arg(camera->label()), QDir::homePath(),
+        tr("Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)"));
+    if (file.isEmpty()) {
+        tile->setTalking(false);
+        return;
+    }
+
+    auto *session = new TalkSession(this);
+    m_talkers.insert(cameraId, session);
+
+    connect(session, &TalkSession::ready, this, [this, cameraId] {
+        if (auto *t = m_tiles.value(cameraId))
+            t->setTalking(true);
+        statusBar()->showMessage(tr("Speaking through the camera…"), 5000);
+    });
+    connect(session, &TalkSession::finished, this, [this, cameraId] {
+        if (auto *t = m_tiles.value(cameraId))
+            t->setTalking(false);
+        if (TalkSession *s = m_talkers.take(cameraId))
+            s->deleteLater();
+        statusBar()->showMessage(tr("Finished."), 4000);
+    });
+    connect(session, &TalkSession::failed, this,
+            [this, cameraId](const QString &why) {
+                if (auto *t = m_tiles.value(cameraId))
+                    t->setTalking(false);
+                if (TalkSession *s = m_talkers.take(cameraId))
+                    s->deleteLater();
+                statusBar()->showMessage(why, 8000);
+            });
+
+    session->start(*camera, file);
 }
 
 void MainWindow::reconcileGrid(const Config &previous)

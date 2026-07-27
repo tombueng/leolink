@@ -16,6 +16,7 @@
 #include "Config.h"
 #include "Log.h"
 #include "MainWindow.h"
+#include "TalkSession.h"
 
 namespace {
 
@@ -240,6 +241,45 @@ int main(int argc, char *argv[])
             delete dialog;
             QApplication::quit();
         });
+        return QApplication::exec();
+    }
+
+    // LEOLINK_TALK_TEST=<host>|<file> sends one clip through the real code path
+    // and reports what happened. Pointed at a silent file it proves the whole
+    // chain — handshake, encoder, RTP framing — without making a sound in
+    // somebody's house.
+    if (qEnvironmentVariableIsSet("LEOLINK_TALK_TEST")) {
+        const QStringList parts =
+            qEnvironmentVariable("LEOLINK_TALK_TEST").split(QLatin1Char('|'));
+        if (parts.size() != 2) {
+            std::fprintf(stderr, "LEOLINK_TALK_TEST=<host>|<file>\n");
+            return 2;
+        }
+        leolink::CameraConfig subject;
+        for (const leolink::CameraConfig &camera : config.active()) {
+            if (camera.host == parts.at(0))
+                subject = camera;
+        }
+        if (subject.host.isEmpty()) {
+            std::fprintf(stderr, "no camera configured at %s\n",
+                         qPrintable(parts.at(0)));
+            return 2;
+        }
+        auto *talk = new leolink::TalkSession(&app);
+        QObject::connect(talk, &leolink::TalkSession::ready, [] {
+            std::fprintf(stderr, "backchannel open\n");
+        });
+        QObject::connect(talk, &leolink::TalkSession::finished, &app, [&app] {
+            std::fprintf(stderr, "finished\n");
+            QApplication::quit();
+        });
+        QObject::connect(talk, &leolink::TalkSession::failed, &app,
+                         [&app](const QString &why) {
+                             std::fprintf(stderr, "failed: %s\n", qPrintable(why));
+                             QApplication::quit();
+                         });
+        talk->start(subject, parts.at(1));
+        QTimer::singleShot(30000, &app, &QApplication::quit);
         return QApplication::exec();
     }
 

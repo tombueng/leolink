@@ -69,6 +69,11 @@ public:
     void setRecording(bool recording);
     bool isRecording() const { return m_recording; }
 
+    /// Shows or hides the talk button. Only cameras that offer a speaker get
+    /// one, which is decided by asking rather than by model name.
+    void setTalkAvailable(bool available);
+    void setTalking(bool talking);
+
 signals:
     void settingsRequested(const QString &cameraId);
     void volumeChanged(const QString &cameraId, int volume, bool muted);
@@ -79,6 +84,8 @@ signals:
     void moveWindowRequested();
     /// The user pressed record on this tile.
     void recordToggled(const QString &cameraId, bool recording);
+    /// The user pressed the talk button.
+    void talkToggled(const QString &cameraId, bool talking);
 
 protected:
     /// What to hand the player: the camera's own address, or the loopback port
@@ -154,6 +161,7 @@ private:
     QSlider *m_volumeSlider{nullptr};
     QToolButton *m_muteButton{nullptr};
     QToolButton *m_recordButton{nullptr};
+    QToolButton *m_talkButton{nullptr};
 
     /// Only used when the transport is Baichuan: the protocol is spoken here
     /// and re-served to the player on a loopback port.

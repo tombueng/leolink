@@ -57,6 +57,7 @@ qt_add_executable(leolink
     src/Log.cpp               src/Log.h
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
     src/SchedulePicker.cpp    src/SchedulePicker.h
+    src/TalkSession.cpp       src/TalkSession.h
 )
 
 target_compile_definitions(leolink PRIVATE

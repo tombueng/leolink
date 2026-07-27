@@ -308,6 +308,18 @@ void VideoTile::buildUi()
     });
     row->addWidget(m_recordButton);
 
+    // Talking back. Hidden until a camera has shown it has a speaker: on the
+    // majority of models it does nothing, and a button that never works is
+    // worse than one that is not there.
+    m_talkButton = stripButton(bar, QStringLiteral("audio-input-microphone"),
+                               QStringLiteral("🗣"), tr("Speak through the camera"));
+    m_talkButton->setCheckable(true);
+    m_talkButton->hide();
+    connect(m_talkButton, &QToolButton::clicked, this, [this](bool on) {
+        emit talkToggled(m_config.id, on);
+    });
+    row->addWidget(m_talkButton);
+
     auto *cog = stripButton(bar, QStringLiteral("configure"),
                             QStringLiteral("⚙"), tr("Camera settings"));
     connect(cog, &QToolButton::clicked, this,
@@ -868,6 +880,22 @@ bool VideoTile::saveScreenshot(const QString &path)
 {
     return m_surface && m_surface->command(
         {QStringLiteral("screenshot-to-file"), path, QStringLiteral("video")});
+}
+
+void VideoTile::setTalkAvailable(bool available)
+{
+    if (m_talkButton)
+        m_talkButton->setVisible(available);
+}
+
+void VideoTile::setTalking(bool talking)
+{
+    if (!m_talkButton)
+        return;
+    const QSignalBlocker block(m_talkButton);
+    m_talkButton->setChecked(talking);
+    m_talkButton->setToolTip(talking ? tr("Stop speaking")
+                                     : tr("Speak through the camera"));
 }
 
 void VideoTile::setRecording(bool recording)

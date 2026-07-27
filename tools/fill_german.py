@@ -279,6 +279,25 @@ GERMAN: dict[str, str] = {
     "The player did not connect.": "Der Player hat sich nicht verbunden.",
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
+    # ── talking back through the camera ──
+    "Speak through the camera": "Über die Kamera sprechen",
+    "Stop speaking": "Sprechen beenden",
+    "Play through %1": "Über %1 abspielen",
+    "Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)":
+        "Audiodateien (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;Alle Dateien (*)",
+    "Speaking through the camera…": "Sprechen über die Kamera…",
+    "Finished.": "Fertig.",
+    "Cannot reach the camera: %1": "Kamera nicht erreichbar: %1",
+    "The camera did not answer on the RTSP port.":
+        "Die Kamera antwortet auf dem RTSP-Port nicht.",
+    "ffmpeg is needed to send sound and could not be started.":
+        "Zum Senden von Ton wird ffmpeg gebraucht, es ließ sich nicht starten.",
+    "The camera rejected the user name or password.":
+        "Die Kamera hat Benutzername oder Passwort abgelehnt.",
+    "The camera refused: %1": "Die Kamera hat abgelehnt: %1",
+    "This camera does not offer a speaker.":
+        "Diese Kamera bietet keinen Lautsprecher an.",
+
     # ── the microphone, which lives in the encoder settings ──
     "Sound": "Ton",
     "Send sound": "Ton übertragen",
