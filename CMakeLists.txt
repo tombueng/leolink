@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(leolink
-    VERSION 0.1.0
+    VERSION 0.1.1
     DESCRIPTION "Native Linux client for Reolink cameras"
     HOMEPAGE_URL "https://github.com/tombueng/leolink"
     LANGUAGES CXX)

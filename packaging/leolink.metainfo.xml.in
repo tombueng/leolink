@@ -104,7 +104,16 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
-    <release version="@PROJECT_VERSION@" date="2026-07-26">
+    <release version="0.1.1" date="2026-07-28">
+      <description>
+        <p>
+          Fixes a crash when the program was closed: the log could be written
+          to while it was being taken apart. Reliable inside a Flatpak,
+          intermittent elsewhere.
+        </p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-07-26">
       <description>
         <p>First release.</p>
         <ul>
