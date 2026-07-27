@@ -46,6 +46,13 @@ RLC-410W — and is what you want full-screen or for recording.
 camera's own web interface uses: slightly lower latency, and it only needs port
 80, which helps when RTSP is filtered.
 
+**Baichuan** is Reolink's own protocol on port 9000 — what their app speaks.
+Reach for it when RTSP gives you nothing: battery-powered models keep it
+switched off to save power, and some firmware disables it by default. It also
+leaves the camera's small pool of web sessions alone, which matters on a device
+that only allows a handful at once. leolink speaks the protocol itself and hands
+the player a plain video stream on a loopback port; sound still comes over RTSP.
+
 ### Keeping the password out of the file
 
 `~/.config/leolink/config.json` is mode 600, but the password is in it as clear
@@ -241,14 +248,81 @@ and a bright surround glares at night.
 ```
 leolink                                    normal start
 leolink --baichuan-test <host> --user u --password p
+leolink --baichuan-video <host> --user u --password p --out /tmp/x.h264
 leolink --baichuan-p2p <UID>               UNTESTED, see below
 ```
 
 The Baichuan probes print what the camera's proprietary protocol on port 9000
-replies. Useful when reporting a problem with an unusual model.
+replies. Useful when reporting a problem with an unusual model. The video probe
+also reports what the media container held — frame counts, codec, anything it
+did not recognise — and writes the stream out so `ffprobe` can confirm it.
 
-`LEOLINK_MPV_DEBUG=1` turns on libmpv's own log, which is what to attach when a
-tile stays black.
+| Variable | What it does |
+|---|---|
+| `LEOLINK_DEBUG=1` | Detailed logging for one run, without touching the settings. Use it when the problem stops leolink from starting far enough to reach a dialog. |
+| `LEOLINK_CONFIG=<path>` | Use a different configuration file. A second set of cameras, a kiosk profile, or trying a setting without disturbing one that works. |
+| `LEOLINK_MPV_DEBUG=1` | libmpv's own log, for a tile that stays black. |
+
+---
+
+## When something goes wrong
+
+**Help ▸ Diagnostics** (Ctrl+D) is the first place to look. It shows what
+leolink and the cameras have actually been doing, filtered by area — video, the
+camera's API, ONVIF events, detection — and by severity.
+
+Errors and warnings are recorded always. **Detailed logging**, the checkbox in
+that window, adds every request to the camera, every decoder decision and every
+reconnect. Leave it off day to day; switch it on when something is wrong,
+reproduce the problem, then press **Copy report**.
+
+The report carries the log together with what the machine is: distribution,
+Qt version, session type, graphics driver, which decoder mpv actually chose,
+whether ffmpeg is installed. That last group answers most reports on its own.
+
+**It is safe to share.** Passwords, session tokens and public addresses are
+removed before anything reaches the file — not on the way out, but at the point
+of writing, so a log that was never meant to be sent is clean too. Addresses
+inside your own network are kept: they identify nothing outside the house and
+are usually the first clue.
+
+The log lives at `~/.local/share/leolink/leolink.log`, rotated at 2 MB (8 MB
+with detailed logging on), one previous file kept.
+
+### If the picture works but the processor is busy
+
+Look for `Decoder in use:` in the log. `vaapi` or `nvdec` means the graphics
+card is doing the work; `no` means the processor is, and on a 2560×1440 stream
+that costs a core and a half for a picture that looks identical.
+
+The usual cause is the camera's **H.264 profile set to “Base”**. Graphics
+drivers implement *Constrained* Baseline, Main and High — not plain Baseline —
+so the driver refuses the stream and mpv quietly falls back. Measured on an
+RLC-410W with an AMD RX 6400:
+
+```
+profile Base (0x42)  →  "Hardware decoding of this stream is unsupported"  →  software
+profile High (0x64)  →  "Using hardware decoding (vaapi)"                  →  vaapi
+```
+
+Camera settings ▸ Video ▸ profile ▸ **High** fixes it. The picture is the same;
+High is a superset of Baseline and every decoder made this century handles it.
+
+leolink says this in the log when it happens, so it need not be worked out
+twice.
+
+If hardware decoding misbehaves on your driver, `QT_XCB_GL_INTEGRATION=xcb_glx`
+puts Qt back on GLX — hardware decoding then cannot work at all, but nor can it
+cause trouble.
+
+### If a setting seems to be missing
+
+Reolink firmware differs enormously between models. **Camera settings ▸
+Maintenance ▸ What this camera supports** asks the camera which commands it
+actually has and lists the answer. If your camera clearly does something leolink
+does not offer, that list in an
+[issue](https://github.com/tombueng/leolink/issues) is what makes it possible to
+add — particularly for hardware nobody here owns, such as an LTE model.
 
 ---
 
@@ -268,7 +342,18 @@ step. If you have such a camera, that output attached to an
 
 **Two-way audio** is not implemented. The vendor's SDK can do it and the
 protocol notes describe where it lives, but the development camera has no
-speaker.
+speaker. The Baichuan transport is now in place, which is most of what it needs.
+
+**Mobile data** — SIM, APN, signal — is implemented from the protocol and has
+never run against a camera with a modem. Nothing there can do damage: a command
+the camera does not know is simply refused. But it may equally show an empty
+screen. The capability list described above is what would let it be finished.
+
+**Weekly schedules** are 7×24 and the editor labels the first row Monday. Which
+weekday the camera itself counts from could not be established here: the value
+cannot be read back in a form that reveals it, and this camera's web interface
+has no schedule screen to compare against. If recordings land a day out, that is
+where to look.
 
 ---
 

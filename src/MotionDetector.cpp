@@ -1,9 +1,13 @@
 #include "MotionDetector.h"
 
+#include "Log.h"
+
 #include <cstdlib>
 
 #include <QProcess>
 #include <QStandardPaths>
+
+#include "ProcessUtil.h"
 
 #include "Config.h"
 
@@ -49,6 +53,9 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
 
     const QString ffmpeg = ffmpegPath();
     if (ffmpeg.isEmpty()) {
+        LEO_ERROR(Motion, camera.label(),
+                  QStringLiteral("ffmpeg not found in PATH — detection here is "
+                                 "not possible"));
         emit failed(tr("ffmpeg is not installed, so motion detection is "
                        "unavailable."));
         return;
@@ -75,6 +82,7 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
         }
     }
 
+    m_stopping = false;
     m_previous.clear();
     m_buffer.clear();
     m_hits = m_misses = 0;
@@ -94,6 +102,7 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
     }
 
     m_process = new QProcess(this);
+    dieWithParent(m_process);
     const QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),
@@ -110,12 +119,38 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
     connect(m_process, &QProcess::readyReadStandardOutput,
             this, &MotionDetector::consume);
     connect(m_process, &QProcess::errorOccurred, this, [this] {
-        emit failed(tr("Motion detection stopped: %1")
-                        .arg(m_process ? m_process->errorString() : QString()));
+        // Not while we are the ones ending it. Shutting down killed ffmpeg and
+        // then reported the kill as a fault, which is a log crying wolf at
+        // precisely the moment somebody reading it wants to trust it.
+        if (m_stopping)
+            return;
+        const QString reason = m_process ? m_process->errorString() : QString();
+        LEO_WARN(Motion, m_label, QStringLiteral("ffmpeg failed: %1").arg(reason));
+        emit failed(tr("Motion detection stopped: %1").arg(reason));
     });
+    // ffmpeg's own complaints — a refused connection, an unsupported codec —
+    // are the reason detection silently does nothing on some cameras.
+    connect(m_process, &QProcess::readyReadStandardError, this, [this] {
+        if (!m_process)
+            return;
+        const QString text =
+            QString::fromUtf8(m_process->readAllStandardError()).trimmed();
+        if (!text.isEmpty())
+            LEO_WARN(Motion, m_label, QStringLiteral("ffmpeg: %1").arg(text));
+    });
+
+    m_label = camera.label();
+    LEO_INFO(Motion, m_label,
+             QStringLiteral("Watching %1 — threshold %2/255 per pixel, %3 % of "
+                            "the area, %4 zone(s) masked out")
+                 .arg(url).arg(m_pixelThreshold)
+                 .arg(m_areaThreshold * 100.0, 0, 'f', 1)
+                 .arg(mask.size() == kZoneCount
+                          ? mask.count(QLatin1Char('0')) : 0));
 
     m_process->start(ffmpeg, args);
     if (!m_process->waitForStarted(5000)) {
+        LEO_ERROR(Motion, m_label, QStringLiteral("ffmpeg did not start"));
         emit failed(tr("Could not start ffmpeg for motion detection."));
         m_process->deleteLater();
         m_process = nullptr;
@@ -124,6 +159,7 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
 
 void MotionDetector::stop()
 {
+    m_stopping = true;
     if (!m_process)
         return;
     m_process->kill();          // no container to finalise here
@@ -193,12 +229,17 @@ void MotionDetector::analyse(const QByteArray &frame)
         m_misses = 0;
         if (!m_active && ++m_hits >= m_hitsToTrigger) {
             m_active = true;
+            LEO_INFO(Motion, m_label,
+                     QStringLiteral("Motion here: %1 %% of the watched area "
+                                    "changed")
+                         .arg(m_level * 100.0, 0, 'f', 2));
             emit motionChanged(true);
         }
     } else {
         m_hits = 0;
         if (m_active && ++m_misses >= m_missesToClear) {
             m_active = false;
+            LEO_INFO(Motion, m_label, QStringLiteral("Motion ended"));
             emit motionChanged(false);
         }
     }

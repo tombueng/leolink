@@ -1,17 +1,22 @@
 #include "VideoTile.h"
 
+#include "BaichuanStream.h"
+#include "Log.h"
+
 #include <QFrame>
 #include <QTimer>
 #include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QIcon>
+#include <QPainter>
 #include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
 
-#include <mpv/client.h>
-
+#include "MpvWidget.h"
+#include "SignalIndicator.h"
 #include "Spinner.h"
 
 namespace leolink {
@@ -22,12 +27,48 @@ namespace {
 /// purpose — an alert that changed shade with the theme would be harder to spot.
 const QColor kAlertRed{0xc0, 0x39, 0x2b};
 
+/// Width of the frame drawn around the picture during an alert.
+constexpr int kAlertBorder = 6;
+
 QString motionStyle()
 {
     return QStringLiteral("QLabel { background:%1; color:white;"
                           " border-radius:3px; padding:1px 6px;"
                           " font-weight:bold; }")
         .arg(kAlertRed.name());
+}
+
+/// Builds one of the small buttons in the control strip.
+///
+/// Theme icons rather than text glyphs wherever the desktop provides them:
+/// they follow the icon theme, scale properly, and look like the rest of the
+/// system. The glyph stays as a fallback for bare setups with no icon theme.
+///
+/// The size is derived from the font rather than fixed, so the buttons grow
+/// with the desktop's font scaling instead of staying at 16 pixels on a 4K
+/// screen — which is what made them too small to hit.
+QToolButton *stripButton(QWidget *parent, const QString &themeIcon,
+                         const QString &glyph, const QString &tip)
+{
+    auto *button = new QToolButton(parent);
+    button->setAutoRaise(true);
+    button->setToolTip(tip);
+    button->setFocusPolicy(Qt::NoFocus);
+
+    const int side = qMax(22, parent->fontMetrics().height() + 8);
+    button->setIconSize(QSize(side, side));
+    button->setMinimumSize(side + 8, side + 6);
+
+    const QIcon icon = QIcon::fromTheme(themeIcon);
+    if (!icon.isNull()) {
+        button->setIcon(icon);
+    } else {
+        button->setText(glyph);
+        QFont font = button->font();
+        font.setPointSizeF(font.pointSizeF() * 1.4);
+        button->setFont(font);
+    }
+    return button;
 }
 
 /// Muted variant of the current text colour, so secondary labels recede in
@@ -61,7 +102,20 @@ void VideoTile::buildUi()
     setMinimumSize(240, 160);
 
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(0, 0, 0, 0);
+    // A constant inset around the picture, normally invisible, painted red
+    // while an alert is up. The frame therefore sits *outside* mpv's window
+    // instead of over it.
+    //
+    // A translucent wash across the picture was tried first and does not work:
+    // mpv renders into its own X window, so a Qt widget on top either covers
+    // it completely or disappears behind it, depending on whether it has a
+    // native window of its own. There is nothing in between without an ARGB
+    // visual and a compositor to match.
+    //
+    // The inset is permanent rather than added when alerting, because changing
+    // it would resize mpv's surface on every event — a visible hiccup in the
+    // picture exactly when it matters.
+    outer->setContentsMargins(kAlertBorder, kAlertBorder, kAlertBorder, 0);
     outer->setSpacing(0);
 
     // The tile must claim its whole grid cell; without this the layout hands
@@ -69,14 +123,98 @@ void VideoTile::buildUi()
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // ── video surface ───────────────────────────────────────────────────────
-    m_surface = new QWidget(this);
-    m_surface->setAttribute(Qt::WA_NativeWindow);   // mpv needs a real window
-    m_surface->setAttribute(Qt::WA_DontCreateNativeAncestors);
-    // Video sits on near-black in every theme: letterbox bars and dark scenes
-    // read correctly against it, and a light backdrop would glare at night.
-    m_surface->setStyleSheet(QStringLiteral("background:#101214;"));
+    // A GL widget Qt owns, into which libmpv draws. Not a native window handed
+    // to mpv: that arrangement broke every time Qt recreated the window.
+    m_surface = new MpvWidget(this);
     m_surface->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     outer->addWidget(m_surface, 1);
+
+    // mpv saying "this stream has ended" is far more reliable than waiting for
+    // a timer to notice nothing arrived.
+    connect(m_surface, &MpvWidget::endOfFile, this, [this](const QString &reason) {
+        if (!m_wantPlayback || reason == QLatin1String("stop") ||
+            reason == QLatin1String("quit"))
+            return;
+        LEO_WARN(Stream, m_config.label(),
+                 QStringLiteral("Stream ended (%1) after %2 decoded frames, "
+                                "reloading %3")
+                     .arg(reason)
+                     .arg(m_surface->decodedFrames())
+                     .arg(playbackUrl()));
+        setStatusText(tr("stream ended (%1) — reconnecting").arg(reason));
+        QTimer::singleShot(1500, this, [this] {
+            if (m_wantPlayback && m_surface)
+                m_surface->play(playbackUrl());
+        });
+    });
+    connect(m_surface, &MpvWidget::logMessage, this, [this](const QString &text) {
+        // mpv's own warnings, verbatim. They name the codec, the decoder and
+        // the frame that failed, which is most of a diagnosis on its own.
+        LEO_WARN(Stream, m_config.label(), text);
+
+        // One case is worth translating from mpv's language into advice,
+        // because it is invisible, common, and fixable in ten seconds.
+        //
+        // Graphics drivers implement *Constrained* Baseline, Main and High. A
+        // camera set to plain "Base" emits profile 0x42, which Mesa does not
+        // offer, so the frames fail, mpv falls back to software and says
+        // nothing further. Everything then works — while decoding 2560x1440 on
+        // the processor. The picture is identical; only the fan knows.
+        if (!m_warnedAboutProfile &&
+            text.contains(QLatin1String("Hardware decoding of this stream is "
+                                        "unsupported"))) {
+            m_warnedAboutProfile = true;
+            LEO_WARN(Stream, m_config.label(),
+                     QStringLiteral(
+                         "The graphics driver will not decode this stream, so "
+                         "it is being decoded on the processor. The usual "
+                         "cause is the camera's H.264 profile being set to "
+                         "\"Base\": drivers implement Constrained Baseline, "
+                         "Main and High, but not plain Baseline. Changing the "
+                         "profile to High under camera settings usually "
+                         "restores hardware decoding at identical quality."));
+        }
+        // Anything the decoder complains about counts towards stream health.
+        if (text.contains(QLatin1String("decoding"), Qt::CaseInsensitive) ||
+            text.contains(QLatin1String("corrupt"), Qt::CaseInsensitive) ||
+            text.contains(QLatin1String("no frame"), Qt::CaseInsensitive) ||
+            text.contains(QLatin1String("out of range"), Qt::CaseInsensitive))
+            ++m_errorsThisWindow;
+    });
+
+    // Judged over ten seconds rather than instantly: a single damaged frame
+    // after a reconnect is normal and not worth alarming anyone about. While
+    // the camera is reconfiguring, nothing is counted at all.
+    m_healthTimer = new QTimer(this);
+    m_healthTimer->setInterval(10000);
+    connect(m_healthTimer, &QTimer::timeout, this, [this] {
+        const int errors = m_errorsThisWindow;
+        m_errorsThisWindow = 0;
+        if (!m_health)
+            return;
+        if (m_settling) {
+            m_health->hide();
+            return;
+        }
+
+        if (errors < 3) {
+            m_health->hide();
+            return;
+        }
+        m_health->setText(errors < 25 ? tr("WEAK SIGNAL") : tr("BAD STREAM"));
+        m_health->setStyleSheet(
+            QStringLiteral("QLabel { background:%1; color:white;"
+                           " border-radius:3px; padding:1px 6px;"
+                           " font-weight:bold; }")
+                .arg(errors < 25 ? QStringLiteral("#d38f28") : kAlertRed.name()));
+        m_health->setToolTip(
+            tr("%n damaged frame(s) in the last ten seconds.\n\n"
+               "Usually a weak Wi-Fi signal, or a bitrate set too low for the "
+               "resolution. leolink repairs what it can — this is what it "
+               "could not.", nullptr, errors));
+        m_health->show();
+    });
+    m_healthTimer->start();
 
     // Sits on top of the surface until video actually arrives. Parented to the
     // tile, not the surface: a child of the native mpv window would be painted
@@ -91,15 +229,28 @@ void VideoTile::buildUi()
     m_firstFrameTimer = new QTimer(this);
     m_firstFrameTimer->setInterval(150);
     connect(m_firstFrameTimer, &QTimer::timeout, this, [this] {
-        if (!m_mpv)
-            return;
-        int64_t width = 0;
-        if (mpv_get_property(m_mpv, "width", MPV_FORMAT_INT64, &width) >= 0 &&
-            width > 0) {
+        if (m_surface && m_surface->videoWidth() > 0) {
             m_spinner->hide();
+            m_spinner->setText(tr("connecting…"));
             m_firstFrameTimer->stop();
         }
     });
+
+    // The status line is worth more than the word "main stream": it shows what
+    // the camera is actually delivering, which is how you notice a camera
+    // quietly dropping to half the frame rate it promised.
+    m_infoTimer = new QTimer(this);
+    m_infoTimer->setInterval(2000);
+    connect(m_infoTimer, &QTimer::timeout, this, &VideoTile::refreshStreamInfo);
+
+    // A stream can stop without anything failing loudly: change the camera's
+    // resolution and it restarts its encoder, the RTSP session ends, and mpv
+    // simply has nothing more to draw. Nothing in the chain asks for it back,
+    // so the picture stays dark for ever. This watches the frame counter and
+    // reloads when it stops moving.
+    m_watchdog = new QTimer(this);
+    m_watchdog->setInterval(3000);
+    connect(m_watchdog, &QTimer::timeout, this, &VideoTile::checkAlive);
 
     // ── control strip ───────────────────────────────────────────────────────
     // Everything below follows the desktop palette, so the strip fits a light
@@ -121,18 +272,25 @@ void VideoTile::buildUi()
     m_motion->setStyleSheet(mutedStyle(palette()));
     row->addWidget(m_motion);
 
+    m_health = new QLabel(QString(), bar);
+    m_health->hide();
+    row->addWidget(m_health);
+
     m_status = new QLabel(tr("connecting…"), bar);
     m_status->setStyleSheet(mutedStyle(palette()));
     row->addWidget(m_status, 1);
 
-    m_muteButton = new QToolButton(bar);
+    m_signal = new SignalIndicator(bar);
+    m_signal->hide();   // shown once a camera reports a strength
+    row->addWidget(m_signal);
+
+    m_muteButton = stripButton(bar, QStringLiteral("audio-volume-high"),
+                               QStringLiteral("🔊"), tr("Mute this camera"));
     m_muteButton->setCheckable(true);
     m_muteButton->setChecked(m_config.muted);
-    m_muteButton->setText(m_config.muted ? QStringLiteral("🔇") : QStringLiteral("🔊"));
-    m_muteButton->setToolTip(tr("Mute this camera"));
-    m_muteButton->setAutoRaise(true);
     connect(m_muteButton, &QToolButton::clicked, this, &VideoTile::onMuteToggled);
     row->addWidget(m_muteButton);
+    updateMuteButton();
 
     m_volumeSlider = new QSlider(Qt::Horizontal, bar);
     m_volumeSlider->setRange(0, 100);
@@ -142,20 +300,16 @@ void VideoTile::buildUi()
     connect(m_volumeSlider, &QSlider::valueChanged, this, &VideoTile::onVolumeSlider);
     row->addWidget(m_volumeSlider);
 
-    m_recordButton = new QToolButton(bar);
+    m_recordButton = stripButton(bar, QStringLiteral("media-record"),
+                                 QStringLiteral("⏺"), tr("Record this camera"));
     m_recordButton->setCheckable(true);
-    m_recordButton->setAutoRaise(true);
-    m_recordButton->setText(QStringLiteral("⏺"));
-    m_recordButton->setToolTip(tr("Record this camera"));
     connect(m_recordButton, &QToolButton::clicked, this, [this](bool on) {
         emit recordToggled(m_config.id, on);
     });
     row->addWidget(m_recordButton);
 
-    auto *cog = new QToolButton(bar);
-    cog->setText(QStringLiteral("⚙"));
-    cog->setAutoRaise(true);
-    cog->setToolTip(tr("Camera settings"));
+    auto *cog = stripButton(bar, QStringLiteral("configure"),
+                            QStringLiteral("⚙"), tr("Camera settings"));
     connect(cog, &QToolButton::clicked, this,
             [this] { emit settingsRequested(m_config.id); });
     row->addWidget(cog);
@@ -165,103 +319,105 @@ void VideoTile::buildUi()
 
 // ── player lifecycle ────────────────────────────────────────────────────────
 
-void VideoTile::setMpvOption(const char *name, const QString &value)
-{
-    if (m_mpv)
-        mpv_set_option_string(m_mpv, name, value.toUtf8().constData());
-}
-
 void VideoTile::createPlayer()
 {
-    if (m_mpv)
+    if (!m_surface)
         return;
 
-    m_mpv = mpv_create();
-    if (!m_mpv) {
-        setStatusText(tr("libmpv unavailable"));
-        return;
-    }
+    auto set = [this](const char *name, const QString &value) {
+        m_surface->setOption(QString::fromLatin1(name), value);
+    };
 
-    // Render into this widget. winId() must be a native window handle; the
-    // platform selection in main.cpp guarantees that.
-    const auto wid = static_cast<int64_t>(m_surface->winId());
-    mpv_set_option(m_mpv, "wid", MPV_FORMAT_INT64, const_cast<int64_t *>(&wid));
-
-    // Surveillance wants "now" rather than "smooth", but not at any price.
-    //
-    // An earlier version also set `untimed=yes` and `cache=no`. That is fine
-    // for a 640x360 sub stream and actively harmful for a 2560x1440 main
-    // stream at 8 Mbit/s: with nowhere to absorb network jitter, packets are
-    // lost, and with a two-second GOP the picture then stays broken — green
-    // blocks — until the next keyframe. A small demuxer buffer costs a
-    // fraction of a second of latency and removes the whole failure mode.
-    // Deliberately NOT mpv's own "low-latency" profile, and not a
-    // reconstruction of it either. Two things were measured against a real
-    // 1440p camera:
-    //
-    //   * demuxer-lavf-probe-info=nostreams and
-    //     demuxer-lavf-analyzeduration=0.1 cut stream probing so short that
-    //     the recorder never learns the codec parameters — every recording
-    //     came out as a zero-byte file.
-    //   * video-latency-hacks and stream-buffer-size=4k skip synchronisation
-    //     and starve the reader, which shows up as green blocks in the
-    //     picture on some drivers.
-    //
-    // What is left keeps latency low through a short read-ahead alone, which
-    // measured zero dropped frames and produced valid recordings.
+    // Surveillance wants "now" rather than "smooth", but not at any price. An
+    // earlier version used mpv's own low-latency profile; two of its options
+    // cut stream probing so short that recordings came out empty, and two more
+    // skipped synchronisation. What is left keeps latency low through a short
+    // read-ahead alone.
     if (m_lowLatency) {
-        setMpvOption("cache-pause", QStringLiteral("no"));
-        setMpvOption("video-sync", QStringLiteral("audio"));
-        setMpvOption("interpolation", QStringLiteral("no"));
+        set("cache-pause", QStringLiteral("no"));
+        set("video-sync", QStringLiteral("audio"));
+        set("interpolation", QStringLiteral("no"));
     }
-    setMpvOption("cache", QStringLiteral("yes"));
-    setMpvOption("demuxer-max-bytes", QStringLiteral("16MiB"));
-    setMpvOption("demuxer-readahead-secs", m_lowLatency ? QStringLiteral("0.3")
-                                                        : QStringLiteral("1.0"));
-    setMpvOption("rtsp-transport", QStringLiteral("tcp"));   // UDP loses frames
-    setMpvOption("hwdec", m_hwdec.isEmpty() ? QStringLiteral("auto-safe")
-                                            : m_hwdec);
-    setMpvOption("vo", QStringLiteral("gpu"));
+    set("cache", QStringLiteral("yes"));
+    set("demuxer-max-bytes", QStringLiteral("16MiB"));
+    set("demuxer-readahead-secs",
+        m_lowLatency ? QStringLiteral("0.3") : QStringLiteral("1.0"));
+    set("rtsp-transport", QStringLiteral("tcp"));   // UDP loses packets
 
-    // Pin mpv to the same windowing system Qt is using. Left to itself mpv
-    // picks a Wayland context whenever WAYLAND_DISPLAY is set — even though we
-    // handed it an X11 window id — and then renders into its own surface
-    // instead of our tile, leaving the tile blank with no error anywhere.
-    if (QGuiApplication::platformName() == QLatin1String("xcb"))
-        setMpvOption("gpu-context", QStringLiteral("x11egl"));
-    setMpvOption("keep-open", QStringLiteral("no"));
-    setMpvOption("idle", QStringLiteral("yes"));
-    setMpvOption("osc", QStringLiteral("no"));
-    // Paint the surface in our own dark tone before any frame exists; some
-    // drivers otherwise show an uninitialised buffer as a green flash.
-    setMpvOption("background", QStringLiteral("#101214"));
-    setMpvOption("input-default-bindings", QStringLiteral("no"));
-    setMpvOption("input-vo-keyboard", QStringLiteral("no"));
-    // A camera that drops off the network should reconnect by itself.
-    setMpvOption("stream-lavf-o", QStringLiteral("reconnect=1,reconnect_streamed=1"));
+    // ── surviving a damaged stream ──────────────────────────────────────────
+    // Cameras on marginal Wi-Fi, or squeezed into too low a bitrate, emit
+    // H.264 with broken slice headers and missing packets. Left alone the
+    // decoder gives up on those frames and the picture fills with green
+    // blocks or freezes.
+    //
+    // enable_er lets the decoder carry on through damaged frames, and ec
+    // conceals what is missing by borrowing from neighbours instead of
+    // showing raw garbage. Measured against a genuinely broken stream from
+    // this camera: 74 visible decode errors in 35 seconds without them,
+    // 2 with. That is the difference between unusable and watchable.
+    set("vd-lavc-o", QStringLiteral("enable_er=1,ec=favor_inter+deblock"));
+    // If hardware decoding keeps failing, fall back to software rather than
+    // showing nothing — slower is better than blank.
+    //
+    // Not 3, which was the first value here and far too eager. An RTSP stream
+    // is joined mid-picture: the first packets are predicted frames whose
+    // reference has already gone past, and a hardware decoder errors on every
+    // one of them. Three was reached before the first key frame arrived, so
+    // hardware decoding was abandoned on every single start and the whole
+    // stream ran in software — quietly, since the fallback is the decoder
+    // working as designed. Twenty is past the opening burst and still well
+    // short of what a genuinely broken driver produces.
+    set("hwdec-software-fallback", QStringLiteral("20"));
+    // Never drop frames to catch up: on a camera every frame may be the one
+    // that matters, and there is no "later" to catch up to.
+    set("framedrop", QStringLiteral("no"));
 
-    // libmpv is silent by default, which makes "black tile, no reason given"
-    // impossible to diagnose. LEOLINK_MPV_DEBUG=1 turns its own log on so a
-    // bug report can carry something useful.
+    // Named explicitly rather than left to mpv. Measured on this hardware:
+    // mpv chose vulkan-copy while rendering through OpenGL, and the picture
+    // came out solid green. Keeping decode and rendering on one API fixes it.
+    set("hwdec", m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec);
+
+    if (m_config.transport == QLatin1String("baichuan")) {
+        // Raw H.264 with no container: nothing in the byte stream says what it
+        // is, so the demuxer has to be told. Without this mpv probes, guesses
+        // and usually gives up.
+        set("demuxer", QStringLiteral("lavf"));
+        set("demuxer-lavf-format", QStringLiteral("h264"));
+        // The elementary stream carries no timestamps either, and mpv says so
+        // in as many words: without this it invents them, warns that seeking
+        // and buffering will be wrong, and plays at whatever rate it guessed.
+        // Telling it not to try, and giving it the rate the camera announced,
+        // is mpv's own documented answer to exactly this case.
+        set("correct-pts", QStringLiteral("no"));
+        set("container-fps-override",
+            QString::number(m_baichuanFps > 0 ? m_baichuanFps : 15));
+    }
+
+    set("keep-open", QStringLiteral("no"));
+    set("idle", QStringLiteral("yes"));
+    set("osc", QStringLiteral("no"));
+    // mpv loads its bundled Lua scripts by default, including the one that
+    // hands unknown URLs to youtube-dl. A camera viewer has no use for any of
+    // them, and one fewer thing between the network and the decoder is worth
+    // having.
+    set("load-scripts", QStringLiteral("no"));
+    set("input-default-bindings", QStringLiteral("no"));
+    set("input-vo-keyboard", QStringLiteral("no"));
+    // A camera that drops off the network should come back by itself.
+    set("stream-lavf-o", QStringLiteral("reconnect=1,reconnect_streamed=1"));
+
     if (qEnvironmentVariableIsSet("LEOLINK_MPV_DEBUG")) {
-        setMpvOption("terminal", QStringLiteral("yes"));
-        setMpvOption("msg-level", QStringLiteral("all=v"));
+        set("terminal", QStringLiteral("yes"));
+        set("msg-level", QStringLiteral("all=v"));
     }
 
-    if (mpv_initialize(m_mpv) < 0) {
-        destroyPlayer();
-        setStatusText(tr("player init failed"));
-        return;
-    }
     pushVolume();
 }
 
 void VideoTile::destroyPlayer()
 {
-    if (!m_mpv)
-        return;
-    mpv_terminate_destroy(m_mpv);
-    m_mpv = nullptr;
+    if (m_surface)
+        m_surface->stop();
 }
 
 void VideoTile::start()
@@ -279,24 +435,96 @@ void VideoTile::start()
 void VideoTile::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
-    if (m_wantPlayback && !m_mpv)
+    // The GL widget can only build its render context once it is on screen;
+    // MpvWidget holds the URL until then, so calling this repeatedly is safe.
+    if (m_wantPlayback)
         beginPlayback();
+}
+
+QString VideoTile::playbackUrl() const
+{
+    // Baichuan is spoken by leolink itself and re-served on a loopback port,
+    // so the address only exists once that connection is up.
+    if (m_config.transport == QLatin1String("baichuan"))
+        return m_baichuanUrl;
+    return m_config.streamUrl();
+}
+
+void VideoTile::startBaichuan()
+{
+    stopBaichuan();
+    m_baichuanUrl.clear();
+
+    m_baichuan = new BaichuanStream(this);
+    connect(m_baichuan, &BaichuanStream::formatKnown, this,
+            [this](int, int, int fps) {
+                // Kept for the next player start: mpv reads the rate when the
+                // stream opens, and by then the camera has usually not said
+                // what it is yet.
+                if (fps > 0)
+                    m_baichuanFps = fps;
+            });
+    connect(m_baichuan, &BaichuanStream::ready, this, [this](const QString &url) {
+        m_baichuanUrl = url;
+        if (m_wantPlayback && m_surface)
+            m_surface->play(url);
+    });
+    connect(m_baichuan, &BaichuanStream::failed, this, [this](const QString &why) {
+        setStatusText(why);
+        // Retried on the usual watchdog schedule rather than immediately: a
+        // camera that refused once will refuse again a second later, and a
+        // tight loop would hold its session pool open for nothing.
+        if (m_wantPlayback)
+            QTimer::singleShot(5000, this, [this] {
+                if (m_wantPlayback)
+                    startBaichuan();
+            });
+    });
+    m_baichuan->start(m_config);
+}
+
+void VideoTile::stopBaichuan()
+{
+    if (!m_baichuan)
+        return;
+    m_baichuan->shutdown();
+    m_baichuan->deleteLater();
+    m_baichuan = nullptr;
 }
 
 void VideoTile::beginPlayback()
 {
     createPlayer();
-    if (!m_mpv)
-        return;
 
-    const QByteArray url = m_config.streamUrl().toUtf8();
-    const char *cmd[] = {"loadfile", url.constData(), nullptr};
-    if (mpv_command(m_mpv, cmd) < 0) {
-        setStatusText(tr("cannot open stream"));
+    if (m_config.transport == QLatin1String("baichuan")) {
+        setStatusText(tr("connecting over Baichuan…"));
+        m_spinner->setGeometry(m_surface->geometry());
+        m_spinner->show();
+        m_spinner->raise();
+        m_firstFrameTimer->start();
+        m_infoTimer->start();
+        m_lastFrameCount = 0;
+        m_stalledChecks = 0;
+        m_watchdog->start();
+        startBaichuan();
         return;
     }
+    // The URL is the single most useful line in the log: it says which
+    // transport, which stream and which channel were asked for, and a
+    // surprising number of reports come down to the wrong one of the three.
+    LEO_INFO(Stream, m_config.label(),
+             QStringLiteral("Opening %1 (transport=%2, stream=%3, decoder=%4, "
+                            "low latency=%5)")
+                 .arg(playbackUrl(), m_config.transport, m_config.stream,
+                      m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec,
+                      m_lowLatency ? QStringLiteral("yes") : QStringLiteral("no")));
+    m_surface->play(playbackUrl());
     setStatusText(m_config.stream == QLatin1String("main") ? tr("main stream")
                                                            : tr("sub stream"));
+    m_infoTimer->start();
+    m_lastFrameCount = 0;
+    m_stalledChecks = 0;
+    m_watchdog->start();
     m_spinner->setGeometry(m_surface->geometry());
     m_spinner->show();
     m_spinner->raise();
@@ -308,16 +536,18 @@ void VideoTile::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
     if (m_spinner && m_spinner->isVisible())
         m_spinner->setGeometry(m_surface->geometry());
-    if (m_flash && m_flash->isVisible())
-        m_flash->setGeometry(m_surface->geometry());
 }
 
 void VideoTile::stop()
 {
-    if (!m_mpv)
-        return;
-    const char *cmd[] = {"stop", nullptr};
-    mpv_command(m_mpv, cmd);
+    m_wantPlayback = false;
+    stopBaichuan();
+    if (m_watchdog)
+        m_watchdog->stop();
+    if (m_infoTimer)
+        m_infoTimer->stop();
+    if (m_surface)
+        m_surface->stop();
 }
 
 void VideoTile::restart()
@@ -331,14 +561,18 @@ void VideoTile::restart()
 
 void VideoTile::applyConfig(const CameraConfig &config)
 {
-    const bool streamChanged = config.streamUrl() != m_config.streamUrl();
+    // Compared as configuration, not as URL: the Baichuan transport has no URL
+    // until its connection is up, and comparing empty against empty would make
+    // a switch between stream types look like no change at all.
+    const bool streamChanged = config.streamUrl() != m_config.streamUrl() ||
+                               config.transport != m_config.transport ||
+                               config.stream != m_config.stream;
     m_config = config;
 
     m_title->setText(m_config.label());
     m_volumeSlider->setValue(m_config.volume);
     m_muteButton->setChecked(m_config.muted);
-    m_muteButton->setText(m_config.muted ? QStringLiteral("🔇")
-                                         : QStringLiteral("🔊"));
+    updateMuteButton();
     if (streamChanged)
         restart();
     else
@@ -347,12 +581,10 @@ void VideoTile::applyConfig(const CameraConfig &config)
 
 void VideoTile::pushVolume()
 {
-    if (!m_mpv)
+    if (!m_surface)
         return;
-    double vol = m_config.volume;
-    mpv_set_property(m_mpv, "volume", MPV_FORMAT_DOUBLE, &vol);
-    int flag = m_config.muted ? 1 : 0;
-    mpv_set_property(m_mpv, "mute", MPV_FORMAT_FLAG, &flag);
+    m_surface->setPropertyDouble(QStringLiteral("volume"), m_config.volume);
+    m_surface->setPropertyFlag(QStringLiteral("mute"), m_config.muted);
 }
 
 void VideoTile::onVolumeSlider(int value)
@@ -362,17 +594,32 @@ void VideoTile::onVolumeSlider(int value)
     if (value > 0 && m_config.muted) {
         m_config.muted = false;
         m_muteButton->setChecked(false);
-        m_muteButton->setText(QStringLiteral("🔊"));
+        updateMuteButton();
     }
     pushVolume();
     emit volumeChanged(m_config.id, m_config.volume, m_config.muted);
 }
 
+void VideoTile::updateMuteButton()
+{
+    if (!m_muteButton)
+        return;
+    const QString name = m_config.muted ? QStringLiteral("audio-volume-muted")
+                                        : QStringLiteral("audio-volume-high");
+    const QIcon icon = QIcon::fromTheme(name);
+    if (!icon.isNull())
+        m_muteButton->setIcon(icon);
+    else
+        m_muteButton->setText(m_config.muted ? QStringLiteral("🔇")
+                                             : QStringLiteral("🔊"));
+    m_muteButton->setToolTip(m_config.muted ? tr("Unmute this camera")
+                                            : tr("Mute this camera"));
+}
+
 void VideoTile::onMuteToggled()
 {
     m_config.muted = m_muteButton->isChecked();
-    m_muteButton->setText(m_config.muted ? QStringLiteral("🔇")
-                                         : QStringLiteral("🔊"));
+    updateMuteButton();
     pushVolume();
     emit volumeChanged(m_config.id, m_config.volume, m_config.muted);
 }
@@ -392,25 +639,66 @@ void VideoTile::flashAlert(int milliseconds)
     if (milliseconds <= 0)
         return;
 
-    if (!m_flash) {
-        m_flash = new QWidget(this);
-        m_flash->setAttribute(Qt::WA_TransparentForMouseEvents);
-        // Translucent rather than opaque: the picture stays visible through
-        // the alert, which is the point of flashing it in the first place.
-        m_flash->setStyleSheet(
-            QStringLiteral("background:rgba(%1,%2,%3,90);"
-                           "border:3px solid %4;")
-                .arg(kAlertRed.red()).arg(kAlertRed.green()).arg(kAlertRed.blue())
-                .arg(kAlertRed.name()));
+    if (!m_flashTimer) {
         m_flashTimer = new QTimer(this);
         m_flashTimer->setSingleShot(true);
-        connect(m_flashTimer, &QTimer::timeout, this, [this] { m_flash->hide(); });
+        connect(m_flashTimer, &QTimer::timeout, this, [this] {
+            m_alerting = false;
+            update();
+        });
     }
 
-    m_flash->setGeometry(m_surface->geometry());
-    m_flash->show();
-    m_flash->raise();
-    m_flashTimer->start(milliseconds);   // restarts if motion continues
+    m_alerting = true;
+    update();
+    m_flashTimer->start(milliseconds);   // restarts while activity continues
+}
+
+void VideoTile::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    if (!m_alerting)
+        return;
+
+    // Only the inset is painted; the picture itself is never touched.
+    QPainter painter(this);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(kAlertRed);
+    const QRect inner = m_surface->geometry();
+    painter.drawRect(QRect(0, 0, width(), inner.top()));                    // top
+    painter.drawRect(QRect(0, inner.bottom() + 1, width(),
+                           height() - inner.bottom() - 1));                 // bottom
+    painter.drawRect(QRect(0, 0, inner.left(), height()));                  // left
+    painter.drawRect(QRect(inner.right() + 1, 0,
+                           width() - inner.right() - 1, height()));         // right
+}
+
+void VideoTile::setWifiSignal(int strength)
+{
+    if (m_signal)
+        m_signal->setStrength(strength);
+}
+
+void VideoTile::setLinkType(const QString &activeLink)
+{
+    if (!m_signal)
+        return;
+
+    // Reolink spells the wired case several ways depending on model and
+    // firmware, so anything that is not clearly wireless counts as wired.
+    SignalIndicator::Link link = SignalIndicator::Link::Wired;
+    const QString value = activeLink.toLower();
+    if (value.contains(QLatin1String("wifi")) ||
+        value.contains(QLatin1String("wlan")))
+        link = SignalIndicator::Link::WiFi;
+    else if (value.contains(QLatin1String("3g")) ||
+             value.contains(QLatin1String("4g")) ||
+             value.contains(QLatin1String("5g")) ||
+             value.contains(QLatin1String("lte")) ||
+             value.contains(QLatin1String("cellular")))
+        link = SignalIndicator::Link::Cellular;
+
+    m_signal->setLink(link);
+    m_signal->setVisible(link != SignalIndicator::Link::Wired);
 }
 
 void VideoTile::setStatusText(const QString &text)
@@ -419,13 +707,157 @@ void VideoTile::setStatusText(const QString &text)
         m_status->setText(text);
 }
 
+void VideoTile::expectDisruption(int seconds)
+{
+    if (!m_settleTimer) {
+        m_settleTimer = new QTimer(this);
+        m_settleTimer->setInterval(1000);
+        connect(m_settleTimer, &QTimer::timeout, this, [this] {
+            if (!m_surface || !m_wantPlayback) {
+                m_settleTimer->stop();
+                m_settling = false;
+                return;
+            }
+
+            // Back as soon as frames actually flow again. A camera usually
+            // rebuilds its encoder in three or four seconds; waiting out a
+            // fixed twenty for the rare slow case just makes every change look
+            // like a failure.
+            if (m_surface->decodedFrames() > m_settleBaseline) {
+                m_settleTimer->stop();
+                m_settling = false;
+                m_stalledChecks = 0;
+                m_errorsThisWindow = 0;
+                return;
+            }
+
+            setStatusText(tr("camera is reconfiguring… %1 s")
+                              .arg(m_settleSecondsLeft));
+
+            // Ask again every few seconds rather than once at the end: the
+            // stream comes back when the camera is ready, not on our schedule.
+            if (m_settleSecondsLeft % 4 == 0)
+                m_surface->play(playbackUrl());
+
+            if (--m_settleSecondsLeft <= 0) {
+                m_settleTimer->stop();
+                m_settling = false;
+                m_stalledChecks = 0;   // let the watchdog take over again
+            }
+        });
+    }
+
+    m_settling = true;
+    m_errorsThisWindow = 0;
+    m_settleSecondsLeft = qMax(4, seconds);
+    m_settleBaseline = m_surface ? m_surface->decodedFrames() : 0;
+    setStatusText(tr("camera is reconfiguring… %1 s").arg(m_settleSecondsLeft));
+    m_spinner->setGeometry(m_surface->geometry());
+    m_spinner->setText(tr("camera is reconfiguring…"));
+    m_spinner->show();
+    m_spinner->raise();
+    m_settleTimer->start();
+}
+
+void VideoTile::checkAlive()
+{
+    if (!m_surface || !m_wantPlayback)
+        return;
+
+    // Changing resolution, frame rate or profile makes the camera tear its
+    // encoder down and build a new one. For a good twenty seconds it emits
+    // half-formed frames or nothing at all. Reconnecting into that only
+    // restarts the same mess — and reconnecting repeatedly, as this used to,
+    // could keep a camera unusable long after it had actually recovered.
+    if (m_settling)
+        return;
+
+    // Decoded frames, not painted ones. Qt repaints on resize and exposure
+    // even when nothing new has arrived, so counting paints reported a frozen
+    // stream as healthy — which is exactly how a dead picture went unnoticed.
+    const quint64 frames = m_surface->decodedFrames();
+    if (frames != m_lastFrameCount) {
+        m_lastFrameCount = frames;
+        m_stalledChecks = 0;
+        m_reconnectAttempts = 0;
+        return;
+    }
+
+    // Five quiet checks — fifteen seconds. A camera switching between day and
+    // night mode, or re-keying its encoder, can go quiet for several seconds
+    // without anything being wrong, and reconnecting through that makes the
+    // picture worse rather than better.
+    if (++m_stalledChecks < 5)
+        return;
+    m_stalledChecks = 0;
+
+    ++m_reconnectAttempts;
+    // Logged at warning level with everything needed to tell the two causes
+    // apart: a camera that stopped sending, and a decoder that stopped
+    // accepting what it sends.
+    const MpvWidget::StreamInfo info = m_surface->streamInfo();
+    LEO_WARN(Stream, m_config.label(),
+             QStringLiteral("No new frames for 15 s — reconnect attempt %1. "
+                            "Last state: %2x%3 %4 %5 fps, %6 kbit/s, core-idle=%7")
+                 .arg(m_reconnectAttempts)
+                 .arg(info.width).arg(info.height)
+                 .arg(info.codec.isEmpty() ? QStringLiteral("?") : info.codec)
+                 .arg(info.fps, 0, 'f', 1)
+                 .arg(info.bitrateKbps, 0, 'f', 0)
+                 .arg(m_surface->isIdle() ? QStringLiteral("yes")
+                                          : QStringLiteral("no")));
+    setStatusText(tr("stream lost — reconnecting (%1)").arg(m_reconnectAttempts));
+    m_spinner->setGeometry(m_surface->geometry());
+    m_spinner->show();
+    m_spinner->raise();
+    m_firstFrameTimer->start();
+
+    // A plain loadfile is enough; the render context stays valid, which is the
+    // whole point of not handing mpv a window of its own.
+    m_surface->play(playbackUrl());
+}
+
+void VideoTile::refreshStreamInfo()
+{
+    if (!m_surface)
+        return;
+    const MpvWidget::StreamInfo info = m_surface->streamInfo();
+    if (info.width <= 0)
+        return;   // nothing playing yet; leave the "connecting" text alone
+
+    // The stream name stays first: it is the one thing that says *which*
+    // stream this is, and the numbers underneath mean little without it.
+    QStringList parts;
+    parts << (m_config.stream == QLatin1String("main") ? tr("main stream")
+                                                       : tr("sub stream"));
+    parts << QStringLiteral("%1×%2").arg(info.width).arg(info.height);
+    if (info.fps > 0.0)
+        parts << tr("%1 fps").arg(info.fps, 0, 'f', info.fps < 10 ? 1 : 0);
+    if (info.bitrateKbps > 0.0) {
+        parts << (info.bitrateKbps >= 1000
+                      ? tr("%1 Mbit/s").arg(info.bitrateKbps / 1000.0, 0, 'f', 1)
+                      : tr("%1 kbit/s").arg(info.bitrateKbps, 0, 'f', 0));
+    }
+    if (!info.codec.isEmpty())
+        parts << info.codec.toUpper();
+
+    setStatusText(parts.join(QStringLiteral(" · ")));
+}
+
+QImage VideoTile::grabRendered()
+{
+    return m_surface ? m_surface->grabRendered() : QImage();
+}
+
+quint64 VideoTile::renderedFrames() const
+{
+    return m_surface ? m_surface->renderedFrames() : 0;
+}
+
 bool VideoTile::saveScreenshot(const QString &path)
 {
-    if (!m_mpv)
-        return false;
-    const QByteArray target = path.toUtf8();
-    const char *cmd[] = {"screenshot-to-file", target.constData(), "video", nullptr};
-    return mpv_command(m_mpv, cmd) >= 0;
+    return m_surface && m_surface->command(
+        {QStringLiteral("screenshot-to-file"), path, QStringLiteral("video")});
 }
 
 void VideoTile::setRecording(bool recording)
@@ -441,6 +873,11 @@ void VideoTile::setRecording(bool recording)
     if (m_recordButton) {
         QSignalBlocker block(m_recordButton);   // do not re-emit into MainWindow
         m_recordButton->setChecked(recording);
+        const QIcon icon = QIcon::fromTheme(recording
+                                                ? QStringLiteral("media-playback-stop")
+                                                : QStringLiteral("media-record"));
+        if (!icon.isNull())
+            m_recordButton->setIcon(icon);
         m_recordButton->setToolTip(recording ? tr("Stop recording")
                                              : tr("Record this camera"));
     }

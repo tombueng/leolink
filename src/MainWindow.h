@@ -16,9 +16,11 @@ class QTimer;
 namespace leolink {
 
 class AudioDetector;
+class DiagnosticsDialog;
 class EventDispatcher;
 class MotionDetector;
 class Recorder;
+class ReolinkClient;
 class EventLog;
 class MotionWatcher;
 class SoundPlayer;
@@ -45,6 +47,8 @@ private slots:
     /// Sound is reported as its own event type but takes the same path as
     /// motion — recording, actions and the log all treat it alike.
     void onSoundChanged(const QString &cameraId, bool active);
+    /// Really stops the application, from wherever Quit was chosen.
+    void quitApplication();
     void onRecordToggled(const QString &cameraId, bool recording);
     void toggleRecordAll();
 
@@ -57,11 +61,26 @@ private:
     void applyLayout();
     void teardownGrid();
     void startWatchers();
+    /// Asks every camera how strong its Wi-Fi is. Cheap, and the only way to
+    /// notice a camera slowly dropping off before it disappears.
+    void pollCameraStatus();
+    /// Logs every status client out. Called when the window goes away, not on
+    /// every grid rebuild — a camera's session pool is small enough that
+    /// churning it costs real availability.
+    void releaseStatusClients();
+    /// LEOLINK_SELFTEST=<dir> writes what each tile actually rendered, plus a
+    /// frame count, and exits. There is no other way to check from outside
+    /// whether the picture is live and clean — a decoder log says nothing
+    /// about what reached the screen.
+    void runSelfTest(const QString &directory);
     /// Raises an event of `type`, whatever noticed it.
     void raiseEvent(const CameraConfig &camera, const QString &type,
                     const QString &message, bool active);
     void applyChrome();
     void showFirstRunHint();
+    /// The log window. A frozen picture leaves nothing behind by itself; this
+    /// is what makes a bug report from a stranger's machine possible.
+    void openDiagnostics();
     /// Right-click menu on the camera area. This is the escape hatch: with the
     /// menu bar, toolbar and window decoration all hidden there would otherwise
     /// be no way back except editing the configuration file by hand.
@@ -99,8 +118,13 @@ private:
     QHash<QString, QTimer *> m_stopTimers;
     /// One ffmpeg process per camera being recorded, keyed by camera id.
     QHash<QString, Recorder *> m_recorders;
+    /// One client per camera, kept alive to poll the Wi-Fi strength.
+    QHash<QString, ReolinkClient *> m_statusClients;
+    QTimer *m_statusTimer{nullptr};
 
     EventLog *m_eventLog{nullptr};
+    /// Kept alive between openings so the filter survives; deleted on close.
+    DiagnosticsDialog *m_diagnostics{nullptr};
     EventDispatcher *m_dispatcher{nullptr};
     SoundPlayer *m_sound{nullptr};
     QSystemTrayIcon *m_tray{nullptr};

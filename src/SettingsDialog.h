@@ -110,6 +110,7 @@ private:
     QComboBox *m_language{nullptr};
     QComboBox *m_hwdec{nullptr};
     QCheckBox *m_lowLatency{nullptr};
+    QCheckBox *m_debugLogging{nullptr};
 
     ReolinkClient *m_tester{nullptr};
     Discovery *m_discovery{nullptr};

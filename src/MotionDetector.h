@@ -81,8 +81,15 @@ private:
     int m_hits{0};
     int m_misses{0};
 
+    /// Set while stop() is tearing ffmpeg down, so its death is not reported
+    /// as a failure.
+    bool m_stopping{false};
     bool m_active{false};
     double m_level{0.0};
+    /// Which camera this is watching, for the log. The detector outlives the
+    /// CameraConfig it was started from, so the name is copied rather than
+    /// referenced.
+    QString m_label;
 };
 
 } // namespace leolink

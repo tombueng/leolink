@@ -1,10 +1,14 @@
 #include "MainWindow.h"
 
+#include <cstdio>
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QDir>
+#include <QFileInfo>
+#include <QTextStream>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QInputDialog>
@@ -15,6 +19,7 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QSet>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QSystemTrayIcon>
@@ -24,7 +29,9 @@
 #include <QWindow>
 
 #include "CameraSettingsDialog.h"
+#include "DiagnosticsDialog.h"
 #include "EventActions.h"
+#include "Log.h"
 #include "EventLog.h"
 #include "EventLogDialog.h"
 #include "SoundPlayer.h"
@@ -33,6 +40,7 @@
 #include "MotionWatcher.h"
 #include "PlaybackBrowser.h"
 #include "Recorder.h"
+#include "ReolinkClient.h"
 #include "SettingsDialog.h"
 #include "VideoTile.h"
 
@@ -59,6 +67,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Keep the history from growing without bound on a machine left running.
     m_eventLog->prune(90);
+    LEO_INFO(App, QString(),
+             QStringLiteral("%1 camera(s) configured, %2 active, decoder=%3, "
+                            "low latency=%4")
+                 .arg(m_config.cameras.size())
+                 .arg(m_config.active().size())
+                 .arg(m_config.mpvHwdecValue())
+                 .arg(m_config.lowLatency ? QStringLiteral("yes")
+                                          : QStringLiteral("no")));
+
+    // One line per camera at startup. Half of what a report needs is simply
+    // "how is it set up", and asking a user to describe that accurately in
+    // prose rarely works.
+    for (const CameraConfig &camera : m_config.active()) {
+        LEO_INFO(App, camera.label(),
+                 QStringLiteral("%1, transport=%2, stream=%3, motion=%4%5%6")
+                     .arg(Log::maskHost(camera.host), camera.transport,
+                          camera.stream, camera.motionSource,
+                          camera.audioDetection ? QStringLiteral(", sound")
+                                                : QString(),
+                          camera.recordOnMotion ? QStringLiteral(", records here")
+                                                : QString()));
+    }
 
     setWindowTitle(QStringLiteral("leolink"));
     setWindowIcon(QIcon(QStringLiteral(":/icons/leolink.svg")));
@@ -83,13 +113,25 @@ MainWindow::MainWindow(QWidget *parent)
     rebuildGrid();
     startWatchers();
 
-    if (m_config.cameras.isEmpty())
+    const QString selfTest = qEnvironmentVariable("LEOLINK_SELFTEST");
+    std::fprintf(stderr, "selftest env = '%s'\n", qPrintable(selfTest));
+    if (!selfTest.isEmpty()) {
+        // Delay is adjustable so the self-test can be pointed at a specific
+        // moment — after a camera has been reconfigured, for instance.
+        const int delay =
+            qEnvironmentVariableIntValue("LEOLINK_SELFTEST_DELAY") > 0
+                ? qEnvironmentVariableIntValue("LEOLINK_SELFTEST_DELAY") * 1000
+                : 15000;
+        QTimer::singleShot(delay, this, [this, selfTest] { runSelfTest(selfTest); });
+    } else if (m_config.cameras.isEmpty()) {
         QTimer::singleShot(0, this, &MainWindow::showFirstRunHint);
+    }
 }
 
 MainWindow::~MainWindow()
 {
     teardownGrid();
+    releaseStatusClients();
 }
 
 const CameraConfig *MainWindow::cameraById(const QString &id) const
@@ -170,10 +212,7 @@ void MainWindow::buildMenus()
     fileMenu->addSeparator();
     auto *quitAction = fileMenu->addAction(tr("&Quit"));
     quitAction->setShortcut(QKeySequence::Quit);
-    connect(quitAction, &QAction::triggered, this, [this] {
-        m_reallyQuit = true;
-        close();
-    });
+    connect(quitAction, &QAction::triggered, this, &MainWindow::quitApplication);
 
     // ── View ────────────────────────────────────────────────────────────────
     auto *viewMenu = menuBar()->addMenu(tr("&View"));
@@ -254,10 +293,39 @@ void MainWindow::buildMenus()
             QUrl(QStringLiteral(LEOLINK_HELP_URL "protocol.html")));
     });
 
+    auto *diagnostics = helpMenu->addAction(tr("&Diagnostics…"));
+    diagnostics->setShortcut(QKeySequence(QStringLiteral("Ctrl+D")));
+    diagnostics->setIcon(QIcon::fromTheme(QStringLiteral("tools-report-bug")));
+    diagnostics->setToolTip(tr("What leolink and the cameras have been doing — "
+                               "and a report to attach to a bug report."));
+    connect(diagnostics, &QAction::triggered, this, &MainWindow::openDiagnostics);
+
     auto *reportIssue = helpMenu->addAction(tr("&Report a problem"));
-    connect(reportIssue, &QAction::triggered, this, [] {
-        QDesktopServices::openUrl(
-            QUrl(QStringLiteral("https://github.com/tombueng/leolink/issues")));
+    connect(reportIssue, &QAction::triggered, this, [this] {
+        // Nudged towards Diagnostics first: a report with a log attached can be
+        // acted on, and one without it usually cannot.
+        QMessageBox box(this);
+        box.setWindowTitle(tr("Report a problem"));
+        box.setIcon(QMessageBox::Information);
+        box.setText(tr("<b>Attach a diagnostics report</b>"));
+        box.setInformativeText(
+            tr("It records what your machine is, what the cameras answered and "
+               "where things went wrong — with passwords and addresses already "
+               "removed. Without it, most reports cannot be followed up.\n\n"
+               "If the problem is one you can trigger, switch on detailed "
+               "logging in the diagnostics window first, make it happen again, "
+               "then copy the report."));
+        QAbstractButton *openDiag =
+            box.addButton(tr("Open diagnostics"), QMessageBox::AcceptRole);
+        QAbstractButton *straight =
+            box.addButton(tr("Go to the issue tracker"), QMessageBox::ActionRole);
+        box.addButton(QMessageBox::Cancel);
+        box.exec();
+        if (box.clickedButton() == openDiag)
+            openDiagnostics();
+        else if (box.clickedButton() == straight)
+            QDesktopServices::openUrl(
+                QUrl(QStringLiteral("https://github.com/tombueng/leolink/issues")));
     });
 
     helpMenu->addSeparator();
@@ -280,6 +348,10 @@ void MainWindow::buildMenus()
     auto *toolbar = addToolBar(tr("Main"));
     toolbar->setObjectName(QStringLiteral("mainToolBar"));
     toolbar->setMovable(false);
+    // Derived from the font rather than fixed, so the toolbar follows the
+    // desktop's scaling instead of staying tiny on a high-resolution screen.
+    const int toolbarIcon = qMax(24, fontMetrics().height() + 10);
+    toolbar->setIconSize(QSize(toolbarIcon, toolbarIcon));
     toolbar->addAction(settingsAction);
     toolbar->addAction(snapAction);
     toolbar->addAction(m_recordAllAction);
@@ -308,10 +380,7 @@ void MainWindow::buildContextMenu()
     });
     m_contextMenu->addSeparator();
     auto *quit = m_contextMenu->addAction(tr("Quit"));
-    connect(quit, &QAction::triggered, this, [this] {
-        m_reallyQuit = true;
-        close();
-    });
+    connect(quit, &QAction::triggered, this, &MainWindow::quitApplication);
 
     m_central->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_central, &QWidget::customContextMenuRequested, this,
@@ -367,10 +436,7 @@ void MainWindow::buildTray()
     connect(settingsAction, &QAction::triggered, this, &MainWindow::openSettings);
     menu->addSeparator();
     auto *quitAction = menu->addAction(tr("Quit"));
-    connect(quitAction, &QAction::triggered, this, [this] {
-        m_reallyQuit = true;
-        close();
-    });
+    connect(quitAction, &QAction::triggered, this, &MainWindow::quitApplication);
 
     m_tray->setContextMenu(menu);
     connect(m_tray, &QSystemTrayIcon::activated, this,
@@ -414,7 +480,13 @@ void MainWindow::teardownGrid()
         timer->deleteLater();
     m_stopTimers.clear();
 
-    // Stop politely so every container gets its trailer written.
+    // Status clients deliberately survive this. The grid is rebuilt whenever
+    // settings are applied, and throwing them away meant a logout and a fresh
+    // login per camera every time — which is precisely when the camera's small
+    // pool of sessions was running dry. pollCameraStatus() drops the ones whose
+    // camera has actually gone; releaseStatusClients() empties the lot when the
+    // window is closing.
+
     for (auto *recorder : std::as_const(m_recorders)) {
         recorder->stop();
         recorder->deleteLater();
@@ -455,6 +527,16 @@ void MainWindow::rebuildGrid()
                     // camera's own settings rather than the application's.
                     if (const CameraConfig *c = cameraById(cameraId)) {
                         CameraSettingsDialog dialog(*c, this);
+                        connect(&dialog, &CameraSettingsDialog::streamReconfigured,
+                                this, [this, cameraId] {
+                                    // Not a reconnect: tell the tile to expect
+                                    // twenty seconds of nonsense and sit it
+                                    // out. Restarting into a half-built
+                                    // encoder is what made a profile change
+                                    // look like a permanent failure.
+                                    if (auto *tile = m_tiles.value(cameraId))
+                                        tile->expectDisruption(20);
+                                });
                         dialog.exec();
                     }
                 });
@@ -475,6 +557,16 @@ void MainWindow::rebuildGrid()
 
     for (auto *tile : std::as_const(m_tiles))
         tile->start();
+
+    // Every half minute is plenty: signal strength drifts, it does not jump,
+    // and each poll is a login plus one request on a small embedded device.
+    if (!m_statusTimer) {
+        m_statusTimer = new QTimer(this);
+        m_statusTimer->setInterval(30000);
+        connect(m_statusTimer, &QTimer::timeout, this, &MainWindow::pollCameraStatus);
+    }
+    m_statusTimer->start();
+    QTimer::singleShot(2000, this, &MainWindow::pollCameraStatus);
 
     statusBar()->showMessage(tr("%n camera(s) live", nullptr, cameras.size()));
 }
@@ -552,6 +644,117 @@ void MainWindow::startWatchers()
                             camera.audioHoldSeconds);
             m_listeners.insert(camera.id, listener);
         }
+    }
+}
+
+void MainWindow::runSelfTest(const QString &directory)
+{
+    std::fprintf(stderr, "selftest: writing to %s, %d tile(s)\n",
+                 qPrintable(directory), int(m_tiles.size()));
+    QDir().mkpath(directory);
+    for (auto it = m_tiles.cbegin(); it != m_tiles.cend(); ++it) {
+        VideoTile *tile = it.value();
+        const QImage first = tile->grabRendered();
+        const quint64 before = tile->renderedFrames();
+
+        QString safe = tile->config().label();
+        safe.replace(QRegularExpression(QStringLiteral("[^\\w.-]")),
+                     QStringLiteral("_"));
+        if (!first.isNull())
+            first.save(QStringLiteral("%1/%2.png").arg(directory, safe));
+
+        // A second grab a moment later: identical pixels mean a frozen
+        // picture, however healthy the logs look.
+        QTimer::singleShot(3000, this, [this, directory, safe, before, tile] {
+            const QImage second = tile->grabRendered();
+            if (!second.isNull())
+                second.save(QStringLiteral("%1/%2_later.png").arg(directory, safe));
+            const quint64 drawn = tile->renderedFrames() - before;
+            std::fprintf(stderr, "selftest: %s drew %llu frames in 3 s\n",
+                         qPrintable(safe),
+                         static_cast<unsigned long long>(drawn));
+            QFile report(directory + QStringLiteral("/report.txt"));
+            if (report.open(QIODevice::Append | QIODevice::Text)) {
+                QTextStream(&report)
+                    << safe << " rendered_frames_in_3s=" << drawn << "\n";
+            }
+            QApplication::quit();
+        });
+    }
+}
+
+void MainWindow::openDiagnostics()
+{
+    // Non-modal: the point is to watch the log while provoking the fault, and a
+    // modal window would stop the user from touching anything that might cause
+    // it.
+    if (!m_diagnostics) {
+        m_diagnostics = new DiagnosticsDialog(this);
+        m_diagnostics->setAttribute(Qt::WA_DeleteOnClose);
+        connect(m_diagnostics, &DiagnosticsDialog::debugLoggingChanged, this,
+                [this](bool enabled) {
+                    m_config.debugLogging = enabled;
+                    m_config.save();
+                });
+        connect(m_diagnostics, &QObject::destroyed, this,
+                [this] { m_diagnostics = nullptr; });
+    }
+    m_diagnostics->show();
+    m_diagnostics->raise();
+    m_diagnostics->activateWindow();
+}
+
+void MainWindow::releaseStatusClients()
+{
+    for (auto *client : std::as_const(m_statusClients))
+        delete client;   // not deleteLater: on the way out there may be no
+                         // event loop left to run it, and the destructor is
+                         // what sends the logout
+    m_statusClients.clear();
+}
+
+void MainWindow::pollCameraStatus()
+{
+    // Cameras that have been removed or switched off take their session with
+    // them, rather than being polled for ever.
+    const QList<CameraConfig> active = m_config.active();
+    QSet<QString> live;
+    for (const CameraConfig &camera : active)
+        live.insert(camera.id);
+    for (const QString &id : m_statusClients.keys()) {
+        if (!live.contains(id)) {
+            delete m_statusClients.take(id);
+            LEO_DEBUG(Api, id, QStringLiteral("Camera gone, session released"));
+        }
+    }
+
+    for (const CameraConfig &camera : active) {
+        ReolinkClient *client = m_statusClients.value(camera.id);
+        if (!client) {
+            client = new ReolinkClient(this);
+            client->setCamera(camera);
+            const QString id = camera.id;
+            connect(client, &ReolinkClient::wifiSignalReady, this,
+                    [this, id](int strength) {
+                        if (auto *tile = m_tiles.value(id))
+                            tile->setWifiSignal(strength);
+                    });
+            // A camera on Ethernet answers with an error; hide the bars rather
+            // than showing an empty meter that looks like a fault.
+            connect(client, &ReolinkClient::linkTypeReady, this,
+                    [this, id](const QString &link) {
+                        if (auto *tile = m_tiles.value(id))
+                            tile->setLinkType(link);
+                    });
+            connect(client, &ReolinkClient::failed, this, [this, id](const QString &) {
+                if (auto *tile = m_tiles.value(id))
+                    tile->setWifiSignal(-1);
+            });
+            m_statusClients.insert(camera.id, client);
+            // The link type is asked once; it does not change while running.
+            client->fetchNetworkInfo();
+        }
+        client->fetchWifiSignal();
     }
 }
 
@@ -967,6 +1170,26 @@ void MainWindow::showFirstRunHint()
         openSettings();
     else if (box.clickedButton() == help)
         QDesktopServices::openUrl(QUrl(QStringLiteral(LEOLINK_HELP_URL)));
+}
+
+void MainWindow::quitApplication()
+{
+    // close() alone was not enough. Qt quits when the *last visible window*
+    // closes, and by the time someone picks Quit from the tray the window is
+    // usually already hidden — so there was no window left to close and
+    // nothing told the application to stop. It kept running with only the tray
+    // icon to show for it.
+    m_reallyQuit = true;
+
+    // Take the tray icon down first, or it lingers in the panel until the
+    // process actually exits.
+    if (m_tray)
+        m_tray->hide();
+
+    teardownGrid();          // stops recordings properly
+    releaseStatusClients();  // and hands every session back to the cameras
+    close();
+    QApplication::quit();
 }
 
 void MainWindow::changeEvent(QEvent *event)

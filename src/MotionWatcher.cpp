@@ -1,5 +1,7 @@
 #include "MotionWatcher.h"
 
+#include "Log.h"
+
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QNetworkAccessManager>
@@ -145,12 +147,21 @@ void MotionWatcher::subscribe()
         const QString address = tagText(scope, QStringLiteral("Address"));
 
         if (address.isEmpty() || address.contains(QLatin1String("w3.org"))) {
+            // The reply itself is the diagnosis here: cameras refuse for
+            // entirely different reasons — events switched off, ONVIF disabled,
+            // a user without the rights — and all of them look the same from
+            // the outside.
+            LEO_WARN(Onvif, m_camera.label(),
+                     QStringLiteral("Subscription refused by %1; reply was: %2")
+                         .arg(m_camera.host, xml.left(500)));
             emit error(m_camera.id, tr("ONVIF subscription failed."));
             if (m_running)
                 QTimer::singleShot(30000, this, &MotionWatcher::subscribe);
             return;
         }
         m_subscription = address;
+        LEO_INFO(Onvif, m_camera.label(),
+                 QStringLiteral("Subscribed, polling %1").arg(address));
         pull();
     });
 }
@@ -182,11 +193,18 @@ void MotionWatcher::pull()
         if (reply->error() != QNetworkReply::NoError) {
             // Subscriptions expire; resubscribing is the normal path back.
             if (++m_failures > 3) {
+                LEO_WARN(Onvif, m_camera.label(),
+                         QStringLiteral("Poll failed four times (%1) — "
+                                        "subscribing again")
+                             .arg(reply->errorString()));
                 m_failures = 0;
                 m_subscription.clear();
                 QTimer::singleShot(5000, this, &MotionWatcher::subscribe);
                 return;
             }
+            LEO_DEBUG(Onvif, m_camera.label(),
+                      QStringLiteral("Poll %1 failed: %2")
+                          .arg(m_failures).arg(reply->errorString()));
             QTimer::singleShot(2000, this, &MotionWatcher::pull);
             return;
         }
@@ -203,6 +221,9 @@ void MotionWatcher::pull()
                                                       Qt::CaseInsensitive) == 0;
             if (active != m_active) {
                 m_active = active;
+                LEO_INFO(Onvif, m_camera.label(),
+                         active ? QStringLiteral("Camera reports motion")
+                                : QStringLiteral("Camera reports motion ended"));
                 emit motionChanged(m_camera.id, active);
             }
         }

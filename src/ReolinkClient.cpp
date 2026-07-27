@@ -1,24 +1,115 @@
 #include "ReolinkClient.h"
 
+#include <memory>
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QEventLoop>
 #include <QSslConfiguration>
+#include <QTimer>
 #include <QUrlQuery>
 
+#include "Log.h"
+
 namespace leolink {
+
+namespace {
+/// How long to wait for a camera to acknowledge a logout. Long enough for a
+/// device on the same network, short enough that one which has vanished does
+/// not hold up closing the window.
+constexpr int kLogoutWaitMs = 700;
+} // namespace
 
 ReolinkClient::ReolinkClient(QObject *parent)
     : QObject(parent), m_net(new QNetworkAccessManager(this))
 {
 }
 
+ReolinkClient::~ReolinkClient()
+{
+    releaseSession();
+}
+
 void ReolinkClient::setCamera(const CameraConfig &camera)
 {
+    // Hand back whatever we hold, whether or not the host changed. The earlier
+    // version only did so on a change of host, and the token was then cleared
+    // regardless — so pointing a client at the same camera again, which the
+    // "Test" button does on every press, silently abandoned a live session.
+    releaseSession();
     m_camera = camera;
-    m_token.clear();   // a different camera means a different session
+    m_token.clear();
+
+    // The log must never carry these, wherever they end up being printed.
+    Log::addSecret(camera.password);
+    if (!camera.uid.isEmpty())
+        Log::addSecret(camera.uid);
+}
+
+void ReolinkClient::releaseSession()
+{
+    if (m_token.isEmpty())
+        return;
+
+    // Sessions are a scarce resource on these cameras — six or eight for the
+    // whole device, shared with the phone app and the web interface — and they
+    // are only freed by logging out or by waiting for the lease to lapse.
+    // Without this, every settings dialog and every snapshot left one behind
+    // until the camera answered -5 "max session" and appeared to be broken.
+    //
+    // Sent detached: this runs from the destructor, so nothing owned by this
+    // object may outlive the call. Nobody waits for the answer; there is
+    // nothing useful to do with it.
+    QUrl url = apiUrl(QStringLiteral("Logout"));
+    const QString token = m_token;
+    m_token.clear();
+
+    auto *net = new QNetworkAccessManager;
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,
+                      QStringLiteral("application/json"));
+    if (m_camera.https) {
+        QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
+        ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
+        request.setSslConfiguration(ssl);
+    }
+
+    QJsonObject entry;
+    entry[QStringLiteral("cmd")] = QStringLiteral("Logout");
+    entry[QStringLiteral("action")] = 0;
+    entry[QStringLiteral("param")] = QJsonObject();
+    QJsonArray body;
+    body.append(entry);
+
+    QNetworkReply *reply =
+        net->post(request, QJsonDocument(body).toJson(QJsonDocument::Compact));
+
+    // Waited for, briefly. Posting and walking away looked right and is not:
+    // this is called from destructors, and the last of those run as the
+    // application is shutting down, when there is no longer an event loop to
+    // carry the request out of the process. The session would then be held for
+    // its full hour — the very thing this exists to prevent.
+    //
+    // User input is excluded so a half-destroyed dialog cannot be clicked, and
+    // the wait is capped: a camera that has gone off the network must not stop
+    // the program from closing.
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    QTimer::singleShot(kLogoutWaitMs, &loop, &QEventLoop::quit);
+    loop.exec(QEventLoop::ExcludeUserInputEvents);
+
+    const bool done = reply->isFinished();
+    reply->deleteLater();
+    net->deleteLater();
+
+    Q_UNUSED(token);
+    LEO_DEBUG(Api, m_camera.label(),
+              done ? QStringLiteral("Logout acknowledged, session released")
+                   : QStringLiteral("Logout sent, no answer within %1 ms")
+                         .arg(kLogoutWaitMs));
 }
 
 QString ReolinkClient::describeError(int rspCode)
@@ -26,8 +117,10 @@ QString ReolinkClient::describeError(int rspCode)
     switch (rspCode) {
     case -3:   return tr("File format not recognised.");
     case -4:   return tr("Invalid input.");
-    case -5:   return tr("No free connections — the camera allows only a few "
-                         "sessions at a time.");
+    case -5:   return tr("The camera has no free sessions. It allows only a "
+                         "handful at once, shared with the phone app and its "
+                         "web page. Close those, or wait a minute for the old "
+                         "ones to lapse.");
     case -6:   return tr("Session expired.");
     case -7:   return tr("Wrong user name or password.");
     case -8:   return tr("Timed out.");
@@ -68,7 +161,7 @@ QUrl ReolinkClient::apiUrl(const QString &command, bool withToken) const
 void ReolinkClient::post(const QString &command, const QJsonObject &param,
                          const std::function<void(const QJsonObject &)> &onOk,
                          const std::function<void(const QString &)> &onErr,
-                         int action)
+                         int action, bool mayRetry)
 {
     QJsonObject entry;
     entry[QStringLiteral("cmd")] = command;
@@ -89,26 +182,75 @@ void ReolinkClient::post(const QString &command, const QJsonObject &param,
         req.setSslConfiguration(ssl);
     }
 
-    QNetworkReply *reply =
-        m_net->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
+    const QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
+    LEO_DEBUG(Api, m_camera.label(),
+              QStringLiteral("→ %1 action=%2 %3")
+                  .arg(command).arg(action)
+                  .arg(param.isEmpty() ? QString()
+                                       : QString::fromUtf8(payload)));
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply, command, onOk, onErr] {
+    const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
+    QNetworkReply *reply = m_net->post(req, payload);
+
+    connect(reply, &QNetworkReply::finished, this,
+            [this, reply, startedAt, command, param, onOk, onErr, action, mayRetry] {
         reply->deleteLater();
+        const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
+
         if (reply->error() != QNetworkReply::NoError) {
-            onErr(tr("Cannot reach %1: %2").arg(m_camera.host, reply->errorString()));
+            const QString message =
+                tr("Cannot reach %1: %2").arg(m_camera.host, reply->errorString());
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 network error after %2 ms: %3")
+                         .arg(command).arg(elapsed).arg(reply->errorString()));
+            onErr(message);
             return;
         }
-        const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+
+        const QByteArray raw = reply->readAll();
+        const QJsonDocument doc = QJsonDocument::fromJson(raw);
         if (!doc.isArray() || doc.array().isEmpty()) {
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 unexpected reply: %2")
+                         .arg(command, QString::fromUtf8(raw.left(400))));
             onErr(tr("Unexpected reply from %1.").arg(m_camera.host));
             return;
         }
+
         const QJsonObject first = doc.array().first().toObject();
         if (first.value(QStringLiteral("code")).toInt(-1) != 0) {
             const QJsonObject err = first.value(QStringLiteral("error")).toObject();
-            onErr(describeError(err.value(QStringLiteral("rspCode")).toInt()));
+            const int rspCode = err.value(QStringLiteral("rspCode")).toInt();
+
+            // A token has a lease, and a client kept around for days — the
+            // status poller, for one — will outlive it. Before this, that
+            // turned into a permanent failure: every later request reused the
+            // dead token and the camera looked unreachable. One silent retry
+            // with a fresh session is what the user would do by hand.
+            if (mayRetry && !m_token.isEmpty() &&
+                (rspCode == -6 || rspCode == -27)) {
+                LEO_INFO(Api, m_camera.label(),
+                         QStringLiteral("Session expired during %1, logging in "
+                                        "again").arg(command));
+                m_token.clear();
+                login([this, command, param, onOk, onErr, action] {
+                          post(command, param, onOk, onErr, action, false);
+                      },
+                      onErr);
+                return;
+            }
+
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 failed after %2 ms: rspCode=%3 %4")
+                         .arg(command).arg(elapsed).arg(rspCode)
+                         .arg(err.value(QStringLiteral("detail")).toString()));
+            onErr(describeError(rspCode));
             return;
         }
+
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("← %1 ok after %2 ms, %3 bytes")
+                      .arg(command).arg(elapsed).arg(raw.size()));
         onOk(first.value(QStringLiteral("value")).toObject());
     });
 }
@@ -121,6 +263,24 @@ void ReolinkClient::login(const std::function<void()> &then,
         return;
     }
 
+    // Everything that needs a session queues behind one login.
+    //
+    // Without this the settings dialog alone opened around twenty. It asks for
+    // every section at once, each asks for a session, and at that moment none
+    // exists yet — so every one of them started its own Login. The camera
+    // handed out twenty sessions, this object kept the last token and forgot
+    // the other nineteen, and there was nothing left to log them out with. A
+    // few of those and the camera answers -5 to everything, for an hour,
+    // including to other programs. It looks exactly like a broken camera.
+    //
+    // The queue also means a burst of requests costs one round trip instead of
+    // twenty, which is the difference between a dialog that opens and one that
+    // stutters.
+    m_waiting.append({then, onErr});
+    if (m_loggingIn)
+        return;
+    m_loggingIn = true;
+
     QJsonObject user;
     user[QStringLiteral("userName")] = m_camera.user;
     user[QStringLiteral("password")] = m_camera.secret();
@@ -128,18 +288,48 @@ void ReolinkClient::login(const std::function<void()> &then,
     param[QStringLiteral("User")] = user;
 
     post(QStringLiteral("Login"), param,
-         [this, then, onErr](const QJsonObject &value) {
-             m_token = value.value(QStringLiteral("Token"))
-                            .toObject()
-                            .value(QStringLiteral("name"))
-                            .toString();
+         [this](const QJsonObject &value) {
+             m_loggingIn = false;
+             const QJsonObject token =
+                 value.value(QStringLiteral("Token")).toObject();
+             m_token = token.value(QStringLiteral("name")).toString();
+
+             // Taken before running any of them: a waiter may well ask for
+             // something else that needs a session, and appending to a list
+             // being iterated is a bug waiting for a slow camera.
+             const QList<PendingLogin> waiting = std::move(m_waiting);
+             m_waiting.clear();
+
              if (m_token.isEmpty()) {
-                 onErr(tr("Login returned no token."));
+                 LEO_ERROR(Api, m_camera.label(),
+                           QStringLiteral("Login succeeded but returned no token"));
+                 for (const PendingLogin &entry : waiting)
+                     entry.onError(tr("Login returned no token."));
                  return;
              }
-             then();
+
+             // The token itself is a working key to the camera for as long as
+             // it lasts, so it never reaches the log intact.
+             Log::addSecret(m_token);
+             LEO_DEBUG(Api, m_camera.label(),
+                       QStringLiteral("Logged in as %1, lease %2 s, %3 request(s) "
+                                      "were waiting")
+                           .arg(m_camera.user)
+                           .arg(token.value(QStringLiteral("leaseTime")).toInt())
+                           .arg(waiting.size()));
+             for (const PendingLogin &entry : waiting)
+                 entry.then();
          },
-         onErr);
+         [this](const QString &error) {
+             m_loggingIn = false;
+             const QList<PendingLogin> waiting = std::move(m_waiting);
+             m_waiting.clear();
+             LEO_WARN(Api, m_camera.label(),
+                      QStringLiteral("Login failed: %1 (%2 request(s) waiting)")
+                          .arg(error).arg(waiting.size()));
+             for (const PendingLogin &entry : waiting)
+                 entry.onError(error);
+         });
 }
 
 void ReolinkClient::testConnection()
@@ -330,6 +520,287 @@ QUrl ReolinkClient::downloadUrl(const Recording &recording) const
     q.addQueryItem(QStringLiteral("output"), recording.name);
     url.setQuery(q);
     return url;
+}
+
+void ReolinkClient::reboot()
+{
+    login([this] {
+        post(QStringLiteral("Reboot"), {},
+             [this](const QJsonObject &) {
+                 // The session dies with the camera; drop the token so the
+                 // next request logs in again rather than failing on -6.
+                 m_token.clear();
+                 emit rebootAccepted();
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::fetchWifiSignal()
+{
+    login([this] {
+        post(QStringLiteral("GetWifiSignal"), {},
+             [this](const QJsonObject &value) {
+                 emit wifiSignalReady(
+                     value.value(QStringLiteral("wifiSignal")).toInt(-1));
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::fetchNetworkInfo()
+{
+    login([this] {
+        // Three separate commands, collected into one object so the dialog has
+        // a single thing to render. A shared pointer because each reply lands
+        // in its own callback and whichever arrives last emits.
+        auto merged = std::make_shared<QJsonObject>();
+        auto outstanding = std::make_shared<int>(3);
+
+        auto done = [this, merged, outstanding] {
+            if (--*outstanding == 0)
+                emit networkInfoReady(*merged);
+        };
+
+        post(QStringLiteral("GetLocalLink"), {},
+             [this, merged, done](const QJsonObject &value) {
+                 const QJsonObject link =
+                     value.value(QStringLiteral("LocalLink")).toObject();
+                 (*merged)[QStringLiteral("LocalLink")] = link;
+                 emit linkTypeReady(
+                     link.value(QStringLiteral("activeLink")).toString());
+                 done();
+             },
+             [done](const QString &) { done(); });
+
+        post(QStringLiteral("GetWifi"), {},
+             [merged, done](const QJsonObject &value) {
+                 (*merged)[QStringLiteral("Wifi")] =
+                     value.value(QStringLiteral("Wifi"));
+                 done();
+             },
+             // Ethernet-only cameras have no Wi-Fi section; not an error.
+             [done](const QString &) { done(); });
+
+        post(QStringLiteral("GetNetPort"), {},
+             [merged, done](const QJsonObject &value) {
+                 (*merged)[QStringLiteral("NetPort")] =
+                     value.value(QStringLiteral("NetPort"));
+                 done();
+             },
+             [done](const QString &) { done(); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::scanWifi()
+{
+    login([this] {
+        post(QStringLiteral("ScanWifi"), {},
+             [this](const QJsonObject &value) {
+                 emit wifiNetworksReady(
+                     value.value(QStringLiteral("Wifi")).toArray());
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::applyWifi(const QString &ssid, const QString &password)
+{
+    login([this, ssid, password] {
+        QJsonObject wifi;
+        wifi[QStringLiteral("ssid")] = ssid;
+        wifi[QStringLiteral("password")] = password;
+        QJsonObject param;
+        param[QStringLiteral("Wifi")] = wifi;
+
+        // TestWifi first: it makes the camera try the credentials and report
+        // back while still reachable on its current connection. Writing them
+        // blind is how a camera ends up on no network at all.
+        post(QStringLiteral("TestWifi"), param,
+             [this, param](const QJsonObject &) {
+                 post(QStringLiteral("SetWifi"), param,
+                      [this](const QJsonObject &) { emit wifiApplied(); },
+                      [this](const QString &e) { emit failed(e); });
+             },
+             [this](const QString &e) {
+                 emit failed(tr("The camera could not join that network: %1").arg(e));
+             });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::testEmail()
+{
+    login([this] {
+        post(QStringLiteral("TestEmail"), {},
+             [this](const QJsonObject &) { emit testSucceededWith(tr("E-mail")); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::testFtp()
+{
+    login([this] {
+        post(QStringLiteral("TestFtp"), {},
+             [this](const QJsonObject &) { emit testSucceededWith(tr("FTP")); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::fetchPerformance()
+{
+    login([this] {
+        post(QStringLiteral("GetPerformance"), {},
+             [this](const QJsonObject &value) {
+                 emit performanceReady(
+                     value.value(QStringLiteral("Performance")).toObject());
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::checkFirmware()
+{
+    login([this] {
+        post(QStringLiteral("CheckFirmware"), {},
+             [this](const QJsonObject &value) {
+                 const QString newer =
+                     value.value(QStringLiteral("newFirmware")).toVariant().toString();
+                 // The camera answers 0 for "nothing newer", otherwise a
+                 // version. Anything that is not a plain 0 counts as an offer.
+                 const bool available = !newer.isEmpty() &&
+                                        newer != QLatin1String("0");
+                 emit firmwareInfo(available
+                                       ? tr("Update available: %1").arg(newer)
+                                       : tr("The firmware is up to date."),
+                                   available);
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::upgradeFirmware()
+{
+    login([this] {
+        post(QStringLiteral("UpgradeOnline"), {},
+             [this](const QJsonObject &) {
+                 // The camera reboots into the new firmware on its own; the
+                 // session dies with it.
+                 m_token.clear();
+                 emit firmwareInfo(
+                     tr("Upgrading. The camera will restart on its own and be "
+                        "unreachable for several minutes. Do not cut its power."),
+                     false);
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::formatStorage()
+{
+    login([this] {
+        QJsonObject param;
+        param[QStringLiteral("HddInfo")] = QJsonObject{{QStringLiteral("id"), 0}};
+        post(QStringLiteral("Format"), param,
+             [this](const QJsonObject &) { emit storageFormatted(); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::probeCommands(const QStringList &commands)
+{
+    login([this, commands] {
+        auto results = std::make_shared<QMap<QString, QString>>();
+        auto outstanding = std::make_shared<int>(int(commands.size()));
+
+        for (const QString &command : commands) {
+            QJsonObject param;
+            param[QStringLiteral("channel")] = 0;
+            // action=1 asks for the range document as well, which is what
+            // reveals whether a command is genuinely implemented rather than
+            // merely accepted.
+            post(command, param,
+                 [results, outstanding, command, this](const QJsonObject &) {
+                     results->insert(command, QString());
+                     if (--*outstanding == 0)
+                         emit commandsProbed(*results);
+                 },
+                 [results, outstanding, command, this](const QString &error) {
+                     results->insert(command, error);
+                     if (--*outstanding == 0)
+                         emit commandsProbed(*results);
+                 },
+                 1);
+        }
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::fetchUsers()
+{
+    login([this] {
+        post(QStringLiteral("GetUser"), {},
+             [this](const QJsonObject &value) {
+                 emit usersReady(value.value(QStringLiteral("User")).toArray());
+             },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::addUser(const QString &name, const QString &password,
+                            const QString &level)
+{
+    login([this, name, password, level] {
+        QJsonObject user;
+        user[QStringLiteral("userName")] = name;
+        user[QStringLiteral("password")] = password;
+        user[QStringLiteral("level")] = level;
+        QJsonObject param;
+        param[QStringLiteral("User")] = user;
+        post(QStringLiteral("AddUser"), param,
+             [this](const QJsonObject &) { emit usersChanged(); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::deleteUser(const QString &name)
+{
+    login([this, name] {
+        QJsonObject param;
+        param[QStringLiteral("User")] =
+            QJsonObject{{QStringLiteral("userName"), name}};
+        post(QStringLiteral("DelUser"), param,
+             [this](const QJsonObject &) { emit usersChanged(); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::changePassword(const QString &name, const QString &password)
+{
+    login([this, name, password] {
+        QJsonObject user;
+        user[QStringLiteral("userName")] = name;
+        user[QStringLiteral("password")] = password;
+        QJsonObject param;
+        param[QStringLiteral("User")] = user;
+        post(QStringLiteral("ModifyUser"), param,
+             [this](const QJsonObject &) { emit usersChanged(); },
+             [this](const QString &e) { emit failed(e); });
+    },
+    [this](const QString &e) { emit failed(e); });
 }
 
 void ReolinkClient::fetchSnapshot()

@@ -91,6 +91,37 @@ do. -9 means this firmware has never heard of the command. -26 means the command
 is real but the model lacks the hardware — no pan-tilt motor, no speaker. A
 client should hide the feature in both cases and retry in neither.
 
+### Sessions are scarce, and only `Logout` frees one
+
+A camera allows a handful of sessions at once — shared with the phone app and
+its own web page — and `Login` reports `leaseTime: 3600`. That lease is real:
+a session that is simply dropped stays occupied for the full hour. Closing the
+program does not release it either.
+
+Measured here, the hard way: after a run that opened a session per settings
+dialog and never logged out, the camera answered `-5 max session` to every
+request for the best part of an hour, including from `curl`. It looks exactly
+like a broken camera.
+
+**Send `Logout` when you are done with a token.** It costs one request and it is
+the difference between a camera that works and one that appears dead.
+
+### `Set*` sometimes refuses what `Get*` just returned
+
+`GetAlarm` reports `enable` as a bit field — `1602` on an RLC-410W — while its
+range document calls it `"boolean"`. `SetAlarm` then rejects `1602` with a bare
+`-4 param error`, and accepts only `0` or `1`. Reading the value back afterwards
+gives `1602` again, so the camera rebuilds the field itself.
+
+This is worth knowing in general terms: **a read-modify-write round trip is not
+guaranteed to be accepted**, so it is worth testing one that changes nothing
+before assuming a write path works. That test is what found this; every shape of
+`SetAlarm` failed until `enable` was normalised, and none of the error messages
+pointed at the field.
+
+Nulls are the other trap: `action.recChannel` comes back as `null` on a camera
+with no recording channels, and dropping the key is safer than sending it.
+
 ### Confirmed commands
 
 36 of 71 probed commands work on the RLC-410W:
@@ -277,6 +308,91 @@ Verified against the device:
 
 The 31-character clip is deliberate on the vendor's side: the string has to fit
 a 32-byte field with a trailing NUL.
+
+### Video — the BcMedia container
+
+Requesting video is message type 3 with an XML body:
+
+```xml
+<Preview version="1.1">
+  <channelId>0</channelId>
+  <handle>0</handle>
+  <streamType>subStream</streamType>   <!-- or mainStream -->
+</Preview>
+```
+
+The camera then sends a run of type-3 messages whose bodies carry a stream of
+blocks. The first message has a non-zero `payload_offset` in its 24-byte header:
+that many bytes at the front are an XML preamble
+(`<Extension><binaryData>1</binaryData></Extension>`), not media. Feed those to
+a parser and it finds nothing.
+
+Each block starts with four ASCII characters. **These are not what the published
+notes say.** Those give the magics as little-endian `u32` constants, which spell
+them backwards; a parser written from them matches nothing at all. What the
+hardware actually sends, verified on an RLC-410W:
+
+| On the wire | Block | Header |
+|---|---|---|
+| `1001` / `1002` | stream info | 32 bytes (length is stated at +4) |
+| `00dc` | key frame | 32 bytes |
+| `01dc` | predicted frame | 24 bytes |
+| `05wb` | AAC audio | 8 bytes |
+| `01wb` | ADPCM audio | 8 bytes |
+
+The names are AVI's, which is presumably where they came from: `00dc` is
+compressed video on stream 0, `wb` is audio.
+
+Video block layout:
+
+```
++0   magic          "00dc" / "01dc"
++4   codec          "H264" / "H265"
++8   payload size   u32
++12  unknown        u32
++16  microseconds   u32
++20  unknown        u32
++24  unix time      u32   (key frames only)
++28  unknown        u32   (key frames only)
+```
+
+Info block:
+
+```
++4   header length  u32   (32 here)
++8   width          u32
++12  height         u32
++17  frame rate     u8
++18  year-1900, month, day, hour, minute, second, each u8
+```
+
+The payload is plain Annex-B, so **the check that the layout is right is that
+the first bytes of every payload are `00 00 00 01`**. That is what turned this
+from guesswork into something verifiable — and it is worth keeping in any parser
+as an assertion.
+
+Two details a parser needs:
+
+* **Blocks are padded.** Zero bytes appear between them, and key frames are
+  followed by a short trailer holding the capture time — four bytes after the
+  first one, three after the ones that follow. Skipping any small gap and
+  resynchronising on the next known magic handles all of it.
+* **Media bodies are not obfuscated.** The XOR applies to the XML control
+  messages only.
+
+leolink unpacks this into an H.264 elementary stream and re-serves it on a
+loopback port, which mpv opens as `tcp://127.0.0.1:<port>`. Since a raw stream
+carries no timestamps, the player needs `--no-correct-pts` and
+`--container-fps-override` set to the rate the info block announced; without
+them mpv invents timing and says so.
+
+```
+leolink --baichuan-video <host> --user admin --password … --out /tmp/x.h264
+```
+
+reports what the container held and writes the elementary stream out, so it can
+be checked with `ffprobe`. Measured on an RLC-410W sub stream: 150 frames in
+10 seconds, 640x352 High profile, zero decode errors.
 
 ### What it adds over the CGI API
 

@@ -18,7 +18,7 @@ include(GNUInstallDirs)
 # Widgets  – UI.  Network – CGI/ONVIF over HTTP.  Xml – ONVIF SOAP replies.
 # Svg      – the application icon is vector art, rendered at any size.
 # LinguistTools supplies qt_add_translations (lupdate/lrelease at build time).
-find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Network Xml Svg LinguistTools)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets Network Xml Svg OpenGLWidgets LinguistTools)
 
 # libmpv does the heavy lifting: RTSP, hardware decoding, audio, volume.
 # Reimplementing that on top of raw FFmpeg would buy us nothing.
@@ -41,6 +41,9 @@ qt_add_executable(leolink
     src/EventLogDialog.cpp    src/EventLogDialog.h
     src/Discovery.cpp         src/Discovery.h
     src/Spinner.cpp           src/Spinner.h
+    src/SignalIndicator.cpp   src/SignalIndicator.h
+    src/MpvWidget.cpp         src/MpvWidget.h
+    src/SectionEditor.cpp     src/SectionEditor.h
     src/EventActions.cpp      src/EventActions.h
     src/MqttPublisher.cpp     src/MqttPublisher.h
     src/SoundPlayer.cpp       src/SoundPlayer.h
@@ -50,6 +53,10 @@ qt_add_executable(leolink
     src/ZoneEditor.cpp        src/ZoneEditor.h
     src/PlaybackBrowser.cpp   src/PlaybackBrowser.h
     src/Baichuan.cpp          src/Baichuan.h
+    src/BaichuanStream.cpp    src/BaichuanStream.h
+    src/Log.cpp               src/Log.h
+    src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
+    src/SchedulePicker.cpp    src/SchedulePicker.h
 )
 
 target_compile_definitions(leolink PRIVATE
@@ -59,7 +66,7 @@ target_compile_definitions(leolink PRIVATE
 )
 
 target_link_libraries(leolink PRIVATE
-    Qt6::Widgets Qt6::Network Qt6::Xml Qt6::Svg
+    Qt6::Widgets Qt6::Network Qt6::Xml Qt6::Svg Qt6::OpenGLWidgets
     PkgConfig::MPV
 )
 
@@ -137,11 +144,18 @@ set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 # Reads the real ELF dependencies rather than a hand-written list that would
 # drift the moment Qt bumps a soname.
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+# ffmpeg is run as a program, not linked, so shlibdeps cannot see it. Recording
+# and both detectors need it; plain viewing does not, which is why it is a
+# recommendation rather than a hard dependency — apt installs it by default
+# either way.
+set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "ffmpeg")
+set(CPACK_DEBIAN_PACKAGE_SUGGESTS "mpv")
 
 set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
 set(CPACK_RPM_PACKAGE_URL "${PROJECT_HOMEPAGE_URL}")
 set(CPACK_RPM_PACKAGE_AUTOREQ ON)
+set(CPACK_RPM_PACKAGE_REQUIRES_POST "ffmpeg")
 # These directories belong to filesystem and hicolor-icon-theme; claiming them
 # would make the package conflict with half the distribution.
 set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION

@@ -57,6 +57,12 @@ signals:
 private:
     QProcess *m_process{nullptr};
     QString m_path;
+    /// Camera name, for the log — the recorder outlives the configuration it
+    /// was started from.
+    QString m_label;
+    /// Set while stop() is ending ffmpeg, so its death is not reported as a
+    /// fault.
+    bool m_stopping{false};
 };
 
 } // namespace leolink

@@ -2,6 +2,8 @@
 #pragma once
 
 #include <QDateTime>
+#include <QMap>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QObject>
 #include <QString>
@@ -40,6 +42,7 @@ class ReolinkClient : public QObject {
 
 public:
     explicit ReolinkClient(QObject *parent = nullptr);
+    ~ReolinkClient() override;
 
     void setCamera(const CameraConfig &camera);
     const CameraConfig &camera() const { return m_camera; }
@@ -76,6 +79,54 @@ public:
     /// URL that downloads it as a file.
     QUrl downloadUrl(const Recording &recording) const;
 
+    /// Restarts the camera. It drops off the network for a minute or so and
+    /// comes back by itself; there is no confirmation beyond the command being
+    /// accepted, because the camera stops answering immediately afterwards.
+    void reboot();
+
+    /// Wi-Fi strength, 0…4. Cameras on Ethernet answer with an error, which is
+    /// reported as such rather than as a strength of zero.
+    void fetchWifiSignal();
+    /// Link type, addresses, SSID — everything the network tab shows.
+    void fetchNetworkInfo();
+
+    /// Asks the camera which networks it can see. The camera does the scanning
+    /// — this computer's own Wi-Fi is irrelevant, and often a different room.
+    void scanWifi();
+    /// Joins a network. The camera tests the credentials before committing, so
+    /// a wrong password fails here rather than taking the camera off the air.
+    void applyWifi(const QString &ssid, const QString &password);
+
+    /// Makes the camera try its own e-mail or FTP settings and report back.
+    /// Testing from here would prove nothing — the camera is the one that has
+    /// to reach the server, and it may sit on a different network.
+    void testEmail();
+    void testFtp();
+
+    /// CPU and memory load inside the camera. A device running hot drops
+    /// frames and stops answering, and nothing else reveals that.
+    void fetchPerformance();
+
+    void checkFirmware();
+    void upgradeFirmware();
+
+    /// Erases the SD card. Irreversible.
+    void formatStorage();
+
+    /// Asks the camera which of a list of commands its firmware knows.
+    ///
+    /// Reolink firmware varies enormously between models and versions, and the
+    /// only honest way to find out what a device supports is to ask it. This
+    /// turns that into something a user can run and paste into a bug report —
+    /// which is how support for hardware nobody here owns gets written.
+    void probeCommands(const QStringList &commands);
+
+    void fetchUsers();
+    void addUser(const QString &name, const QString &password,
+                 const QString &level);
+    void deleteUser(const QString &name);
+    void changePassword(const QString &name, const QString &password);
+
     bool hasSession() const { return !m_token.isEmpty(); }
 
     static QString describeError(int rspCode);
@@ -88,6 +139,24 @@ signals:
     void sectionReady(const QString &command, const QJsonObject &value,
                       const QJsonObject &ranges);
     void sectionApplied(const QString &command);
+    void rebootAccepted();
+    void wifiSignalReady(int strength);
+    /// "Wifi", "LAN", "3G"/"4G" — whatever the camera calls its active link.
+    void linkTypeReady(const QString &activeLink);
+    /// Merged from GetLocalLink, GetWifi and GetNetPort.
+    void networkInfoReady(const QJsonObject &info);
+    /// Each entry has ssid, signal and encryption.
+    void wifiNetworksReady(const QJsonArray &networks);
+    void wifiApplied();
+    void testSucceededWith(const QString &what);
+    void performanceReady(const QJsonObject &info);
+    void firmwareInfo(const QString &text, bool updateAvailable);
+    /// command → what the camera said: empty for "supported", otherwise the
+    /// reason it gave.
+    void commandsProbed(const QMap<QString, QString> &results);
+    void usersReady(const QJsonArray &users);
+    void usersChanged();
+    void storageFormatted();
     void recordingsReady(const QList<Recording> &recordings);
     void snapshotReady(const QByteArray &jpeg);
     void failed(const QString &reason);
@@ -97,13 +166,25 @@ private:
     void post(const QString &command, const QJsonObject &param,
               const std::function<void(const QJsonObject &value)> &onOk,
               const std::function<void(const QString &error)> &onErr,
-              int action = 0);
+              int action = 0, bool mayRetry = true);
+    /// Hands the session back. Cameras allow only a handful at once, and one
+    /// that is merely dropped stays occupied until its lease runs out.
+    void releaseSession();
     void login(const std::function<void()> &then,
                const std::function<void(const QString &)> &onErr);
 
     QNetworkAccessManager *m_net;
     CameraConfig m_camera;
     QString m_token;
+
+    /// Requests that arrived while a login was still in flight. A camera hands
+    /// out a session per Login, so exactly one may ever be outstanding.
+    struct PendingLogin {
+        std::function<void()> then;
+        std::function<void(const QString &)> onError;
+    };
+    QList<PendingLogin> m_waiting;
+    bool m_loggingIn{false};
 };
 
 } // namespace leolink

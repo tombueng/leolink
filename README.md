@@ -25,7 +25,10 @@ software is involved.
   untouched and the processor stays idle.
 - **Changes settings on the camera**: resolution, frame rate, bit rate, H.264
   profile and the picture controls. Every choice offered is one the camera
-  itself reported, so no model is shown an option it cannot do.
+  itself reported, so no model is shown an option it cannot do. Also the
+  camera's own detection area drawn on a live picture, its weekly schedules for
+  detection and recording, sensitivity by time of day, privacy areas it blanks
+  before anything leaves the device, users, Wi-Fi, firmware and a restart.
 - **Reacts to events**: run a command, call an HTTP endpoint, publish MQTT.
   Configure it once globally or per camera.
 - **Event log** with the still and recording captured at the time, filterable
@@ -36,6 +39,16 @@ software is involved.
 - **Recordings on the camera's SD card**: search by period, play, download.
 - **Any RTSP source**, not only Reolink — the custom-URL transport takes
   anything libmpv can open.
+- **Four ways to get the picture**: RTSP, HTTP-FLV, the camera's own Baichuan
+  protocol, or a URL of your own. Baichuan is the answer for cameras that keep
+  RTSP switched off, and it does not consume one of the camera's few web
+  sessions.
+- **Diagnostics that can be handed to somebody else.** Errors and warnings are
+  always recorded; switching on detailed logging adds the whole conversation
+  with the camera. Help ▸ Diagnostics shows it, filters it, and copies a report
+  with the machine's details attached — **passwords, session tokens and public
+  addresses removed before anything is written**, so it can be pasted into a bug
+  report as it stands.
 - **English and German.**
 
 ## Requirements
@@ -136,7 +149,17 @@ Developed against an **RLC-410W**. Other Reolink models speak the same
 protocols, and leolink asks each camera what it supports rather than assuming.
 
 Verified against real hardware: the HTTP API, RTSP and HTTP-FLV streaming,
-snapshots, ONVIF discovery and motion push, and the Baichuan login handshake.
+snapshots, ONVIF discovery and motion push, and Baichuan — login *and* video.
+The Baichuan container was worked out from a capture rather than from the
+published notes, which have the block magics byte-reversed; see
+[docs/protocol.md](docs/protocol.md). Measured on the sub stream: 150 frames in
+ten seconds, 640x352 High profile, no decode errors.
+
+Writing settings was tested by round trip — read a section, write it back
+unchanged, confirm the camera accepts it. That is what caught `SetAlarm`
+refusing the very value `GetAlarm` had just returned; the detection area, the
+schedules and the sensitivity bands were then verified by editing one, reading
+it back changed, and restoring it.
 
 Packaging: `.deb`, `.rpm`, AppImage and Flatpak all build. The Flatpak
 compiles libplacebo, libass and libmpv from source against the KDE runtime and
@@ -148,19 +171,31 @@ one: traffic footage changed 6.3% of watched pixels on average, a static camera
 with room to spare.
 
 Not yet verified, because the test camera cannot: **playback from the SD card**
-(none fitted, so every search answers -17) and the **P2P path** (no P2P-capable
-camera here). Both are implemented from the documented protocol and report what
-the camera actually said rather than guessing, so a first run on real hardware
-should show plainly where reality differs. If you have such a camera,
-`leolink --baichuan-p2p <UID>` and an issue with the output would be genuinely
-useful.
+(none fitted, so every search answers -17), the **P2P path** (no P2P-capable
+camera here) and **mobile data** (no camera with a modem). All three are
+implemented from the documented protocol and report what the camera actually
+said rather than guessing, so a first run on real hardware should show plainly
+where reality differs.
+
+If you have such a camera, two things would genuinely help: the output of
+`leolink --baichuan-p2p <UID>`, and — for an LTE model — the list from
+**Maintenance ▸ What this camera supports**, which asks the camera which
+commands its firmware actually has. Guessing at command names from here is the
+only reason the mobile-data screen is marked untested.
+
+One thing that could not be established from here: **which weekday the camera's
+168-character schedule starts on.** It is 7×24 and Monday-first is the ISO
+convention, so that is what the editor labels. A schedule cannot be read back in
+a form that reveals the order, and this camera's web interface has no schedule
+screen to compare against. If your recordings land a day out, say so — it is one
+constant in `CameraSettingsDialog.cpp`.
 
 Missing before a Flathub submission: **screenshots**. They must not show a real
 camera feed; add a camera with the custom-URL transport pointing at freely
 licensed footage, then capture the window.
 
-Planned: motion and audio detection performed by leolink itself, with drawable
-zones, for cameras that report nothing on their own.
+Two-way audio is not implemented. Baichuan carries it and the transport is now
+in place, so it is the obvious next thing.
 
 ## Credit
 

@@ -20,7 +20,9 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include "DiagnosticsDialog.h"
 #include "Discovery.h"
+#include "Log.h"
 #include "MotionDetector.h"
 #include "ZoneEditor.h"
 #include "ReolinkClient.h"
@@ -124,7 +126,16 @@ QWidget *SettingsDialog::buildCameraTab()
     m_transport = new QComboBox(page);
     m_transport->addItem(tr("RTSP"), QStringLiteral("rtsp"));
     m_transport->addItem(tr("HTTP-FLV (lower latency)"), QStringLiteral("flv"));
+    m_transport->addItem(tr("Baichuan (the camera's own protocol)"),
+                         QStringLiteral("baichuan"));
     m_transport->addItem(tr("Custom URL"), QStringLiteral("custom"));
+    m_transport->setToolTip(
+        tr("RTSP suits most cameras and is what to try first.\n\n"
+           "HTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\n"
+           "Baichuan is what Reolink's own app speaks. It is the answer for "
+           "cameras that keep RTSP switched off — battery models do — and it "
+           "does not use the camera's small pool of web sessions. Video only: "
+           "sound still comes over RTSP."));
 
     m_https = new QCheckBox(tr("Use HTTPS for the control API"), page);
     m_enabled = new QCheckBox(tr("Show this camera"), page);
@@ -544,16 +555,18 @@ QWidget *SettingsDialog::buildWindowTab()
 
     // ── decoding ────────────────────────────────────────────────────────────
     m_hwdec = new QComboBox(page);
-    m_hwdec->addItem(tr("Hardware, fastest"), QStringLiteral("auto"));
+    m_hwdec->addItem(tr("Hardware (recommended)"), QStringLiteral("hw"));
+    m_hwdec->addItem(tr("Hardware, driver's choice"), QStringLiteral("auto"));
     m_hwdec->addItem(tr("Hardware, with frame copy"), QStringLiteral("copy"));
     m_hwdec->addItem(tr("Software only"), QStringLiteral("off"));
     m_hwdec->setToolTip(
-        tr("Hardware decoding keeps the processor free and is the right choice "
-           "for main-stream resolutions.\n\n"
-           "If the picture shows green blocks or stalls, pick “with frame "
-           "copy”: it still decodes on the GPU but copies each frame to main "
-           "memory, which some drivers need when the video sits inside another "
-           "window."));
+        tr("“Recommended” names the decoder explicitly so that decoding and "
+           "drawing stay on the same graphics API. Left to itself, mpv may "
+           "decode through one API and draw through another, which on some "
+           "cards turns the picture solid green.\n\n"
+           "If the picture is broken, try the others in turn. “Software only” "
+           "always works but costs a whole processor core at full "
+           "resolution."));
     for (int i = 0; i < m_hwdec->count(); ++i)
         if (m_hwdec->itemData(i).toString() == m_config.hwdec)
             m_hwdec->setCurrentIndex(i);
@@ -571,12 +584,54 @@ QWidget *SettingsDialog::buildWindowTab()
     auto *decodeBox = new QGroupBox(tr("Video"), page);
     decodeBox->setLayout(decodeForm);
 
+    // ── diagnostics ─────────────────────────────────────────────────────────
+    m_debugLogging = new QCheckBox(tr("Detailed logging"), page);
+    m_debugLogging->setChecked(m_config.debugLogging);
+    m_debugLogging->setToolTip(
+        tr("Records every request to the camera, every decoder decision and "
+           "every reconnect, in ~/.local/share/leolink/leolink.log."));
+
+    auto *logNote = new QLabel(
+        tr("Errors and warnings are always recorded. Detailed logging adds the "
+           "conversation with the camera — switch it on when something is "
+           "wrong, reproduce it, then send the report from Help ▸ "
+           "Diagnostics. Passwords and tokens are removed before anything is "
+           "written."),
+        page);
+    logNote->setWordWrap(true);
+    logNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    auto *openDiagnostics = new QPushButton(tr("Open diagnostics…"), page);
+    connect(openDiagnostics, &QPushButton::clicked, this, [this] {
+        // Applied straight away: the user came here to record something, and
+        // having to press OK first would lose the very lines they wanted.
+        Log::setDebugEnabled(m_debugLogging->isChecked());
+        auto *dialog = new DiagnosticsDialog(this);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        connect(dialog, &DiagnosticsDialog::debugLoggingChanged,
+                m_debugLogging, &QCheckBox::setChecked);
+        dialog->show();
+    });
+
+    auto *logRow = new QHBoxLayout;
+    logRow->addWidget(openDiagnostics);
+    logRow->addStretch(1);
+
+    auto *logLayout = new QVBoxLayout;
+    logLayout->addWidget(m_debugLogging);
+    logLayout->addWidget(logNote);
+    logLayout->addLayout(logRow);
+
+    auto *logBox = new QGroupBox(tr("Diagnostics"), page);
+    logBox->setLayout(logLayout);
+
     auto *layout = new QVBoxLayout(page);
     layout->addWidget(chromeBox);
     layout->addWidget(decodeBox);
     layout->addWidget(trayBox);
     layout->addWidget(raiseBox);
     layout->addWidget(langBox);
+    layout->addWidget(logBox);
     layout->addStretch(1);
     return page;
 }
@@ -847,6 +902,8 @@ void SettingsDialog::onAccept()
     m_config.language = m_language->currentData().toString();
     m_config.hwdec = m_hwdec->currentData().toString();
     m_config.lowLatency = m_lowLatency->isChecked();
+    m_config.debugLogging = m_debugLogging->isChecked();
+    Log::setDebugEnabled(m_config.debugLogging);
 
     for (const CameraConfig &c : m_config.cameras) {
         if (c.host.isEmpty()) {

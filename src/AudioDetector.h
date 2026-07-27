@@ -51,6 +51,10 @@ private:
     void analyse(const QByteArray &window);
 
     QProcess *m_process{nullptr};
+    /// Camera name for the log, and a flag so a deliberate kill is not
+    /// reported as a fault.
+    QString m_label;
+    bool m_stopping{false};
     QByteArray m_buffer;
 
     double m_thresholdDb{-35.0};

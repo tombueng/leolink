@@ -94,6 +94,12 @@ QString CameraConfig::streamUrl() const
     if (transport == QLatin1String("custom"))
         return customUrl;
 
+    // Baichuan has no URL of its own: the protocol is spoken by leolink and
+    // re-served on a loopback port whose number is only known once the
+    // connection is up. VideoTile asks BaichuanStream for the address instead.
+    if (transport == QLatin1String("baichuan"))
+        return {};
+
     if (transport == QLatin1String("flv")) {
         // What the camera's own web UI uses. Lower latency than RTSP and it
         // only needs port 80, which helps when RTSP is filtered.
@@ -127,6 +133,13 @@ QString CameraConfig::streamUrl() const
 
 QString Config::path()
 {
+    // LEOLINK_CONFIG points somewhere else entirely. Useful for a second set of
+    // cameras, for a kiosk profile kept apart from a personal one, and for
+    // trying a setting without touching a configuration that works.
+    const QString override = qEnvironmentVariable("LEOLINK_CONFIG");
+    if (!override.isEmpty())
+        return override;
+
     const QString dir =
         QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     return dir + QStringLiteral("/config.json");
@@ -175,8 +188,9 @@ Config Config::load()
         root.value(QStringLiteral("flashMilliseconds")).toInt(1500);
     cfg.soundOnMotion = root.value(QStringLiteral("soundOnMotion")).toBool(false);
     cfg.soundFile = root.value(QStringLiteral("soundFile")).toString();
-    cfg.hwdec = root.value(QStringLiteral("hwdec")).toString(QStringLiteral("auto"));
+    cfg.hwdec = root.value(QStringLiteral("hwdec")).toString(QStringLiteral("hw"));
     cfg.lowLatency = root.value(QStringLiteral("lowLatency")).toBool(true);
+    cfg.debugLogging = root.value(QStringLiteral("debugLogging")).toBool(false);
 
     const QJsonArray arr = root.value(QStringLiteral("cameras")).toArray();
     for (const QJsonValue &v : arr) {
@@ -294,6 +308,7 @@ bool Config::save() const
     root[QStringLiteral("soundFile")] = soundFile;
     root[QStringLiteral("hwdec")] = hwdec;
     root[QStringLiteral("lowLatency")] = lowLatency;
+    root[QStringLiteral("debugLogging")] = debugLogging;
 
     // QSaveFile writes to a temporary and renames on commit, so an interrupted
     // write cannot leave a half-written camera list behind.
@@ -319,14 +334,19 @@ QString Config::effectiveRecordDir() const
 
 QString Config::mpvHwdecValue() const
 {
-    // "auto-safe" only enables backends mpv considers reliable; "vaapi-copy"
-    // adds a readback that costs a little bandwidth and cures the green-frame
-    // problem seen with zero-copy VAAPI inside an embedded EGL window.
     if (hwdec == QLatin1String("off"))
         return QStringLiteral("no");
     if (hwdec == QLatin1String("copy"))
         return QStringLiteral("auto-copy");
-    return QStringLiteral("auto-safe");
+    if (hwdec == QLatin1String("auto"))
+        return QStringLiteral("auto-safe");
+
+    // Named in order rather than left to mpv. mpv picks the first backend it
+    // can load, which on an AMD card meant decoding through Vulkan while
+    // rendering through OpenGL — a handover that produced a solid green
+    // picture. Listing vaapi first keeps both on the same API, and the list
+    // still falls back on hardware that has no VA-API at all.
+    return QStringLiteral("vaapi,nvdec,no");
 }
 
 QString Config::effectiveSoundFile() const

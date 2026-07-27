@@ -1,9 +1,13 @@
 #include "AudioDetector.h"
 
+#include "Log.h"
+
 #include <cmath>
 
 #include <QProcess>
 #include <QStandardPaths>
+
+#include "ProcessUtil.h"
 
 #include "Config.h"
 
@@ -71,7 +75,10 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
         return;
     }
 
+    m_stopping = false;
+    m_label = camera.label();
     m_process = new QProcess(this);
+    dieWithParent(m_process);
     const QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),
@@ -87,8 +94,11 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
     connect(m_process, &QProcess::readyReadStandardOutput,
             this, &AudioDetector::consume);
     connect(m_process, &QProcess::errorOccurred, this, [this] {
-        emit failed(tr("Sound detection stopped: %1")
-                        .arg(m_process ? m_process->errorString() : QString()));
+        if (m_stopping)
+            return;   // we killed it; that is not a fault
+        const QString reason = m_process ? m_process->errorString() : QString();
+        LEO_WARN(Motion, m_label, QStringLiteral("ffmpeg failed: %1").arg(reason));
+        emit failed(tr("Sound detection stopped: %1").arg(reason));
     });
 
     m_process->start(ffmpeg, args);
@@ -101,6 +111,7 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
 
 void AudioDetector::stop()
 {
+    m_stopping = true;
     if (!m_process)
         return;
     m_process->kill();

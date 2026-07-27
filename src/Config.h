@@ -130,16 +130,34 @@ public:
     QString language{QStringLiteral("system")};
 
     // ── decoding ────────────────────────────────────────────────────────────
-    /// "auto"  let the driver pick (fastest, but VAAPI surfaces in an embedded
-    ///         window can tear or show green blocks on some drivers)
-    /// "copy"  hardware decode, then copy frames to system memory — still far
-    ///         cheaper than software, and immune to that class of bug
-    /// "off"   software only
-    QString hwdec{QStringLiteral("auto")};
+    /// How video is decoded. Values: "hw", "auto", "copy", "off".
+    ///
+    /// The default names the backends explicitly instead of letting mpv pick,
+    /// and that is not a preference — it is measured. On this hardware mpv's
+    /// own choice was vulkan-copy while the renderer ran on OpenGL, and the
+    /// picture came out solid green. Screenshotting mpv's rendered window and
+    /// counting pixels where green dominates gave:
+    ///
+    ///     auto-copy    1.0000   unusable
+    ///     vaapi-copy   0.9778   unusable
+    ///     vaapi        0.0054   clean
+    ///     software     0.0000   clean
+    ///     vaapi,nvdec,no  0.0000   clean
+    ///
+    /// So the copy paths are the broken ones here, not the zero-copy path.
+    /// Naming a priority list keeps decode and rendering on the same API.
+    QString hwdec{QStringLiteral("hw")};
     /// Trade a little latency for a buffer. Off is fine for sub streams; a
     /// high-bitrate main stream needs somewhere to absorb network jitter.
     bool lowLatency{true};
     QString mpvHwdecValue() const;
+
+    // ── diagnostics ─────────────────────────────────────────────────────────
+    /// Record every request, decoder decision and reconnect. Off by default:
+    /// it is verbose enough to matter on a machine left running for weeks, and
+    /// the everyday log — errors, warnings, a thin line of activity — is
+    /// written either way so an unexpected failure is never unrecorded.
+    bool debugLogging{false};
 
     // ── alerting ────────────────────────────────────────────────────────────
     /// Tint the tile red briefly so a glance at the wall is enough.

@@ -24,6 +24,276 @@ TS_FILE = ROOT / "translations" / "leolink_de.ts"
 
 # Source string → German. Plain text, no XML escaping: that is applied on write.
 GERMAN: dict[str, str] = {
+    # ── diagnostics and logging ──
+    "Diagnostics": "Diagnose",
+    "&Diagnostics…": "&Diagnose…",
+    "What leolink and the cameras have been doing — and a report to attach to a "
+    "bug report.":
+        "Was leolink und die Kameras getan haben — und ein Bericht zum Anhängen "
+        "an eine Fehlermeldung.",
+    "Errors only": "Nur Fehler",
+    "Warnings and errors": "Warnungen und Fehler",
+    "Normal activity": "Normaler Betrieb",
+    "Everything": "Alles",
+    "All areas": "Alle Bereiche",
+    "Search…": "Suchen…",
+    "Show": "Zeigen",
+    "Detailed logging": "Ausführliche Protokollierung",
+    "Records every request to the camera, every decoder decision and every "
+    "reconnect. Leave it off for everyday use — switch it on when something is "
+    "wrong, reproduce the problem, then send the report.":
+        "Zeichnet jede Anfrage an die Kamera auf, jede Decoder-Entscheidung und "
+        "jeden Neuaufbau. Im Alltag ausgelassen — bei einem Problem einschalten, "
+        "den Fehler erneut auslösen, dann den Bericht schicken.",
+    "Records every request to the camera, every decoder decision and every "
+    "reconnect, in ~/.local/share/leolink/leolink.log.":
+        "Zeichnet jede Anfrage an die Kamera auf, jede Decoder-Entscheidung und "
+        "jeden Neuaufbau, in ~/.local/share/leolink/leolink.log.",
+    "Errors and warnings are always recorded. Detailed logging adds the "
+    "conversation with the camera — switch it on when something is wrong, "
+    "reproduce it, then send the report from Help ▸ Diagnostics. Passwords and "
+    "tokens are removed before anything is written.":
+        "Fehler und Warnungen werden immer aufgezeichnet. Die ausführliche "
+        "Protokollierung ergänzt den Dialog mit der Kamera — bei einem Problem "
+        "einschalten, den Fehler erneut auslösen, dann unter Hilfe ▸ Diagnose "
+        "den Bericht schicken. Passwörter und Sitzungsschlüssel werden vorher "
+        "entfernt.",
+    "Open diagnostics…": "Diagnose öffnen…",
+    "Open diagnostics": "Diagnose öffnen",
+    "Follow new lines": "Neuen Zeilen folgen",
+    "Copy report": "Bericht kopieren",
+    "System details and the log, ready to paste into a bug report.":
+        "Systemangaben und Protokoll, fertig zum Einfügen in eine Fehlermeldung.",
+    "Report copied.": "Bericht kopiert.",
+    "Save report…": "Bericht speichern…",
+    "Save report": "Bericht speichern",
+    "Text files (*.txt)": "Textdateien (*.txt)",
+    "Could not write %1.": "%1 ließ sich nicht schreiben.",
+    "Open log folder": "Protokollordner öffnen",
+    "Passwords, session tokens and internet addresses are removed before "
+    "anything is written, so this can be shared as it is. Addresses inside your "
+    "own network are kept — they are usually the first clue.":
+        "Passwörter, Sitzungsschlüssel und Internetadressen werden vor dem "
+        "Schreiben entfernt; der Bericht kann also so weitergegeben werden. "
+        "Adressen aus dem eigenen Netz bleiben stehen — sie sind meist der erste "
+        "Anhaltspunkt.",
+    "%1 of %2 lines": "%1 von %2 Zeilen",
+    "Report a problem": "Ein Problem melden",
+    "<b>Attach a diagnostics report</b>": "<b>Diagnosebericht anhängen</b>",
+    "It records what your machine is, what the cameras answered and where "
+    "things went wrong — with passwords and addresses already removed. Without "
+    "it, most reports cannot be followed up.\n\nIf the problem is one you can "
+    "trigger, switch on detailed logging in the diagnostics window first, make "
+    "it happen again, then copy the report.":
+        "Er hält fest, was für ein Rechner das ist, was die Kameras geantwortet "
+        "haben und wo es schiefging — Passwörter und Adressen sind bereits "
+        "entfernt. Ohne ihn lassen sich die meisten Meldungen nicht "
+        "weiterverfolgen.\n\nLässt sich das Problem gezielt auslösen, vorher im "
+        "Diagnosefenster die ausführliche Protokollierung einschalten, den "
+        "Fehler erneut herbeiführen und dann den Bericht kopieren.",
+    "Go to the issue tracker": "Zur Fehlerverwaltung",
+
+    # ── log categories ──
+    "Application": "Anwendung",
+    "Camera API": "Kamera-Schnittstelle",
+    "ONVIF events": "ONVIF-Ereignisse",
+    "Event actions": "Ereignisaktionen",
+    "Baichuan": "Baichuan",
+    "User interface": "Benutzeroberfläche",
+    "Qt": "Qt",
+
+    # ── Wi-Fi scan ──
+    "strong": "stark",
+    "good": "gut",
+    "fair": "mittel",
+    "weak": "schwach",
+    "unknown": "unbekannt",
+    "%1 — %2 (%3/4)": "%1 — %2 (%3/4)",
+    "Signal as the camera hears it: %1 of 4":
+        "Signal, wie die Kamera es empfängt: %1 von 4",
+    "Encryption: %1": "Verschlüsselung: %1",
+    "Some names were heard from several access points — that is a mesh. The "
+    "camera joins the name, not a particular node; the mesh decides which one "
+    "it talks to and hands it over as needed. To find the best spot, move the "
+    "camera and watch “Wi-Fi signal” above: that is the link it actually has.":
+        "Einige Namen kamen von mehreren Zugangspunkten — das ist ein "
+        "Mesh-Netz. Die Kamera verbindet sich mit dem Namen, nicht mit einem "
+        "bestimmten Knoten; welcher das ist, handeln Kamera und Mesh unter sich "
+        "aus und wechseln bei Bedarf. Für den besten Platz die Kamera "
+        "verschieben und oben „WLAN-Signal“ beobachten: das ist die Verbindung, "
+        "die sie tatsächlich hat.",
+
+    # ── capability probe ──
+    "What this camera supports": "Was diese Kamera unterstützt",
+    "Reolink firmware differs enormously between models, and the only reliable "
+    "way to know what a camera can do is to ask it. If something is missing "
+    "from leolink that your camera clearly has, this list in a bug report is "
+    "what makes it possible to add.":
+        "Die Reolink-Firmware unterscheidet sich stark zwischen den Modellen; "
+        "zuverlässig lässt sich nur durch Nachfragen klären, was eine Kamera "
+        "kann. Fehlt in leolink etwas, das die Kamera offensichtlich beherrscht, "
+        "macht genau diese Liste in einer Fehlermeldung das Nachrüsten möglich.",
+    "Ask the camera": "Kamera fragen",
+    "Copy the list": "Liste kopieren",
+    "Copied.": "Kopiert.",
+    "<b>Supported (%1):</b> %2<br><br><b>Not supported (%3):</b> %4":
+        "<b>Unterstützt (%1):</b> %2<br><br><b>Nicht unterstützt (%3):</b> %4",
+
+    # ── privacy areas ──
+    "Privacy": "Privatsphäre",
+    "Privacy areas…": "Privatzonen…",
+    "Parts of the view the camera blanks before anything leaves it.":
+        "Bildbereiche, die die Kamera schwärzt, bevor irgendetwas sie verlässt.",
+    "Blanked in the camera itself, so the covered part is missing from every "
+    "viewer and every recording — a neighbour's window, or a desk that should "
+    "not be on film.":
+        "In der Kamera selbst geschwärzt: der abgedeckte Teil fehlt in jedem "
+        "Betrachter und jeder Aufnahme — das Fenster der Nachbarn etwa, oder ein "
+        "Schreibtisch, der nicht auf Video gehört.",
+    "%1 — privacy areas": "%1 — Privatzonen",
+    "Drag out the parts of the view the camera should blank. It blacks them out "
+    "before anything leaves the device, so they are missing from the live "
+    "picture, from recordings and from every other client — including the "
+    "manufacturer's app.":
+        "Die Bereiche aufziehen, die die Kamera schwärzen soll. Sie schwärzt sie, "
+        "bevor etwas das Gerät verlässt — sie fehlen also im Livebild, in "
+        "Aufnahmen und in jedem anderen Programm, auch in der App des "
+        "Herstellers.",
+    "Remove the last": "Letzte entfernen",
+    "Remove all": "Alle entfernen",
+    "No picture: %1 — the areas can still be drawn.":
+        "Kein Bild: %1 — die Bereiche lassen sich trotzdem einzeichnen.",
+    "%1 of %2 areas": "%1 von %2 Bereichen",
+    "nothing blanked": "nichts geschwärzt",
+
+    # ── detection area and schedules ──
+    "Detection area…": "Erfassungsbereich…",
+    "Which parts of the picture the camera watches. Everything outside the area "
+    "is ignored — a road at the edge of view, a tree in the wind, a neighbour's "
+    "door.":
+        "Welche Bildteile die Kamera überwacht. Alles außerhalb wird ignoriert — "
+        "eine Straße am Bildrand, ein Baum im Wind, die Tür der Nachbarn.",
+    "%1 — the camera's detection area": "%1 — Erfassungsbereich der Kamera",
+    "Drag over the picture to choose what the camera watches. Darkened areas "
+    "are ignored. This is the camera's own grid, %1 by %2, so it is finer than "
+    "leolink's own.":
+        "Über das Bild ziehen, um festzulegen, was die Kamera überwacht. "
+        "Abgedunkelte Bereiche werden ignoriert. Das ist das Raster der Kamera "
+        "selbst, %1 mal %2, also feiner als das von leolink.",
+    "When to watch…": "Wann überwachen…",
+    "Hours of the week the camera raises motion events at all.":
+        "Stunden der Woche, in denen die Kamera überhaupt Bewegungsereignisse "
+        "meldet.",
+    "%1 — when to watch": "%1 — wann überwachen",
+    "Hours in which the camera raises motion events. Outside them it still "
+    "sees, but says nothing.":
+        "Stunden, in denen die Kamera Bewegungsereignisse meldet. Außerhalb "
+        "sieht sie weiterhin, sagt aber nichts.",
+    "When to record…": "Wann aufnehmen…",
+    "Hours of the week the camera records to its card by itself.":
+        "Stunden der Woche, in denen die Kamera von sich aus auf ihre Karte "
+        "aufnimmt.",
+    "%1 — when to record": "%1 — wann aufnehmen",
+    "Hours in which the camera records to its own card. This needs a card "
+    "fitted; recording to this computer is set under Cameras → Events and works "
+    "without one.":
+        "Stunden, in denen die Kamera auf ihre eigene Karte aufnimmt. Dafür muss "
+        "eine Karte eingesetzt sein; die Aufnahme auf diesen Rechner wird unter "
+        "Kameras → Ereignisse eingestellt und kommt ohne Karte aus.",
+    "Area, times and sensitivity": "Bereich, Zeiten und Empfindlichkeit",
+    "To": "Bis",
+    "Cameras allow a different sensitivity at different times of day, which is "
+    "how you stop headlights at night triggering everything without going deaf "
+    "during the day.":
+        "Kameras erlauben je nach Tageszeit eine andere Empfindlichkeit — so "
+        "lösen Scheinwerfer nachts nicht mehr alles aus, ohne dass die Kamera "
+        "tagsüber blind wird.",
+
+    # ── weekly schedule editor ──
+    "All week": "Ganze Woche",
+    "Never": "Nie",
+    "Nights": "Nachts",
+    "Working hours": "Arbeitszeit",
+    "Weekends": "Wochenende",
+    "22:00 to 06:00, every day.": "22:00 bis 06:00, täglich.",
+    "08:00 to 17:00, Monday to Friday.": "08:00 bis 17:00, Montag bis Freitag.",
+    "Nothing is selected — this will never run.":
+        "Nichts ausgewählt — das läuft dann nie.",
+    "Always on.": "Immer aktiv.",
+
+    # ── mobile data ──
+    "Mobile data": "Mobilfunk",
+    "SIM card": "SIM-Karte",
+    "PIN": "PIN",
+    "Only needed if the card asks for one. Three wrong tries lock the card and "
+    "it then needs a PUK, which only your operator has.":
+        "Nur nötig, wenn die Karte danach fragt. Nach drei Fehlversuchen ist die "
+        "Karte gesperrt und braucht eine PUK, die nur der Anbieter hat.",
+    "Access point (APN)": "Zugangspunkt (APN)",
+    "Authentication": "Anmeldeverfahren",
+    "Use mobile data": "Mobilfunk verwenden",
+    "Modem": "Modem",
+    "Card": "Karte",
+    "Type": "Art",
+    "Signal": "Signal",
+    "IMEI": "IMEI",
+    "Card number": "Kartennummer",
+    "Mobile connection": "Mobilfunkverbindung",
+    "Data used": "Verbrauchtes Datenvolumen",
+    "Monthly limit": "Monatsgrenze",
+    "<b>Not tested on real hardware.</b> Nobody involved in leolink owns a "
+    "camera with a modem, so this was written from the protocol alone. It "
+    "cannot damage anything — a command the camera does not know is simply "
+    "refused — but it may equally show nothing at all.\n\nIf your camera has a "
+    "SIM, “What this camera supports” under Maintenance lists the commands its "
+    "firmware actually has. That list, in a bug report, is what would let this "
+    "be finished properly.":
+        "<b>Nicht an echter Hardware getestet.</b> Niemand an leolink Beteiligter "
+        "besitzt eine Kamera mit Modem; das hier entstand allein anhand des "
+        "Protokolls. Kaputtgehen kann nichts — einen unbekannten Befehl weist "
+        "die Kamera einfach ab — genauso gut kann aber gar nichts erscheinen."
+        "\n\nHat Ihre Kamera eine SIM-Karte, listet „Was diese Kamera "
+        "unterstützt“ unter Wartung die Befehle auf, die die Firmware "
+        "tatsächlich kennt. Diese Liste in einer Fehlermeldung wäre das, was den "
+        "Ausbau möglich macht.",
+
+    # ── Baichuan transport ──
+    "Baichuan (the camera's own protocol)":
+        "Baichuan (das eigene Protokoll der Kamera)",
+    "RTSP suits most cameras and is what to try first.\n\nHTTP-FLV needs only "
+    "port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's "
+    "own app speaks. It is the answer for cameras that keep RTSP switched off — "
+    "battery models do — and it does not use the camera's small pool of web "
+    "sessions. Video only: sound still comes over RTSP.":
+        "RTSP passt zu den meisten Kameras und ist der erste Versuch."
+        "\n\nHTTP-FLV braucht nur Port 80, was hilft, wo RTSP gesperrt ist."
+        "\n\nBaichuan spricht Reolinks eigene App. Es ist die Antwort für "
+        "Kameras, die RTSP abgeschaltet lassen — Akkumodelle tun das — und es "
+        "belegt keine der wenigen Websitzungen der Kamera. Nur Video: der Ton "
+        "kommt weiterhin über RTSP.",
+    "connecting over Baichuan…": "verbinde über Baichuan…",
+    "Cannot open a local port: %1": "Lokaler Port ließ sich nicht öffnen: %1",
+    "Baichuan login failed: %1": "Baichuan-Anmeldung fehlgeschlagen: %1",
+    "The camera refused to send video: %1":
+        "Die Kamera verweigerte die Videoübertragung: %1",
+    "The player did not connect.": "Der Player hat sich nicht verbunden.",
+    "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
+
+    # ── maintenance ──
+    "Factory reset is not offered here. It clears the network settings too, and "
+    "a camera that has forgotten its Wi-Fi has to be taken down and reached by "
+    "cable — use the camera's own web interface if you really want that.":
+        "Das Zurücksetzen auf Werkseinstellungen gibt es hier nicht. Es löscht "
+        "auch die Netzwerkeinstellungen, und eine Kamera, die ihr WLAN vergessen "
+        "hat, muss abgenommen und per Kabel erreicht werden — wer das wirklich "
+        "will, nimmt die Weboberfläche der Kamera.",
+    "The camera has no free sessions. It allows only a handful at once, shared "
+    "with the phone app and its web page. Close those, or wait a minute for the "
+    "old ones to lapse.":
+        "Die Kamera hat keine freien Sitzungen. Sie erlaubt nur eine Handvoll "
+        "gleichzeitig, geteilt mit der Handy-App und ihrer Webseite. Diese "
+        "schließen oder eine Minute warten, bis die alten ablaufen.",
+
     # ── menus ──
     "&File": "&Datei",
     "&View": "&Ansicht",
@@ -108,6 +378,7 @@ GERMAN: dict[str, str] = {
     "player init failed": "Wiedergabe ließ sich nicht starten",
     "MOTION": "BEWEGUNG",
     "Mute this camera": "Diese Kamera stummschalten",
+    "Unmute this camera": "Stummschaltung aufheben",
     "Volume": "Lautstärke",
     "Camera settings": "Kameraeinstellungen",
 
@@ -503,6 +774,397 @@ GERMAN: dict[str, str] = {
     "Saved to %1": "Gespeichert unter %1",
     "Download failed: %1": "Herunterladen fehlgeschlagen: %1",
 
+    # ── maintenance ──
+    "Maintenance": "Wartung",
+    "Restart": "Neustart",
+    "Restart the camera": "Kamera neu starten",
+    "The camera goes off the network for a minute or so and comes back on its "
+    "own. Recordings on its SD card are not affected, and settings are kept.\n\n"
+    "Worth trying when a camera has stopped answering, is refusing new "
+    "connections, or has drifted out of step after a firmware update.":
+        "Die Kamera ist etwa eine Minute lang nicht erreichbar und meldet sich "
+        "danach von selbst zurück. Aufnahmen auf der SD-Karte und Einstellungen "
+        "bleiben erhalten.\n\n"
+        "Einen Versuch wert, wenn eine Kamera nicht mehr antwortet, keine neuen "
+        "Verbindungen annimmt oder sich nach einem Firmware-Update seltsam "
+        "verhält.",
+    "<b>Restart %1?</b>": "<b>%1 neu starten?</b>",
+    "The picture will be gone for about a minute. Anything being recorded right "
+    "now will stop.":
+        "Das Bild ist etwa eine Minute lang weg. Eine gerade laufende Aufnahme "
+        "wird beendet.",
+    "Asking %1 to restart…": "Fordere Neustart von %1 an…",
+    "Restarting. The camera will be back in about a minute.":
+        "Startet neu. Die Kamera ist in etwa einer Minute wieder da.",
+    "Factory reset and formatting the SD card are not offered here. Both are "
+    "irreversible and are better done in the camera's own web interface, where "
+    "the warnings are the manufacturer's.":
+        "Werksreset und das Formatieren der SD-Karte gibt es hier bewusst "
+        "nicht. Beides ist unumkehrbar und gehört in die Weboberfläche der "
+        "Kamera, wo die Warnungen vom Hersteller stammen.",
+
+    # ── network tab and signal ──
+    "Network": "Netzwerk",
+    "Connection": "Verbindung",
+    "Reading…": "Lese…",
+    "Wi-Fi signal": "WLAN-Signal",
+    "Wi-Fi signal unknown": "WLAN-Signal unbekannt",
+    "Wi-Fi signal %1 of %2": "WLAN-Signal %1 von %2",
+    "Link": "Anbindung",
+    "Address": "Adresse",
+    "Netmask": "Netzmaske",
+    "Gateway": "Gateway",
+    "MAC": "MAC",
+    "DNS": "DNS",
+    "Network name": "Netzwerkname",
+    "Ports": "Ports",
+    "The camera reported nothing.": "Die Kamera hat nichts gemeldet.",
+    "Shown for reference. Addresses, Wi-Fi credentials and ports are changed "
+    "in the camera's own web interface — a mistake here would put the camera "
+    "out of reach.":
+        "Nur zur Information. Adressen, WLAN-Zugangsdaten und Ports werden in "
+        "der Weboberfläche der Kamera geändert — ein Fehler hier würde die "
+        "Kamera unerreichbar machen.",
+
+    # ── decoding, reworded ──
+    "Hardware, with frame copy (recommended)":
+        "Hardware, mit Bildkopie (empfohlen)",
+    "Hardware, zero copy (fastest)": "Hardware, ohne Kopie (am schnellsten)",
+    "All three decode on the graphics card where it can.\n\n"
+    "“With frame copy” hands each frame through main memory. It is a few "
+    "percent slower and it is the default, because the zero-copy path produces "
+    "green blocks or a frozen picture on several drivers when the video sits "
+    "inside another window.\n\n"
+    "Try “zero copy” if you want the last few percent; go back if the picture "
+    "breaks up.":
+        "Alle drei dekodieren auf der Grafikkarte, soweit möglich.\n\n"
+        "„Mit Bildkopie“ reicht jedes Bild durch den Hauptspeicher. Das ist "
+        "wenige Prozent langsamer und die Vorgabe, weil der Weg ohne Kopie auf "
+        "mehreren Treibern grüne Flächen oder ein stehendes Bild erzeugt, wenn "
+        "das Video in einem anderen Fenster eingebettet ist.\n\n"
+        "„Ohne Kopie“ holt die letzten Prozent heraus; bei Bildfehlern wieder "
+        "zurückstellen.",
+
+    # ── camera sections (generated forms) ──
+    "This camera does not offer these settings.":
+        "Diese Kamera bietet diese Einstellungen nicht.",
+    "Exposure and orientation": "Belichtung und Ausrichtung",
+    "Day / night": "Tag / Nacht",
+    "Automatic": "Automatisch",
+    "Always colour": "Immer Farbe",
+    "Always black and white": "Immer Schwarzweiß",
+    "“Auto” switches to infrared as the light goes. Forcing colour at night "
+    "gives a picture too dark to use; forcing black and white by day loses "
+    "colour for nothing.":
+        "„Automatisch“ schaltet bei nachlassendem Licht auf Infrarot um. "
+        "Erzwungene Farbe nachts ergibt ein zu dunkles Bild; erzwungenes "
+        "Schwarzweiß tagsüber verschenkt die Farbe ohne Gegenwert.",
+    "Anti-flicker": "Flimmerfilter",
+    "Match your mains frequency — 50 Hz in Europe — or indoor lighting will "
+    "beat against the shutter and the picture will pulse.":
+        "Auf die Netzfrequenz stellen — in Europa 50 Hz — sonst schwebt "
+        "Kunstlicht gegen den Verschluss und das Bild pulsiert.",
+    "Exposure": "Belichtung",
+    "Mirror": "Spiegeln",
+    "Flip": "Kippen",
+    "For a camera mounted upside down.": "Für über Kopf montierte Kameras.",
+    "Backlight compensation": "Gegenlichtausgleich",
+    "Helps when the subject stands against a bright window or sky.":
+        "Hilft, wenn das Motiv vor einem hellen Fenster oder Himmel steht.",
+    "Noise reduction": "Rauschunterdrückung",
+    "Cleans up a dark picture, at the cost of smearing anything that moves.":
+        "Beruhigt ein dunkles Bild, verschmiert dafür alles, was sich bewegt.",
+    "Rotation": "Drehung",
+    "Dynamic contrast": "Dynamischer Kontrast",
+    "Infrared illumination": "Infrarotbeleuchtung",
+    "Infrared lamps": "Infrarotlampen",
+    "Always on": "Immer an",
+    "Always off": "Immer aus",
+    "“Auto” turns them on when it gets dark. Switch them off if the camera "
+    "looks through glass — the reflection blinds it.":
+        "„Automatisch“ schaltet sie bei Dunkelheit ein. Bei Blick durch eine "
+        "Scheibe abschalten — die Reflexion blendet die Kamera.",
+
+    # ── overlay ──
+    "Overlay": "Einblendung",
+    "On-screen text": "Text im Bild",
+    "Background": "Hintergrund",
+    "Draws a box behind the text so it stays readable over a bright scene.":
+        "Legt einen Kasten hinter den Text, damit er auch vor hellem "
+        "Hintergrund lesbar bleibt.",
+    "Watermark": "Wasserzeichen",
+    "Embeds a mark in the recording itself.":
+        "Bettet eine Markierung in die Aufnahme selbst ein.",
+    "The camera burns this into the picture, so it appears in every recording "
+    "and every client — not only here.":
+        "Die Kamera brennt das ins Bild — es erscheint in jeder Aufnahme und "
+        "in jedem Client, nicht nur hier.",
+
+    # ── detection in the camera ──
+    "Motion detection in the camera": "Bewegungserkennung in der Kamera",
+    "Switched on": "Eingeschaltet",
+    "Higher notices more, including shadows and headlights.":
+        "Höher erkennt mehr — auch Schatten und Scheinwerfer.",
+    "This is the camera's own detection, the one it reports over ONVIF. "
+    "leolink's own analysis of the picture is set separately, under "
+    "Cameras → Events.":
+        "Das ist die Erkennung der Kamera selbst, die sie über ONVIF meldet. "
+        "leolinks eigene Bildanalyse wird getrennt eingestellt, unter "
+        "Kameras → Ereignisse.",
+
+    # ── recording on the camera ──
+    "Recording": "Aufnahme",
+    "Recording to the camera's card": "Aufnahme auf die Karte der Kamera",
+    "Overwrite when full": "Bei vollem Speicher überschreiben",
+    "Off means recording simply stops once the card fills up.":
+        "Aus bedeutet, dass die Aufnahme bei voller Karte einfach endet.",
+    "Record before the event": "Vorlauf aufzeichnen",
+    "Keeps the seconds leading up to a trigger, which is usually the "
+    "interesting part.":
+        "Behält die Sekunden vor dem Auslöser — meist der interessante Teil.",
+    "Keep recording after": "Nachlauf aufzeichnen",
+    "File length": "Dateilänge",
+    "These govern what the camera writes to its own SD card. Recording to this "
+    "computer is set under Cameras → Events and needs no card.":
+        "Das steuert, was die Kamera auf ihre eigene SD-Karte schreibt. Die "
+        "Aufnahme auf diesen Rechner wird unter Kameras → Ereignisse "
+        "eingestellt und braucht keine Karte.",
+
+    # ── alerts from the camera ──
+    "Alerts": "Benachrichtigungen",
+    "E-mail": "E-Mail",
+    "FTP": "FTP",
+    "FTP upload": "FTP-Upload",
+    "Push notification": "Push-Nachricht",
+    "Server": "Server",
+    "Port": "Port",
+    "Send to": "Senden an",
+    "Encrypted": "Verschlüsselt",
+    "Not more often than": "Höchstens alle",
+    "Attach": "Anhang",
+    "Directory": "Verzeichnis",
+    "Mode": "Modus",
+    "Schedule": "Zeitplan",
+    "Sent by the camera itself, so they keep working when this computer is "
+    "switched off. leolink's own reactions — commands, webhooks, MQTT — are "
+    "under Cameras → Events.":
+        "Verschickt die Kamera selbst, sie funktionieren also auch bei "
+        "ausgeschaltetem Rechner. leolinks eigene Reaktionen — Befehle, "
+        "Webhooks, MQTT — stehen unter Kameras → Ereignisse.",
+
+    # ── time ──
+    "Time": "Zeit",
+    "Time server": "Zeitserver",
+    "Synchronise the clock": "Uhr abgleichen",
+    "Every": "Alle",
+    "Scheduled restart": "Geplanter Neustart",
+    "Restart regularly": "Regelmäßig neu starten",
+    "Some cameras become unreliable after weeks of uptime; a weekly restart is "
+    "a cheap cure.":
+        "Manche Kameras werden nach Wochen Laufzeit unzuverlässig; ein "
+        "wöchentlicher Neustart ist ein billiges Gegenmittel.",
+    "Day": "Tag",
+    "Hour": "Stunde",
+    "Minute": "Minute",
+    "A camera with the wrong clock stamps its recordings wrongly, which is "
+    "worth more than it sounds when you need to find one.":
+        "Eine Kamera mit falscher Uhr stempelt ihre Aufnahmen falsch — das "
+        "wiegt schwerer, als es klingt, wenn man eine davon sucht.",
+
+    # ── wifi setup ──
+    "Wi-Fi": "WLAN",
+    "Network": "Netzwerk",
+    "Scan": "Suchen",
+    "Join network": "Netzwerk beitreten",
+    "scanning…": "suche…",
+    "The camera is scanning for networks…": "Die Kamera sucht nach Netzwerken…",
+    "The camera scans, not this computer — what it can reach is what counts. "
+    "The password is tried before it is saved, so a typo is refused rather "
+    "than leaving the camera on no network at all.":
+        "Es sucht die Kamera, nicht dieser Rechner — entscheidend ist, was sie "
+        "erreicht. Das Passwort wird vor dem Speichern geprüft; ein Tippfehler "
+        "wird also abgewiesen, statt die Kamera ohne Netz zurückzulassen.",
+    "Change the camera's network": "Netzwerk der Kamera wechseln",
+    "<b>Move %1 to “%2”?</b>": "<b>%1 in „%2“ umziehen?</b>",
+    "The camera tests the password first and refuses if it is wrong, so this "
+    "is safer than it sounds.\n\n"
+    "It will still disappear for a minute while it reconnects, and if the new "
+    "network hands out a different address you will have to update it here "
+    "afterwards.":
+        "Die Kamera prüft das Passwort vorab und lehnt ein falsches ab — das "
+        "ist also ungefährlicher, als es klingt.\n\n"
+        "Sie verschwindet trotzdem für eine Minute, und wenn das neue Netz "
+        "eine andere Adresse vergibt, muss sie hier nachgetragen werden.",
+    "Join": "Beitreten",
+    "Testing the password on the camera…": "Prüfe das Passwort auf der Kamera…",
+    "Saved. The camera is reconnecting and will be back shortly.":
+        "Gespeichert. Die Kamera verbindet sich neu und ist gleich wieder da.",
+    "The camera could not join that network: %1":
+        "Die Kamera konnte diesem Netzwerk nicht beitreten: %1",
+    "Addresses and ports are read here but changed in the camera's own web "
+    "interface. Getting one wrong takes the camera off the network entirely, "
+    "and the only way back is the reset pin — a warning dialog is no "
+    "substitute for the manufacturer's own screen there.":
+        "Adressen und Ports werden hier nur gelesen und in der Weboberfläche "
+        "der Kamera geändert. Ein Fehler nimmt die Kamera komplett vom Netz, "
+        "und der einzige Weg zurück ist die Reset-Nadel — dafür ist ein "
+        "Warnhinweis kein Ersatz für den Bildschirm des Herstellers.",
+
+    # ── stream status ──
+    "%1 fps": "%1 fps",
+    "%1 Mbit/s": "%1 Mbit/s",
+    "%1 kbit/s": "%1 kbit/s",
+    "stream lost — reconnecting (%1)": "Stream verloren — verbinde neu (%1)",
+
+    # ── decoder options and signal ──
+    "Hardware (recommended)": "Hardware (empfohlen)",
+    "Hardware, driver's choice": "Hardware, Treiberwahl",
+    "“Recommended” names the decoder explicitly so that decoding and drawing "
+    "stay on the same graphics API. Left to itself, mpv may decode through one "
+    "API and draw through another, which on some cards turns the picture solid "
+    "green.\n\n"
+    "If the picture is broken, try the others in turn. “Software only” always "
+    "works but costs a whole processor core at full resolution.":
+        "„Empfohlen“ benennt den Decoder ausdrücklich, damit Dekodieren und "
+        "Zeichnen auf derselben Grafik-API bleiben. Sich selbst überlassen, "
+        "dekodiert mpv womöglich über die eine API und zeichnet über die "
+        "andere — auf manchen Karten wird das Bild dann komplett grün.\n\n"
+        "Bei kaputtem Bild die anderen der Reihe nach probieren. „Nur "
+        "Software“ funktioniert immer, kostet bei voller Auflösung aber einen "
+        "ganzen Prozessorkern.",
+    "Mobile data": "Mobilfunk",
+    "Wired": "Kabel",
+    "%1 — strength unknown": "%1 — Stärke unbekannt",
+    "%1 — %2 of %3": "%1 — %2 von %3",
+
+    # ── stream health ──
+    "WEAK SIGNAL": "SCHWACHES SIGNAL",
+    "BAD STREAM": "GESTÖRTER STROM",
+    "stream ended (%1) — reconnecting":
+        "Stream beendet (%1) — verbinde neu",
+    "Open the &log file": "&Protokolldatei öffnen",
+    "What the players and the cameras reported. Worth attaching to a bug "
+    "report.":
+        "Was die Wiedergabe und die Kameras gemeldet haben. Gehört an einen "
+        "Fehlerbericht.",
+    "Nothing logged yet.": "Noch nichts protokolliert.",
+
+    # ── bitrate warning ──
+    "Bit rate looks too low": "Bitrate wirkt zu niedrig",
+    "<b>%1 kbit/s is very little for %2.</b>":
+        "<b>%1 kbit/s sind sehr wenig für %2.</b>",
+    "At this ratio the camera's encoder tends to emit damaged frames, which "
+    "arrive as green blocks or a picture that freezes — not a network fault, "
+    "and not something leolink can repair fully.\n\n"
+    "Either raise the bit rate or lower the resolution.":
+        "In diesem Verhältnis erzeugt der Encoder der Kamera beschädigte "
+        "Bilder, die als grüne Flächen oder stehendes Bild ankommen — kein "
+        "Netzwerkfehler, und von leolink nicht vollständig zu reparieren.\n\n"
+        "Entweder die Bitrate erhöhen oder die Auflösung senken.",
+    "Apply anyway": "Trotzdem anwenden",
+
+    "camera is reconfiguring…": "Kamera stellt sich um…",
+
+    # ── tests, condition, firmware, storage ──
+    "Send a test e-mail": "Test-E-Mail senden",
+    "Test the FTP upload": "FTP-Upload testen",
+    "Asking the camera to send a test e-mail…":
+        "Bitte die Kamera, eine Test-E-Mail zu senden…",
+    "Asking the camera to try the FTP server…":
+        "Bitte die Kamera, den FTP-Server zu versuchen…",
+    "%1: the camera reported success.": "%1: Die Kamera meldet Erfolg.",
+    "Condition": "Zustand",
+    "Processor load %1%": "Prozessorlast %1 %",
+    "Encoder load %1%": "Encoder-Last %1 %",
+    "Network throughput %1 kbit/s": "Netzdurchsatz %1 kbit/s",
+    "The camera is at its limit. Lowering the resolution or frame rate will "
+    "steady it.":
+        "Die Kamera ist am Anschlag. Eine niedrigere Auflösung oder Bildrate "
+        "beruhigt sie.",
+    "Firmware": "Firmware",
+    "Not checked.": "Nicht geprüft.",
+    "Check for updates": "Nach Aktualisierung suchen",
+    "Asking Reolink…": "Frage bei Reolink an…",
+    "Install update": "Aktualisierung einspielen",
+    "Update available: %1": "Aktualisierung verfügbar: %1",
+    "The firmware is up to date.": "Die Firmware ist aktuell.",
+    "Install firmware": "Firmware einspielen",
+    "<b>Update the firmware on %1?</b>": "<b>Firmware auf %1 aktualisieren?</b>",
+    "The camera downloads the update itself and restarts. It will be "
+    "unreachable for several minutes.\n\n"
+    "Do not cut its power during the update — a camera interrupted mid-flash "
+    "usually needs sending back.":
+        "Die Kamera lädt die Aktualisierung selbst und startet neu. Sie ist "
+        "dabei mehrere Minuten nicht erreichbar.\n\n"
+        "Währenddessen keinesfalls die Stromversorgung trennen — eine mitten "
+        "im Schreibvorgang unterbrochene Kamera muss meist eingeschickt "
+        "werden.",
+    "Install": "Einspielen",
+    "Upgrading. The camera will restart on its own and be unreachable for "
+    "several minutes. Do not cut its power.":
+        "Wird eingespielt. Die Kamera startet von selbst neu und ist einige "
+        "Minuten nicht erreichbar. Strom nicht trennen.",
+    "Storage": "Speicher",
+    "Format the SD card": "SD-Karte formatieren",
+    "Formatting erases every recording on the card. There is no undo and no "
+    "confirmation from the camera afterwards.":
+        "Formatieren löscht jede Aufnahme auf der Karte. Das lässt sich nicht "
+        "rückgängig machen, und die Kamera bestätigt es hinterher nicht.",
+    "<b>Erase everything on the card in %1?</b>":
+        "<b>Alles auf der Karte in %1 löschen?</b>",
+    "Every recording on the card is deleted. This cannot be undone, and "
+    "nothing that has not already been downloaded can be recovered.":
+        "Jede Aufnahme auf der Karte wird gelöscht. Das ist unumkehrbar, und "
+        "was nicht bereits heruntergeladen wurde, ist verloren.",
+    "Erase": "Löschen",
+    "Formatting…": "Formatiere…",
+    "The card has been formatted.": "Die Karte wurde formatiert.",
+    "Factory reset is not offered here. It clears the network settings as "
+    "well, and a camera that has forgotten its Wi-Fi has to be fetched down "
+    "and reset by hand.":
+        "Werksreset gibt es hier nicht. Er löscht auch die Netzwerk"
+        "einstellungen, und eine Kamera, die ihr WLAN vergessen hat, muss man "
+        "herunterholen und von Hand einrichten.",
+
+    # ── users ──
+    "Users": "Benutzer",
+    "Rights": "Rechte",
+    "Administrator": "Administrator",
+    "Viewer": "Betrachter",
+    "Add…": "Hinzufügen…",
+    "Change password…": "Passwort ändern…",
+    "Delete": "Löschen",
+    "New user": "Neuer Benutzer",
+    "User name": "Benutzername",
+    "Password for %1": "Passwort für %1",
+    "Creating %1…": "Lege %1 an…",
+    "Change password": "Passwort ändern",
+    "New password for %1": "Neues Passwort für %1",
+    "Changing the password for %1…": "Ändere das Passwort für %1…",
+    "This is the account leolink uses": "Das ist das Konto, das leolink nutzt",
+    "Change it here and leolink will be locked out until the new password is "
+    "entered under Cameras as well.":
+        "Wird es hier geändert, ist leolink ausgesperrt, bis das neue Passwort "
+        "auch unter Kameras eingetragen ist.",
+    "Cannot delete this account": "Dieses Konto lässt sich nicht löschen",
+    "leolink is signed in as “%1”. Deleting it would cut the connection to "
+    "this camera immediately.":
+        "leolink ist als „%1“ angemeldet. Ein Löschen würde die Verbindung zu "
+        "dieser Kamera sofort kappen.",
+    "Delete user": "Benutzer löschen",
+    "Delete “%1” from the camera?": "„%1“ von der Kamera löschen?",
+    "Deleting %1…": "Lösche %1…",
+    "Done.": "Fertig.",
+    "These are accounts on the camera, not in leolink. A viewer account can "
+    "watch but not change anything — worth using for anything that only needs "
+    "to see the picture, so a stored password cannot be turned against the "
+    "camera's settings.":
+        "Das sind Konten auf der Kamera, nicht in leolink. Ein Betrachterkonto "
+        "darf zusehen, aber nichts ändern — sinnvoll überall dort, wo nur das "
+        "Bild gebraucht wird, damit ein gespeichertes Passwort nicht gegen die "
+        "Einstellungen der Kamera verwendet werden kann.",
+    "camera is reconfiguring… %1 s": "Kamera stellt sich um… %1 s",
+
     # ── errors from the camera ──
     "File format not recognised.": "Dateiformat nicht erkannt.",
     "Invalid input.": "Ungültige Eingabe.",
@@ -545,11 +1207,39 @@ GERMAN: dict[str, str] = {
 
 # Plural forms need one <numerusform> per German plural (singular, plural).
 PLURALS: dict[str, list[str]] = {
+    ", %n access point(s)": [", %n Zugangspunkt", ", %n Zugangspunkte"],
+    "Heard from %n access point(s) — one network, several nodes. The strongest "
+    "is what is shown.": [
+        "Von %n Zugangspunkt empfangen — ein Netz, mehrere Knoten. Angezeigt "
+        "wird der stärkste.",
+        "Von %n Zugangspunkten empfangen — ein Netz, mehrere Knoten. Angezeigt "
+        "wird der stärkste."],
+    "%n network(s) found, strongest first.": [
+        "%n Netz gefunden, stärkstes zuerst.",
+        "%n Netze gefunden, stärkstes zuerst."],
+    "Asking about %n command(s)…": ["Frage %n Befehl ab…", "Frage %n Befehle ab…"],
+    "%n area(s) blanked": ["%n Bereich geschwärzt", "%n Bereiche geschwärzt"],
+    "%n area(s), switched off": ["%n Bereich, abgeschaltet",
+                                 "%n Bereiche, abgeschaltet"],
+    "%n hour(s) a week.": ["%n Stunde pro Woche.", "%n Stunden pro Woche."],
+
     "%n camera(s) live": ["%n Kamera live", "%n Kameras live"],
     "Saved %n snapshot(s)": ["%n Standbild gespeichert",
                              "%n Standbilder gespeichert"],
     "Found %n device(s)…": ["%n Gerät gefunden…", "%n Geräte gefunden…"],
     "%n recording(s) found.": ["%n Aufnahme gefunden.", "%n Aufnahmen gefunden."],
+    "%n network(s) found.": ["%n Netzwerk gefunden.", "%n Netzwerke gefunden."],
+    "%n damaged frame(s) in the last ten seconds.\n\n"
+    "Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. "
+    "leolink repairs what it can — this is what it could not.": [
+        "%n beschädigtes Bild in den letzten zehn Sekunden.\n\n"
+        "Meist ein schwaches WLAN-Signal oder eine für die Auflösung zu "
+        "niedrige Bitrate. leolink repariert, was es kann — das hier ging "
+        "nicht mehr.",
+        "%n beschädigte Bilder in den letzten zehn Sekunden.\n\n"
+        "Meist ein schwaches WLAN-Signal oder eine für die Auflösung zu "
+        "niedrige Bitrate. leolink repariert, was es kann — das hier ging "
+        "nicht mehr."],
 }
 
 
