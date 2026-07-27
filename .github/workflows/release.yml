@@ -1,0 +1,169 @@
+name: Release
+
+# Everything a release needs is built here rather than on somebody's machine:
+# the artefacts people download should come from a known source tree with a
+# recorded log, not from whichever laptop happened to be to hand.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build a release for"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  packages:
+    name: deb, rpm and source archive
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
+            qt6-tools-dev qt6-tools-dev-tools \
+            libmpv-dev rpm desktop-file-utils appstream
+
+      - name: Build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+
+      # A store submission that fails on malformed metadata wastes a review
+      # round trip. This is the same check the everyday build runs.
+      - name: Validate desktop entry and AppStream data
+        run: cmake --build build --target validate-metadata
+
+      - name: Package
+        working-directory: build
+        run: |
+          cpack -G DEB
+          cpack -G RPM
+          cpack -G TGZ
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-packages
+          path: |
+            build/*.deb
+            build/*.rpm
+            build/*.tar.gz
+          if-no-files-found: error
+
+  appimage:
+    name: AppImage
+    # Not 22.04: it carries Qt 6.2 and leolink needs 6.4. The AppImage bundles
+    # its Qt anyway, so the older base buys nothing here.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
+            qt6-tools-dev qt6-tools-dev-tools libmpv-dev \
+            libfuse2t64 wget file desktop-file-utils
+
+      - name: Build and stage
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          DESTDIR=$PWD/AppDir cmake --install build
+
+      - name: Package
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
+          export QMAKE=/usr/lib/qt6/bin/qmake6
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage \
+            --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/scalable/apps/io.github.tombueng.leolink.svg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: '*.AppImage'
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: [packages, appimage]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Collect and checksum
+        run: |
+          mkdir -p release
+          find artifacts -type f \
+            \( -name '*.deb' -o -name '*.rpm' -o -name '*.tar.gz' \
+               -o -name '*.AppImage' \) -exec cp {} release/ \;
+          # Checksums so anyone can tell that what they downloaded is what was
+          # built. Generated here, from the artefacts themselves.
+          (cd release && sha256sum * > SHA256SUMS)
+          ls -la release
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
+          files: release/*
+          body: |
+            A native Linux client for Reolink cameras.
+
+            ## Installing
+
+            **Debian, Ubuntu, Mint**
+            ```bash
+            sudo apt install ./leolink-*-Linux.deb
+            ```
+
+            **Fedora, openSUSE**
+            ```bash
+            sudo dnf install ./leolink-*.rpm
+            ```
+
+            **Anywhere else**
+            ```bash
+            chmod +x leolink-*.AppImage
+            ./leolink-*.AppImage
+            ```
+
+            `ffmpeg` is needed for recording and for the detection leolink does
+            itself; everything else works without it.
+
+            ## Verifying the download
+
+            ```bash
+            sha256sum -c SHA256SUMS --ignore-missing
+            ```
+
+            ## Where it has been tested
+
+            Against a Reolink RLC-410W and a Duo 2 PoE. Other models speak the
+            same protocols and leolink asks each camera what it supports rather
+            than assuming — but that is reasoning, not testing. Playback from an
+            SD card, the P2P path and mobile data are implemented from the
+            protocol and have never run against hardware that has them.
