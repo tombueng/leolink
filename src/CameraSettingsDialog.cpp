@@ -6,6 +6,7 @@
 #include <QPlainTextEdit>
 #include <QScrollArea>
 #include <QTimeEdit>
+#include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -274,9 +275,30 @@ void CameraSettingsDialog::buildEncoderTab()
     note->setWordWrap(true);
     note->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
 
+    // Sound is part of the encoder settings, and it was missing here.
+    //
+    // A Duo 2 arrived with audio switched off: the stream carried an AAC track
+    // that was digital silence — measured at -91 dB mean *and* peak, every
+    // sample in the same bucket. Nothing in leolink could turn it on, so the
+    // only symptom was "no sound, whatever I do", with a perfectly healthy
+    // audio track to look at.
+    m_encAudio = new QCheckBox(tr("Send sound"), page);
+    m_encAudio->setEnabled(false);   // until the camera has answered
+    m_encAudio->setToolTip(
+        tr("The camera's microphone. With this off it still puts an audio track "
+           "in the stream — an entirely silent one, which is much harder to "
+           "recognise than no track at all."));
+    connect(m_encAudio, &QCheckBox::toggled, this,
+            [this] { m_applyButton->setEnabled(true); });
+
+    auto *audioBox = new QGroupBox(tr("Sound"), page);
+    auto *audioLayout = new QVBoxLayout(audioBox);
+    audioLayout->addWidget(m_encAudio);
+
     auto *layout = new QVBoxLayout(page);
     layout->addWidget(streamGroup(tr("Main stream"), m_main));
     layout->addWidget(streamGroup(tr("Sub stream"), m_sub));
+    layout->addWidget(audioBox);
     layout->addWidget(note);
     layout->addStretch(1);
 
@@ -1935,6 +1957,14 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
         m_encValue = value.value(QStringLiteral("Enc")).toObject();
         m_encRange = ranges;
 
+        // Only where the camera has a microphone to switch.
+        if (m_encValue.contains(QStringLiteral("audio"))) {
+            m_encAudio->setEnabled(true);
+            const QSignalBlocker block(m_encAudio);
+            m_encAudio->setChecked(
+                m_encValue.value(QStringLiteral("audio")).toInt() != 0);
+        }
+
         // The range document is an array: one entry per supported resolution,
         // each carrying the rates valid at that resolution. Collect the sizes
         // first, then fill the rest from the entry that matches what is set.
@@ -2055,6 +2085,11 @@ QJsonObject CameraSettingsDialog::collectEncoder() const
     apply(sub, m_sub);
     enc[QStringLiteral("mainStream")] = main;
     enc[QStringLiteral("subStream")] = sub;
+
+    if (m_encAudio->isEnabled()) {
+        // Reported as 0/1 rather than true/false by every model seen.
+        enc[QStringLiteral("audio")] = m_encAudio->isChecked() ? 1 : 0;
+    }
 
     QJsonObject param;
     param[QStringLiteral("Enc")] = enc;

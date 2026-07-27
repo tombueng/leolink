@@ -56,6 +56,15 @@ private:
     void buildMenus();
     void buildTray();
     void rebuildGrid();
+    /// Builds one tile, wired up and registered. Shared by the full rebuild and
+    /// by the reconciliation, so a camera added later behaves like one that was
+    /// there from the start.
+    VideoTile *createTile(const CameraConfig &camera);
+    /// Brings the grid into line with the configuration without tearing it
+    /// down. Streams that have not changed keep running.
+    void reconcileGrid(const Config &previous);
+    /// Same for the things that watch for motion and sound.
+    void reconcileWatchers(const QHash<QString, CameraConfig> &previous);
     /// Places every tile per Config::layout(). Separate from rebuildGrid() so
     /// leaving full screen does not restart the streams.
     void applyLayout();

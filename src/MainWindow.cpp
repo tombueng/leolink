@@ -503,6 +503,46 @@ void MainWindow::teardownGrid()
     m_placeholder->hide();
 }
 
+VideoTile *MainWindow::createTile(const CameraConfig &camera)
+{
+    auto *tile = new VideoTile(camera, m_config.mpvHwdecValue(),
+                               m_config.lowLatency, m_central);
+    connect(tile, &VideoTile::volumeChanged, this, &MainWindow::onVolumeChanged);
+    connect(tile, &VideoTile::fullscreenRequested,
+            this, &MainWindow::toggleFullscreenTile);
+    connect(tile, &VideoTile::settingsRequested, this,
+            [this](const QString &cameraId) {
+                // The cog on a tile means "this camera", so open the
+                // camera's own settings rather than the application's.
+                if (const CameraConfig *c = cameraById(cameraId)) {
+                    CameraSettingsDialog dialog(*c, this);
+                    connect(&dialog, &CameraSettingsDialog::streamReconfigured,
+                            this, [this, cameraId] {
+                                // Not a reconnect: tell the tile to expect
+                                // twenty seconds of nonsense and sit it
+                                // out. Restarting into a half-built
+                                // encoder is what made a profile change
+                                // look like a permanent failure.
+                                if (auto *tile = m_tiles.value(cameraId))
+                                    tile->expectDisruption(20);
+                            });
+                    dialog.exec();
+                }
+            });
+    connect(tile, &VideoTile::moveWindowRequested,
+            this, &MainWindow::startWindowDrag);
+    connect(tile, &VideoTile::recordToggled,
+            this, &MainWindow::onRecordToggled);
+    // The tiles cover the central widget, so they need the escape hatch too.
+    tile->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(tile, &QWidget::customContextMenuRequested, this,
+            [this, tile](const QPoint &pos) {
+                m_contextMenu->popup(tile->mapToGlobal(pos));
+            });
+    m_tiles.insert(camera.id, tile);
+    return tile;
+}
+
 void MainWindow::rebuildGrid()
 {
     teardownGrid();
@@ -515,43 +555,8 @@ void MainWindow::rebuildGrid()
         return;
     }
 
-    for (const CameraConfig &camera : cameras) {
-        auto *tile = new VideoTile(camera, m_config.mpvHwdecValue(),
-                                   m_config.lowLatency, m_central);
-        connect(tile, &VideoTile::volumeChanged, this, &MainWindow::onVolumeChanged);
-        connect(tile, &VideoTile::fullscreenRequested,
-                this, &MainWindow::toggleFullscreenTile);
-        connect(tile, &VideoTile::settingsRequested, this,
-                [this](const QString &cameraId) {
-                    // The cog on a tile means "this camera", so open the
-                    // camera's own settings rather than the application's.
-                    if (const CameraConfig *c = cameraById(cameraId)) {
-                        CameraSettingsDialog dialog(*c, this);
-                        connect(&dialog, &CameraSettingsDialog::streamReconfigured,
-                                this, [this, cameraId] {
-                                    // Not a reconnect: tell the tile to expect
-                                    // twenty seconds of nonsense and sit it
-                                    // out. Restarting into a half-built
-                                    // encoder is what made a profile change
-                                    // look like a permanent failure.
-                                    if (auto *tile = m_tiles.value(cameraId))
-                                        tile->expectDisruption(20);
-                                });
-                        dialog.exec();
-                    }
-                });
-        connect(tile, &VideoTile::moveWindowRequested,
-                this, &MainWindow::startWindowDrag);
-        connect(tile, &VideoTile::recordToggled,
-                this, &MainWindow::onRecordToggled);
-        // The tiles cover the central widget, so they need the escape hatch too.
-        tile->setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(tile, &QWidget::customContextMenuRequested, this,
-                [this, tile](const QPoint &pos) {
-                    m_contextMenu->popup(tile->mapToGlobal(pos));
-                });
-        m_tiles.insert(camera.id, tile);
-    }
+    for (const CameraConfig &camera : cameras)
+        createTile(camera);
 
     applyLayout();
 
@@ -609,7 +614,10 @@ void MainWindow::startWatchers()
         const bool useLocal = source == QLatin1String("local") ||
                               source == QLatin1String("both");
 
-        if (useCamera) {
+        // Only what is missing. reconcileWatchers() removes the ones whose
+        // settings moved and leaves the rest alone, so creating a second
+        // watcher here would mean two subscriptions and doubled events.
+        if (useCamera && !m_watchers.contains(camera.id)) {
             auto *watcher = new MotionWatcher(this);
             connect(watcher, &MotionWatcher::motionChanged,
                     this, &MainWindow::onMotionChanged);
@@ -617,7 +625,8 @@ void MainWindow::startWatchers()
             m_watchers.insert(camera.id, watcher);
         }
 
-        if (useLocal && MotionDetector::available()) {
+        if (useLocal && !m_detectors.contains(camera.id) &&
+            MotionDetector::available()) {
             auto *detector = new MotionDetector(this);
             const QString id = camera.id;
             connect(detector, &MotionDetector::motionChanged, this,
@@ -631,7 +640,8 @@ void MainWindow::startWatchers()
             m_detectors.insert(camera.id, detector);
         }
 
-        if (camera.audioDetection && AudioDetector::available()) {
+        if (camera.audioDetection && !m_listeners.contains(camera.id) &&
+            AudioDetector::available()) {
             auto *listener = new AudioDetector(this);
             const QString id = camera.id;
             connect(listener, &AudioDetector::soundChanged, this,
@@ -1087,6 +1097,12 @@ void MainWindow::openSettings()
     if (dialog.exec() != QDialog::Accepted)
         return;
 
+    // Kept so the reconciliation can tell what actually changed.
+    const Config previous = m_config;
+    QHash<QString, CameraConfig> watched;
+    for (const CameraConfig &camera : m_config.active())
+        watched.insert(camera.id, camera);
+
     m_config = dialog.result();
     if (!m_config.save()) {
         QMessageBox::warning(this, tr("Cannot save"),
@@ -1105,7 +1121,119 @@ void MainWindow::openSettings()
         m_framelessAction->setChecked(m_config.frameless);
 
     applyChrome();
-    rebuildGrid();
+
+    // Not a rebuild. Tearing the grid down and building it again restarted
+    // every stream on every visit to this dialog — rename one camera and all of
+    // them went black for a few seconds. The tiles already know how to take a
+    // new configuration and only restart when the stream itself has changed;
+    // they were simply never asked.
+    reconcileGrid(previous);
+    reconcileWatchers(watched);
+}
+
+void MainWindow::reconcileGrid(const Config &previous)
+{
+    // Decoding is settled when a player is created, so a change there is the
+    // one case that genuinely needs new players.
+    if (previous.hwdec != m_config.hwdec ||
+        previous.lowLatency != m_config.lowLatency) {
+        LEO_INFO(Ui, QString(),
+                 QStringLiteral("Decoding settings changed — rebuilding the "
+                                "players"));
+        rebuildGrid();
+        return;
+    }
+
+    const QList<CameraConfig> cameras = m_config.active();
+    QSet<QString> live;
+    for (const CameraConfig &camera : cameras)
+        live.insert(camera.id);
+
+    // Gone, or switched off.
+    for (const QString &id : m_tiles.keys()) {
+        if (live.contains(id))
+            continue;
+        if (VideoTile *tile = m_tiles.take(id)) {
+            tile->stop();
+            tile->deleteLater();
+        }
+    }
+
+    if (cameras.isEmpty()) {
+        m_grid->addWidget(m_placeholder, 0, 0);
+        m_placeholder->show();
+        statusBar()->showMessage(tr("No cameras configured"));
+        return;
+    }
+    m_grid->removeWidget(m_placeholder);
+    m_placeholder->hide();
+
+    int kept = 0;
+    for (const CameraConfig &camera : cameras) {
+        if (VideoTile *tile = m_tiles.value(camera.id)) {
+            // Restarts only if the address, transport or stream changed.
+            tile->applyConfig(camera);
+            ++kept;
+        } else {
+            createTile(camera)->start();
+        }
+    }
+
+    applyLayout();
+    LEO_DEBUG(Ui, QString(),
+              QStringLiteral("Settings applied: %1 tile(s) kept running, %2 in "
+                             "total").arg(kept).arg(cameras.size()));
+}
+
+void MainWindow::reconcileWatchers(const QHash<QString, CameraConfig> &previous)
+{
+    // Motion and sound detection open streams of their own, so restarting them
+    // for nothing costs a reconnect just as a tile does. Only the cameras whose
+    // detection settings actually moved are touched.
+    auto detectionDiffers = [](const CameraConfig &a, const CameraConfig &b) {
+        return a.motionSource != b.motionSource ||
+               a.motionZones != b.motionZones ||
+               a.motionSensitivity != b.motionSensitivity ||
+               a.motionMinArea != b.motionMinArea ||
+               a.audioDetection != b.audioDetection ||
+               a.audioThresholdDb != b.audioThresholdDb ||
+               a.audioHoldSeconds != b.audioHoldSeconds ||
+               a.streamUrl() != b.streamUrl();
+    };
+
+    QSet<QString> live;
+    for (const CameraConfig &camera : m_config.active())
+        live.insert(camera.id);
+
+    for (const QString &id : previous.keys()) {
+        const bool gone = !live.contains(id);
+        bool changed = gone;
+        if (!gone) {
+            for (const CameraConfig &camera : m_config.active()) {
+                if (camera.id == id) {
+                    changed = detectionDiffers(previous.value(id), camera);
+                    break;
+                }
+            }
+        }
+        if (!changed)
+            continue;
+        if (auto *watcher = m_watchers.take(id)) {
+            watcher->stop();
+            watcher->deleteLater();
+        }
+        if (auto *detector = m_detectors.take(id)) {
+            detector->stop();
+            detector->deleteLater();
+        }
+        if (auto *listener = m_listeners.take(id)) {
+            listener->stop();
+            listener->deleteLater();
+        }
+    }
+
+    // startWatchers() creates only what is missing, so the untouched ones stay
+    // exactly as they were.
     startWatchers();
 }
 

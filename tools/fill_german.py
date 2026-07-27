@@ -279,6 +279,16 @@ GERMAN: dict[str, str] = {
     "The player did not connect.": "Der Player hat sich nicht verbunden.",
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
+    # ── the microphone, which lives in the encoder settings ──
+    "Sound": "Ton",
+    "Send sound": "Ton übertragen",
+    "The camera's microphone. With this off it still puts an audio track in the "
+    "stream — an entirely silent one, which is much harder to recognise than no "
+    "track at all.":
+        "Das Mikrofon der Kamera. Ist das aus, legt sie trotzdem eine Tonspur in "
+        "den Stream — eine völlig stumme, was sehr viel schwerer zu erkennen ist "
+        "als gar keine Spur.",
+
     # ── what newer cameras can tell apart ──
     "What it recognises": "Was sie erkennt",
     "People": "Personen",

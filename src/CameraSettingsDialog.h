@@ -10,6 +10,7 @@
 
 #include "Config.h"
 
+class QCheckBox;
 class QComboBox;
 class QGroupBox;
 class QLabel;
@@ -190,6 +191,8 @@ private:
     };
     StreamControls m_main;
     StreamControls m_sub;
+    /// The camera's microphone, which lives in the encoder settings.
+    QCheckBox *m_encAudio{nullptr};
 
     QSlider *m_bright{nullptr};
     QSlider *m_contrast{nullptr};

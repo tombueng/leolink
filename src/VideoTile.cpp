@@ -337,6 +337,16 @@ void VideoTile::createPlayer()
         set("cache-pause", QStringLiteral("no"));
         set("video-sync", QStringLiteral("audio"));
         set("interpolation", QStringLiteral("no"));
+
+        // Sound was left at mpv's defaults, which is a fifth of a second of
+        // output buffer on top of everything else — and since video-sync is
+        // "audio", the picture waits for it. Halving it takes that off both.
+        //
+        // Not lower: below about 60 ms an output that is even briefly late
+        // produces clicks, and a camera microphone is not worth that.
+        set("audio-buffer", QStringLiteral("0.1"));
+        // Nothing to resample towards a display clock: the audio is the clock.
+        set("audio-stream-silence", QStringLiteral("no"));
     }
     set("cache", QStringLiteral("yes"));
     set("demuxer-max-bytes", QStringLiteral("16MiB"));
