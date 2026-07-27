@@ -96,10 +96,13 @@ jobs:
             --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/scalable/apps/io.github.tombueng.leolink.svg
 
+      # Named, not globbed: linuxdeploy and its Qt plugin are AppImages too,
+      # and a glob happily shipped both of them as if they were part of
+      # leolink.
       - uses: actions/upload-artifact@v4
         with:
           name: appimage
-          path: '*.AppImage'
+          path: leolink*.AppImage
           if-no-files-found: error
 
   publish:
@@ -117,8 +120,9 @@ jobs:
         run: |
           mkdir -p release
           find artifacts -type f \
-            \( -name '*.deb' -o -name '*.rpm' -o -name '*.tar.gz' \
-               -o -name '*.AppImage' \) -exec cp {} release/ \;
+            \( -name 'leolink*.deb' -o -name 'leolink*.rpm' \
+               -o -name 'leolink*.tar.gz' -o -name 'leolink*.AppImage' \) \
+            -exec cp {} release/ \;
           # Checksums so anyone can tell that what they downloaded is what was
           # built. Generated here, from the artefacts themselves.
           (cd release && sha256sum * > SHA256SUMS)
