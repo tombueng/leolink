@@ -127,7 +127,9 @@ QString ReolinkClient::describeError(int rspCode)
     case -9:   return tr("This firmware does not support that command.");
     case -12:  return tr("Could not read the configuration.");
     case -13:  return tr("Could not verify the configuration.");
-    case -17:  return tr("Subsystem unavailable — typically no SD card fitted.");
+    case -17:  return tr("Part of the camera did not answer. Depending on what "
+                         "was asked, that means no SD card is fitted, or the "
+                         "camera has no way out to the internet.");
     case -26:  return tr("Not permitted — this model lacks the hardware.");
     case -27:  return tr("Account invalid, log in again.");
     case -28:  return tr("User name already taken.");
@@ -655,20 +657,29 @@ void ReolinkClient::testFtp()
 
 void ReolinkClient::fetchPerformance()
 {
-    login([this] {
+    auto fail = [this](const QString &e) {
+        emit readoutFailed(QStringLiteral("performance"), e);
+    };
+    login([this, fail] {
         post(QStringLiteral("GetPerformance"), {},
              [this](const QJsonObject &value) {
                  emit performanceReady(
                      value.value(QStringLiteral("Performance")).toObject());
              },
-             [this](const QString &e) { emit failed(e); });
+             fail);
     },
-    [this](const QString &e) { emit failed(e); });
+    fail);
 }
 
 void ReolinkClient::checkFirmware()
 {
-    login([this] {
+    // A camera behind a network with no route out cannot reach Reolink, and
+    // says so with -17. Reported here rather than through failed(), so the
+    // answer appears where the question was asked.
+    auto fail = [this](const QString &e) {
+        emit readoutFailed(QStringLiteral("firmware"), e);
+    };
+    login([this, fail] {
         post(QStringLiteral("CheckFirmware"), {},
              [this](const QJsonObject &value) {
                  const QString newer =
@@ -682,9 +693,9 @@ void ReolinkClient::checkFirmware()
                                        : tr("The firmware is up to date."),
                                    available);
              },
-             [this](const QString &e) { emit failed(e); });
+             fail);
     },
-    [this](const QString &e) { emit failed(e); });
+    fail);
 }
 
 void ReolinkClient::upgradeFirmware()
@@ -748,14 +759,17 @@ void ReolinkClient::probeCommands(const QStringList &commands)
 
 void ReolinkClient::fetchUsers()
 {
-    login([this] {
+    auto fail = [this](const QString &e) {
+        emit readoutFailed(QStringLiteral("users"), e);
+    };
+    login([this, fail] {
         post(QStringLiteral("GetUser"), {},
              [this](const QJsonObject &value) {
                  emit usersReady(value.value(QStringLiteral("User")).toArray());
              },
-             [this](const QString &e) { emit failed(e); });
+             fail);
     },
-    [this](const QString &e) { emit failed(e); });
+    fail);
 }
 
 void ReolinkClient::addUser(const QString &name, const QString &password,

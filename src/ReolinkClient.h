@@ -150,6 +150,13 @@ signals:
     void wifiApplied();
     void testSucceededWith(const QString &what);
     void performanceReady(const QJsonObject &info);
+    /// A read-out that has its own place on screen could not be fetched.
+    /// `what` names the panel — "performance", "users", "firmware" — so the
+    /// reason lands where the user is looking rather than in a status line
+    /// they have already looked away from. Without this a panel that failed
+    /// simply sat at "Reading…" for ever, which reads as the program having
+    /// hung.
+    void readoutFailed(const QString &what, const QString &reason);
     void firmwareInfo(const QString &text, bool updateAvailable);
     /// command → what the camera said: empty for "supported", otherwise the
     /// reason it gave.

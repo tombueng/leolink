@@ -279,6 +279,17 @@ GERMAN: dict[str, str] = {
     "The player did not connect.": "Der Player hat sich nicht verbunden.",
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
+    # ── firmware and read-out failures ──
+    "The camera asks Reolink, not this computer — so it needs a way out to the "
+    "internet of its own.":
+        "Die Kamera fragt bei Reolink an, nicht dieser Rechner — sie braucht "
+        "also einen eigenen Weg ins Internet.",
+    "Part of the camera did not answer. Depending on what was asked, that means "
+    "no SD card is fitted, or the camera has no way out to the internet.":
+        "Ein Teil der Kamera hat nicht geantwortet. Je nachdem, wonach gefragt "
+        "wurde, heißt das: keine SD-Karte eingesetzt, oder die Kamera kommt "
+        "nicht ins Internet.",
+
     # ── maintenance ──
     "Factory reset is not offered here. It clears the network settings too, and "
     "a camera that has forgotten its Wi-Fi has to be taken down and reached by "

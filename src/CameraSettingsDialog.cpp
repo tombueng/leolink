@@ -155,8 +155,10 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
             });
     connect(m_client, &ReolinkClient::firmwareInfo, this,
             [this](const QString &text, bool available) {
+                m_firmware->setStyleSheet(QString());
                 m_firmware->setText(text);
                 m_upgradeButton->setEnabled(available);
+                m_checkFirmwareButton->setEnabled(true);
             });
     connect(m_client, &ReolinkClient::usersReady, this,
             [this](const QJsonArray &users) {
@@ -169,6 +171,24 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                     m_userTable->setItem(row, 1, new QTableWidgetItem(
                         level == QLatin1String("admin") ? tr("Administrator")
                                                         : tr("Viewer")));
+                }
+            });
+    connect(m_client, &ReolinkClient::readoutFailed, this,
+            [this](const QString &what, const QString &reason) {
+                // Each panel gets its own answer. A label left reading "Asking
+                // Reolink…" for ever is indistinguishable from a program that
+                // has stopped responding, and that is what this was.
+                const QString style = QStringLiteral("color:#c0392b;");
+                if (what == QLatin1String("firmware")) {
+                    m_firmware->setText(reason);
+                    m_firmware->setStyleSheet(style);
+                    m_checkFirmwareButton->setEnabled(true);
+                } else if (what == QLatin1String("performance")) {
+                    m_performance->setText(reason);
+                    m_performance->setStyleSheet(style);
+                } else if (what == QLatin1String("users")) {
+                    m_userStatus->setText(reason);
+                    m_userStatus->setStyleSheet(style);
                 }
             });
     connect(m_client, &ReolinkClient::commandsProbed,
@@ -366,8 +386,12 @@ void CameraSettingsDialog::buildUserTab()
     note->setWordWrap(true);
     note->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
 
+    m_userStatus = new QLabel(page);
+    m_userStatus->setWordWrap(true);
+
     auto *layout = new QVBoxLayout(page);
     layout->addWidget(m_userTable, 1);
+    layout->addWidget(m_userStatus);
     layout->addLayout(buttonRow);
     layout->addWidget(note);
 
@@ -688,6 +712,7 @@ void CameraSettingsDialog::onScanWifi()
     m_wifiScanButton->setEnabled(false);
     m_wifiNetworks->clear();
     m_wifiNetworks->addItem(tr("scanning…"));
+    m_wifiHint->hide();
     m_status->setStyleSheet(QString());
     m_status->setText(tr("The camera is scanning for networks…"));
     m_client->scanWifi();
@@ -817,9 +842,14 @@ void CameraSettingsDialog::buildMaintenanceTab()
     m_firmware = new QLabel(tr("Not checked."), page);
     m_firmware->setWordWrap(true);
 
-    auto *checkButton = new QPushButton(tr("Check for updates"), page);
-    connect(checkButton, &QPushButton::clicked, this, [this] {
+    m_checkFirmwareButton = new QPushButton(tr("Check for updates"), page);
+    m_checkFirmwareButton->setToolTip(
+        tr("The camera asks Reolink, not this computer — so it needs a way out "
+           "to the internet of its own."));
+    connect(m_checkFirmwareButton, &QPushButton::clicked, this, [this] {
+        m_firmware->setStyleSheet(QString());
         m_firmware->setText(tr("Asking Reolink…"));
+        m_checkFirmwareButton->setEnabled(false);
         m_client->checkFirmware();
     });
 
@@ -847,7 +877,7 @@ void CameraSettingsDialog::buildMaintenanceTab()
     });
 
     auto *firmwareRow = new QHBoxLayout;
-    firmwareRow->addWidget(checkButton);
+    firmwareRow->addWidget(m_checkFirmwareButton);
     firmwareRow->addWidget(m_upgradeButton);
     firmwareRow->addStretch(1);
 
@@ -1882,9 +1912,21 @@ void CameraSettingsDialog::onSectionApplied(const QString &command)
 void CameraSettingsDialog::onFailed(const QString &reason)
 {
     m_pending = 0;
+
+    // Every button that was disabled while waiting comes back. A disabled
+    // control with no explanation is the same as a frozen program from where
+    // the user is sitting, and this dialog disables several of them the moment
+    // it asks the camera anything.
     m_applyButton->setEnabled(true);
     if (m_rebootButton)
         m_rebootButton->setEnabled(true);
+    if (m_wifiScanButton)
+        m_wifiScanButton->setEnabled(true);
+    if (m_wifiJoinButton)
+        m_wifiJoinButton->setEnabled(true);
+    if (m_checkFirmwareButton)
+        m_checkFirmwareButton->setEnabled(true);
+
     m_status->setText(reason);
     m_status->setStyleSheet(QStringLiteral("color:#c0392b;"));
 }

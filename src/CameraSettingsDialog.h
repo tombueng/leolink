@@ -145,6 +145,9 @@ private:
     /// The same list in a form worth pasting into a bug report.
     QString m_capabilityReport;
     QLabel *m_firmware{nullptr};
+    QPushButton *m_checkFirmwareButton{nullptr};
+    /// Says why the user list is empty, rather than leaving an empty table.
+    QLabel *m_userStatus{nullptr};
     QPushButton *m_upgradeButton{nullptr};
 
     /// What the camera last told us, kept so that writing back only changes
