@@ -1,6 +1,11 @@
 #include "CameraSettingsDialog.h"
 
+#include <cstdio>
+
 #include <QApplication>
+#include <QPlainTextEdit>
+#include <QScrollArea>
+#include <QTimeEdit>
 #include <QClipboard>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -143,9 +148,12 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 const int codec = info.value(QStringLiteral("codecRate")).toInt();
                 const int net = info.value(QStringLiteral("netThroughput")).toInt();
                 QStringList rows;
-                rows << tr("Processor load %1%").arg(cpu);
+                rows << tr("Processor load %1 %").arg(cpu);
+                // codecRate is a rate, not a percentage. Calling it one
+                // produced "encoder load 3191 %", which is the sort of number
+                // that tells you the label is wrong rather than the camera.
                 if (codec > 0)
-                    rows << tr("Encoder load %1%").arg(codec);
+                    rows << tr("Encoder output %1 kbit/s").arg(codec);
                 if (net > 0)
                     rows << tr("Network throughput %1 kbit/s").arg(net);
                 if (cpu >= 90)
@@ -271,7 +279,7 @@ void CameraSettingsDialog::buildEncoderTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Video"));
+    addPage(page, tr("Video"));
 }
 
 void CameraSettingsDialog::buildPictureTab()
@@ -346,7 +354,7 @@ void CameraSettingsDialog::buildPictureTab()
 
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Picture"));
+    addPage(page, tr("Picture"));
 }
 
 void CameraSettingsDialog::buildUserTab()
@@ -395,7 +403,7 @@ void CameraSettingsDialog::buildUserTab()
     layout->addLayout(buttonRow);
     layout->addWidget(note);
 
-    m_tabs->addTab(page, tr("Users"));
+    addPage(page, tr("Users"));
 }
 
 void CameraSettingsDialog::onAddUser()
@@ -577,7 +585,7 @@ void CameraSettingsDialog::buildNetworkTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Network"));
+    addPage(page, tr("Network"));
 }
 
 namespace {
@@ -902,9 +910,14 @@ void CameraSettingsDialog::buildMaintenanceTab()
     storageLayout->addWidget(formatButton, 0, Qt::AlignLeft);
 
     // ── what this firmware actually has ─────────────────────────────────────
-    m_capabilities = new QLabel(tr("Not checked."), page);
-    m_capabilities->setWordWrap(true);
-    m_capabilities->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    // A plain text box rather than a label: the answer is forty-odd command
+    // names, and as a wrapped label it decided the whole dialog should be
+    // sixteen hundred pixels wide.
+    m_capabilities = new QPlainTextEdit(page);
+    m_capabilities->setReadOnly(true);
+    m_capabilities->setPlainText(tr("Not checked."));
+    m_capabilities->setMinimumHeight(90);
+    m_capabilities->setMaximumHeight(160);
 
     auto *probeButton = new QPushButton(tr("Ask the camera"), page);
     connect(probeButton, &QPushButton::clicked, this,
@@ -941,7 +954,7 @@ void CameraSettingsDialog::buildMaintenanceTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Maintenance"));
+    addPage(page, tr("Maintenance"));
 }
 
 void CameraSettingsDialog::onProbeCapabilities()
@@ -972,8 +985,8 @@ void CameraSettingsDialog::onProbeCapabilities()
         QStringLiteral("GetChannelstatus"),
     };
 
-    m_capabilities->setText(tr("Asking about %n command(s)…", nullptr,
-                               int(kCommands.size())));
+    m_capabilities->setPlainText(tr("Asking about %n command(s)…", nullptr,
+                                    int(kCommands.size())));
     m_client->probeCommands(kCommands);
 }
 
@@ -988,8 +1001,8 @@ void CameraSettingsDialog::onCapabilities(const QMap<QString, QString> &results)
             missing.append(it.key());
     }
 
-    m_capabilities->setText(
-        tr("<b>Supported (%1):</b> %2<br><br><b>Not supported (%3):</b> %4")
+    m_capabilities->setPlainText(
+        tr("Supported (%1):\n%2\n\nNot supported (%3):\n%4")
             .arg(supported.size())
             .arg(supported.join(QStringLiteral(", ")))
             .arg(missing.size())
@@ -1031,6 +1044,24 @@ void CameraSettingsDialog::onReboot()
     m_status->setStyleSheet(QString());
     m_status->setText(tr("Asking %1 to restart…").arg(m_camera.host));
     m_client->reboot();
+}
+
+void CameraSettingsDialog::addPage(QWidget *page, const QString &title)
+{
+    // Inside a scroll area, every one of them.
+    //
+    // Two problems, one cause. A word-wrapped QLabel reports the width of its
+    // whole text as what it would like, and a layout hands that straight on as
+    // the dialog's minimum — so the window opened 1663 pixels wide and could
+    // not be dragged narrower, because its minimum size was its preferred size.
+    // A scroll area has a small minimum of its own and resizes its contents to
+    // the viewport, which makes the labels wrap to whatever width the user
+    // chooses instead of choosing it for them.
+    auto *area = new QScrollArea(this);
+    area->setWidget(page);
+    area->setWidgetResizable(true);
+    area->setFrameShape(QFrame::NoFrame);
+    m_tabs->addTab(area, title);
 }
 
 SectionEditor *CameraSettingsDialog::addSection(QWidget *page,
@@ -1110,7 +1141,7 @@ void CameraSettingsDialog::buildOverlayTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Overlay"));
+    addPage(page, tr("Overlay"));
 }
 
 void CameraSettingsDialog::buildDetectionTab()
@@ -1128,11 +1159,9 @@ void CameraSettingsDialog::buildDetectionTab()
                                  }));
 
     // ── the parts a generated form cannot express ───────────────────────────
-    // The alarm section carries a detection grid, a week of hours and a table
-    // of sensitivities by time of day. None of those is a field with a range,
-    // so each gets a screen of its own; the section itself is fetched and
-    // written whole.
-    m_areaButton = new QPushButton(tr("Detection area…"), page);
+    // Three different things, which looked like one because they all say
+    // "when" or "where". Separated and each labelled with what it decides.
+    m_areaButton = new QPushButton(tr("Choose the area…"), page);
     m_areaButton->setToolTip(
         tr("Which parts of the picture the camera watches. Everything outside "
            "the area is ignored — a road at the edge of view, a tree in the "
@@ -1140,21 +1169,32 @@ void CameraSettingsDialog::buildDetectionTab()
     connect(m_areaButton, &QPushButton::clicked,
             this, &CameraSettingsDialog::onEditDetectionArea);
 
-    m_detectionScheduleButton = new QPushButton(tr("When to watch…"), page);
-    m_detectionScheduleButton->setToolTip(
-        tr("Hours of the week the camera raises motion events at all."));
+    auto *areaBox = new QGroupBox(tr("Where it looks"), page);
+    auto *areaLayout = new QVBoxLayout(areaBox);
+    areaLayout->addWidget(m_areaButton, 0, Qt::AlignLeft);
+
+    m_detectionScheduleButton = new QPushButton(tr("Choose the hours…"), page);
     connect(m_detectionScheduleButton, &QPushButton::clicked,
             this, &CameraSettingsDialog::onEditDetectionSchedule);
+
+    auto *scheduleNote = new QLabel(
+        tr("A week of hours: in the ones you tick, the camera reports motion; "
+           "in the rest it stays quiet. Nothing to do with how sensitive it is "
+           "— that is set below."),
+        page);
+    scheduleNote->setWordWrap(true);
+    scheduleNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    auto *scheduleBox = new QGroupBox(tr("When it reports at all"), page);
+    auto *scheduleLayout = new QVBoxLayout(scheduleBox);
+    scheduleLayout->addWidget(scheduleNote);
+    scheduleLayout->addWidget(m_detectionScheduleButton, 0, Qt::AlignLeft);
 
     m_sensitivityTable = new QTableWidget(0, 3, page);
     m_sensitivityTable->setHorizontalHeaderLabels(
         {tr("From"), tr("To"), tr("Sensitivity")});
     m_sensitivityTable->horizontalHeader()->setStretchLastSection(true);
     m_sensitivityTable->verticalHeader()->setVisible(false);
-    m_sensitivityTable->setToolTip(
-        tr("Cameras allow a different sensitivity at different times of day, "
-           "which is how you stop headlights at night triggering everything "
-           "without going deaf during the day."));
     connect(m_sensitivityTable, &QTableWidget::cellChanged, this,
             [this](int, int) {
                 if (m_loadingAlarm)
@@ -1163,15 +1203,25 @@ void CameraSettingsDialog::buildDetectionTab()
                 m_applyButton->setEnabled(true);
             });
 
-    auto *buttonRow = new QHBoxLayout;
-    buttonRow->addWidget(m_areaButton);
-    buttonRow->addWidget(m_detectionScheduleButton);
-    buttonRow->addStretch(1);
+    auto *sensNote = new QLabel(
+        tr("Within a day the camera can be more or less easily triggered. This "
+           "is how you stop headlights at night setting everything off without "
+           "making it deaf by day. The camera fixes how many periods there are; "
+           "their times and sensitivities are yours."),
+        page);
+    sensNote->setWordWrap(true);
+    sensNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
 
-    m_alarmBox = new QGroupBox(tr("Area, times and sensitivity"), page);
+    auto *sensBox = new QGroupBox(tr("How readily it triggers"), page);
+    auto *sensLayout = new QVBoxLayout(sensBox);
+    sensLayout->addWidget(sensNote);
+    sensLayout->addWidget(m_sensitivityTable);
+
+    m_alarmBox = new QGroupBox(tr("Camera-side detection"), page);
     auto *alarmLayout = new QVBoxLayout(m_alarmBox);
-    alarmLayout->addLayout(buttonRow);
-    alarmLayout->addWidget(m_sensitivityTable);
+    alarmLayout->addWidget(areaBox);
+    alarmLayout->addWidget(scheduleBox);
+    alarmLayout->addWidget(sensBox);
     m_alarmBox->setEnabled(false);   // until the camera has answered
     layout->addWidget(m_alarmBox);
 
@@ -1185,7 +1235,7 @@ void CameraSettingsDialog::buildDetectionTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Detection"));
+    addPage(page, tr("Detection"));
 }
 
 void CameraSettingsDialog::onAlarmReady(const QJsonObject &alarm)
@@ -1210,19 +1260,30 @@ void CameraSettingsDialog::onAlarmReady(const QJsonObject &alarm)
                 .arg(hour, 2, 10, QLatin1Char('0'))
                 .arg(minute, 2, 10, QLatin1Char('0'));
         };
-        auto *from = new QTableWidgetItem(
-            time(band.value(QStringLiteral("beginHour")).toInt(),
-                 band.value(QStringLiteral("beginMin")).toInt()));
-        auto *to = new QTableWidgetItem(
-            time(band.value(QStringLiteral("endHour")).toInt(),
-                 band.value(QStringLiteral("endMin")).toInt()));
-        // The times are shown but not edited: the camera fixes the bands and
-        // rejects any other division, so offering to change them would be
-        // offering something that does not work.
-        from->setFlags(from->flags() & ~Qt::ItemIsEditable);
-        to->setFlags(to->flags() & ~Qt::ItemIsEditable);
-        m_sensitivityTable->setItem(row, 0, from);
-        m_sensitivityTable->setItem(row, 1, to);
+        // Editable, because the camera's own range document says they are:
+        // beginHour, beginMin, endHour and endMin all come with min and max.
+        // They were locked here on an assumption, and the assumption was wrong.
+        Q_UNUSED(time);
+        auto *from = new QTimeEdit(
+            QTime(band.value(QStringLiteral("beginHour")).toInt(),
+                  band.value(QStringLiteral("beginMin")).toInt()),
+            m_sensitivityTable);
+        auto *to = new QTimeEdit(
+            QTime(band.value(QStringLiteral("endHour")).toInt(),
+                  band.value(QStringLiteral("endMin")).toInt()),
+            m_sensitivityTable);
+        for (QTimeEdit *edit : {from, to}) {
+            edit->setDisplayFormat(QStringLiteral("HH:mm"));
+            edit->setFrame(false);
+            connect(edit, &QTimeEdit::timeChanged, this, [this] {
+                if (m_loadingAlarm)
+                    return;
+                m_alarmDirty = true;
+                m_applyButton->setEnabled(true);
+            });
+        }
+        m_sensitivityTable->setCellWidget(row, 0, from);
+        m_sensitivityTable->setCellWidget(row, 1, to);
         m_sensitivityTable->setItem(
             row, 2,
             new QTableWidgetItem(QString::number(
@@ -1337,7 +1398,7 @@ void CameraSettingsDialog::buildMobileTab()
     layout->addWidget(warning);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Mobile data"));
+    addPage(page, tr("Mobile data"));
 }
 
 void CameraSettingsDialog::onMaskReady(const QJsonObject &mask,
@@ -1490,11 +1551,21 @@ QJsonObject CameraSettingsDialog::collectAlarm() const
     QJsonArray bands = alarm.value(QStringLiteral("sens")).toArray();
     for (int row = 0; row < m_sensitivityTable->rowCount() &&
                       row < bands.size(); ++row) {
-        QTableWidgetItem *item = m_sensitivityTable->item(row, 2);
-        if (!item)
-            continue;
         QJsonObject band = bands.at(row).toObject();
-        band[QStringLiteral("sensitivity")] = item->text().toInt();
+
+        if (auto *from = qobject_cast<QTimeEdit *>(
+                m_sensitivityTable->cellWidget(row, 0))) {
+            band[QStringLiteral("beginHour")] = from->time().hour();
+            band[QStringLiteral("beginMin")] = from->time().minute();
+        }
+        if (auto *to = qobject_cast<QTimeEdit *>(
+                m_sensitivityTable->cellWidget(row, 1))) {
+            band[QStringLiteral("endHour")] = to->time().hour();
+            band[QStringLiteral("endMin")] = to->time().minute();
+        }
+        if (QTableWidgetItem *item = m_sensitivityTable->item(row, 2))
+            band[QStringLiteral("sensitivity")] = item->text().toInt();
+
         bands[row] = band;
     }
     alarm[QStringLiteral("sens")] = bands;
@@ -1540,7 +1611,7 @@ void CameraSettingsDialog::buildRecordingTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Recording"));
+    addPage(page, tr("Recording"));
 }
 
 void CameraSettingsDialog::buildAlertTab()
@@ -1559,6 +1630,31 @@ void CameraSettingsDialog::buildAlertTab()
                                      {QStringLiteral("interval"), tr("Not more often than"), {}, {}},
                                      {QStringLiteral("attachment"), tr("Attach"), {}, {}},
                                  }, false));
+
+    // ── siren ───────────────────────────────────────────────────────────────
+    // Appears only on cameras that have one; the rest answer -26 and the
+    // section stays hidden. There is deliberately no button to sound it: a
+    // siren is loud, it is usually mounted outside somebody's bedroom window,
+    // and a control that fires it is not something to add without being asked.
+    layout->addWidget(addSection(page, QStringLiteral("GetAudioAlarm"),
+                                 tr("Siren"),
+                                 {
+                                     {QStringLiteral("enable"), tr("Sound on an alarm"), {}, {}},
+                                     {QStringLiteral("schedule"), tr("Times"), {}, {}},
+                                     {QStringLiteral("alarmMode"), tr("Mode"), {}, {}},
+                                 }));
+    layout->addWidget(addSection(page, QStringLiteral("GetAudioAlarmV20"),
+                                 tr("Siren"),
+                                 {
+                                     {QStringLiteral("enable"), tr("Sound on an alarm"), {}, {}},
+                                 }));
+    layout->addWidget(addSection(page, QStringLiteral("GetWhiteLed"),
+                                 tr("Spotlight"),
+                                 {
+                                     {QStringLiteral("state"), tr("On"), {}, {}},
+                                     {QStringLiteral("mode"), tr("Mode"), {}, {}},
+                                     {QStringLiteral("bright"), tr("Brightness"), {}, {}},
+                                 }));
 
     layout->addWidget(addSection(page, QStringLiteral("GetFtp"), tr("FTP upload"),
                                  {
@@ -1608,7 +1704,7 @@ void CameraSettingsDialog::buildAlertTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Alerts"));
+    addPage(page, tr("Alerts"));
 }
 
 void CameraSettingsDialog::buildTimeTab()
@@ -1645,7 +1741,7 @@ void CameraSettingsDialog::buildTimeTab()
     layout->addWidget(note);
     layout->addStretch(1);
 
-    m_tabs->addTab(page, tr("Time"));
+    addPage(page, tr("Time"));
 }
 
 // ── camera replies ──────────────────────────────────────────────────────────
@@ -1909,8 +2005,42 @@ void CameraSettingsDialog::onSectionApplied(const QString &command)
            "may drop out for a moment."));
 }
 
+void CameraSettingsDialog::reportForTesting() const
+{
+    std::fprintf(stderr, "size            %dx%d\n", width(), height());
+    std::fprintf(stderr, "minimum         %dx%d\n",
+                 minimumSizeHint().width(), minimumSizeHint().height());
+    std::fprintf(stderr, "tabs            %d\n", m_tabs->count());
+    std::fprintf(stderr, "users           %d row(s)\n", m_userTable->rowCount());
+    std::fprintf(stderr, "user status     %s\n",
+                 qPrintable(m_userStatus->text()));
+    std::fprintf(stderr, "sensitivity     %d row(s)\n",
+                 m_sensitivityTable->rowCount());
+    std::fprintf(stderr, "firmware        %s\n", qPrintable(m_firmware->text()));
+    std::fprintf(stderr, "condition       %s\n",
+                 qPrintable(m_performance->text().replace('\n', ' ')));
+    std::fprintf(stderr, "status          %s\n", qPrintable(m_status->text()));
+    for (int i = 0; i < m_tabs->count(); ++i) {
+        std::fprintf(stderr, "  tab %-16s hint %dx%d\n",
+                     qPrintable(m_tabs->tabText(i)),
+                     m_tabs->widget(i)->sizeHint().width(),
+                     m_tabs->widget(i)->sizeHint().height());
+    }
+}
+
 void CameraSettingsDialog::onFailed(const QString &reason)
 {
+    // "This firmware does not know that command" is not a fault. It is how the
+    // dialog discovers what a camera has, and every section that gets it simply
+    // does not appear. Showing it in red at the foot of the window made a
+    // perfectly healthy camera look broken.
+    if (ReolinkClient::meansUnsupported(m_client->lastErrorCode())) {
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("Section not available on this model: %1")
+                      .arg(reason));
+        return;
+    }
+
     m_pending = 0;
 
     // Every button that was disabled while waiting comes back. A disabled

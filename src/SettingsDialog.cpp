@@ -805,6 +805,10 @@ void SettingsDialog::onScan()
         tr("Looking for cameras…"), tr("Stop"), 0, 0, this);
     progress->setWindowModality(Qt::WindowModal);
     progress->setMinimumDuration(0);
+    // Shown outright. A progress dialog with no maximum never calls setValue(),
+    // and without a call to setValue() it waits for minimumDuration to elapse
+    // before appearing — which for a four second scan meant it never did.
+    progress->show();
 
     auto *found = new QList<DiscoveredCamera>;
 
@@ -831,12 +835,28 @@ void SettingsDialog::onScan()
                     return;
                 }
 
+                // Devices already in the list are still shown, marked. Hiding
+                // them would leave the user wondering whether the camera on the
+                // shelf was found at all; offering them unmarked invites a
+                // duplicate entry.
                 QStringList labels;
+                QList<int> existingFor;
                 for (const DiscoveredCamera &c : std::as_const(*found)) {
-                    labels << QStringLiteral("%1 — %2%3")
+                    int already = -1;
+                    for (int i = 0; i < m_config.cameras.size(); ++i) {
+                        if (m_config.cameras.at(i).host.compare(
+                                c.address, Qt::CaseInsensitive) == 0) {
+                            already = i;
+                            break;
+                        }
+                    }
+                    existingFor.append(already);
+                    labels << QStringLiteral("%1 — %2%3%4")
                                   .arg(c.address,
                                        c.name.isEmpty() ? tr("unnamed device") : c.name,
-                                       c.looksReolink ? tr(" (Reolink)") : QString());
+                                       c.looksReolink ? tr(" (Reolink)") : QString(),
+                                       already >= 0 ? tr("  · already added")
+                                                    : QString());
                 }
 
                 bool ok = false;
@@ -845,6 +865,13 @@ void SettingsDialog::onScan()
                     tr("Add which one?"), labels, 0, false, &ok);
                 if (ok && !chosen.isEmpty()) {
                     const int index = labels.indexOf(chosen);
+                    if (index >= 0 && existingFor.at(index) >= 0) {
+                        // Already known: take them to it rather than making a
+                        // second entry for the same camera.
+                        m_list->setCurrentRow(existingFor.at(index));
+                        delete found;
+                        return;
+                    }
                     if (index >= 0) {
                         CameraConfig c;
                         c.id = Config::newId();

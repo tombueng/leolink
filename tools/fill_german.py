@@ -279,6 +279,58 @@ GERMAN: dict[str, str] = {
     "The player did not connect.": "Der Player hat sich nicht verbunden.",
     "The camera stopped sending.": "Die Kamera sendet nicht mehr.",
 
+    # ── detection, plainly separated ──
+    "Camera-side detection": "Erkennung in der Kamera",
+    "Where it looks": "Wo sie hinschaut",
+    "Choose the area…": "Bereich wählen…",
+    "When it reports at all": "Wann sie überhaupt meldet",
+    "Choose the hours…": "Stunden wählen…",
+    "A week of hours: in the ones you tick, the camera reports motion; in the "
+    "rest it stays quiet. Nothing to do with how sensitive it is — that is set "
+    "below.":
+        "Eine Woche in Stunden: in den angehakten meldet die Kamera Bewegung, "
+        "in den übrigen schweigt sie. Hat nichts damit zu tun, wie empfindlich "
+        "sie ist — das steht darunter.",
+    "How readily it triggers": "Wie leicht sie anspricht",
+    "Within a day the camera can be more or less easily triggered. This is how "
+    "you stop headlights at night setting everything off without making it deaf "
+    "by day. The camera fixes how many periods there are; their times and "
+    "sensitivities are yours.":
+        "Innerhalb eines Tages kann die Kamera leichter oder schwerer "
+        "ansprechen. So lösen Scheinwerfer nachts nicht mehr alles aus, ohne "
+        "dass sie tagsüber blind wird. Wie viele Abschnitte es gibt, gibt die "
+        "Kamera vor; deren Zeiten und Empfindlichkeiten gehören Ihnen.",
+
+    # ── siren and spotlight ──
+    "Siren": "Sirene",
+    "Sound on an alarm": "Bei Alarm auslösen",
+    "Times": "Zeiten",
+    "Spotlight": "Scheinwerfer",
+    "On": "An",
+
+    # ── zone tools ──
+    "Draw": "Zeichnen",
+    "Watch a rectangle": "Rechteck überwachen",
+    "Ignore a rectangle": "Rechteck ignorieren",
+    "Drag over single cells.": "Über einzelne Felder ziehen.",
+    "Drag out a rectangle to watch. Shift and drag does the same without "
+    "changing tool.":
+        "Ein Rechteck aufziehen, das überwacht wird. Umschalt und ziehen macht "
+        "dasselbe, ohne das Werkzeug zu wechseln.",
+    "Drag out a rectangle to ignore. Ctrl and drag does the same without "
+    "changing tool.":
+        "Ein Rechteck aufziehen, das ignoriert wird. Strg und ziehen macht "
+        "dasselbe, ohne das Werkzeug zu wechseln.",
+
+    # ── discovery ──
+    "  · already added": "  · schon eingetragen",
+
+    # ── condition readout ──
+    "Processor load %1 %": "Prozessorlast %1 %",
+    "Encoder output %1 kbit/s": "Encoder-Datenrate %1 kbit/s",
+    "Supported (%1):\n%2\n\nNot supported (%3):\n%4":
+        "Unterstützt (%1):\n%2\n\nNicht unterstützt (%3):\n%4",
+
     # ── firmware and read-out failures ──
     "The camera asks Reolink, not this computer — so it needs a way out to the "
     "internet of its own.":

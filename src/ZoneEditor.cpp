@@ -93,11 +93,41 @@ int ZoneGrid::cellAt(const QPoint &point) const
     return row * m_columns + column;
 }
 
+void ZoneGrid::applyRectangle(int from, int to, bool value)
+{
+    if (from < 0 || to < 0)
+        return;
+    const int r1 = qMin(from / m_columns, to / m_columns);
+    const int r2 = qMax(from / m_columns, to / m_columns);
+    const int c1 = qMin(from % m_columns, to % m_columns);
+    const int c2 = qMax(from % m_columns, to % m_columns);
+    for (int row = r1; row <= r2; ++row)
+        for (int column = c1; column <= c2; ++column)
+            m_cells[row * m_columns + column] = value;
+}
+
 void ZoneGrid::mousePressEvent(QMouseEvent *event)
 {
     const int cell = cellAt(event->pos());
     if (cell < 0)
         return;
+
+    // Shift and Ctrl reach the rectangle tools without leaving the picture,
+    // which is where the hand already is. The buttons do the same thing for
+    // anyone who would rather see the choice.
+    Tool tool = m_tool;
+    if (event->modifiers() & Qt::ShiftModifier)
+        tool = Tool::RectangleOn;
+    else if (event->modifiers() & Qt::ControlModifier)
+        tool = Tool::RectangleOff;
+
+    if (tool != Tool::Paint) {
+        m_rubberFrom = m_rubberTo = cell;
+        m_paintValue = tool == Tool::RectangleOn;
+        update();
+        return;
+    }
+
     // The first cell decides the direction for the whole drag.
     m_paintValue = !m_cells[cell];
     m_cells[cell] = m_paintValue;
@@ -110,9 +140,30 @@ void ZoneGrid::mouseMoveEvent(QMouseEvent *event)
     if (!(event->buttons() & Qt::LeftButton))
         return;
     const int cell = cellAt(event->pos());
-    if (cell < 0 || m_cells[cell] == m_paintValue)
+    if (cell < 0)
+        return;
+
+    if (m_rubberFrom >= 0) {
+        if (cell == m_rubberTo)
+            return;
+        m_rubberTo = cell;   // drawn as an outline until the button comes up
+        update();
+        return;
+    }
+
+    if (m_cells[cell] == m_paintValue)
         return;
     m_cells[cell] = m_paintValue;
+    update();
+    emit maskChanged();
+}
+
+void ZoneGrid::mouseReleaseEvent(QMouseEvent *)
+{
+    if (m_rubberFrom < 0)
+        return;
+    applyRectangle(m_rubberFrom, m_rubberTo, m_paintValue);
+    m_rubberFrom = m_rubberTo = -1;
     update();
     emit maskChanged();
 }
@@ -145,6 +196,19 @@ void ZoneGrid::paintEvent(QPaintEvent *)
             painter.drawRect(QRectF(column * cellWidth, row * cellHeight,
                                     cellWidth, cellHeight));
         }
+    }
+
+    // The rectangle being dragged out, before it is committed.
+    if (m_rubberFrom >= 0 && m_rubberTo >= 0) {
+        const int r1 = qMin(m_rubberFrom / m_columns, m_rubberTo / m_columns);
+        const int r2 = qMax(m_rubberFrom / m_columns, m_rubberTo / m_columns);
+        const int c1 = qMin(m_rubberFrom % m_columns, m_rubberTo % m_columns);
+        const int c2 = qMax(m_rubberFrom % m_columns, m_rubberTo % m_columns);
+        const QRectF box(c1 * cellWidth, r1 * cellHeight,
+                         (c2 - c1 + 1) * cellWidth, (r2 - r1 + 1) * cellHeight);
+        painter.setBrush(QColor(0, 0, 0, m_paintValue ? 40 : 110));
+        painter.setPen(QPen(Qt::white, 2, Qt::DashLine));
+        painter.drawRect(box);
     }
 
     painter.setBrush(Qt::NoBrush);
@@ -188,6 +252,40 @@ ZoneEditor::ZoneEditor(const CameraConfig &camera, const QString &mask,
     connect(none, &QPushButton::clicked, this, [this] { m_grid->fill(false); });
     connect(invert, &QPushButton::clicked, this, [this] { m_grid->invert(); });
 
+    // Three tools, one of them at a time.
+    auto *paintTool = new QPushButton(tr("Draw"), this);
+    auto *rectOnTool = new QPushButton(tr("Watch a rectangle"), this);
+    auto *rectOffTool = new QPushButton(tr("Ignore a rectangle"), this);
+    for (QPushButton *button : {paintTool, rectOnTool, rectOffTool})
+        button->setCheckable(true);
+    paintTool->setChecked(true);
+    paintTool->setToolTip(tr("Drag over single cells."));
+    rectOnTool->setToolTip(
+        tr("Drag out a rectangle to watch. Shift and drag does the same "
+           "without changing tool."));
+    rectOffTool->setToolTip(
+        tr("Drag out a rectangle to ignore. Ctrl and drag does the same "
+           "without changing tool."));
+
+    auto choose = [this, paintTool, rectOnTool, rectOffTool](ZoneGrid::Tool tool) {
+        m_grid->setTool(tool);
+        paintTool->setChecked(tool == ZoneGrid::Tool::Paint);
+        rectOnTool->setChecked(tool == ZoneGrid::Tool::RectangleOn);
+        rectOffTool->setChecked(tool == ZoneGrid::Tool::RectangleOff);
+    };
+    connect(paintTool, &QPushButton::clicked, this,
+            [choose] { choose(ZoneGrid::Tool::Paint); });
+    connect(rectOnTool, &QPushButton::clicked, this,
+            [choose] { choose(ZoneGrid::Tool::RectangleOn); });
+    connect(rectOffTool, &QPushButton::clicked, this,
+            [choose] { choose(ZoneGrid::Tool::RectangleOff); });
+
+    auto *toolRow = new QHBoxLayout;
+    toolRow->addWidget(paintTool);
+    toolRow->addWidget(rectOnTool);
+    toolRow->addWidget(rectOffTool);
+    toolRow->addStretch(1);
+
     auto *buttonsRow = new QHBoxLayout;
     buttonsRow->addWidget(all);
     buttonsRow->addWidget(none);
@@ -205,6 +303,7 @@ ZoneEditor::ZoneEditor(const CameraConfig &camera, const QString &mask,
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(hint);
     layout->addWidget(m_grid, 1);
+    layout->addLayout(toolRow);
     layout->addLayout(buttonsRow);
     layout->addWidget(m_status);
     layout->addWidget(dialogButtons);

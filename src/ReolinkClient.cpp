@@ -165,6 +165,39 @@ void ReolinkClient::post(const QString &command, const QJsonObject &param,
                          const std::function<void(const QString &)> &onErr,
                          int action, bool mayRetry)
 {
+    // Most callers want the value and nothing else.
+    postRaw(command, param,
+            [onOk](const QJsonObject &entry) {
+                onOk(entry.value(QStringLiteral("value")).toObject());
+            },
+            onErr, action, mayRetry);
+}
+
+void ReolinkClient::postRaw(const QString &command, const QJsonObject &param,
+                            const std::function<void(const QJsonObject &)> &onOk,
+                            const std::function<void(const QString &)> &onErr,
+                            int action, bool mayRetry)
+{
+    m_queue.append([this, command, param, onOk, onErr, action, mayRetry] {
+        sendNow(command, param, onOk, onErr, action, mayRetry);
+    });
+    pump();
+}
+
+void ReolinkClient::pump()
+{
+    while (m_inFlight < kMaxInFlight && !m_queue.isEmpty()) {
+        const std::function<void()> next = m_queue.takeFirst();
+        ++m_inFlight;
+        next();
+    }
+}
+
+void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
+                            const std::function<void(const QJsonObject &)> &onOk,
+                            const std::function<void(const QString &)> &onErr,
+                            int action, bool mayRetry)
+{
     QJsonObject entry;
     entry[QStringLiteral("cmd")] = command;
     entry[QStringLiteral("action")] = action;
@@ -186,18 +219,31 @@ void ReolinkClient::post(const QString &command, const QJsonObject &param,
 
     const QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
     LEO_DEBUG(Api, m_camera.label(),
-              QStringLiteral("→ %1 action=%2 %3")
+              QStringLiteral("→ %1 action=%2 session=%3 %4")
                   .arg(command).arg(action)
+                  .arg(m_token.isEmpty()
+                           ? QStringLiteral("none")
+                           : QStringLiteral("%1 chars").arg(m_token.size()))
                   .arg(param.isEmpty() ? QString()
                                        : QString::fromUtf8(payload)));
 
     const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
+    const QString tokenUsed = m_token;
     QNetworkReply *reply = m_net->post(req, payload);
 
     connect(reply, &QNetworkReply::finished, this,
-            [this, reply, startedAt, command, param, onOk, onErr, action, mayRetry] {
+            [this, reply, startedAt, command, param, onOk, onErr, action, mayRetry,
+             tokenUsed] {
         reply->deleteLater();
         const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
+
+        // The slot is freed however this ends, and the next request started —
+        // after the handler has run, so a retry keeps its place in the queue.
+        --m_inFlight;
+        struct Pumper {
+            ReolinkClient *self;
+            ~Pumper() { self->pump(); }
+        } pumper{this};
 
         if (reply->error() != QNetworkReply::NoError) {
             const QString message =
@@ -229,19 +275,29 @@ void ReolinkClient::post(const QString &command, const QJsonObject &param,
             // turned into a permanent failure: every later request reused the
             // dead token and the camera looked unreachable. One silent retry
             // with a fresh session is what the user would do by hand.
-            if (mayRetry && !m_token.isEmpty() &&
+            if (mayRetry && !tokenUsed.isEmpty() &&
                 (rspCode == -6 || rspCode == -27)) {
                 LEO_INFO(Api, m_camera.label(),
-                         QStringLiteral("Session expired during %1, logging in "
+                         QStringLiteral("Session refused during %1, logging in "
                                         "again").arg(command));
-                m_token.clear();
+                // Only if nobody has already replaced it. The old test looked
+                // at m_token, so the first request to fail cleared it and every
+                // other one then decided it was not allowed to retry — twenty
+                // failures reported for one expired session.
+                if (m_token == tokenUsed)
+                    m_token.clear();
                 login([this, command, param, onOk, onErr, action] {
-                          post(command, param, onOk, onErr, action, false);
+                          postRaw(command, param, onOk, onErr, action, false);
                       },
                       onErr);
                 return;
             }
 
+            // Recorded so the caller can tell "this camera has no such
+            // feature" from "something went wrong". Single-threaded and set
+            // immediately before the callback runs, which is the only reason a
+            // shared field is acceptable here.
+            m_lastErrorCode = rspCode;
             LEO_WARN(Api, m_camera.label(),
                      QStringLiteral("← %1 failed after %2 ms: rspCode=%3 %4")
                          .arg(command).arg(elapsed).arg(rspCode)
@@ -253,7 +309,7 @@ void ReolinkClient::post(const QString &command, const QJsonObject &param,
         LEO_DEBUG(Api, m_camera.label(),
                   QStringLiteral("← %1 ok after %2 ms, %3 bytes")
                       .arg(command).arg(elapsed).arg(raw.size()));
-        onOk(first.value(QStringLiteral("value")).toObject());
+        onOk(first);
     });
 }
 
@@ -314,6 +370,9 @@ void ReolinkClient::login(const std::function<void()> &then,
              // it lasts, so it never reaches the log intact.
              Log::addSecret(m_token);
              LEO_DEBUG(Api, m_camera.label(),
+                       QStringLiteral("token is %1 chars")
+                           .arg(m_token.size()));
+             LEO_DEBUG(Api, m_camera.label(),
                        QStringLiteral("Logged in as %1, lease %2 s, %3 request(s) "
                                       "were waiting")
                            .arg(m_camera.user)
@@ -367,54 +426,32 @@ void ReolinkClient::fetchDeviceInfo()
 
 void ReolinkClient::fetchSection(const QString &command, const QJsonObject &param)
 {
+    // action=1 returns the current value *and* the permitted ranges in one
+    // round trip, so the dialog can be built from a single request.
+    //
+    // This used to build and send its own request instead of going through
+    // postRaw(). It therefore had none of the logging, none of the retry when a
+    // session expires, and did not record the camera's error code — which is
+    // why a firmware answering "I do not know that command" turned up as a red
+    // error at the foot of the dialog with nothing in the log to explain it.
+    // Through login() like everything else. Sending the request straight to
+    // postRaw() looks tidier and is wrong: with no session yet the camera
+    // answers "please login first" to every section at once, and the dialog
+    // comes up empty.
     login([this, command, param] {
-        // action=1 returns the current value *and* the permitted ranges in one
-        // round trip, so the dialog can be built from a single request.
-        QJsonObject entry;
-        entry[QStringLiteral("cmd")] = command;
-        entry[QStringLiteral("action")] = 1;
-        entry[QStringLiteral("param")] = param;
-
-        QJsonArray body;
-        body.append(entry);
-
-        QNetworkRequest req(apiUrl(command));
-        req.setHeader(QNetworkRequest::ContentTypeHeader,
-                      QStringLiteral("application/json"));
-        if (m_camera.https) {
-            QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
-            ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
-            req.setSslConfiguration(ssl);
-        }
-
-        QNetworkReply *reply =
-            m_net->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
-        connect(reply, &QNetworkReply::finished, this, [this, reply, command] {
-            reply->deleteLater();
-            if (reply->error() != QNetworkReply::NoError) {
-                emit failed(tr("Cannot reach %1: %2")
-                                .arg(m_camera.host, reply->errorString()));
-                return;
-            }
-            const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-            if (!doc.isArray() || doc.array().isEmpty()) {
-                emit failed(tr("Unexpected reply from %1.").arg(m_camera.host));
-                return;
-            }
-            const QJsonObject first = doc.array().first().toObject();
-            if (first.value(QStringLiteral("code")).toInt(-1) != 0) {
-                const QJsonObject err = first.value(QStringLiteral("error")).toObject();
-                emit failed(describeError(err.value(QStringLiteral("rspCode")).toInt()));
-                return;
-            }
-            // Older firmware calls it "initial" rather than "range".
-            QJsonObject ranges = first.value(QStringLiteral("range")).toObject();
-            if (ranges.isEmpty())
-                ranges = first.value(QStringLiteral("initial")).toObject();
-            emit sectionReady(command,
-                              first.value(QStringLiteral("value")).toObject(),
-                              ranges);
-        });
+        postRaw(command, param,
+                [this, command](const QJsonObject &entry) {
+                    // Older firmware calls it "initial" rather than "range".
+                    QJsonObject ranges =
+                        entry.value(QStringLiteral("range")).toObject();
+                    if (ranges.isEmpty())
+                        ranges = entry.value(QStringLiteral("initial")).toObject();
+                    emit sectionReady(command,
+                                      entry.value(QStringLiteral("value")).toObject(),
+                                      ranges);
+                },
+                [this](const QString &e) { emit failed(e); },
+                1);
     },
     [this](const QString &e) { emit failed(e); });
 }

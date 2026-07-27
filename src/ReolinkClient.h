@@ -129,6 +129,15 @@ public:
 
     bool hasSession() const { return !m_token.isEmpty(); }
 
+    /// The camera's own code for the failure just reported. -9 and -26 mean
+    /// "this model has not got that", which is not an error worth showing
+    /// anyone; everything else is.
+    int lastErrorCode() const { return m_lastErrorCode; }
+    static bool meansUnsupported(int rspCode)
+    {
+        return rspCode == -9 || rspCode == -26;
+    }
+
     static QString describeError(int rspCode);
 
 signals:
@@ -174,6 +183,19 @@ private:
               const std::function<void(const QJsonObject &value)> &onOk,
               const std::function<void(const QString &error)> &onErr,
               int action = 0, bool mayRetry = true);
+    /// As post(), but hands the whole reply entry over rather than only its
+    /// `value` — needed wherever the `range` document matters. Everything
+    /// shares this one path so that logging, the retry when a session expires
+    /// and the recorded error code apply everywhere.
+    void postRaw(const QString &command, const QJsonObject &param,
+                 const std::function<void(const QJsonObject &entry)> &onOk,
+                 const std::function<void(const QString &error)> &onErr,
+                 int action = 0, bool mayRetry = true);
+    /// Actually puts a request on the wire. Only pump() calls this.
+    void sendNow(const QString &command, const QJsonObject &param,
+                 const std::function<void(const QJsonObject &entry)> &onOk,
+                 const std::function<void(const QString &error)> &onErr,
+                 int action, bool mayRetry);
     /// Hands the session back. Cameras allow only a handful at once, and one
     /// that is merely dropped stays occupied until its lease runs out.
     void releaseSession();
@@ -183,6 +205,7 @@ private:
     QNetworkAccessManager *m_net;
     CameraConfig m_camera;
     QString m_token;
+    int m_lastErrorCode{0};
 
     /// Requests that arrived while a login was still in flight. A camera hands
     /// out a session per Login, so exactly one may ever be outstanding.
@@ -192,6 +215,26 @@ private:
     };
     QList<PendingLogin> m_waiting;
     bool m_loggingIn{false};
+
+    /// Requests waiting for a slot, and how many are on the wire.
+    ///
+    /// The settings dialog asks for twenty-odd sections at once. On its own
+    /// the camera copes with that; with a second leolink also talking to it,
+    /// it starts answering "please login first" to a valid token and the whole
+    /// dialog comes up empty. Measured, all four combinations:
+    ///
+    ///     second instance   unthrottled   throttled
+    ///     running           storms of -6  none
+    ///     not running       none          none
+    ///
+    /// So the second instance is what breaks it and this is what survives it.
+    /// Trickling a few at a time costs nothing noticeable — the dialog fills in
+    /// a fraction of a second either way — and being gentle with a small
+    /// embedded device is not a bad default in any case.
+    QList<std::function<void()>> m_queue;
+    int m_inFlight{0};
+    static constexpr int kMaxInFlight = 4;
+    void pump();
 };
 
 } // namespace leolink

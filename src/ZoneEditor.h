@@ -41,6 +41,12 @@ public:
     void fill(bool watched);
     void invert();
 
+    /// What dragging does. Painting cell by cell suits touching up an edge;
+    /// dragging a rectangle suits the usual job, which is "ignore that whole
+    /// corner". Both exist because neither covers the other.
+    enum class Tool { Paint, RectangleOn, RectangleOff };
+    void setTool(Tool tool) { m_tool = tool; }
+
 signals:
     void maskChanged();
 
@@ -48,6 +54,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     int heightForWidth(int width) const override;
     bool hasHeightForWidth() const override { return true; }
 
@@ -55,12 +62,19 @@ private:
     /// Cell under a point, or -1 outside the grid.
     int cellAt(const QPoint &point) const;
 
+    /// Cells under a rectangle from `from` to `to`, inclusive.
+    void applyRectangle(int from, int to, bool value);
+
     QPixmap m_background;
     int m_columns;
     int m_rows;
     QVector<bool> m_cells;
     /// What a drag is currently doing, decided at the first cell touched.
     bool m_paintValue{true};
+    Tool m_tool{Tool::Paint};
+    /// While a rectangle is being dragged out.
+    int m_rubberFrom{-1};
+    int m_rubberTo{-1};
 };
 
 /// Draws the rectangles a camera blanks out of its own picture.

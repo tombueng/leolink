@@ -14,6 +14,7 @@ class QComboBox;
 class QGroupBox;
 class QLabel;
 class QLineEdit;
+class QPlainTextEdit;
 class QPushButton;
 class QSlider;
 class QTableWidget;
@@ -38,6 +39,11 @@ class CameraSettingsDialog : public QDialog {
 
 public:
     CameraSettingsDialog(const CameraConfig &camera, QWidget *parent = nullptr);
+
+    /// Prints what the dialog ended up looking like and holding. Used by
+    /// LEOLINK_DIALOG_TEST; there is no other way to check a dialog from
+    /// outside the process.
+    void reportForTesting() const;
 
 signals:
     /// The camera's encoder was changed, so its stream has just restarted.
@@ -85,6 +91,8 @@ private:
 
     /// Creates an editor for one camera section and registers it so the reply
     /// to Get<name> lands in the right place.
+    /// Adds a tab, wrapped so the dialog stays resizable.
+    void addPage(QWidget *page, const QString &title);
     SectionEditor *addSection(QWidget *page, const QString &command,
                               const QString &title,
                               const QList<struct FieldSpec> &fields,
@@ -141,7 +149,7 @@ private:
     QJsonObject m_recording;
     bool m_recordingDirty{false};
     QLabel *m_performance{nullptr};
-    QLabel *m_capabilities{nullptr};
+    QPlainTextEdit *m_capabilities{nullptr};
     /// The same list in a form worth pasting into a bug report.
     QString m_capabilityReport;
     QLabel *m_firmware{nullptr};

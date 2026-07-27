@@ -6,11 +6,13 @@
 #include <QCommandLineParser>
 #include <QIcon>
 #include <QSocketNotifier>
+#include <QTimer>
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTranslator>
 
 #include "Baichuan.h"
+#include "CameraSettingsDialog.h"
 #include "Config.h"
 #include "Log.h"
 #include "MainWindow.h"
@@ -200,6 +202,33 @@ int main(int argc, char *argv[])
         return leolink::runP2PProbe(parser.value(bcUid),
                                     parser.value(bcUser),
                                     parser.value(bcPass));
+    }
+
+    // A way to look at the camera-settings dialog without a screen. It builds
+    // the whole thing, waits for the camera to answer, and prints what ended up
+    // on it — which is the only way to check a dialog's size and contents from
+    // outside without taking over somebody's desktop.
+    if (qEnvironmentVariableIsSet("LEOLINK_DIALOG_TEST")) {
+        if (config.active().isEmpty()) {
+            std::fprintf(stderr, "no camera configured\n");
+            return 1;
+        }
+        auto *dialog = new leolink::CameraSettingsDialog(config.active().first());
+        dialog->show();
+        // Long enough for every section to have come back. Six seconds was not,
+        // and the report then described a dialog that was still filling in.
+        const int wait =
+            qEnvironmentVariableIntValue("LEOLINK_DIALOG_TEST") > 1
+                ? qEnvironmentVariableIntValue("LEOLINK_DIALOG_TEST") * 1000
+                : 15000;
+        QTimer::singleShot(wait, &app, [dialog] {
+            dialog->reportForTesting();
+            // Deleted, so the session goes back. A test that leaks one is a
+            // test that makes the next run fail.
+            delete dialog;
+            QApplication::quit();
+        });
+        return QApplication::exec();
     }
 
     installSignalHandling(&app);
