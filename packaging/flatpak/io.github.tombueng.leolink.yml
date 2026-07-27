@@ -8,7 +8,7 @@
 # Qt 6, which is most of what leolink needs.
 app-id: io.github.tombueng.leolink
 runtime: org.kde.Platform
-runtime-version: '6.9'
+runtime-version: '6.11'
 sdk: org.kde.Sdk
 command: leolink
 
@@ -46,6 +46,11 @@ modules:
       - -Ddemos=false
       - -Dvulkan=disabled       # leolink renders through OpenGL
       - -Dshaderc=disabled
+      # Also off, and it has to be said explicitly: the KDE SDK ships a
+      # glslang that libplacebo finds by itself and then cannot link against
+      # ("undefined reference to glslang::TProgram"). Nothing here needs it —
+      # it exists to compile shaders to SPIR-V, which is a Vulkan concern.
+      - -Dglslang=disabled
     sources:
       # Must be a git source, not a tarball: libplacebo carries glad as a
       # submodule and its meson build refuses to configure without it

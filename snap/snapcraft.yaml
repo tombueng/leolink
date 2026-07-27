@@ -1,0 +1,108 @@
+# Snap package.
+#
+# Strict confinement, deliberately. leolink talks to cameras over the network,
+# draws through OpenGL, plays and records sound, and writes recordings into the
+# user's own folders — every one of which strict confinement covers through a
+# named interface. Asking for classic would mean a manual review by Canonical
+# and weeks of waiting, in exchange for permissions the program does not need.
+#
+# The one thing that does not survive confinement is the "password command"
+# option, which runs `pass` or `secret-tool` on the host. A confined snap cannot
+# see those. The password field works as normal; that shortcut does not.
+#
+# Strict also means the kde-neon-6 extension can be used, which serves Qt from a
+# shared content snap instead of bundling it — a fraction of the size, and it
+# picks up Qt security fixes without a rebuild here.
+#
+# Build:   sg lxd -c "snapcraft --use-lxd"
+# Install: sudo snap install --dangerous ./leolink_*.snap
+name: leolink
+base: core24
+adopt-info: leolink
+summary: Watch and record Reolink cameras
+description: |
+  A native Linux client for Reolink IP cameras. Several cameras at once in a
+  grid you arrange yourself, with the volume of each under its own control.
+
+  Motion can come from the camera itself over ONVIF, or be worked out here from
+  the picture for cameras that report nothing — with drawable zones, so a tree
+  in the wind or a neighbour's door can be left out. Recordings are written to
+  your own disk, which works even on cameras with no memory card fitted.
+
+  It also changes the settings on the camera: resolution, frame rate, bit rate,
+  the detection area, privacy zones the camera blanks before anything leaves it,
+  users and Wi-Fi. Every control is built from what the camera itself reports it
+  can do, so a model is never offered a setting it does not have.
+
+  Nothing is sent to any third party. On the local network leolink talks only to
+  the camera.
+
+title: leolink
+website: https://github.com/tombueng/leolink
+source-code: https://github.com/tombueng/leolink
+issues: https://github.com/tombueng/leolink/issues
+contact: https://github.com/tombueng/leolink/issues
+icon: resources/icons/leolink.svg
+
+license: MIT
+grade: stable
+confinement: strict
+compression: lzo
+
+platforms:
+  amd64:
+
+apps:
+  leolink:
+    command: usr/bin/leolink
+    desktop: usr/share/applications/io.github.tombueng.leolink.desktop
+    extensions: [kde-neon-6]
+    plugs:
+      - network          # the cameras
+      - network-bind     # the loopback port Baichuan video is re-served on
+      - opengl
+      - audio-playback   # camera microphones, and the alert sound
+      - audio-record     # talking back through a camera's speaker
+      - home             # recordings and snapshots
+      - removable-media  # a recordings folder on an external disk
+      - password-manager-service
+    environment:
+      # ffmpeg is bundled and run as a program: recording, and the detection
+      # leolink does itself.
+      PATH: $SNAP/usr/bin:$PATH
+      LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
+
+parts:
+  leolink:
+    plugin: cmake
+    # From the working tree: the build container has no route to GitHub, and
+    # for a local build a checkout would be redundant anyway.
+    source: .
+    source-type: local
+    override-pull: |
+      craftctl default
+      # The project's own version, not cmake_minimum_required's — a loose grep
+      # for "VERSION" finds that first and labelled the snap 3.21.
+      craftctl set version="$(sed -n 's/^[[:space:]]*VERSION \([0-9][0-9.]*\)[[:space:]]*$/\1/p' CMakeLists.txt | head -1)"
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      - qt6-base-dev
+      - qt6-base-dev-tools
+      - qt6-svg-dev
+      - qt6-tools-dev
+      - qt6-tools-dev-tools
+      - libmpv-dev
+      - libgl-dev
+    stage-packages:
+      # libmpv does the decoding, the hardware acceleration and the audio; the
+      # KDE content snap carries Qt but not this.
+      - libmpv2
+      # Recording and both detectors run ffmpeg as a separate process. Without
+      # it those features report themselves unavailable rather than failing
+      # obscurely, but a camera viewer that cannot record is only half of one.
+      - ffmpeg
+    prime:
+      - -usr/share/doc
+      - -usr/share/man
