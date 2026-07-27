@@ -1,6 +1,8 @@
 // Diagnostics: one log everybody can read, and nobody leaks a password with.
 #pragma once
 
+#include <atomic>
+
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -61,6 +63,11 @@ public:
     /// Qt's own message handler.
     static void start();
 
+    /// Puts Qt's own message handler back and stops accepting lines. Called on
+    /// the way out, so nothing logged during shutdown reaches state that is
+    /// being torn down.
+    static void stop();
+
     /// Debug detail on or off. Persisted in the configuration; the environment
     /// variable LEOLINK_DEBUG=1 forces it on for one run, which is how you get
     /// a log out of a build that will not start far enough to show a dialog.
@@ -117,6 +124,8 @@ private:
     QString redact(QString text) const;
 
     static bool s_debug;
+    /// False before start() and after stop(); write() checks it first.
+    static std::atomic_bool s_running;
 };
 
 } // namespace leolink

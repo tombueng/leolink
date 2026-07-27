@@ -114,17 +114,6 @@ int main(int argc, char *argv[])
     // Language: the configured one, or whatever the system asks for.
     const leolink::Config config = leolink::Config::load();
 
-    // Logging starts before anything else can fail. Every stored password goes
-    // in as a secret first, so that even a stray dump of the configuration
-    // cannot put one in a file the user is later asked to send us.
-    leolink::Log::setDebugEnabled(config.debugLogging);
-    for (const leolink::CameraConfig &camera : config.cameras) {
-        leolink::Log::addSecret(camera.password);
-        leolink::Log::addSecret(camera.uid);
-        leolink::Log::addSecret(camera.actions.mqttPassword);
-    }
-    leolink::Log::addSecret(config.actions.mqttPassword);
-    leolink::Log::start();
     const QLocale locale = config.language == QLatin1String("system")
                                ? QLocale()
                                : QLocale(config.language);
@@ -186,7 +175,24 @@ int main(int argc, char *argv[])
     parser.addOption(bcSeconds);
     parser.addOption(bcUser);
     parser.addOption(bcPass);
+    // Only now. QCommandLineParser answers --version and --help by calling
+    // exit() outright, which runs static destructors while Qt is still very
+    // much alive — and anything logged in that window reaches a handler whose
+    // state is already being taken apart. Inside the Flatpak that produced a
+    // double free every time; on the host it was luck.
     parser.process(app);
+
+    // Every stored password goes in as a secret before the first line is
+    // written, so that even a stray dump of the configuration cannot put one
+    // in a file the user is later asked to send us.
+    leolink::Log::setDebugEnabled(config.debugLogging);
+    for (const leolink::CameraConfig &camera : config.cameras) {
+        leolink::Log::addSecret(camera.password);
+        leolink::Log::addSecret(camera.uid);
+        leolink::Log::addSecret(camera.actions.mqttPassword);
+    }
+    leolink::Log::addSecret(config.actions.mqttPassword);
+    leolink::Log::start();
 
     // Diagnostic modes: no window, just protocol output on the terminal.
     if (parser.isSet(bcTest)) {
@@ -298,5 +304,6 @@ int main(int argc, char *argv[])
     // QApplication.
 
     LEO_INFO(App, QString(), QStringLiteral("Stopped"));
+    leolink::Log::stop();
     return result;
 }

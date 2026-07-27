@@ -27,15 +27,33 @@ namespace leolink {
 
 namespace {
 
-/// Guards the file, the ring buffer and the secret list. One mutex for all
-/// three: they are only ever touched together, and logging is not on any hot
-/// path worth splitting them for.
-QMutex g_mutex;
-QFile g_file;
-QStringList g_ring;
-QStringList g_secrets;
-QMap<QString, QString> g_facts;
-bool g_started = false;
+/// Everything the log owns, deliberately never destroyed.
+///
+/// It used to be a set of file-scope globals, and that crashed on the way out.
+/// Qt's own message handler is still installed while static destructors run,
+/// so anything logged during shutdown — by Qt, by a plugin, by a driver —
+/// reached a mutex and a QFile that had already been torn down. The symptoms
+/// were "QRegularExpression object is invalid" followed by a double free, and
+/// they only showed up inside the Flatpak, where the runtime happens to log
+/// something late. On the host the same bug sat there silently.
+///
+/// A leaked singleton has no destruction order to get wrong. It costs one
+/// allocation that is never freed, which for a process-lifetime log is the
+/// correct trade.
+struct State {
+    QMutex mutex;
+    QFile file;
+    QStringList ring;
+    QStringList secrets;
+    QMap<QString, QString> facts;
+    bool started = false;
+};
+
+State &state()
+{
+    static State *instance = new State;
+    return *instance;
+}
 
 /// How many lines the diagnostics window can show without re-reading the file.
 constexpr int kRingLines = 3000;
@@ -125,6 +143,7 @@ void writeToStderr(const QString &line)
 } // namespace
 
 bool Log::s_debug = false;
+std::atomic_bool Log::s_running{false};
 
 Log &Log::instance()
 {
@@ -145,23 +164,24 @@ QString Log::previousLogPath()
 void Log::start()
 {
     {
-        QMutexLocker locker(&g_mutex);
-        if (g_started)
+        QMutexLocker locker(&state().mutex);
+        if (state().started)
             return;
-        g_started = true;
+        state().started = true;
         QDir().mkpath(directory());
-        g_file.setFileName(logPath());
-        if (!g_file.open(QIODevice::Append | QIODevice::Text)) {
+        state().file.setFileName(logPath());
+        if (!state().file.open(QIODevice::Append | QIODevice::Text)) {
             // A read-only home directory or a full disk. Say so once on the
             // terminal: silently losing the log is how a diagnosable problem
             // becomes an undiagnosable one.
             writeToStderr(QStringLiteral("leolink: cannot write %1: %2")
-                              .arg(logPath(), g_file.errorString()));
+                              .arg(logPath(), state().file.errorString()));
         }
     }
 
     if (qEnvironmentVariableIntValue("LEOLINK_DEBUG") > 0)
         s_debug = true;
+    s_running = true;
 
     // Qt, its platform plugins and the Wayland stack all complain through
     // qWarning. Those complaints are frequently the actual explanation — a
@@ -194,6 +214,17 @@ void Log::start()
                           : QGuiApplication::platformName()));
 }
 
+void Log::stop()
+{
+    // Order matters: stop the handler first, so nothing new arrives while the
+    // last lines are being flushed.
+    qInstallMessageHandler(nullptr);
+    s_running = false;
+    QMutexLocker locker(&state().mutex);
+    if (state().file.isOpen())
+        state().file.flush();
+}
+
 void Log::setDebugEnabled(bool enabled)
 {
     if (enabled == s_debug)
@@ -211,21 +242,21 @@ void Log::addSecret(const QString &secret)
     // problem, and hiding it would not fix that.
     if (secret.size() < 4)
         return;
-    QMutexLocker locker(&g_mutex);
-    if (!g_secrets.contains(secret))
-        g_secrets.append(secret);
+    QMutexLocker locker(&state().mutex);
+    if (!state().secrets.contains(secret))
+        state().secrets.append(secret);
 }
 
 void Log::clearSecrets()
 {
-    QMutexLocker locker(&g_mutex);
-    g_secrets.clear();
+    QMutexLocker locker(&state().mutex);
+    state().secrets.clear();
 }
 
 void Log::setFact(const QString &key, const QString &value)
 {
-    QMutexLocker locker(&g_mutex);
-    g_facts.insert(key, value);
+    QMutexLocker locker(&state().mutex);
+    state().facts.insert(key, value);
 }
 
 QString Log::categoryName(Category category)
@@ -277,8 +308,8 @@ QString Log::levelName(Level level)
 
 QString Log::redact(QString text) const
 {
-    // Caller holds the mutex: g_secrets is read here.
-    for (const QString &secret : std::as_const(g_secrets))
+    // Caller holds the mutex: state().secrets is read here.
+    for (const QString &secret : std::as_const(state().secrets))
         text.replace(secret, QStringLiteral("«hidden»"));
 
     // Session tokens appear in every API URL. They expire, but a log is often
@@ -305,6 +336,8 @@ QString Log::redact(QString text) const
 void Log::write(Level level, Category category, const QString &source,
                 const QString &text)
 {
+    if (!s_running)
+        return;   // before start(), or after stop() during shutdown
     if (level == Level::Debug && !s_debug)
         return;
     instance().writeLine(level, category, source, text);
@@ -315,7 +348,7 @@ void Log::writeLine(Level level, Category category, const QString &source,
 {
     QString line;
     {
-        QMutexLocker locker(&g_mutex);
+        QMutexLocker locker(&state().mutex);
 
         // %-8s on the category and a fixed-width level keep the columns lined
         // up, which is the difference between skimming a log and reading it.
@@ -329,19 +362,19 @@ void Log::writeLine(Level level, Category category, const QString &source,
                         text);
         line = redact(line);
 
-        if (g_file.isOpen()) {
+        if (state().file.isOpen()) {
             rotateIfNeeded();
-            g_file.write(line.toUtf8());
-            g_file.write("\n");
+            state().file.write(line.toUtf8());
+            state().file.write("\n");
             // Flushed every line on purpose. A log that loses its last page is
             // useless precisely when it matters, because the interesting thing
             // is usually whatever happened just before the crash.
-            g_file.flush();
+            state().file.flush();
         }
 
-        g_ring.append(line);
-        while (g_ring.size() > kRingLines)
-            g_ring.removeFirst();
+        state().ring.append(line);
+        while (state().ring.size() > kRingLines)
+            state().ring.removeFirst();
     }
 
     if (level == Level::Error || level == Level::Warning || s_debug)
@@ -353,31 +386,31 @@ void Log::writeLine(Level level, Category category, const QString &source,
 void Log::rotateIfNeeded()
 {
     // Caller holds the mutex.
-    if (g_file.size() <= maxFileSize())
+    if (state().file.size() <= maxFileSize())
         return;
 
-    g_file.close();
+    state().file.close();
     const QString current = logPath();
     const QString previous = previousLogPath();
     QFile::remove(previous);
     QFile::rename(current, previous);
-    g_file.setFileName(current);
-    if (!g_file.open(QIODevice::Append | QIODevice::Text))
+    state().file.setFileName(current);
+    if (!state().file.open(QIODevice::Append | QIODevice::Text))
         writeToStderr(QStringLiteral("leolink: cannot reopen %1").arg(current));
 }
 
 QStringList Log::recent() const
 {
-    QMutexLocker locker(&g_mutex);
-    return g_ring;
+    QMutexLocker locker(&state().mutex);
+    return state().ring;
 }
 
 QString Log::report()
 {
     QMap<QString, QString> facts;
     {
-        QMutexLocker locker(&g_mutex);
-        facts = g_facts;
+        QMutexLocker locker(&state().mutex);
+        facts = state().facts;
     }
 
     QStringList lines;
