@@ -146,9 +146,13 @@ line, and is pruned to 90 days on start.
 | `Ctrl+S` | snapshot every camera |
 | `Ctrl+R` | start/stop recording every camera |
 | `Ctrl+L` | event log |
-| `F11` | full screen |
-| double-click a tile | that camera fills the window, again to go back |
+| `F11` | full screen — the whole grid, every bar hidden |
+| `Esc` | leave full screen |
+| double-click a tile | that camera alone fills the screen, again to go back |
 | right-click | menu — also the way back when everything else is hidden |
+
+In full screen the controls under each camera withdraw a few seconds after the
+pointer stops, and the pointer goes with them; moving it brings both back.
 
 With the decoration hidden, drag the strip beneath any camera to move the
 window.

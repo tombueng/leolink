@@ -259,6 +259,7 @@ void VideoTile::buildUi()
     bar->setFrameShape(QFrame::NoFrame);
     bar->setAutoFillBackground(true);
     bar->setBackgroundRole(QPalette::Window);
+    m_strip = bar;
 
     auto *row = new QHBoxLayout(bar);
     row->setContentsMargins(6, 3, 6, 3);
@@ -568,6 +569,60 @@ void VideoTile::resizeEvent(QResizeEvent *event)
     updateStatusLabel();
     if (m_spinner && m_spinner->isVisible())
         m_spinner->setGeometry(m_surface->geometry());
+    layoutStrip();
+}
+
+void VideoTile::setImmersive(bool on)
+{
+    if (m_immersive == on || !m_strip)
+        return;
+    m_immersive = on;
+
+    auto *outer = qobject_cast<QVBoxLayout *>(layout());
+    if (!outer)
+        return;
+
+    if (on) {
+        // Out of the layout, but still a child of the tile: a child of the
+        // video surface would be painted over by mpv, which is why the
+        // connecting spinner is parented here too.
+        outer->removeWidget(m_strip);
+        m_strip->hide();
+        layoutStrip();
+    } else {
+        outer->addWidget(m_strip, 0);
+        m_strip->show();
+    }
+
+    // Without tracking, a pointer moved across the picture with no button held
+    // produces no events at all, and the controls would never come back.
+    setMouseTracking(on);
+    const QList<QWidget *> children = findChildren<QWidget *>();
+    for (QWidget *child : children)
+        child->setMouseTracking(on);
+}
+
+void VideoTile::setControlsVisible(bool visible)
+{
+    if (!m_immersive || !m_strip)
+        return;
+    if (visible) {
+        layoutStrip();
+        m_strip->show();
+        m_strip->raise();
+    } else {
+        m_strip->hide();
+    }
+}
+
+void VideoTile::layoutStrip()
+{
+    if (!m_immersive || !m_strip || !m_surface)
+        return;
+    const QRect video = m_surface->geometry();
+    const int height = m_strip->sizeHint().height();
+    m_strip->setGeometry(video.left(), video.bottom() + 1 - height,
+                         video.width(), height);
 }
 
 void VideoTile::stop()
@@ -956,8 +1011,10 @@ void VideoTile::setRecording(bool recording)
 void VideoTile::mousePressEvent(QMouseEvent *event)
 {
     // Only the strip below the video: dragging on the picture itself would
-    // fight with the double-click that toggles full screen.
-    if (event->button() == Qt::LeftButton &&
+    // fight with the double-click that toggles full screen. In full screen
+    // there is nothing to drag — and the strip is over the picture, so the
+    // test below would hand the whole tile to the window manager.
+    if (!m_immersive && event->button() == Qt::LeftButton &&
         event->position().y() > m_surface->geometry().bottom()) {
         emit moveWindowRequested();
         event->accept();

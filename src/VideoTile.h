@@ -74,6 +74,20 @@ public:
     void setTalkAvailable(bool available);
     void setTalking(bool talking);
 
+    /// Full-screen presentation: the control strip leaves the layout and
+    /// floats over the foot of the picture instead of sitting under it.
+    ///
+    /// It has to leave the layout, because in full screen the strip comes and
+    /// goes with the pointer. Were it still laid out, every appearance would
+    /// resize mpv's surface and the picture would jump by the height of the
+    /// strip — the same reason the alert frame is a permanent inset rather
+    /// than something added when an alert arrives.
+    void setImmersive(bool on);
+    /// Shows or hides the floating strip. Does nothing outside full screen,
+    /// where the strip belongs to the layout and is always there.
+    void setControlsVisible(bool visible);
+    bool isImmersive() const { return m_immersive; }
+
 signals:
     void settingsRequested(const QString &cameraId);
     void volumeChanged(const QString &cameraId, int volume, bool muted);
@@ -118,6 +132,9 @@ private:
 
 
     void beginPlayback();
+    /// Puts the floating strip across the foot of the picture. Only used while
+    /// immersive; in the grid the layout does this.
+    void layoutStrip();
     void refreshStreamInfo();
     /// Re-elides the status line to the room the layout has left it.
     void updateStatusLabel();
@@ -150,6 +167,10 @@ private:
     bool m_alerting{false};
     QTimer *m_flashTimer{nullptr};
     QLabel *m_title{nullptr};
+    /// The row of controls under the picture. Held on to because full screen
+    /// takes it out of the layout and floats it over the video.
+    QWidget *m_strip{nullptr};
+    bool m_immersive{false};
     QLabel *m_status{nullptr};
     /// The full text, before eliding — kept so a resize can redo it.
     QString m_statusText;

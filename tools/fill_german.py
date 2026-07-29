@@ -415,6 +415,7 @@ GERMAN: dict[str, str] = {
     "Open &recordings folder": "&Aufnahmeordner öffnen",
     "&Quit": "&Beenden",
     "&Full screen": "&Vollbild",
+    "Leave full screen": "Vollbild verlassen",
     "Show &menu bar": "&Menüleiste anzeigen",
     "Show &toolbar": "&Werkzeugleiste anzeigen",
     "Show status &bar": "&Statusleiste anzeigen",
@@ -431,7 +432,12 @@ GERMAN: dict[str, str] = {
     "No cameras configured": "Keine Kameras eingerichtet",
     "Nothing to capture": "Nichts aufzunehmen",
     "Save snapshots to": "Standbilder speichern unter",
-    "Double-click to return to the grid": "Doppelklick führt zurück zum Gitter",
+    "Esc leaves full screen": "Esc verlässt das Vollbild",
+    "Esc leaves full screen · double-click a camera to fill the screen":
+        "Esc verlässt das Vollbild · Doppelklick auf eine Kamera füllt den "
+        "Bildschirm",
+    "Double-click for the grid · Esc leaves full screen":
+        "Doppelklick für das Gitter · Esc verlässt das Vollbild",
     "Cannot save": "Speichern nicht möglich",
     "Settings could not be written to %1.":
         "Die Einstellungen konnten nicht nach %1 geschrieben werden.",

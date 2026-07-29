@@ -36,8 +36,12 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
-    /// Catches the minimise so the window can go to the tray instead.
+    /// Catches the minimise so the window can go to the tray instead, and
+    /// notices a window manager taking the window out of full screen.
     void changeEvent(QEvent *event) override;
+    /// Watches the whole application for signs of life while full screen, so
+    /// the controls and the pointer can be taken away once there are none.
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
     void openSettings();
@@ -94,6 +98,30 @@ private:
     void raiseEvent(const CameraConfig &camera, const QString &type,
                     const QString &message, bool active);
     void applyChrome();
+
+    /// Full screen: the window over the whole screen with every bar gone, and
+    /// controls that withdraw when the pointer stops moving. An empty
+    /// `cameraId` shows the grid, a camera's id shows that one camera alone.
+    ///
+    /// The window itself is reused rather than a second one being opened: a
+    /// tile handed to another window is realised again, and mpv's surface
+    /// would go with it — every stream would restart on the way in and on the
+    /// way out.
+    void enterFullscreen(const QString &cameraId = QString());
+    void leaveFullscreen();
+    /// Shows one camera alone, or all of them when `cameraId` is empty.
+    void showOnly(const QString &cameraId);
+    /// Hands the tiles their full-screen presentation, and starts (or stops)
+    /// watching for an idle pointer.
+    void setTilesImmersive(bool on);
+    void showFullscreenControls();
+    void hideFullscreenControls();
+    /// Keeps the View menu's checkbox and the context menu honest, however
+    /// full screen was entered or left.
+    void syncFullscreenState();
+    /// Says how to get out again. With every bar hidden, nothing else does.
+    void showFullscreenHint(const QString &text);
+
     void showFirstRunHint();
     /// The log window. A frozen picture leaves nothing behind by itself; this
     /// is what makes a bug report from a stranger's machine possible.
@@ -152,10 +180,28 @@ private:
     QAction *m_statusBarAction{nullptr};
     QAction *m_framelessAction{nullptr};
     QAction *m_recordAllAction{nullptr};
+    QAction *m_fullScreenAction{nullptr};
+    /// The same way out, in the right-click menu. Only shown in full screen.
+    QAction *m_leaveFullscreenAction{nullptr};
     QMenu *m_contextMenu{nullptr};
 
-    /// Camera blown up to fill the window; empty while showing the grid.
+    /// Camera filling the screen; empty while showing the grid.
     QString m_fullscreenId;
+    bool m_fullscreen{false};
+    /// Set when full screen was entered by double-clicking a tile. Leaving
+    /// that camera then leaves full screen as well — whereas a double-click
+    /// inside a full screen entered with F11 only goes back to the grid.
+    bool m_fullscreenFromTile{false};
+    /// What the window looked like before, so leaving restores a maximised
+    /// window as maximised rather than as an ordinary one.
+    Qt::WindowStates m_preFullscreenState{Qt::WindowNoState};
+    /// Takes the controls and the pointer away once nothing has moved.
+    QTimer *m_idleTimer{nullptr};
+    bool m_controlsVisible{true};
+    bool m_cursorHidden{false};
+    /// Short-lived "Esc leaves full screen", floating over the picture.
+    QLabel *m_fullscreenHint{nullptr};
+    QTimer *m_hintTimer{nullptr};
     /// Set while quitting so closeEvent does not hide to tray instead.
     bool m_reallyQuit{false};
 };

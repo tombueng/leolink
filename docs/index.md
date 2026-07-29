@@ -212,6 +212,20 @@ anything can read it. It is pruned to 90 days at start-up.
 Menu bar, toolbar, status bar and the window decoration can each be hidden, for
 a wall display that should show cameras and nothing else.
 
+### Full screen
+
+`F11` puts the grid over the whole screen with every bar hidden. A
+double-click on a camera gives that one camera the screen to itself; another
+double-click goes back to the grid, and `Esc` leaves full screen altogether —
+the bars come back exactly as they were configured.
+
+A double-click on a camera in an ordinary window takes the short way and does
+both at once: that camera, full screen. `Esc` then returns to the window.
+
+The controls under each camera stay out of the way while nothing is happening:
+a few seconds after the pointer stops they withdraw, and the pointer is hidden
+with them, leaving nothing but the picture. Any movement brings them back.
+
 **If you have hidden everything and cannot find your way back:**
 
 - `Ctrl+M` brings the menu bar back

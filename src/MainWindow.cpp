@@ -20,6 +20,8 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSet>
+#include <QGuiApplication>
+#include <QShortcut>
 #include <QTabWidget>
 #include <QThread>
 #include <QStandardPaths>
@@ -318,13 +320,42 @@ void MainWindow::buildMenus()
     // ── View ────────────────────────────────────────────────────────────────
     auto *viewMenu = menuBar()->addMenu(tr("&View"));
 
-    auto *fullScreenAction = viewMenu->addAction(tr("&Full screen"));
-    fullScreenAction->setShortcut(QKeySequence::FullScreen);
-    fullScreenAction->setCheckable(true);
-    connect(fullScreenAction, &QAction::toggled, this, [this](bool on) {
-        setWindowState(on ? windowState() | Qt::WindowFullScreen
-                          : windowState() & ~Qt::WindowFullScreen);
+    m_fullScreenAction = viewMenu->addAction(tr("&Full screen"));
+    // F11 named outright, because that is the key every browser and player on
+    // this desktop uses, and QKeySequence::FullScreen is not F11 on every
+    // platform. Whatever the platform does call full screen is added after
+    // it — but only if it differs: the same sequence listed twice is an
+    // ambiguous shortcut, and Qt answers an ambiguous shortcut by doing
+    // nothing at all.
+    QList<QKeySequence> fullScreenKeys{QKeySequence(Qt::Key_F11)};
+    for (const QKeySequence &key :
+         QKeySequence::keyBindings(QKeySequence::FullScreen)) {
+        if (!fullScreenKeys.contains(key))
+            fullScreenKeys.append(key);
+    }
+    m_fullScreenAction->setShortcuts(fullScreenKeys);
+    m_fullScreenAction->setCheckable(true);
+    // Full screen hides the menu bar, and a hidden menu bar takes its own
+    // shortcuts with it — so the action belongs to the window as well, the
+    // same arrangement Ctrl+M needs and for the same reason.
+    m_fullScreenAction->setShortcutContext(Qt::ApplicationShortcut);
+    addAction(m_fullScreenAction);
+    // triggered(), not toggled(): the checkbox is also set from the other
+    // ways in and out, and toggled() would send those straight back round.
+    connect(m_fullScreenAction, &QAction::triggered, this, [this](bool on) {
+        if (on) {
+            m_fullscreenFromTile = false;
+            enterFullscreen(m_fullscreenId);
+        } else {
+            leaveFullscreen();
+        }
     });
+
+    // Escape is the way out everybody tries first. It is a shortcut rather
+    // than an action so that hiding it from the menus cannot disable it.
+    auto *escape = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+    escape->setContext(Qt::WindowShortcut);
+    connect(escape, &QShortcut::activated, this, &MainWindow::leaveFullscreen);
 
     viewMenu->addSeparator();
 
@@ -470,6 +501,14 @@ void MainWindow::buildContextMenu()
     m_contextMenu->addAction(m_toolBarAction);
     m_contextMenu->addAction(m_statusBarAction);
     m_contextMenu->addAction(m_framelessAction);
+
+    // The way out of full screen, for a pointer that never finds Escape.
+    // Hidden while there is nothing to leave.
+    m_leaveFullscreenAction = m_contextMenu->addAction(tr("Leave full screen"));
+    m_leaveFullscreenAction->setVisible(false);
+    connect(m_leaveFullscreenAction, &QAction::triggered,
+            this, &MainWindow::leaveFullscreen);
+
     m_contextMenu->addSeparator();
 
     auto *settings = m_contextMenu->addAction(tr("Cameras…"));
@@ -500,10 +539,13 @@ void MainWindow::startWindowDrag()
 
 void MainWindow::applyChrome()
 {
-    menuBar()->setVisible(m_config.showMenuBar);
-    statusBar()->setVisible(m_config.showStatusBar);
+    // Full screen outranks the configuration while it lasts. Applying settings
+    // from inside it would otherwise put the menu bar back over the picture,
+    // and leaving is what is supposed to bring the bars back.
+    menuBar()->setVisible(m_config.showMenuBar && !m_fullscreen);
+    statusBar()->setVisible(m_config.showStatusBar && !m_fullscreen);
     if (auto *bar = findChild<QToolBar *>(QStringLiteral("mainToolBar")))
-        bar->setVisible(m_config.showToolBar);
+        bar->setVisible(m_config.showToolBar && !m_fullscreen);
 
     const bool wantFrameless = m_config.frameless;
     if (bool(windowFlags() & Qt::FramelessWindowHint) != wantFrameless) {
@@ -640,6 +682,12 @@ VideoTile *MainWindow::createTile(const CameraConfig &camera)
             [this, tile](const QPoint &pos) {
                 m_contextMenu->popup(tile->mapToGlobal(pos));
             });
+    // A camera switched on while full screen joins it, rather than being the
+    // one tile still wearing its grid clothes.
+    if (m_fullscreen) {
+        tile->setImmersive(true);
+        tile->setControlsVisible(m_controlsVisible);
+    }
     m_tiles.insert(camera.id, tile);
     return tile;
 }
@@ -871,25 +919,238 @@ void MainWindow::pollCameraStatus()
     }
 }
 
+// ── full screen ─────────────────────────────────────────────────────────────
+
 void MainWindow::toggleFullscreenTile(const QString &cameraId)
 {
     if (!m_tiles.contains(cameraId))
         return;
 
     if (m_fullscreenId == cameraId) {
-        m_fullscreenId.clear();
-        for (auto *tile : std::as_const(m_tiles))
-            tile->show();
-        applyLayout();
-        statusBar()->showMessage(tr("Grid view"));
+        // Back out. A double-click brought us here, so a double-click undoes
+        // the whole of it; F11 did, so only the single camera is undone and
+        // the grid stays full screen.
+        if (m_fullscreenFromTile) {
+            leaveFullscreen();
+        } else {
+            showOnly(QString());
+            showFullscreenHint(tr("Esc leaves full screen"));
+        }
         return;
     }
 
-    m_fullscreenId = cameraId;
+    if (m_fullscreen) {
+        showOnly(cameraId);
+        showFullscreenHint(tr("Double-click for the grid · Esc leaves full screen"));
+        return;
+    }
+
+    m_fullscreenFromTile = true;
+    enterFullscreen(cameraId);
+}
+
+void MainWindow::enterFullscreen(const QString &cameraId)
+{
+    if (!cameraId.isEmpty() && !m_tiles.contains(cameraId))
+        return;
+
+    if (!m_fullscreen) {
+        m_preFullscreenState = windowState() & ~Qt::WindowFullScreen;
+        m_fullscreen = true;
+
+        // Hidden directly rather than through applyChrome(): the configuration
+        // must come through full screen untouched, so that leaving it puts
+        // back exactly the bars the user chose to keep.
+        menuBar()->hide();
+        statusBar()->hide();
+        if (auto *bar = findChild<QToolBar *>(QStringLiteral("mainToolBar")))
+            bar->hide();
+
+        // Edge to edge. The gap between tiles stays, or a wall of cameras
+        // becomes one picture with no telling where each one ends.
+        m_grid->setContentsMargins(0, 0, 0, 0);
+        m_grid->setSpacing(2);
+
+        setTilesImmersive(true);
+        showFullScreen();
+    }
+
+    showOnly(cameraId);
+    syncFullscreenState();
+    showFullscreenHint(cameraId.isEmpty()
+                           ? tr("Esc leaves full screen · double-click a camera "
+                                "to fill the screen")
+                           : tr("Double-click for the grid · Esc leaves full screen"));
+}
+
+void MainWindow::leaveFullscreen()
+{
+    if (!m_fullscreen)
+        return;
+
+    m_fullscreen = false;
+    m_fullscreenFromTile = false;
+
+    setTilesImmersive(false);
+    showOnly(QString());
+
+    m_grid->setContentsMargins(4, 4, 4, 4);
+    m_grid->setSpacing(4);
+
+    if (m_fullscreenHint)
+        m_fullscreenHint->hide();
+
+    setWindowState(m_preFullscreenState);
+    applyChrome();   // the bars come back as configured, not as they were left
+    syncFullscreenState();
+    statusBar()->showMessage(tr("Grid view"), 4000);
+}
+
+void MainWindow::showOnly(const QString &cameraId)
+{
+    m_fullscreenId = m_tiles.contains(cameraId) ? cameraId : QString();
+
+    if (m_fullscreenId.isEmpty()) {
+        for (auto *tile : std::as_const(m_tiles))
+            tile->show();
+        applyLayout();   // restores the cells and the stretch of every row
+        return;
+    }
+
+    // Out of the layout entirely, not merely hidden: a hidden widget still
+    // holds its cell, and the stretch on the rows and columns it left behind
+    // would go on claiming their share of the window. The one camera left
+    // would then fill its old cell and nothing more.
+    for (auto *tile : std::as_const(m_tiles))
+        m_grid->removeWidget(tile);
+    for (int c = 0; c < m_grid->columnCount(); ++c)
+        m_grid->setColumnStretch(c, c == 0 ? 1 : 0);
+    for (int r = 0; r < m_grid->rowCount(); ++r)
+        m_grid->setRowStretch(r, r == 0 ? 1 : 0);
+
     for (auto it = m_tiles.cbegin(); it != m_tiles.cend(); ++it)
-        it.value()->setVisible(it.key() == cameraId);
-    m_grid->addWidget(m_tiles.value(cameraId), 0, 0);
-    statusBar()->showMessage(tr("Double-click to return to the grid"));
+        it.value()->setVisible(it.key() == m_fullscreenId);
+    m_grid->addWidget(m_tiles.value(m_fullscreenId), 0, 0);
+}
+
+void MainWindow::setTilesImmersive(bool on)
+{
+    for (auto *tile : std::as_const(m_tiles))
+        tile->setImmersive(on);
+
+    if (on) {
+        if (!m_idleTimer) {
+            m_idleTimer = new QTimer(this);
+            m_idleTimer->setSingleShot(true);
+            m_idleTimer->setInterval(3000);
+            connect(m_idleTimer, &QTimer::timeout,
+                    this, &MainWindow::hideFullscreenControls);
+        }
+        // On the application, not on the window: the picture is a surface of
+        // its own and swallows what happens over it.
+        qApp->installEventFilter(this);
+        m_controlsVisible = false;   // so the call below actually shows them
+        showFullscreenControls();
+    } else {
+        qApp->removeEventFilter(this);
+        if (m_idleTimer)
+            m_idleTimer->stop();
+        if (m_cursorHidden) {
+            QGuiApplication::restoreOverrideCursor();
+            m_cursorHidden = false;
+        }
+        m_controlsVisible = true;
+    }
+}
+
+void MainWindow::showFullscreenControls()
+{
+    if (!m_fullscreen)
+        return;
+
+    if (!m_controlsVisible) {
+        m_controlsVisible = true;
+        for (auto *tile : std::as_const(m_tiles))
+            tile->setControlsVisible(true);
+    }
+    if (m_cursorHidden) {
+        QGuiApplication::restoreOverrideCursor();
+        m_cursorHidden = false;
+    }
+    m_idleTimer->start();
+}
+
+void MainWindow::hideFullscreenControls()
+{
+    if (!m_fullscreen)
+        return;
+
+    // Not while a menu is open over the picture: the pointer is on its way to
+    // something, and taking it away mid-journey is unusable.
+    if (QApplication::activePopupWidget()) {
+        m_idleTimer->start();
+        return;
+    }
+
+    if (m_controlsVisible) {
+        m_controlsVisible = false;
+        for (auto *tile : std::as_const(m_tiles))
+            tile->setControlsVisible(false);
+    }
+    if (m_fullscreenHint)
+        m_fullscreenHint->hide();
+    if (!m_cursorHidden) {
+        QGuiApplication::setOverrideCursor(Qt::BlankCursor);
+        m_cursorHidden = true;
+    }
+}
+
+void MainWindow::syncFullscreenState()
+{
+    if (m_fullScreenAction) {
+        QSignalBlocker block(m_fullScreenAction);
+        m_fullScreenAction->setChecked(m_fullscreen);
+    }
+    if (m_leaveFullscreenAction)
+        m_leaveFullscreenAction->setVisible(m_fullscreen);
+}
+
+void MainWindow::showFullscreenHint(const QString &text)
+{
+    if (!m_fullscreen)
+        return;
+
+    if (!m_fullscreenHint) {
+        m_fullscreenHint = new QLabel(m_central);
+        m_fullscreenHint->setAttribute(Qt::WA_TransparentForMouseEvents);
+        m_fullscreenHint->setStyleSheet(
+            QStringLiteral("QLabel { background:rgba(0,0,0,180); color:white;"
+                           " border-radius:6px; padding:6px 14px;"
+                           " font-weight:600; }"));
+        m_hintTimer = new QTimer(this);
+        m_hintTimer->setSingleShot(true);
+        m_hintTimer->setInterval(4000);
+        connect(m_hintTimer, &QTimer::timeout, this, [this] {
+            if (m_fullscreenHint)
+                m_fullscreenHint->hide();
+        });
+    }
+
+    m_fullscreenHint->setText(text);
+    m_fullscreenHint->adjustSize();
+    m_fullscreenHint->show();
+    m_fullscreenHint->raise();
+    m_hintTimer->start();
+
+    // Placed once the window has actually taken the screen; asked any earlier
+    // it would be centred on the size the window had before.
+    QTimer::singleShot(0, this, [this] {
+        if (!m_fullscreenHint || !m_fullscreenHint->isVisible())
+            return;
+        m_fullscreenHint->move((m_central->width() - m_fullscreenHint->width()) / 2,
+                               24);
+        m_fullscreenHint->raise();
+    });
 }
 
 // ── events ──────────────────────────────────────────────────────────────────
@@ -1109,10 +1370,15 @@ QString MainWindow::captureEventStill(const CameraConfig &camera)
 
 void MainWindow::raiseForEvent()
 {
-    if (m_config.raiseMode == QLatin1String("fullscreen"))
-        showFullScreen();
-    else
+    if (m_config.raiseMode == QLatin1String("fullscreen")) {
+        show();   // it may have been sitting in the tray
+        // Through the same door as F11, so the chrome goes and Escape works.
+        // Raising a window into a full screen nobody could leave was the one
+        // way to end up trapped without a menu bar.
+        enterFullscreen(m_fullscreenId);
+    } else {
         showNormal();   // restores whatever geometry the window had
+    }
     raise();
     activateWindow();
 }
@@ -1212,7 +1478,10 @@ void MainWindow::openSettings()
                              tr("Settings could not be written to %1.")
                                  .arg(Config::path()));
     }
-    m_fullscreenId.clear();
+    // Back to the grid before anything is reconciled: the single camera on
+    // screen may be the one that was just deleted, and forgetting its id
+    // without showing the others again would leave them hidden for good.
+    showOnly(QString());
 
     if (m_menuBarAction)
         m_menuBarAction->setChecked(m_config.showMenuBar);
@@ -1497,13 +1766,38 @@ void MainWindow::quitApplication()
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    if (event->type() == QEvent::WindowStateChange && isMinimized() &&
-        m_config.minimizeToTray && m_tray && m_tray->isVisible()) {
-        // Defer: hiding from inside the state-change handler confuses some
-        // window managers, which then leave a ghost entry in the task bar.
-        QTimer::singleShot(0, this, &QWidget::hide);
+    if (event->type() == QEvent::WindowStateChange) {
+        if (isMinimized() && m_config.minimizeToTray && m_tray &&
+            m_tray->isVisible()) {
+            // Defer: hiding from inside the state-change handler confuses some
+            // window managers, which then leave a ghost entry in the task bar.
+            QTimer::singleShot(0, this, &QWidget::hide);
+        } else if (m_fullscreen && !isFullScreen() && !isMinimized()) {
+            // The window manager has its own full-screen key, and it does not
+            // tell anyone. Without this the window would come back with no
+            // menu bar, no status bar and no way to find either.
+            QTimer::singleShot(0, this, &MainWindow::leaveFullscreen);
+        }
     }
     QMainWindow::changeEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (m_fullscreen) {
+        switch (event->type()) {
+        case QEvent::MouseMove:
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonDblClick:
+        case QEvent::Wheel:
+        case QEvent::KeyPress:
+            showFullscreenControls();
+            break;
+        default:
+            break;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
