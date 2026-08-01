@@ -1108,6 +1108,55 @@ STRINGS: dict[str, str] = {
     "Detection, reactions and recording in leolink, and the camera's own "
     "encoder, picture and schedules.":
         "leolink 側の検知・反応・録画と、カメラ自身のエンコーダー・画質・スケジュール。",
+
+    # ── the settings, split by reach ──
+    "nothing": "なし",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "きっかけの直前の数秒 — "
+        "たいてい、その人がどうやってそこへ来たのかが写っている部分です。過ぎたことは後から録画できないので、ゼロより大きくすると映像を常にバッファへ流し込みます。カメラへの接続がもう "
+        "1 本と、少しのディスクを使います。",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "イベントが場面の途中で終わらないように。この時間内に動きが再開した場合は、2 つ目のファイルを作らず同じファイルを続けます。",
+    "Include before": "前を含める",
+    "When something happens": "何かあったとき",
+    "Record without stopping": "止めずに録画する",
+    " h": " 時間",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "アーカイブがどこまでさかのぼるか。この古さになったファイルは、いちばん新しいものの場所を空けるために削除されます。",
+    " min": " 分",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "アーカイブは 1 つのファイルではなく連なりです。ファイルは先頭を切り詰められないので、丸一日を 1 "
+        "つに収めるには毎分書き直すことになります。短いファイルは目的の瞬間を細かく探せ、長いファイルは数が少なくて済みます。",
+    "Keep the last": "保持する期間",
+    "One file per": "1 ファイルの長さ",
+    "Round the clock": "二十四時間",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "両方を入れると 1 "
+        "つのバッファが両方を兼ねます。イベントの録画はアーカイブから切り出されるので、カメラへ余分な接続は開きません。\n\nファイルの保存先はどのカメラも同じで、設定 "
+        "▸ 録画 で決めます。",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 時間ぶんの映像です。ディスクをどれだけ使うかはビットレート次第で、このカメラはまだ知らせてきていません。",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "このストリームに設定された %2 kbit/s なら約 %1 GB です。録画フォルダーにそれだけ空きがあるか確かめてください。",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg が入っていないため、連続録画は使えません。",
+    "Nothing had been buffered yet.": "まだ何もバッファされていませんでした。",
+    "That moment is no longer in the buffer.": "その時点はもうバッファにありません。",
+    "The recording could not be cut out of the buffer.":
+        "バッファから録画を切り出せませんでした。",
 }
 
 

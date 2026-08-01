@@ -71,6 +71,19 @@ struct CameraConfig {
     /// Keep recording this many seconds after motion stops, so the tail of an
     /// event is not cut off mid-scene.
     int recordTrailingSeconds{15};
+    /// Seconds *before* the trigger to include. Anything above zero means the
+    /// stream is buffered continuously — the past cannot be recorded after the
+    /// fact — so it costs one connection to the camera and a little disk.
+    int recordPreSeconds{0};
+
+    /// Record without stopping, keeping a rolling window. Written as segments
+    /// rather than one file: a file cannot be trimmed at the front, so "the
+    /// last day" in one file would mean rewriting it as every minute expires.
+    bool continuousRecording{false};
+    int continuousRetentionHours{24};
+    /// Length of one archive file. Minutes, because a day of six-second
+    /// segments is fourteen thousand files to scroll past.
+    int continuousSegmentMinutes{10};
 
     QString label() const;
     /// Resolves passwordCommand if set, otherwise returns password.

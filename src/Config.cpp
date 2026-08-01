@@ -243,6 +243,14 @@ Config Config::load()
         c.recordOnMotion = o.value(QStringLiteral("recordOnMotion")).toBool(false);
         c.recordTrailingSeconds =
             o.value(QStringLiteral("recordTrailingSeconds")).toInt(15);
+        c.recordPreSeconds =
+            o.value(QStringLiteral("recordPreSeconds")).toInt(0);
+        c.continuousRecording =
+            o.value(QStringLiteral("continuousRecording")).toBool(false);
+        c.continuousRetentionHours =
+            o.value(QStringLiteral("continuousRetentionHours")).toInt(24);
+        c.continuousSegmentMinutes =
+            o.value(QStringLiteral("continuousSegmentMinutes")).toInt(10);
         if (!c.host.isEmpty())
             cfg.cameras.append(c);
     }
@@ -297,6 +305,10 @@ bool Config::save() const
         o[QStringLiteral("audioHoldSeconds")] = c.audioHoldSeconds;
         o[QStringLiteral("recordOnMotion")] = c.recordOnMotion;
         o[QStringLiteral("recordTrailingSeconds")] = c.recordTrailingSeconds;
+        o[QStringLiteral("recordPreSeconds")] = c.recordPreSeconds;
+        o[QStringLiteral("continuousRecording")] = c.continuousRecording;
+        o[QStringLiteral("continuousRetentionHours")] = c.continuousRetentionHours;
+        o[QStringLiteral("continuousSegmentMinutes")] = c.continuousSegmentMinutes;
         arr.append(o);
     }
 

@@ -44,6 +44,7 @@
 #include "MotionWatcher.h"
 #include "PlaybackBrowser.h"
 #include "Recorder.h"
+#include "SegmentBuffer.h"
 #include "ReolinkClient.h"
 #include "PreferencesDialog.h"
 #include "SettingsDialog.h"
@@ -118,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent)
     applyChrome();
     rebuildGrid();
     startWatchers();
+    reconcileBuffers();
 
     // LEOLINK_SCREENSHOT=<dir> saves a picture of the window and quits. Grabbed
     // through Qt rather than off the X server: under a software renderer only
@@ -1200,6 +1202,28 @@ void MainWindow::dispatchActions(const CameraConfig &camera, bool active,
 
 void MainWindow::beginMotionRecording(const CameraConfig &camera)
 {
+    // With a buffer running, the recording is cut out of it when the event is
+    // over. That is the only way the seconds *before* the trigger can be in
+    // the file: by then they are already on disk.
+    if (SegmentBuffer *buffer = bufferFor(camera.id)) {
+        Q_UNUSED(buffer);
+        if (m_bufferedStart.contains(camera.id))
+            return;   // the same event, still going
+        const QString path = recordingPathFor(camera);
+        if (path.isEmpty()) {
+            statusBar()->showMessage(
+                tr("Cannot create %1").arg(m_config.effectiveRecordDir()), 8000);
+            return;
+        }
+        m_bufferedStart.insert(
+            camera.id, QDateTime::currentDateTime().addSecs(
+                           -qMax(0, camera.recordPreSeconds)));
+        m_bufferedPath.insert(camera.id, path);
+        if (auto *tile = m_tiles.value(camera.id))
+            tile->setRecording(true);
+        return;
+    }
+
     if (isRecording(camera.id))
         return;
 
@@ -1212,9 +1236,94 @@ void MainWindow::beginMotionRecording(const CameraConfig &camera)
     recorderFor(camera)->start(camera, path);
 }
 
+SegmentBuffer *MainWindow::bufferFor(const QString &cameraId) const
+{
+    return m_buffers.value(cameraId);
+}
+
+void MainWindow::reconcileBuffers()
+{
+    QSet<QString> wanted;
+    for (const CameraConfig &camera : m_config.active()) {
+        const bool preRoll = camera.recordOnMotion && camera.recordPreSeconds > 0;
+        if (!preRoll && !camera.continuousRecording)
+            continue;
+        // Baichuan has no URL of its own — the stream is re-served on a
+        // loopback port that only exists while a tile is playing it, so
+        // ffmpeg has nothing to open.
+        if (camera.streamUrl().isEmpty())
+            continue;
+
+        SegmentBuffer::Settings settings;
+        if (camera.continuousRecording) {
+            // The archive doubles as the pre-roll buffer, so one connection
+            // serves both. Its files are minutes long because a day of
+            // six-second segments is a folder nobody can use.
+            settings.directory = continuousDirFor(camera);
+            settings.segmentSeconds =
+                qBound(1, camera.continuousSegmentMinutes, 60) * 60;
+            settings.retentionSeconds =
+                qint64(qBound(1, camera.continuousRetentionHours, 720)) * 3600;
+        } else {
+            // Pre-roll only: short segments, kept just long enough to cover
+            // the roll plus the time it takes to notice and cut.
+            settings.directory = m_config.effectiveRecordDir() +
+                                 QStringLiteral("/.buffer/") + camera.id;
+            settings.segmentSeconds = 6;
+            settings.retentionSeconds = camera.recordPreSeconds + 120;
+        }
+
+        SegmentBuffer *buffer = m_buffers.value(camera.id);
+        if (!buffer) {
+            buffer = new SegmentBuffer(this);
+            const QString name = camera.label();
+            connect(buffer, &SegmentBuffer::extracted, this,
+                    [this](const QString &path) {
+                        statusBar()->showMessage(
+                            tr("Saved %1").arg(QFileInfo(path).fileName()), 5000);
+                    });
+            connect(buffer, &SegmentBuffer::failed, this,
+                    [this, name](const QString &why) {
+                        statusBar()->showMessage(
+                            QStringLiteral("%1: %2").arg(name, why), 8000);
+                    });
+            m_buffers.insert(camera.id, buffer);
+        }
+        buffer->start(camera, settings);
+        wanted.insert(camera.id);
+    }
+
+    // Cameras that no longer buffer, or have gone entirely.
+    const QStringList running = m_buffers.keys();
+    for (const QString &id : running) {
+        if (wanted.contains(id))
+            continue;
+        m_buffers.take(id)->deleteLater();
+        m_bufferedStart.remove(id);
+        m_bufferedPath.remove(id);
+    }
+}
+
+void MainWindow::finishBufferedRecording(const CameraConfig &camera)
+{
+    if (!m_bufferedStart.contains(camera.id))
+        return;
+
+    SegmentBuffer *buffer = bufferFor(camera.id);
+    const QDateTime from = m_bufferedStart.take(camera.id);
+    const QString path = m_bufferedPath.take(camera.id);
+    if (auto *tile = m_tiles.value(camera.id))
+        tile->setRecording(false);
+    if (!buffer || path.isEmpty())
+        return;
+
+    buffer->extract(from, QDateTime::currentDateTime(), path);
+}
+
 void MainWindow::scheduleRecordingStop(const CameraConfig &camera)
 {
-    if (!isRecording(camera.id))
+    const bool buffered = m_bufferedStart.contains(camera.id);
+    if (!buffered && !isRecording(camera.id))
         return;
 
     QTimer *timer = m_stopTimers.value(camera.id);
@@ -1223,6 +1332,12 @@ void MainWindow::scheduleRecordingStop(const CameraConfig &camera)
         timer->setSingleShot(true);
         const QString id = camera.id;
         connect(timer, &QTimer::timeout, this, [this, id] {
+            // Two ways a recording ends, depending on where it came from.
+            if (m_bufferedStart.contains(id)) {
+                if (const CameraConfig *c = cameraById(id))
+                    finishBufferedRecording(*c);
+                return;
+            }
             if (auto *recorder = m_recorders.value(id))
                 recorder->stop();   // reports through Recorder::stopped
         });
@@ -1286,8 +1401,21 @@ bool MainWindow::isRecording(const QString &cameraId) const
 
 QString MainWindow::activeRecording(const QString &cameraId) const
 {
+    // A buffered recording has a name before it has a file: it is cut once
+    // the event is over, and the log entry is written while it is going on.
+    if (m_bufferedPath.contains(cameraId))
+        return m_bufferedPath.value(cameraId);
     auto *recorder = m_recorders.value(cameraId);
     return recorder && recorder->isRecording() ? recorder->path() : QString();
+}
+
+QString MainWindow::safeName(const CameraConfig &camera)
+{
+    QString safe = camera.label();
+    // A camera called "Front / Drive" would otherwise become a directory.
+    safe.replace(QRegularExpression(QStringLiteral("[^\\w.-]")),
+                 QStringLiteral("_"));
+    return safe;
 }
 
 QString MainWindow::recordingPathFor(const CameraConfig &camera) const
@@ -1296,14 +1424,19 @@ QString MainWindow::recordingPathFor(const CameraConfig &camera) const
     if (!QDir().mkpath(dir))
         return {};
 
-    QString safe = camera.label();
-    // A camera called "Front / Drive" would otherwise become a directory.
-    safe.replace(QRegularExpression(QStringLiteral("[^\\w.-]")),
-                 QStringLiteral("_"));
     return QStringLiteral("%1/%2-%3.mkv")
-        .arg(dir, safe,
+        .arg(dir, safeName(camera),
              QDateTime::currentDateTime().toString(
                  QStringLiteral("yyyyMMdd-HHmmss")));
+}
+
+QString MainWindow::continuousDirFor(const CameraConfig &camera) const
+{
+    // Its own folder per camera, apart from the event recordings: one is
+    // browsed by hand, the other is listed in the event log, and mixing
+    // thousands of archive files in with them would bury the events.
+    return m_config.effectiveRecordDir() + QStringLiteral("/continuous/") +
+           safeName(camera);
 }
 
 void MainWindow::onRecordToggled(const QString &cameraId, bool recording)
@@ -1317,6 +1450,12 @@ void MainWindow::onRecordToggled(const QString &cameraId, bool recording)
         // timer of a motion event.
         if (auto *timer = m_stopTimers.value(cameraId))
             timer->stop();
+        // Whichever kind is running. A buffered event still has to be cut,
+        // or pressing stop would throw the event away rather than end it.
+        if (m_bufferedStart.contains(cameraId)) {
+            if (const CameraConfig *c = cameraById(cameraId))
+                finishBufferedRecording(*c);
+        }
         if (auto *recorder = m_recorders.value(cameraId))
             recorder->stop();
         m_recordAllAction->setChecked(false);
@@ -1546,6 +1685,7 @@ void MainWindow::applyConfig(const Config &next)
     // they were simply never asked.
     reconcileGrid(previous);
     reconcileWatchers(watched);
+    reconcileBuffers();
 }
 
 void MainWindow::askAboutSpeakers()

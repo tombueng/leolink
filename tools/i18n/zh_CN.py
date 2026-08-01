@@ -1060,6 +1060,50 @@ STRINGS: dict[str, str] = {
     "Detection, reactions and recording in leolink, and the camera's own "
     "encoder, picture and schedules.":
         "leolink 侧的侦测、响应与录像，以及摄像机自身的编码器、画面和时段。",
+
+    # ── the settings, split by reach ──
+    "nothing": "不含",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "触发前的那几秒——通常正是能看出人是怎么过来的那一段。过去的画面无法事后补录，所以只要大于零，就会把码流持续写进缓冲：多一条到摄像机的连接，以及一点磁盘。",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "免得事件在场景中途就断了。在这段时间内重新出现的移动会接着写同一个文件，而不是另起一个。",
+    "Include before": "往前多录",
+    "When something happens": "发生事情时",
+    "Record without stopping": "不间断录制",
+    " h": " 小时",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "存档能往回追多久。文件到了这个年纪就会被删掉，给最新的腾地方。",
+    " min": " 分钟",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "存档是一串文件，不是一个——文件没法从头上剪掉，把一整天塞进一个文件就意味着每分钟重写一遍。文件短，定位某一刻更准；文件长，翻起来更少。",
+    "Keep the last": "保留最近",
+    "One file per": "每个文件",
+    "Round the clock": "全天候",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "两个都打开时，一个缓冲兼顾两者：事件录像直接从存档里剪出来，因此不会再向摄像机多开一条连接。\n\n文件存到哪里对所有摄像机都一样，在「设置 "
+        "▸ 录像」中指定。",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 小时的视频。占多少磁盘取决于码率，而这台摄像机还没有报告过。",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "按这条码流设定的 %2 kbit/s 计算，大约 %1 GB。请确认录像文件夹有这么多空间。",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "未安装 ffmpeg，因此无法不间断录制。",
+    "Nothing had been buffered yet.": "缓冲里还什么都没有。",
+    "That moment is no longer in the buffer.": "那一刻已经不在缓冲里了。",
+    "The recording could not be cut out of the buffer.": "无法从缓冲中剪出这段录像。",
 }
 
 

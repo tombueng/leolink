@@ -138,6 +138,37 @@ survives an abrupt end far better than MP4.
 Motion that resumes during that tail continues the same file instead of starting
 a second one.
 
+**Include before** puts the seconds *leading up to* the trigger into the file —
+usually the part that shows how someone got there. The past cannot be recorded
+after the fact, so anything above zero keeps the stream running into a buffer of
+short segments on disk; when the event ends, the file is cut out of them without
+re-encoding. It costs one more connection to the camera and a little disk, and
+it is bounded by how long leolink has been running: ask for thirty seconds
+twenty seconds after starting and you get twenty.
+
+The cut lands on a key frame, so you may get a second or two *more* lead-in than
+asked for, never less.
+
+### Round the clock
+
+Recording without stopping keeps a rolling window — the last day, the last
+week — under `<recordings folder>/continuous/<camera>/`.
+
+It is a run of files rather than one, because a file cannot be trimmed at the
+front: keeping a day in a single file would mean rewriting tens of gigabytes
+every time a minute expires. Dropping a whole file costs one `unlink`. **One
+file per** sets how long each is — shorter finds a moment more precisely,
+longer leaves fewer to scroll past — and **Keep the last** how far back the
+archive reaches. Older files are deleted as new ones arrive.
+
+Switch this on together with a pre-recording and one buffer serves both: the
+recording of an event is cut out of the archive, so nothing extra is opened to
+the camera.
+
+Plan for the disk. The dialog estimates it from the bit rate the camera reports
+for the stream leolink is opening — at 4 Mbit/s, a day is about 43 GB per
+camera.
+
 ### Reacting
 
 Three reactions, each optional, set globally or per camera:

@@ -67,12 +67,15 @@ bool Recorder::start(const CameraConfig &camera, const QString &path)
     m_process = new QProcess(this);
     dieWithParent(m_process);
 
-    const QStringList args{
+    QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),
-        // TCP for the same reason the viewer uses it: UDP loses packets and a
-        // recording with holes is worse than a slightly later one.
-        QStringLiteral("-rtsp_transport"), QStringLiteral("tcp"),
+    };
+    // TCP for the same reason the viewer uses it: UDP loses packets and a
+    // recording with holes is worse than a slightly later one. Only for RTSP
+    // — see rtspTransportArgs().
+    args += rtspTransportArgs(url);
+    args += QStringList{
         QStringLiteral("-i"), url,
         // Copy the packets through. No re-encoding means no quality loss and
         // almost no CPU, which is what makes recording several cameras at

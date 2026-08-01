@@ -98,9 +98,14 @@ private slots:
 private:
     // ── the leolink half ────────────────────────────────────────────────────
     void buildWatchTab();
+    void buildRecordTab();
     void buildReactionTab();
     void buildPlaybackTab();
     void storeLeolinkSettings();
+    /// Rough disk cost of the round-the-clock archive, from what the stream is
+    /// actually delivering. A number in gigabytes stops this being a setting
+    /// people turn on once and discover a week later.
+    void refreshArchiveEstimate();
 
     void buildEncoderTab();
     void buildPictureTab();
@@ -169,6 +174,11 @@ private:
     QString m_zones;
     QCheckBox *m_recordOnMotion{nullptr};
     QSpinBox *m_recordTrailing{nullptr};
+    QSpinBox *m_recordPre{nullptr};
+    QCheckBox *m_continuous{nullptr};
+    QSpinBox *m_retentionHours{nullptr};
+    QSpinBox *m_segmentMinutes{nullptr};
+    QLabel *m_archiveEstimate{nullptr};
     QComboBox *m_actionScope{nullptr};
     ActionEditor *m_actions{nullptr};
     QCheckBox *m_muted{nullptr};

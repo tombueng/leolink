@@ -1,6 +1,7 @@
 // Main window: camera grid, chrome toggles, tray, event handling.
 #pragma once
 
+#include <QDateTime>
 #include <QHash>
 #include <QMainWindow>
 
@@ -21,6 +22,7 @@ class EventDispatcher;
 class MotionDetector;
 class Recorder;
 class ReolinkClient;
+class SegmentBuffer;
 class EventLog;
 class MotionWatcher;
 class SoundPlayer;
@@ -140,6 +142,15 @@ private:
     void dispatchActions(const CameraConfig &camera, bool active,
                          const QString &recording, const QString &still);
     void beginMotionRecording(const CameraConfig &camera);
+    /// Starts, restarts or stops each camera's buffer to match the
+    /// configuration. Cheap to call: a buffer whose terms have not changed is
+    /// left running, so an unrelated edit does not punch a hole in an archive.
+    void reconcileBuffers();
+    /// The buffer for `camera`, or nullptr when it neither pre-records nor
+    /// archives — in which case events are recorded live, as before.
+    SegmentBuffer *bufferFor(const QString &cameraId) const;
+    /// Cuts a finished event out of the buffer.
+    void finishBufferedRecording(const CameraConfig &camera);
     /// Returns the recorder for a camera, creating it on first use.
     Recorder *recorderFor(const CameraConfig &camera);
     bool isRecording(const QString &cameraId) const;
@@ -149,6 +160,11 @@ private:
     void raiseForEvent();
     /// Builds a recording path for a camera: <recordDir>/<name>-<stamp>.mkv
     QString recordingPathFor(const CameraConfig &camera) const;
+    /// Where a camera's round-the-clock archive lives:
+    /// <recordDir>/continuous/<name>/
+    QString continuousDirFor(const CameraConfig &camera) const;
+    /// The camera's name with anything a path would choke on replaced.
+    static QString safeName(const CameraConfig &camera);
     /// Saves a still for the event log; returns the path, or empty on failure.
     QString captureEventStill(const CameraConfig &camera);
 
@@ -167,6 +183,14 @@ private:
     QHash<QString, QTimer *> m_stopTimers;
     /// One ffmpeg process per camera being recorded, keyed by camera id.
     QHash<QString, Recorder *> m_recorders;
+    /// One per camera that pre-records, archives round the clock, or both.
+    QHash<QString, SegmentBuffer *> m_buffers;
+    /// Where a buffered event began, from the moment motion was reported
+    /// minus the pre-roll. The file is cut once the event is over.
+    QHash<QString, QDateTime> m_bufferedStart;
+    /// Where that cut will be written, decided at the start so the event log
+    /// can name the file before it exists.
+    QHash<QString, QString> m_bufferedPath;
     /// One client per camera, kept alive to poll the Wi-Fi strength.
     QHash<QString, ReolinkClient *> m_statusClients;
     /// One per camera currently being spoken through.

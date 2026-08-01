@@ -105,6 +105,7 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
 
     beginSection(tr("In leolink"));
     buildWatchTab();
+    buildRecordTab();
     buildReactionTab();
     buildPlaybackTab();
 
@@ -308,6 +309,10 @@ void CameraSettingsDialog::storeLeolinkSettings()
     m_camera.audioHoldSeconds = m_audioHold->value();
     m_camera.recordOnMotion = m_recordOnMotion->isChecked();
     m_camera.recordTrailingSeconds = m_recordTrailing->value();
+    m_camera.recordPreSeconds = m_recordPre->value();
+    m_camera.continuousRecording = m_continuous->isChecked();
+    m_camera.continuousRetentionHours = m_retentionHours->value();
+    m_camera.continuousSegmentMinutes = m_segmentMinutes->value();
     m_camera.useGlobalActions = m_actionScope->currentData().toBool();
     m_camera.actions = m_actions->actions();
     m_camera.muted = m_muted->isChecked();
@@ -442,38 +447,150 @@ void CameraSettingsDialog::buildWatchTab()
     addPage(page, tr("Detection by leolink"));
 }
 
-void CameraSettingsDialog::buildReactionTab()
+void CameraSettingsDialog::buildRecordTab()
 {
     auto *page = new QWidget;
 
+    // ── on an event ─────────────────────────────────────────────────────────
     m_recordOnMotion = new QCheckBox(tr("Record while motion lasts"), page);
     m_recordOnMotion->setChecked(m_camera.recordOnMotion);
     m_recordOnMotion->setToolTip(
         tr("Records on this computer from the live stream, so it works even "
            "when the camera has no SD card fitted."));
 
+    m_recordPre = new QSpinBox(page);
+    m_recordPre->setRange(0, 300);
+    m_recordPre->setSuffix(tr(" s"));
+    m_recordPre->setSpecialValueText(tr("nothing"));
+    m_recordPre->setValue(m_camera.recordPreSeconds);
+    m_recordPre->setToolTip(
+        tr("The seconds leading up to the trigger — usually the part that "
+           "shows how someone got there. The past cannot be recorded after "
+           "the fact, so anything above zero keeps the stream running into a "
+           "buffer: one more connection to the camera, and a little disk."));
+
     m_recordTrailing = new QSpinBox(page);
     m_recordTrailing->setRange(0, 600);
     m_recordTrailing->setSuffix(tr(" s"));
     m_recordTrailing->setValue(m_camera.recordTrailingSeconds);
+    m_recordTrailing->setToolTip(
+        tr("So an event does not stop mid-scene. Motion that resumes within "
+           "this time continues the same file instead of starting a second."));
 
-    connect(m_recordOnMotion, &QCheckBox::toggled,
-            m_recordTrailing, &QWidget::setEnabled);
-    m_recordTrailing->setEnabled(m_camera.recordOnMotion);
+    auto syncMotion = [this](bool on) {
+        m_recordPre->setEnabled(on);
+        m_recordTrailing->setEnabled(on);
+    };
+    connect(m_recordOnMotion, &QCheckBox::toggled, this, syncMotion);
+    syncMotion(m_camera.recordOnMotion);
 
     auto *recordForm = new QFormLayout;
     recordForm->addRow(QString(), m_recordOnMotion);
+    recordForm->addRow(tr("Include before"), m_recordPre);
     recordForm->addRow(tr("Keep recording after"), m_recordTrailing);
 
-    auto *recordBox = new QGroupBox(tr("Recording on this computer"), page);
+    auto *recordBox = new QGroupBox(tr("When something happens"), page);
     recordBox->setLayout(recordForm);
 
-    auto *folderNote = new QLabel(
-        tr("Where the files go is the same for every camera and is set under "
+    // ── round the clock ─────────────────────────────────────────────────────
+    m_continuous = new QCheckBox(tr("Record without stopping"), page);
+    m_continuous->setChecked(m_camera.continuousRecording);
+
+    m_retentionHours = new QSpinBox(page);
+    m_retentionHours->setRange(1, 720);
+    m_retentionHours->setSuffix(tr(" h"));
+    m_retentionHours->setValue(m_camera.continuousRetentionHours);
+    m_retentionHours->setToolTip(
+        tr("How far back the archive reaches. Once it is this old, a file is "
+           "deleted to make room for the newest one."));
+
+    m_segmentMinutes = new QSpinBox(page);
+    m_segmentMinutes->setRange(1, 60);
+    m_segmentMinutes->setSuffix(tr(" min"));
+    m_segmentMinutes->setValue(m_camera.continuousSegmentMinutes);
+    m_segmentMinutes->setToolTip(
+        tr("The archive is a run of files, not one — a file cannot be trimmed "
+           "at the front, so keeping a day in one of them would mean "
+           "rewriting it every minute. Shorter files find a moment more "
+           "precisely; longer ones are fewer to scroll past."));
+
+    m_archiveEstimate = new QLabel(page);
+    m_archiveEstimate->setWordWrap(true);
+    m_archiveEstimate->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    auto syncContinuous = [this](bool on) {
+        m_retentionHours->setEnabled(on);
+        m_segmentMinutes->setEnabled(on);
+        refreshArchiveEstimate();
+    };
+    connect(m_continuous, &QCheckBox::toggled, this, syncContinuous);
+    connect(m_retentionHours, &QSpinBox::valueChanged,
+            this, &CameraSettingsDialog::refreshArchiveEstimate);
+    syncContinuous(m_camera.continuousRecording);
+
+    auto *alwaysForm = new QFormLayout;
+    alwaysForm->addRow(QString(), m_continuous);
+    alwaysForm->addRow(tr("Keep the last"), m_retentionHours);
+    alwaysForm->addRow(tr("One file per"), m_segmentMinutes);
+    alwaysForm->addRow(QString(), m_archiveEstimate);
+
+    auto *alwaysBox = new QGroupBox(tr("Round the clock"), page);
+    alwaysBox->setLayout(alwaysForm);
+
+    auto *sharedNote = new QLabel(
+        tr("With both switched on, one buffer serves both: the recording of "
+           "an event is cut out of the archive, so nothing extra is opened to "
+           "the camera.\n\n"
+           "Where the files go is the same for every camera and is set under "
            "Settings ▸ Recordings."), page);
-    folderNote->setWordWrap(true);
-    folderNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
-    recordForm->addRow(QString(), folderNote);
+    sharedNote->setWordWrap(true);
+    sharedNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    auto *layout = new QVBoxLayout(page);
+    layout->addWidget(recordBox);
+    layout->addWidget(alwaysBox);
+    layout->addWidget(sharedNote);
+    layout->addStretch(1);
+    addPage(page, tr("Recording"));
+}
+
+void CameraSettingsDialog::refreshArchiveEstimate()
+{
+    if (!m_archiveEstimate)
+        return;
+    if (!m_continuous->isChecked()) {
+        m_archiveEstimate->clear();
+        return;
+    }
+
+    // From the bit rate the camera says it is sending on the stream leolink
+    // actually opens. Guessing would be worse than saying nothing, so a
+    // camera that has not answered yet gets the honest version.
+    const QJsonObject stream =
+        m_encValue.value(m_camera.stream == QLatin1String("main")
+                             ? QStringLiteral("mainStream")
+                             : QStringLiteral("subStream")).toObject();
+    const int kbit = stream.value(QStringLiteral("bitRate")).toInt();
+    const int hours = m_retentionHours->value();
+    if (kbit <= 0) {
+        m_archiveEstimate->setText(
+            tr("%1 hours of video. How much disk that is depends on the bit "
+               "rate, which this camera has not reported yet.").arg(hours));
+        return;
+    }
+
+    const double gigabytes = double(kbit) * 1000.0 / 8.0 * 3600.0 * hours /
+                             (1024.0 * 1024.0 * 1024.0);
+    m_archiveEstimate->setText(
+        tr("About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+           "recordings folder has that much to spare.")
+            .arg(gigabytes, 0, 'f', gigabytes < 10 ? 1 : 0)
+            .arg(kbit));
+}
+
+void CameraSettingsDialog::buildReactionTab()
+{
+    auto *page = new QWidget;
 
     m_actionScope = new QComboBox(page);
     m_actionScope->addItem(tr("Follow the defaults under Settings"), true);
@@ -498,7 +615,6 @@ void CameraSettingsDialog::buildReactionTab()
     actionLayout->addWidget(m_actions);
 
     auto *layout = new QVBoxLayout(page);
-    layout->addWidget(recordBox);
     layout->addWidget(actionBox);
     layout->addStretch(1);
     addPage(page, tr("Reactions"));
@@ -2275,6 +2391,8 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
     if (command == QLatin1String("GetEnc")) {
         m_encValue = value.value(QStringLiteral("Enc")).toObject();
         m_encRange = ranges;
+        // The archive estimate needs the bit rate, which only arrives here.
+        refreshArchiveEstimate();
 
         // Only where the camera has a microphone to switch.
         if (m_encValue.contains(QStringLiteral("audio"))) {

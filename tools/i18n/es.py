@@ -1300,6 +1300,65 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "Detección, reacciones y grabación en leolink, y el codificador, la "
         "imagen y los horarios de la propia cámara.",
+
+    # ── the settings, split by reach ──
+    "nothing": "nada",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "Los segundos previos al disparo — normalmente la parte que muestra "
+        "cómo llegó alguien hasta allí. El pasado no puede grabarse después, "
+        "así que cualquier valor por encima de cero mantiene el flujo entrando "
+        "en un búfer: una conexión más a la cámara, y algo de disco.",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "Para que un evento no acabe a media escena. El movimiento que vuelve "
+        "dentro de este tiempo continúa el mismo archivo en vez de empezar "
+        "otro.",
+    "Include before": "Incluir antes",
+    "When something happens": "Cuando ocurre algo",
+    "Record without stopping": "Grabar sin parar",
+    " h": " h",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "Hasta dónde llega hacia atrás el archivo. Cuando un fichero alcanza "
+        "esa edad se borra para dejar sitio al más reciente.",
+    " min": " min",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "El archivo es una serie de ficheros, no uno — un fichero no se puede "
+        "recortar por delante, así que guardar un día entero en uno solo "
+        "obligaría a reescribirlo cada minuto. Los ficheros cortos localizan "
+        "mejor un momento; los largos son menos que recorrer.",
+    "Keep the last": "Conservar",
+    "One file per": "Un fichero cada",
+    "Round the clock": "Las veinticuatro horas",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "Con ambos activados, un solo búfer sirve para los dos: la grabación "
+        "de un evento se recorta del archivo, así que no se abre nada más a la "
+        "cámara.\n\nA dónde van los ficheros es igual para todas las cámaras y "
+        "se ajusta en Ajustes ▸ Grabaciones.",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 horas de vídeo. Cuánto disco es eso depende de la tasa de bits, "
+        "que esta cámara todavía no ha informado.",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "Unos %1 GB a los %2 kbit/s a los que está ajustado este flujo. "
+        "Conviene que la carpeta de grabaciones tenga ese espacio libre.",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg no está instalado, así que no se puede grabar sin parar.",
+    "Nothing had been buffered yet.": "Todavía no había nada en el búfer.",
+    "That moment is no longer in the buffer.":
+        "Ese momento ya no está en el búfer.",
+    "The recording could not be cut out of the buffer.":
+        "La grabación no se pudo recortar del búfer.",
 }
 
 

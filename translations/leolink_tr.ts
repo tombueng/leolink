@@ -118,12 +118,12 @@
         <translation>%1 için akış adresi yok.</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="101"/>
+        <location filename="../src/AudioDetector.cpp" line="103"/>
         <source>Sound detection stopped: %1</source>
         <translation>Ses algılama durdu: %1</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="106"/>
+        <location filename="../src/AudioDetector.cpp" line="108"/>
         <source>Could not start ffmpeg for sound detection.</source>
         <translation>Ses algılama için ffmpeg başlatılamadı.</translation>
     </message>
@@ -167,116 +167,116 @@
 <context>
     <name>leolink::CameraSettingsDialog</name>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="124"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="132"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="125"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="133"/>
         <source>Reading settings from %1…</source>
         <translation>%1 kamerasından ayarlar okunuyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="137"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="138"/>
         <source>Apply to camera</source>
         <translation>Kameraya uygula</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="168"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="169"/>
         <source>Restarting. The camera will be back in about a minute.</source>
         <translation>Yeniden başlatılıyor. Kamera yaklaşık bir dakika içinde geri gelecek.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="184"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="185"/>
         <source>Saved. The camera is reconnecting and will be back shortly.</source>
         <translation>Kaydedildi. Kamera yeniden bağlanıyor, birazdan geri gelecek.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="190"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="191"/>
         <source>%1: the camera reported success.</source>
         <translation>%1: kamera başarılı olduğunu bildirdi.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="198"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="199"/>
         <source>Processor load %1 %</source>
         <translation>İşlemci yükü %1 %</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="203"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="204"/>
         <source>Encoder output %1 kbit/s</source>
         <translation>Kodlayıcı çıkışı %1 kbit/s</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="205"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="206"/>
         <source>Network throughput %1 kbit/s</source>
         <translation>Ağ trafiği %1 kbit/s</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="207"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="208"/>
         <source>The camera is at its limit. Lowering the resolution or frame rate will steady it.</source>
         <translation>Kamera sınırında. Çözünürlüğü ya da kare hızını düşürmek onu dengeleyecektir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="227"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="749"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="228"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="865"/>
         <source>Administrator</source>
         <translation>Yönetici</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="228"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="749"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="229"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="865"/>
         <source>Viewer</source>
         <translation>İzleyici</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="253"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="254"/>
         <source>Done.</source>
         <translation>Tamam.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="258"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="259"/>
         <source>The card has been formatted.</source>
         <translation>Kart biçimlendirildi.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="560"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="676"/>
         <source>Higher means better picture and more network traffic. The camera only offers the rates it can actually sustain.</source>
         <translation>Yüksek olması daha iyi görüntü ve daha çok ağ trafiği demektir. Kamera yalnızca gerçekten sürdürebildiği hızları sunar.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="564"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="680"/>
         <source>Resolution</source>
         <translation>Çözünürlük</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="565"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="681"/>
         <source>Frame rate</source>
         <translation>Kare hızı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="566"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="682"/>
         <source>Bit rate (kbit/s)</source>
         <translation>Bit hızı (kbit/s)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="567"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="683"/>
         <source>H.264 profile</source>
         <translation>H.264 profili</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="575"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="691"/>
         <source>These change the camera itself, so every client sees the result. The choices come from the camera and differ per model.</source>
         <translation>Bunlar kameranın kendisini değiştirir; sonucu her program görür. Seçenekler kameradan gelir ve modelden modele değişir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="588"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="704"/>
         <source>Send sound</source>
         <translation>Sesi ilet</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="591"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="707"/>
         <source>The camera&apos;s microphone. With this off it still puts an audio track in the stream — an entirely silent one, which is much harder to recognise than no track at all.</source>
         <translation>Kameranın mikrofonu. Bu kapalıyken de akışa bir ses izi koyar — tamamen sessiz olan, ki bunu fark etmek izin hiç olmamasından çok daha zordur.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="431"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="597"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="436"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="713"/>
         <source>Sound</source>
         <translation>Ses</translation>
     </message>
@@ -286,634 +286,625 @@
         <translation>leolink'te</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="111"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="112"/>
         <source>In the camera</source>
         <translation>Kamerada</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="127"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="128"/>
         <source>Try again</source>
         <translation>Yeniden dene</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="331"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="336"/>
         <source>The camera reports it (ONVIF)</source>
         <translation>Kameranın kendisi (ONVIF)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="333"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="338"/>
         <source>leolink watches the picture</source>
         <translation>leolink görüntüyü izliyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="335"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="340"/>
         <source>Either of the two</source>
         <translation>İkisinden herhangi biri</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="336"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="341"/>
         <source>Do not watch</source>
         <translation>İzleme</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="345"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="350"/>
         <source>&lt;b&gt;The camera reports it:&lt;/b&gt; the camera&apos;s own detector decides, and sends an ONVIF event. What it watches and how readily it triggers is set under “Detection” further down, in the camera itself.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink watches the picture:&lt;/b&gt; this computer opens a second sub-stream connection and analyses the picture. Works with any camera, including ones that report nothing — and the camera&apos;s own detector then plays no part.</source>
         <translation>&lt;b&gt;Kamera bildirir:&lt;/b&gt; kameranın kendi algılayıcısı karar verir ve bir ONVIF olayı gönderir. Neyi izlediği ve ne kolaylıkla tetiklendiği aşağıdaki «Algılama» altında, kameranın kendisinde ayarlanır.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink görüntüyü izler:&lt;/b&gt; bu bilgisayar alt akışa ikinci bir bağlantı açıp görüntüyü çözümler. Hiçbir şey bildirmeyenler de dâhil her kamerayla çalışır — ve o durumda kameranın kendi algılayıcısının bir rolü kalmaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="356"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="361"/>
         <source>Choose what is watched…</source>
         <translation>Neyin izleneceğini seç…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="364"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="369"/>
         <source>How much a spot in the picture must change to count. Higher notices more, including shadows and rain.</source>
         <translation>Görüntüdeki bir noktanın sayılması için ne kadar değişmesi gerektiği. Yüksek değer daha çoğunu fark eder — gölgeleri ve yağmuru da.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="369"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="374"/>
         <source> ‰</source>
         <translation> ‰</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="372"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="377"/>
         <source>How much of the watched area must change before it counts as motion. 20‰ is two percent of the picture — roughly a person at middle distance.</source>
         <translation>İzlenen alanın ne kadarının değişmesi hareket sayılacak. 20 ‰, görüntünün yüzde ikisidir — kabaca orta uzaklıkta bir insan.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="377"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="382"/>
         <source>Motion comes from</source>
         <translation>Hareketi bildiren</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="380"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="385"/>
         <source>How leolink learns of motion</source>
         <translation>leolink hareketten nasıl haberdar olur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="386"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="391"/>
         <source>Minimum area</source>
         <translation>En küçük alan</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="388"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="393"/>
         <source>When leolink watches the picture</source>
         <translation>leolink görüntüyü izlediğinde</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="399"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="404"/>
         <source>Raise an event on sound</source>
         <translation>Seste olay oluştur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="402"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="407"/>
         <source>Needs a camera with a microphone. Opens another connection to the sub stream.</source>
         <translation>Mikrofonlu bir kamera gerekir. Alt akışa bir bağlantı daha açar.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="407"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="412"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="410"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="415"/>
         <source>-60 dB is close to silence, -20 dB a raised voice nearby.</source>
         <translation>-60 dB sessizliğe yakın, -20 dB yakında yükseltilmiş bir sestir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="414"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="457"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="419"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="463"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="474"/>
         <source> s</source>
         <translation> sn</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="417"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="422"/>
         <source>Keeps the event up after the noise stops, so one bark is not reported four times.</source>
         <translation>Gürültü kesildikten sonra olayı ayakta tutar; böylece tek bir havlama dört kez bildirilmez.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="428"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="433"/>
         <source>Sound above</source>
         <translation>Şundan yüksek ses</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="429"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="434"/>
         <source>Hold for</source>
         <translation>Şu süre boyunca tut</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="442"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="447"/>
         <source>Detection by leolink</source>
         <translation>leolink tarafından algılama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="449"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="455"/>
         <source>Record while motion lasts</source>
         <translation>Hareket sürdüğü sürece kaydet</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="452"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="458"/>
         <source>Records on this computer from the live stream, so it works even when the camera has no SD card fitted.</source>
         <translation>Canlı akıştan bu bilgisayara kaydeder; dolayısıyla kamerada SD kart olmasa da çalışır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="468"/>
-        <source>Recording on this computer</source>
-        <translation>Bu bilgisayara kayıt</translation>
-    </message>
-    <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="472"/>
-        <source>Where the files go is the same for every camera and is set under Settings ▸ Recordings.</source>
-        <translation>Dosyaların nereye gideceği tüm kameralar için aynıdır ve Ayarlar ▸ Kayıtlar altında belirlenir.</translation>
-    </message>
-    <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="479"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="596"/>
         <source>Follow the defaults under Settings</source>
         <translation>Ayarlar'daki varsayılanları izle</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="480"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="597"/>
         <source>Use this camera&apos;s own</source>
         <translation>Bu kameranınkini kullan</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="493"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="504"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="610"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="620"/>
         <source>Reactions</source>
         <translation>Tepkiler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="495"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="612"/>
         <source>What happens on an event</source>
         <translation>Bir olayda ne olacağı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="511"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="627"/>
         <source>Muted</source>
         <translation>Sessiz</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="526"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="642"/>
         <source>Volume</source>
         <translation>Ses düzeyi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="528"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="644"/>
         <source>Sound in leolink</source>
         <translation>leolink'te ses</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="532"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="648"/>
         <source>The same two controls sit on the camera&apos;s own tile, where they are quicker to reach. Cameras start muted: opening a wall of them should not fill the room with sound from every one at once.</source>
         <translation>Aynı iki denetim, daha çabuk erişilen kamera karosunun üzerinde de bulunur. Kameralar sessiz başlar: bir duvar dolusu kamerayı açmak, odayı hepsinin sesiyle doldurmamalı.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="542"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="658"/>
         <source>Playback</source>
         <translation>Oynatma</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="602"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="718"/>
         <source>Main stream</source>
         <translation>Ana akış</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="603"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="719"/>
         <source>Sub stream</source>
         <translation>Alt akış</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="608"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="724"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="622"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2130"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="738"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2246"/>
         <source>Brightness</source>
         <translation>Parlaklık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="623"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="739"/>
         <source>Contrast</source>
         <translation>Karşıtlık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="624"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="740"/>
         <source>Saturation</source>
         <translation>Doygunluk</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="625"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="741"/>
         <source>Sharpness</source>
         <translation>Keskinlik</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="626"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="742"/>
         <source>Hue</source>
         <translation>Renk tonu</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="628"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="683"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="744"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="799"/>
         <source>Picture</source>
         <translation>Görüntü</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="638"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="754"/>
         <source>Exposure and orientation</source>
         <translation>Pozlama ve yönlendirme</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="640"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="756"/>
         <source>Day / night</source>
         <translation>Gündüz / gece</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="641"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="757"/>
         <source>“Auto” switches to infrared as the light goes. Forcing colour at night gives a picture too dark to use; forcing black and white by day loses colour for nothing.</source>
         <translation>«Otomatik», ışık azaldıkça kızılötesine geçer. Geceleri rengi zorlamak kullanılamayacak kadar karanlık bir görüntü verir; gündüz siyah beyazı zorlamak da rengi boşuna harcar.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="646"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="676"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="762"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="792"/>
         <source>Automatic</source>
         <translation>Otomatik</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="647"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="763"/>
         <source>Always colour</source>
         <translation>Her zaman renkli</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="648"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="764"/>
         <source>Always black and white</source>
         <translation>Her zaman siyah beyaz</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="649"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="765"/>
         <source>Anti-flicker</source>
         <translation>Titreşim önleme</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="650"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="766"/>
         <source>Match your mains frequency — 50 Hz in Europe — or indoor lighting will beat against the shutter and the picture will pulse.</source>
         <translation>Şebeke frekansınıza uydurun — Avrupa'da 50 Hz — yoksa iç aydınlatma örtücüyle vuruşur ve görüntü atar.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="654"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="770"/>
         <source>Exposure</source>
         <translation>Pozlama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="655"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="771"/>
         <source>Mirror</source>
         <translation>Aynala</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="656"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="772"/>
         <source>Flip</source>
         <translation>Ters çevir</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="657"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="773"/>
         <source>For a camera mounted upside down.</source>
         <translation>Baş aşağı monte edilmiş bir kamera için.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="658"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="774"/>
         <source>Backlight compensation</source>
         <translation>Arka ışık dengelemesi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="659"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="775"/>
         <source>Helps when the subject stands against a bright window or sky.</source>
         <translation>Konu parlak bir pencerenin ya da gökyüzünün önünde durduğunda yardımcı olur.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="661"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="777"/>
         <source>Noise reduction</source>
         <translation>Gürültü azaltma</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="662"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="778"/>
         <source>Cleans up a dark picture, at the cost of smearing anything that moves.</source>
         <translation>Karanlık bir görüntüyü temizler; karşılığında hareket eden her şeyi bulanıklaştırır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="664"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="780"/>
         <source>Rotation</source>
         <translation>Döndürme</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="665"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="781"/>
         <source>Dynamic contrast</source>
         <translation>Devingen karşıtlık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="669"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="785"/>
         <source>Infrared illumination</source>
         <translation>Kızılötesi aydınlatma</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="671"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="787"/>
         <source>Infrared lamps</source>
         <translation>Kızılötesi lambalar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="672"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="788"/>
         <source>“Auto” turns them on when it gets dark. Switch them off if the camera looks through glass — the reflection blinds it.</source>
         <translation>«Otomatik», hava karardığında bunları yakar. Kamera camın arkasından bakıyorsa kapatın — yansıma onu kör eder.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="677"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="793"/>
         <source>Always on</source>
         <translation>Her zaman açık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="678"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="794"/>
         <source>Always off</source>
         <translation>Her zaman kapalı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="692"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1793"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2072"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2084"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2100"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2137"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="808"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1909"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2188"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2200"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2216"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2253"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="692"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="751"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="808"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="867"/>
         <source>Rights</source>
         <translation>Yetkiler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="699"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="815"/>
         <source>Add…</source>
         <translation>Ekle…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="700"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="816"/>
         <source>Change password…</source>
         <translation>Parolayı değiştir…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="701"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="817"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="715"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="831"/>
         <source>These are accounts on the camera, not in leolink. A viewer account can watch but not change anything — worth using for anything that only needs to see the picture, so a stored password cannot be turned against the camera&apos;s settings.</source>
         <translation>Bunlar leolink'teki değil, kameradaki hesaplardır. İzleyici hesabı izleyebilir ama hiçbir şeyi değiştiremez — yalnızca görüntüyü görmesi yeten her şey için kullanmaya değer, böylece saklanan bir parola kameranın ayarlarına karşı kullanılamaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="732"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="848"/>
         <source>Users</source>
         <translation>Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="739"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="744"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="751"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="855"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="860"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="867"/>
         <source>New user</source>
         <translation>Yeni kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="739"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="855"/>
         <source>User name</source>
         <translation>Kullanıcı adı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="744"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="860"/>
         <source>Password for %1</source>
         <translation>%1 için parola</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="756"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="872"/>
         <source>Creating %1…</source>
         <translation>%1 oluşturuluyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="771"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="887"/>
         <source>Change password</source>
         <translation>Parolayı değiştir</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="771"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="887"/>
         <source>New password for %1</source>
         <translation>%1 için yeni parola</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="780"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="896"/>
         <source>This is the account leolink uses</source>
         <translation>leolink'in kullandığı hesap budur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="781"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="897"/>
         <source>Change it here and leolink will be locked out until the new password is entered under Cameras as well.</source>
         <translation>Burada değiştirirseniz, yeni parola Kameralar altına da girilene kadar leolink dışarıda kalır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="785"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="901"/>
         <source>Changing the password for %1…</source>
         <translation>%1 parolası değiştiriliyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="798"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="914"/>
         <source>Cannot delete this account</source>
         <translation>Bu hesap silinemez</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="799"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="915"/>
         <source>leolink is signed in as “%1”. Deleting it would cut the connection to this camera immediately.</source>
         <translation>leolink «%1» olarak oturum açmış durumda. Onu silmek bu kameraya olan bağlantıyı anında keserdi.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="804"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="920"/>
         <source>Delete user</source>
         <translation>Kullanıcıyı sil</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="805"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="921"/>
         <source>Delete “%1” from the camera?</source>
         <translation>«%1» kameradan silinsin mi?</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="809"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="925"/>
         <source>Deleting %1…</source>
         <translation>%1 siliniyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="816"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1224"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="932"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1340"/>
         <source>Format the SD card</source>
         <translation>SD kartı biçimlendir</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="818"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="934"/>
         <source>&lt;b&gt;Erase everything on the card in %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 kamerasındaki kartta ne varsa silinsin mi?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="821"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="937"/>
         <source>Every recording on the card is deleted. This cannot be undone, and nothing that has not already been downloaded can be recovered.</source>
         <translation>Karttaki her kayıt silinir. Bu geri alınamaz ve daha önce indirilmemiş hiçbir şey kurtarılamaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="824"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="940"/>
         <source>Erase</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="831"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="947"/>
         <source>Formatting…</source>
         <translation>Biçimlendiriliyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="841"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="957"/>
         <source>Wi-Fi signal</source>
         <translation>Wi-Fi sinyali</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="845"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1169"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="961"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1285"/>
         <source>Reading…</source>
         <translation>Okunuyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="849"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="965"/>
         <source>Connection</source>
         <translation>Bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="862"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="978"/>
         <source>Scan</source>
         <translation>Tara</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="866"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="982"/>
         <source>Join network</source>
         <translation>Ağa katıl</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="880"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="914"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1803"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="996"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1030"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1919"/>
         <source>Network</source>
         <translation>Ağ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="882"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1794"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2073"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2085"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2101"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2138"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="998"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1910"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2189"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2201"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2217"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2254"/>
         <source>Password</source>
         <translation>Parola</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="885"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1001"/>
         <source>Wi-Fi</source>
         <translation>Wi-Fi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="891"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1007"/>
         <source>The camera scans, not this computer — what it can reach is what counts. The password is tried before it is saved, so a typo is refused rather than leaving the camera on no network at all.</source>
         <translation>Tarayan bu bilgisayar değil, kameradır — önemli olan onun ulaşabildiğidir. Parola kaydedilmeden önce denenir; böylece bir yazım hatası, kamerayı ağsız bırakmak yerine reddedilir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="899"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1015"/>
         <source>Addresses and ports are read here but changed in the camera&apos;s own web interface. Getting one wrong takes the camera off the network entirely, and the only way back is the reset pin — a warning dialog is no substitute for the manufacturer&apos;s own screen there.</source>
         <translation>Adresler ve bağlantı noktaları burada okunur ama kameranın kendi web arayüzünden değiştirilir. Birini yanlış girmek kamerayı ağdan tamamen düşürür ve geri dönüşün tek yolu sıfırlama iğnesidir — orada bir uyarı penceresi, üreticinin kendi ekranının yerini tutmaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="944"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1060"/>
         <source>strong</source>
         <translation>güçlü</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="945"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1061"/>
         <source>good</source>
         <translation>iyi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="946"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1062"/>
         <source>fair</source>
         <translation>orta</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="947"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1063"/>
         <source>weak</source>
         <translation>zayıf</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="948"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1064"/>
         <source>unknown</source>
         <translation>bilinmiyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1002"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1118"/>
         <source>%1 — %2 (%3/4)</source>
         <translation>%1 — %2 (%3/4)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1007"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1123"/>
         <source>, %n access point(s)</source>
         <translation><numerusform>, %n erişim noktası</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1012"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1128"/>
         <source>Signal as the camera hears it: %1 of 4</source>
         <translation>Kameranın duyduğu haliyle sinyal: 4 üzerinden %1</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1014"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1130"/>
         <source>Encryption: %1</source>
         <translation>Şifreleme: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1016"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1132"/>
         <source>Heard from %n access point(s) — one network, several nodes. The strongest is what is shown.</source>
         <translation><numerusform>%n erişim noktasından duyuldu — tek ağ, birkaç düğüm. Gösterilen, en güçlü olanı.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1030"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1146"/>
         <source>Some names were heard from several access points — that is a mesh. The camera joins the name, not a particular node; the mesh decides which one it talks to and hands it over as needed. To find the best spot, move the camera and watch “Wi-Fi signal” above: that is the link it actually has.</source>
         <translation>Bazı adlar birden çok erişim noktasından duyuldu — bu bir örgü ağdır. Kamera belirli bir düğüme değil, ada bağlanır; hangisiyle konuşacağına örgü ağ karar verir ve gerektiğinde devreder. En iyi yeri bulmak için kamerayı gezdirin ve yukarıdaki «Wi-Fi sinyali»ni izleyin: gerçekten sahip olduğu bağlantı odur.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1040"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1156"/>
         <source>%n network(s) found, strongest first.</source>
         <translation><numerusform>%n ağ bulundu, en güçlüsü ilk sırada.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1048"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1164"/>
         <source>scanning…</source>
         <translation>taranıyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1051"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1167"/>
         <source>The camera is scanning for networks…</source>
         <translation>Kamera ağları tarıyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1062"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1178"/>
         <source>Change the camera&apos;s network</source>
         <translation>Kameranın ağını değiştir</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1064"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1180"/>
         <source>&lt;b&gt;Move %1 to “%2”?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 «%2» ağına taşınsın mı?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1066"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1182"/>
         <source>The camera tests the password first and refuses if it is wrong, so this is safer than it sounds.
 
 It will still disappear for a minute while it reconnects, and if the new network hands out a different address you will have to update it here afterwards.</source>
@@ -922,68 +913,68 @@ It will still disappear for a minute while it reconnects, and if the new network
 Yine de yeniden bağlanırken bir dakika ortadan kaybolacak ve yeni ağ ona başka bir adres verirse sonrasında burada güncellemeniz gerekecek.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1072"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1188"/>
         <source>Join</source>
         <translation>Katıl</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1080"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1196"/>
         <source>Testing the password on the camera…</source>
         <translation>Parola kamerada sınanıyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1098"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1214"/>
         <source>Link</source>
         <translation>Bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1099"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1215"/>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1100"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1216"/>
         <source>Netmask</source>
         <translation>Ağ maskesi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1101"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1217"/>
         <source>Gateway</source>
         <translation>Ağ geçidi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1102"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1218"/>
         <source>MAC</source>
         <translation>MAC</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1103"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1219"/>
         <source>DNS</source>
         <translation>DNS</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1104"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1220"/>
         <source>Network name</source>
         <translation>Ağ adı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1125"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1241"/>
         <source>Ports</source>
         <translation>Bağlantı noktaları</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1127"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1243"/>
         <source>The camera reported nothing.</source>
         <translation>Kamera bir şey bildirmedi.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1135"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1355"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1251"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1471"/>
         <source>Restart the camera</source>
         <translation>Kamerayı yeniden başlat</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1141"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1257"/>
         <source>The camera goes off the network for a minute or so and comes back on its own. Recordings on its SD card are not affected, and settings are kept.
 
 Worth trying when a camera has stopped answering, is refusing new connections, or has drifted out of step after a firmware update.</source>
@@ -992,59 +983,59 @@ Worth trying when a camera has stopped answering, is refusing new connections, o
 Bir kamera yanıt vermez olduğunda, yeni bağlantıları reddettiğinde ya da bir donanım yazılımı güncellemesinden sonra tuhaflaştığında denemeye değer.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1149"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1362"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1265"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1478"/>
         <source>Restart</source>
         <translation>Yeniden başlat</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1160"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1276"/>
         <source>Factory reset is not offered here. It clears the network settings too, and a camera that has forgotten its Wi-Fi has to be taken down and reached by cable — use the camera&apos;s own web interface if you really want that.</source>
         <translation>Fabrika ayarlarına dönüş burada sunulmuyor. Ağ ayarlarını da siler ve Wi-Fi'sini unutmuş bir kamerayı indirip kabloyla bağlamak gerekir — bunu gerçekten istiyorsanız kameranın kendi web arayüzünü kullanın.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1171"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1287"/>
         <source>Condition</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1176"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1244"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1292"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1360"/>
         <source>Not checked.</source>
         <translation>Denetlenmedi.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1179"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1295"/>
         <source>Check for updates</source>
         <translation>Güncellemeleri denetle</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1181"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1297"/>
         <source>The camera asks Reolink, not this computer — so it needs a way out to the internet of its own.</source>
         <translation>Reolink'e bu bilgisayar değil, kamera sorar — dolayısıyla kendine ait bir internet çıkışı gerekir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1185"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1301"/>
         <source>Asking Reolink…</source>
         <translation>Reolink'e soruluyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1190"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1306"/>
         <source>Install update</source>
         <translation>Güncellemeyi kur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1194"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1310"/>
         <source>Install firmware</source>
         <translation>Donanım yazılımını kur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1196"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1312"/>
         <source>&lt;b&gt;Update the firmware on %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 kamerasının donanım yazılımı güncellensin mi?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1198"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1314"/>
         <source>The camera downloads the update itself and restarts. It will be unreachable for several minutes.
 
 Do not cut its power during the update — a camera interrupted mid-flash usually needs sending back.</source>
@@ -1053,62 +1044,62 @@ Do not cut its power during the update — a camera interrupted mid-flash usuall
 Güncelleme sırasında elektriğini kesmeyin — yazma işleminin ortasında kesilen bir kamera genellikle servise gitmek zorunda kalır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1203"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1319"/>
         <source>Install</source>
         <translation>Kur</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1218"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1334"/>
         <source>Firmware</source>
         <translation>Donanım yazılımı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1228"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1344"/>
         <source>Storage</source>
         <translation>Depolama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1231"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1347"/>
         <source>Formatting erases every recording on the card. There is no undo and no confirmation from the camera afterwards.</source>
         <translation>Biçimlendirmek karttaki her kaydı siler. Geri alınamaz ve sonrasında kameradan bir onay da gelmez.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1248"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1364"/>
         <source>Ask the camera</source>
         <translation>Kameraya sor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1252"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1368"/>
         <source>Copy the list</source>
         <translation>Listeyi kopyala</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1255"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1371"/>
         <source>Copied.</source>
         <translation>Kopyalandı.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1263"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1379"/>
         <source>What this camera supports</source>
         <translation>Bu kameranın desteklediği özellikler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1266"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1382"/>
         <source>Reolink firmware differs enormously between models, and the only reliable way to know what a camera can do is to ask it. If something is missing from leolink that your camera clearly has, this list in a bug report is what makes it possible to add.</source>
         <translation>Reolink donanım yazılımı modelden modele çok değişir ve bir kameranın neler yapabildiğini öğrenmenin tek güvenilir yolu ona sormaktır. leolink'te, kameranızda açıkça bulunan bir şey eksikse, bir hata bildirimindeki bu liste onu eklemeyi mümkün kılan şeydir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1283"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1399"/>
         <source>Maintenance</source>
         <translation>Bakım</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1314"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1430"/>
         <source>Asking about %n command(s)…</source>
         <translation><numerusform>%n komut soruluyor…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1331"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1447"/>
         <source>Supported (%1):
 %2
 
@@ -1121,308 +1112,392 @@ Desteklenmiyor (%3):
 %4</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1357"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1473"/>
         <source>&lt;b&gt;Restart %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 yeniden başlatılsın mı?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1359"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1475"/>
         <source>The picture will be gone for about a minute. Anything being recorded right now will stop.</source>
         <translation>Görüntü yaklaşık bir dakika gidecek. Şu anda kaydedilen ne varsa duracak.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1371"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1487"/>
         <source>Asking %1 to restart…</source>
         <translation>%1 kamerasından yeniden başlatma isteniyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1449"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1565"/>
         <source>On-screen text</source>
         <translation>Ekran üstü yazı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1451"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1567"/>
         <source>Background</source>
         <translation>Arka plan</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1452"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1568"/>
         <source>Draws a box behind the text so it stays readable over a bright scene.</source>
         <translation>Aydınlık bir sahnede okunur kalsın diye yazının arkasına bir kutu çizer.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1454"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1570"/>
         <source>Watermark</source>
         <translation>Filigran</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1455"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1571"/>
         <source>Embeds a mark in the recording itself.</source>
         <translation>Kaydın kendisine bir işaret gömer.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1459"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1575"/>
         <source>Privacy areas…</source>
         <translation>Gizli alanlar…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1462"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1578"/>
         <source>Parts of the view the camera blanks before anything leaves it.</source>
         <translation>Görüntünün, kameradan hiçbir şey çıkmadan önce kararttığı bölümleri.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1473"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1589"/>
         <source>Privacy</source>
         <translation>Gizlilik</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1477"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1593"/>
         <source>Blanked in the camera itself, so the covered part is missing from every viewer and every recording — a neighbour&apos;s window, or a desk that should not be on film.</source>
         <translation>Kameranın kendi içinde karartılır; böylece kapatılan bölüm her izleyicide ve her kayıtta eksiktir — komşunun penceresi ya da videoya girmemesi gereken bir çalışma masası.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1484"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1600"/>
         <source>The camera burns this into the picture, so it appears in every recording and every client — not only here.</source>
         <translation>Kamera bunu görüntünün içine yakar; dolayısıyla her kayıtta ve her programda görünür — yalnızca burada değil.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1492"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1608"/>
         <source>Overlay</source>
         <translation>Bindirme</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1501"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1617"/>
         <source>Motion detection in the camera</source>
         <translation>Kamerada hareket algılama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="385"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1503"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1543"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="390"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1619"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1659"/>
         <source>Sensitivity</source>
         <translation>Duyarlılık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1504"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="464"/>
+        <source>nothing</source>
+        <translation>yok</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="467"/>
+        <source>The seconds leading up to the trigger — usually the part that shows how someone got there. The past cannot be recorded after the fact, so anything above zero keeps the stream running into a buffer: one more connection to the camera, and a little disk.</source>
+        <translation>Tetiklemeden hemen önceki saniyeler — genellikle birinin oraya nasıl geldiğini gösteren kısım. Geçmiş sonradan kaydedilemez; sıfırın üzerindeki her değer bu yüzden akışı sürekli bir tampona yazar: kameraya bir bağlantı daha, ve biraz disk.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="477"/>
+        <source>So an event does not stop mid-scene. Motion that resumes within this time continues the same file instead of starting a second.</source>
+        <translation>Bir olay sahnenin ortasında bitmesin diye. Bu süre içinde yeniden başlayan hareket, ikinci bir dosya açmak yerine aynı dosyayı sürdürür.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="489"/>
+        <source>Include before</source>
+        <translation>Öncesini de al</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="492"/>
+        <source>When something happens</source>
+        <translation>Bir şey olduğunda</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="496"/>
+        <source>Record without stopping</source>
+        <translation>Durmadan kaydet</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="501"/>
+        <source> h</source>
+        <translation> sa</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="504"/>
+        <source>How far back the archive reaches. Once it is this old, a file is deleted to make room for the newest one.</source>
+        <translation>Arşivin ne kadar geriye uzandığı. Bu yaşa gelen bir dosya, en yenisine yer açmak için silinir.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="509"/>
+        <source> min</source>
+        <translation> dk</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="512"/>
+        <source>The archive is a run of files, not one — a file cannot be trimmed at the front, so keeping a day in one of them would mean rewriting it every minute. Shorter files find a moment more precisely; longer ones are fewer to scroll past.</source>
+        <translation>Arşiv tek bir dosya değil, bir dosya dizisidir — bir dosya baştan kırpılamaz, bütün bir günü tek dosyada tutmak onu her dakika yeniden yazmak demek olurdu. Kısa dosyalar bir anı daha kesin bulur; uzun dosyalar gezinmek için daha azdır.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="533"/>
+        <source>Keep the last</source>
+        <translation>Şu kadarını tut</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="534"/>
+        <source>One file per</source>
+        <translation>Her dosya</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="537"/>
+        <source>Round the clock</source>
+        <translation>Günün yirmi dört saati</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="541"/>
+        <source>With both switched on, one buffer serves both: the recording of an event is cut out of the archive, so nothing extra is opened to the camera.
+
+Where the files go is the same for every camera and is set under Settings ▸ Recordings.</source>
+        <translation>İkisi de açıkken tek bir tampon ikisine birden yeter: olayın kaydı arşivin içinden kesilir, yani kameraya fazladan hiçbir şey açılmaz.
+
+Dosyaların nereye gideceği tüm kameralar için aynıdır ve Ayarlar ▸ Kayıtlar altında belirlenir.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="577"/>
+        <source>%1 hours of video. How much disk that is depends on the bit rate, which this camera has not reported yet.</source>
+        <translation>%1 saatlik video. Bunun ne kadar disk ettiği bit hızına bağlı, ve bu kamera onu henüz bildirmedi.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="585"/>
+        <source>About %1 GB at the %2 kbit/s this stream is set to. Make sure the recordings folder has that much to spare.</source>
+        <translation>Bu akışın ayarlı olduğu %2 kbit/s ile yaklaşık %1 GB. Kayıt klasöründe o kadar yer bulunsun.</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1620"/>
         <source>Higher notices more, including shadows and headlights.</source>
         <translation>Yüksek değer daha çoğunu fark eder — gölgeleri ve farları da.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1506"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1815"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2023"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2077"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2087"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2093"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1622"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1931"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2139"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2193"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2203"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2209"/>
         <source>Switched on</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1512"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1628"/>
         <source>Choose the area…</source>
         <translation>Alanı seç…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1514"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1630"/>
         <source>Which parts of the picture the camera watches. Everything outside the area is ignored — a road at the edge of view, a tree in the wind, a neighbour&apos;s door.</source>
         <translation>Kameranın görüntünün hangi bölümlerini izlediği. Alanın dışında kalan her şey yok sayılır — görüntünün kenarındaki bir yol, rüzgârdaki bir ağaç, komşunun kapısı.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1520"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1636"/>
         <source>Where it looks</source>
         <translation>Nereye bakıyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1524"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1640"/>
         <source>Choose the hours…</source>
         <translation>Saatleri seç…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1529"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1645"/>
         <source>A week of hours: in the ones you tick, the camera reports motion; in the rest it stays quiet. Nothing to do with how sensitive it is — that is set below.</source>
         <translation>Saatlerden oluşan bir hafta: işaretlediklerinizde kamera hareketi bildirir, kalanlarda susar. Ne kadar duyarlı olduğuyla ilgisi yok — o aşağıda ayarlanır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1536"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1652"/>
         <source>When it reports at all</source>
         <translation>Ne zaman bildiriyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1543"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1659"/>
         <source>From</source>
         <translation>Başlangıç</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1543"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1659"/>
         <source>To</source>
         <translation>Bitiş</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1555"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1671"/>
         <source>Within a day the camera can be more or less easily triggered. This is how you stop headlights at night setting everything off without making it deaf by day. The camera fixes how many periods there are; their times and sensitivities are yours.</source>
         <translation>Gün içinde kamera daha kolay ya da daha zor tetiklenebilir. Geceleri farların her şeyi tetiklemesini, gündüz kamerayı kör etmeden böyle önlersiniz. Kaç dilim olacağını kamera belirler; saatleri ve duyarlılıkları sizindir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1563"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1679"/>
         <source>How readily it triggers</source>
         <translation>Ne kolaylıkla tetikleniyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1571"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1687"/>
         <source>What it recognises</source>
         <translation>Neyi tanıyor</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1573"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1706"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1689"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1822"/>
         <source>People</source>
         <translation>İnsanlar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1574"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1707"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1690"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1823"/>
         <source>Vehicles</source>
         <translation>Araçlar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1575"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1708"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1691"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1824"/>
         <source>Animals</source>
         <translation>Hayvanlar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1576"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1709"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1692"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1825"/>
         <source>Faces</source>
         <translation>Yüzler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1579"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1695"/>
         <source>Camera-side detection</source>
         <translation>Kamera tarafında algılama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1588"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1704"/>
         <source>This is the camera&apos;s own detection, the one it reports over ONVIF. leolink&apos;s own analysis of the picture is set separately, under Cameras → Events.</source>
         <translation>Bu, kameranın kendi algılamasıdır; ONVIF üzerinden bildirdiği de budur. leolink'in görüntüyü kendi çözümlemesi ayrıca, Kameralar → Olaylar altından ayarlanır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1597"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1713"/>
         <source>Detection</source>
         <translation>Algılama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1674"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1790"/>
         <source>%1 — the camera&apos;s detection area</source>
         <translation>%1 — kameranın algılama alanı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1675"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1791"/>
         <source>Drag over the picture to choose what the camera watches. Darkened areas are ignored. This is the camera&apos;s own grid, %1 by %2, so it is finer than leolink&apos;s own.</source>
         <translation>Kameranın neyi izleyeceğini seçmek için görüntünün üzerinde sürükleyin. Karartılmış alanlar yok sayılır. Bu, kameranın kendi ızgarasıdır, %1 × %2, yani leolink'inkinden daha ince.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1692"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1808"/>
         <source>%1 — when to watch</source>
         <translation>%1 — ne zaman izlesin</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1693"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1809"/>
         <source>Hours in which the camera raises motion events. Outside them it still sees, but says nothing.</source>
         <translation>Kameranın hareket olayı bildirdiği saatler. Bunların dışında görmeye devam eder ama bir şey söylemez.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1704"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1820"/>
         <source>Any movement</source>
         <translation>Her türlü hareket</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1705"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1821"/>
         <source>Continuous</source>
         <translation>Sürekli</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1737"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1853"/>
         <source>This camera keeps a separate week for each kind of event. Which one?</source>
         <translation>Bu kamera her olay türü için ayrı bir hafta tutuyor. Hangisi?</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1785"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1901"/>
         <source>SIM card</source>
         <translation>SIM kart</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1787"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1903"/>
         <source>PIN</source>
         <translation>PIN</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1788"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1904"/>
         <source>Only needed if the card asks for one. Three wrong tries lock the card and it then needs a PUK, which only your operator has.</source>
         <translation>Yalnızca kart isterse gerekir. Üç yanlış deneme kartı kilitler; sonrasında yalnızca operatörünüzde bulunan bir PUK gerekir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1792"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1908"/>
         <source>Access point (APN)</source>
         <translation>Erişim noktası (APN)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1795"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1911"/>
         <source>Authentication</source>
         <translation>Kimlik doğrulama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1796"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1912"/>
         <source>Use mobile data</source>
         <translation>Mobil veriyi kullan</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1800"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1916"/>
         <source>Modem</source>
         <translation>Modem</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1802"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1918"/>
         <source>Card</source>
         <translation>Kart</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1804"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1920"/>
         <source>Type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1805"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1921"/>
         <source>Signal</source>
         <translation>Sinyal</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1806"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1922"/>
         <source>IMEI</source>
         <translation>IMEI</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1807"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1923"/>
         <source>Card number</source>
         <translation>Kart numarası</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1811"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1927"/>
         <source>Mobile connection</source>
         <translation>Mobil bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1813"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1929"/>
         <source>Data used</source>
         <translation>Kullanılan veri</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1814"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1930"/>
         <source>Monthly limit</source>
         <translation>Aylık sınır</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1822"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1938"/>
         <source>&lt;b&gt;Not tested on real hardware.&lt;/b&gt; Nobody involved in leolink owns a camera with a modem, so this was written from the protocol alone. It cannot damage anything — a command the camera does not know is simply refused — but it may equally show nothing at all.
 
 If your camera has a SIM, “What this camera supports” under Maintenance lists the commands its firmware actually has. That list, in a bug report, is what would let this be finished properly.</source>
@@ -1431,310 +1506,311 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
 Kameranızda SIM varsa, Bakım altındaki «Bu kameranın desteklediği özellikler», donanım yazılımının gerçekten sahip olduğu komutları listeler. Bir hata bildirimindeki o liste, bu bölümün doğru dürüst tamamlanmasını sağlayacak şeydir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1835"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1951"/>
         <source>Mobile data</source>
         <translation>Mobil veri</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1852"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1968"/>
         <source>nothing blanked</source>
         <translation>hiçbir şey karartılmadı</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1854"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1970"/>
         <source>%n area(s) blanked</source>
         <translation><numerusform>%n alan karartıldı</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1856"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1972"/>
         <source>%n area(s), switched off</source>
         <translation><numerusform>%n alan, kapalı</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1938"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2054"/>
         <source>%1 — when to record</source>
         <translation>%1 — ne zaman kaydetsin</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1939"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2055"/>
         <source>Hours in which the camera records to its own card. This needs a card fitted; recording to this computer is set under Cameras → Events and works without one.</source>
         <translation>Kameranın kendi kartına kayıt yaptığı saatler. Bunun için takılı bir kart gerekir; bu bilgisayara kayıt Kameralar → Olaylar altından ayarlanır ve karta gerek duymaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2017"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2027"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2133"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2143"/>
         <source>Recording to the camera&apos;s card</source>
         <translation>Kameranın kartına kayıt</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2019"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2029"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2135"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2145"/>
         <source>Overwrite when full</source>
         <translation>Dolunca üzerine yaz</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2020"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2032"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2136"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2148"/>
         <source>Record before the event</source>
         <translation>Olaydan önceki süreyi kaydet</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="466"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2021"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2035"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="490"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2137"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2151"/>
         <source>Keep recording after</source>
         <translation>Sonrasında kaydı sürdür</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2022"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2036"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2138"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2152"/>
         <source>File length</source>
         <translation>Dosya uzunluğu</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2030"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2146"/>
         <source>Off means recording simply stops once the card fills up.</source>
         <translation>Kapalı olması, kart dolduğunda kaydın basitçe duracağı anlamına gelir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2033"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2149"/>
         <source>Keeps the seconds leading up to a trigger, which is usually the interesting part.</source>
         <translation>Tetiklemeden önceki saniyeleri saklar; genellikle ilginç olan kısım odur.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2039"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2155"/>
         <source>When to record…</source>
         <translation>Ne zaman kaydetsin…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2042"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2158"/>
         <source>Hours of the week the camera records to its card by itself.</source>
         <translation>Kameranın kendi kartına kendiliğinden kayıt yaptığı haftalık saatler.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2052"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2168"/>
         <source>These govern what the camera writes to its own SD card. Recording to this computer is set under Cameras → Events and needs no card.</source>
         <translation>Bunlar kameranın kendi SD kartına ne yazacağını belirler. Bu bilgisayara kayıt Kameralar → Olaylar altından ayarlanır ve karta gerek duymaz.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2060"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="554"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2176"/>
         <source>Recording</source>
         <translation>Kayıt</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2068"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2096"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2184"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2212"/>
         <source>E-mail</source>
         <translation>E-posta</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2070"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2082"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2098"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2135"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2192"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2186"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2198"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2214"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2251"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2308"/>
         <source>Server</source>
         <translation>Sunucu</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2071"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2083"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2099"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2136"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2193"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2187"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2199"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2215"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2252"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2309"/>
         <source>Port</source>
         <translation>Bağlantı noktası</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2074"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2103"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2190"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2219"/>
         <source>Encrypted</source>
         <translation>Şifreli</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2075"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2104"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2191"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2220"/>
         <source>Not more often than</source>
         <translation>Şu sıklıktan daha sık değil</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2076"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2105"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2192"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2221"/>
         <source>Attach</source>
         <translation>Ekle</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2080"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2133"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2196"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2249"/>
         <source>FTP upload</source>
         <translation>FTP yüklemesi</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2086"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2202"/>
         <source>Folder</source>
         <translation>Klasör</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2091"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2207"/>
         <source>Push notifications</source>
         <translation>Anlık bildirimler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2102"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2218"/>
         <source>Send to</source>
         <translation>Şuraya gönder</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2114"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2121"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2230"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2237"/>
         <source>Siren</source>
         <translation>Siren</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2116"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2123"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2232"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2239"/>
         <source>Sound on an alarm</source>
         <translation>Alarmda ses ver</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2117"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2233"/>
         <source>Times</source>
         <translation>Saatler</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2118"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2129"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2140"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2234"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2245"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2256"/>
         <source>Mode</source>
         <translation>Kip</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2126"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2242"/>
         <source>Spotlight</source>
         <translation>Işıldak</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2128"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2244"/>
         <source>On</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2139"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2255"/>
         <source>Directory</source>
         <translation>Dizin</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2144"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2260"/>
         <source>Push notification</source>
         <translation>Anlık bildirim</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2146"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2262"/>
         <source>Schedule</source>
         <translation>Zamanlama</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2152"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2268"/>
         <source>Send a test e-mail</source>
         <translation>Sınama e-postası gönder</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2155"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2271"/>
         <source>Asking the camera to send a test e-mail…</source>
         <translation>Kameradan sınama e-postası göndermesi isteniyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2158"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2274"/>
         <source>Test the FTP upload</source>
         <translation>FTP yüklemesini sına</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2161"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2277"/>
         <source>Asking the camera to try the FTP server…</source>
         <translation>Kameradan FTP sunucusunu denemesi isteniyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2172"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2288"/>
         <source>Sent by the camera itself, so they keep working when this computer is switched off. leolink&apos;s own reactions — commands, webhooks, MQTT — are under Cameras → Events.</source>
         <translation>Bunları kameranın kendisi gönderir; dolayısıyla bu bilgisayar kapalıyken de çalışmayı sürdürürler. leolink'in kendi tepkileri — komutlar, webhook'lar, MQTT — Kameralar → Olaylar altındadır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2181"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2297"/>
         <source>Alerts</source>
         <translation>Uyarılar</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2189"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2305"/>
         <source>Time server</source>
         <translation>Zaman sunucusu</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2191"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2307"/>
         <source>Synchronise the clock</source>
         <translation>Saati eşitle</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2194"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2310"/>
         <source>Every</source>
         <translation>Her</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2198"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2314"/>
         <source>Scheduled restart</source>
         <translation>Zamanlanmış yeniden başlatma</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2200"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2316"/>
         <source>Restart regularly</source>
         <translation>Düzenli olarak yeniden başlat</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2201"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2317"/>
         <source>Some cameras become unreliable after weeks of uptime; a weekly restart is a cheap cure.</source>
         <translation>Bazı kameralar haftalarca açık kaldıktan sonra güvenilmez olur; haftalık bir yeniden başlatma ucuz bir çaredir.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2204"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2320"/>
         <source>Day</source>
         <translation>Gün</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2205"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2321"/>
         <source>Hour</source>
         <translation>Saat</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2206"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2322"/>
         <source>Minute</source>
         <translation>Dakika</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2210"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2326"/>
         <source>A camera with the wrong clock stamps its recordings wrongly, which is worth more than it sounds when you need to find one.</source>
         <translation>Saati yanlış olan bir kamera kayıtlarını yanlış tarihler; bir kaydı bulmanız gerektiğinde bunun ağırlığı sanıldığından fazladır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2218"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2334"/>
         <source>Time</source>
         <translation>Saat</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2340"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2458"/>
         <source>Ready.</source>
         <translation>Hazır.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2445"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2563"/>
         <source>Writing to the camera…</source>
         <translation>Kameraya yazılıyor…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2503"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2621"/>
         <source>Nothing to write.</source>
         <translation>Yazılacak bir şey yok.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2520"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2638"/>
         <source>Saved. Changing the encoder restarts the stream, so the picture may drop out for a moment.</source>
         <translation>Kaydedildi. Kodlayıcıyı değiştirmek akışı yeniden başlatır, bu yüzden görüntü kısa süre kesilebilir.</translation>
     </message>
@@ -2107,12 +2183,12 @@ Kaydedilmiş videolar ve görüntüler diskte kalır — yalnızca günlük temi
 <context>
     <name>leolink::MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="71"/>
+        <location filename="../src/MainWindow.cpp" line="72"/>
         <source>%1 failed: %2</source>
         <translation>%1 başarısız: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="110"/>
+        <location filename="../src/MainWindow.cpp" line="111"/>
         <source>No cameras configured yet.
 
 Use “Cameras…” to add one.</source>
@@ -2121,149 +2197,149 @@ Use “Cameras…” to add one.</source>
 Bir tane eklemek için «Kameralar…» seçeneğini kullanın.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="253"/>
+        <location filename="../src/MainWindow.cpp" line="255"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="255"/>
+        <location filename="../src/MainWindow.cpp" line="257"/>
         <source>&amp;Cameras…</source>
         <translation>&amp;Kameralar…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="260"/>
+        <location filename="../src/MainWindow.cpp" line="262"/>
         <source>&amp;Settings…</source>
         <translation>&amp;Ayarlar…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="266"/>
+        <location filename="../src/MainWindow.cpp" line="268"/>
         <source>&amp;Save snapshots…</source>
         <translation>Anlık görüntüleri ka&amp;ydet…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="271"/>
+        <location filename="../src/MainWindow.cpp" line="273"/>
         <source>&amp;Record all cameras</source>
         <translation>Tüm kameraları &amp;kaydet</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="278"/>
+        <location filename="../src/MainWindow.cpp" line="280"/>
         <source>&amp;Event log…</source>
         <translation>&amp;Olay günlüğü…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="286"/>
+        <location filename="../src/MainWindow.cpp" line="288"/>
         <source>Recordings on the &amp;camera…</source>
         <translation>Kameradaki &amp;kayıtlar…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="288"/>
+        <location filename="../src/MainWindow.cpp" line="290"/>
         <source>Browse what is stored on the camera&apos;s own SD card.</source>
         <translation>Kameranın kendi SD kartında ne olduğuna göz atın.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="292"/>
-        <location filename="../src/MainWindow.cpp" line="725"/>
-        <location filename="../src/MainWindow.cpp" line="1654"/>
+        <location filename="../src/MainWindow.cpp" line="294"/>
+        <location filename="../src/MainWindow.cpp" line="727"/>
+        <location filename="../src/MainWindow.cpp" line="1794"/>
         <source>No cameras configured</source>
         <translation>Yapılandırılmış kamera yok</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="303"/>
+        <location filename="../src/MainWindow.cpp" line="305"/>
         <source>Which camera</source>
         <translation>Hangi kamera</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="303"/>
+        <location filename="../src/MainWindow.cpp" line="305"/>
         <source>Show recordings from</source>
         <translation>Kayıtları gösterilecek kamera</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="315"/>
+        <location filename="../src/MainWindow.cpp" line="317"/>
         <source>Open &amp;recordings folder</source>
         <translation>Kayıt klasörünü &amp;aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="323"/>
+        <location filename="../src/MainWindow.cpp" line="325"/>
         <source>&amp;Quit</source>
         <translation>Çı&amp;k</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="328"/>
+        <location filename="../src/MainWindow.cpp" line="330"/>
         <source>&amp;View</source>
         <translation>&amp;Görünüm</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="330"/>
+        <location filename="../src/MainWindow.cpp" line="332"/>
         <source>&amp;Full screen</source>
         <translation>&amp;Tam ekran</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="369"/>
+        <location filename="../src/MainWindow.cpp" line="371"/>
         <source>Show &amp;menu bar</source>
         <translation>&amp;Menü çubuğunu göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="383"/>
+        <location filename="../src/MainWindow.cpp" line="385"/>
         <source>Show &amp;toolbar</source>
         <translation>A&amp;raç çubuğunu göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="392"/>
+        <location filename="../src/MainWindow.cpp" line="394"/>
         <source>Show status &amp;bar</source>
         <translation>&amp;Durum çubuğunu göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="401"/>
+        <location filename="../src/MainWindow.cpp" line="403"/>
         <source>Hide window &amp;decoration</source>
         <translation>&amp;Pencere çerçevesini gizle</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="413"/>
+        <location filename="../src/MainWindow.cpp" line="415"/>
         <source>Drag the strip under a camera to move the window. Ctrl+Shift+D brings the frame back, Ctrl+M the menu.</source>
         <translation>Pencereyi taşımak için bir kameranın altındaki şeridi sürükleyin. Ctrl+Shift+D çerçeveyi, Ctrl+M menüyü geri getirir.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="420"/>
+        <location filename="../src/MainWindow.cpp" line="422"/>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="422"/>
+        <location filename="../src/MainWindow.cpp" line="424"/>
         <source>&amp;Online handbook</source>
         <translation>Çevrim&amp;içi el kitabı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="429"/>
+        <location filename="../src/MainWindow.cpp" line="431"/>
         <source>&amp;Protocol notes</source>
         <translation>&amp;Protokol notları</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="435"/>
+        <location filename="../src/MainWindow.cpp" line="437"/>
         <source>&amp;Diagnostics…</source>
         <translation>&amp;Tanılama…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="438"/>
+        <location filename="../src/MainWindow.cpp" line="440"/>
         <source>What leolink and the cameras have been doing — and a report to attach to a bug report.</source>
         <translation>leolink'in ve kameraların neler yaptığı — ve bir hata bildirimine ekleyebileceğiniz rapor.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="442"/>
+        <location filename="../src/MainWindow.cpp" line="444"/>
         <source>&amp;Report a problem</source>
         <translation>Bir &amp;sorun bildir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="447"/>
+        <location filename="../src/MainWindow.cpp" line="449"/>
         <source>Report a problem</source>
         <translation>Bir sorun bildir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="449"/>
+        <location filename="../src/MainWindow.cpp" line="451"/>
         <source>&lt;b&gt;Attach a diagnostics report&lt;/b&gt;</source>
         <translation>&lt;b&gt;Bir tanılama raporu ekleyin&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="451"/>
+        <location filename="../src/MainWindow.cpp" line="453"/>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
@@ -2272,232 +2348,234 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 Sorunu kendiniz tetikleyebiliyorsanız, önce tanılama penceresinde ayrıntılı günlüğü açın, sorunu yeniden yaşatın, sonra raporu kopyalayın.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="458"/>
+        <location filename="../src/MainWindow.cpp" line="460"/>
         <source>Open diagnostics</source>
         <translation>Tanılamayı aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="460"/>
+        <location filename="../src/MainWindow.cpp" line="462"/>
         <source>Go to the issue tracker</source>
         <translation>Hata takip sistemine git</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="471"/>
+        <location filename="../src/MainWindow.cpp" line="473"/>
         <source>&amp;About leolink</source>
         <translation>leolink &amp;hakkında</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="474"/>
+        <location filename="../src/MainWindow.cpp" line="476"/>
         <source>About leolink</source>
         <translation>leolink hakkında</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="475"/>
+        <location filename="../src/MainWindow.cpp" line="477"/>
         <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly: HTTP API, RTSP and ONVIF on the local network, and Reolink&apos;s P2P service when you want to reach a camera from elsewhere.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Reolink kameraları için yerel bir Linux istemcisi.&lt;/p&gt;&lt;p&gt;Kameranın kendi protokollerini doğrudan konuşur: yerel ağda HTTP arayüzü, RTSP ve ONVIF; bir kameraya başka bir yerden ulaşmak istediğinizde de Reolink'in P2P hizmeti.&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;El kitabı&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;Kaynak kodu&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Reolink ile bağlantılı değildir, Reolink tarafından desteklenmez.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="487"/>
+        <location filename="../src/MainWindow.cpp" line="489"/>
         <source>Main</source>
         <translation>Ana</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="499"/>
+        <location filename="../src/MainWindow.cpp" line="501"/>
         <source>Ready</source>
         <translation>Hazır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="515"/>
+        <location filename="../src/MainWindow.cpp" line="517"/>
         <source>Leave full screen</source>
         <translation>Tam ekrandan çık</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="522"/>
-        <location filename="../src/MainWindow.cpp" line="586"/>
+        <location filename="../src/MainWindow.cpp" line="524"/>
+        <location filename="../src/MainWindow.cpp" line="588"/>
         <source>Cameras…</source>
         <translation>Kameralar…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="524"/>
+        <location filename="../src/MainWindow.cpp" line="526"/>
         <source>Event log…</source>
         <translation>Olay günlüğü…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="530"/>
-        <location filename="../src/MainWindow.cpp" line="589"/>
+        <location filename="../src/MainWindow.cpp" line="532"/>
+        <location filename="../src/MainWindow.cpp" line="591"/>
         <source>Quit</source>
         <translation>Çık</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="580"/>
+        <location filename="../src/MainWindow.cpp" line="582"/>
         <source>Show window</source>
         <translation>Pencereyi göster</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="749"/>
+        <location filename="../src/MainWindow.cpp" line="751"/>
         <source>%n camera(s) live</source>
         <translation><numerusform>%n kamera canlı</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="958"/>
+        <location filename="../src/MainWindow.cpp" line="960"/>
         <source>Esc leaves full screen</source>
         <translation>Esc tam ekrandan çıkarır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="965"/>
-        <location filename="../src/MainWindow.cpp" line="1004"/>
+        <location filename="../src/MainWindow.cpp" line="967"/>
+        <location filename="../src/MainWindow.cpp" line="1006"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>Izgara için çift tıklayın · Esc tam ekrandan çıkarır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1002"/>
+        <location filename="../src/MainWindow.cpp" line="1004"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>Esc tam ekrandan çıkarır · bir kameraya çift tıklamak ekranı kaplatır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1027"/>
+        <location filename="../src/MainWindow.cpp" line="1029"/>
         <source>Grid view</source>
         <translation>Izgara görünümü</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1209"/>
-        <location filename="../src/MainWindow.cpp" line="1332"/>
+        <location filename="../src/MainWindow.cpp" line="1215"/>
+        <location filename="../src/MainWindow.cpp" line="1233"/>
+        <location filename="../src/MainWindow.cpp" line="1471"/>
         <source>Cannot create %1</source>
         <translation>%1 oluşturulamıyor</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1246"/>
+        <location filename="../src/MainWindow.cpp" line="1361"/>
         <source>Recording %1</source>
         <translation>%1 kaydediliyor</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1254"/>
+        <location filename="../src/MainWindow.cpp" line="1283"/>
+        <location filename="../src/MainWindow.cpp" line="1369"/>
         <source>Saved %1</source>
         <translation>%1 kaydedildi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1260"/>
-        <location filename="../src/MainWindow.cpp" line="1367"/>
+        <location filename="../src/MainWindow.cpp" line="1375"/>
+        <location filename="../src/MainWindow.cpp" line="1506"/>
         <source>Recording stopped</source>
         <translation>Kayıt durduruldu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1267"/>
+        <location filename="../src/MainWindow.cpp" line="1382"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1348"/>
+        <location filename="../src/MainWindow.cpp" line="1487"/>
         <source>Recording started</source>
         <translation>Kayıt başladı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1366"/>
+        <location filename="../src/MainWindow.cpp" line="1505"/>
         <source>Recording all cameras</source>
         <translation>Tüm kameralar kaydediliyor</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1447"/>
+        <location filename="../src/MainWindow.cpp" line="1586"/>
         <source>%1 at %2</source>
         <translation>%2 konumunda %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1467"/>
+        <location filename="../src/MainWindow.cpp" line="1606"/>
         <source>Motion detected</source>
         <translation>Hareket algılandı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1479"/>
+        <location filename="../src/MainWindow.cpp" line="1618"/>
         <source>Sound detected</source>
         <translation>Ses algılandı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1502"/>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
         <source>Menu bar hidden</source>
         <translation>Menü çubuğu gizli</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1503"/>
+        <location filename="../src/MainWindow.cpp" line="1642"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>Menü çubuğu da araç çubuğu da gizliyken menüyü geri getirmek için Ctrl+M tuşlarına basın.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1522"/>
+        <location filename="../src/MainWindow.cpp" line="1661"/>
         <source>Cannot save</source>
         <translation>Kaydedilemiyor</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1523"/>
+        <location filename="../src/MainWindow.cpp" line="1662"/>
         <source>Settings could not be written to %1.</source>
         <translation>Ayarlar %1 konumuna yazılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1589"/>
+        <location filename="../src/MainWindow.cpp" line="1729"/>
         <source>Play through %1</source>
         <translation>%1 üzerinden çal</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1590"/>
+        <location filename="../src/MainWindow.cpp" line="1730"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>Ses dosyaları (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;Tüm dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1602"/>
+        <location filename="../src/MainWindow.cpp" line="1742"/>
         <source>Speaking through the camera…</source>
         <translation>Kameradan konuşuluyor…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1609"/>
+        <location filename="../src/MainWindow.cpp" line="1749"/>
         <source>Finished.</source>
         <translation>Bitti.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1732"/>
+        <location filename="../src/MainWindow.cpp" line="1872"/>
         <source>Nothing to capture</source>
         <translation>Yakalanacak bir şey yok</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1737"/>
+        <location filename="../src/MainWindow.cpp" line="1877"/>
         <source>Save snapshots to</source>
         <translation>Anlık görüntüleri şuraya kaydet</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="1755"/>
+        <location filename="../src/MainWindow.cpp" line="1895"/>
         <source>Saved %n snapshot(s)</source>
         <translation><numerusform>%n anlık görüntü kaydedildi</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1773"/>
+        <location filename="../src/MainWindow.cpp" line="1913"/>
         <source>Welcome to leolink</source>
         <translation>leolink'e hoş geldiniz</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1775"/>
+        <location filename="../src/MainWindow.cpp" line="1915"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Henüz hiçbir kamera yapılandırılmadı.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1777"/>
+        <location filename="../src/MainWindow.cpp" line="1917"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>Adresi, kullanıcı adı ve parolasıyla bir kamera ekleyin. leolink kamerayla doğrudan kendi ağınızda konuşur — hiçbir bulut hesabı devreye girmez.&lt;p&gt;Her seçeneğin ne yaptığı el kitabında anlatılır.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1781"/>
+        <location filename="../src/MainWindow.cpp" line="1921"/>
         <source>Add camera…</source>
         <translation>Kamera ekle…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1782"/>
+        <location filename="../src/MainWindow.cpp" line="1922"/>
         <source>Open handbook</source>
         <translation>El kitabını aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1858"/>
+        <location filename="../src/MainWindow.cpp" line="1998"/>
         <source>leolink is still running</source>
         <translation>leolink çalışmaya devam ediyor</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1859"/>
+        <location filename="../src/MainWindow.cpp" line="1999"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>Kameralar kaydetmeyi sürdürüyor. Geri dönmek için bildirim alanındaki simgeyi kullanın.</translation>
     </message>
@@ -2561,12 +2639,12 @@ Sorunu kendiniz tetikleyebiliyorsanız, önce tanılama penceresinde ayrıntıl�
         <translation>%1 için akış adresi yok.</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="129"/>
+        <location filename="../src/MotionDetector.cpp" line="131"/>
         <source>Motion detection stopped: %1</source>
         <translation>Hareket algılama durdu: %1</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="154"/>
+        <location filename="../src/MotionDetector.cpp" line="156"/>
         <source>Could not start ffmpeg for motion detection.</source>
         <translation>Hareket algılama için ffmpeg başlatılamadı.</translation>
     </message>
@@ -3032,17 +3110,17 @@ Görüntü bozuksa öbürlerini sırayla deneyin. «Yalnızca yazılım» her za
         <translation>%1 için akış adresi yok.</translation>
     </message>
     <message>
-        <location filename="../src/Recorder.cpp" line="99"/>
+        <location filename="../src/Recorder.cpp" line="102"/>
         <source>Recording failed: %1</source>
         <translation>Kayıt başarısız: %1</translation>
     </message>
     <message>
-        <location filename="../src/Recorder.cpp" line="131"/>
+        <location filename="../src/Recorder.cpp" line="134"/>
         <source>Recording produced no data (ffmpeg exit %1).</source>
         <translation>Kayıt hiç veri üretmedi (ffmpeg %1 ile çıktı).</translation>
     </message>
     <message>
-        <location filename="../src/Recorder.cpp" line="147"/>
+        <location filename="../src/Recorder.cpp" line="150"/>
         <source>Could not start ffmpeg.</source>
         <translation>ffmpeg başlatılamadı.</translation>
     </message>
@@ -3285,6 +3363,40 @@ Görüntü bozuksa öbürlerini sırayla deneyin. «Yalnızca yazılım» her za
         <location filename="../src/SectionEditor.cpp" line="108"/>
         <source>This camera does not offer these settings.</source>
         <translation>Bu kamerada bu ayarlar yok.</translation>
+    </message>
+</context>
+<context>
+    <name>leolink::SegmentBuffer</name>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="81"/>
+        <source>ffmpeg is not installed, so continuous recording is unavailable.</source>
+        <translation>ffmpeg kurulu değil, bu yüzden kesintisiz kayıt yapılamıyor.</translation>
+    </message>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="86"/>
+        <source>No stream address for %1.</source>
+        <translation>%1 için akış adresi yok.</translation>
+    </message>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="90"/>
+        <location filename="../src/SegmentBuffer.cpp" line="279"/>
+        <source>Cannot write to %1.</source>
+        <translation>%1 konumuna yazılamıyor.</translation>
+    </message>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="255"/>
+        <source>Nothing had been buffered yet.</source>
+        <translation>Tamponda henüz bir şey yoktu.</translation>
+    </message>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="270"/>
+        <source>That moment is no longer in the buffer.</source>
+        <translation>O an artık tamponda değil.</translation>
+    </message>
+    <message>
+        <location filename="../src/SegmentBuffer.cpp" line="325"/>
+        <source>The recording could not be cut out of the buffer.</source>
+        <translation>Kayıt tampondan kesilemedi.</translation>
     </message>
 </context>
 <context>

@@ -1324,6 +1324,67 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "Détection, réactions et enregistrement dans leolink, ainsi que le "
         "codeur, l'image et les horaires de la caméra elle-même.",
+
+    # ── the settings, split by reach ──
+    "nothing": "rien",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "Les secondes qui précèdent le déclenchement — en général la partie "
+        "qui montre comment quelqu'un est arrivé là. Le passé ne s'enregistre "
+        "pas après coup : toute valeur supérieure à zéro fait donc couler le "
+        "flux en continu dans un tampon, soit une connexion de plus à la "
+        "caméra et un peu de disque.",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "Pour qu'un événement ne s'arrête pas au milieu d'une scène. Un "
+        "mouvement qui reprend dans ce délai continue le même fichier au lieu "
+        "d'en ouvrir un second.",
+    "Include before": "Inclure avant",
+    "When something happens": "Quand il se passe quelque chose",
+    "Record without stopping": "Enregistrer sans interruption",
+    " h": " h",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "Jusqu'où remonte l'archive. Un fichier de cet âge est supprimé pour "
+        "faire place au plus récent.",
+    " min": " min",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "L'archive est une suite de fichiers, pas un seul — un fichier ne se "
+        "coupe pas par l'avant, garder une journée dans un seul obligerait à "
+        "le réécrire chaque minute. Des fichiers courts retrouvent un instant "
+        "plus précisément ; des longs sont moins nombreux à parcourir.",
+    "Keep the last": "Conserver",
+    "One file per": "Un fichier toutes les",
+    "Round the clock": "Vingt-quatre heures sur vingt-quatre",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "Les deux activés, un seul tampon sert aux deux : l'enregistrement "
+        "d'un événement est découpé dans l'archive, donc rien de plus n'est "
+        "ouvert vers la caméra.\n\nOù vont les fichiers est le même pour "
+        "toutes les caméras et se règle sous Réglages ▸ Enregistrements.",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 heures de vidéo. Ce que cela fait en disque dépend du débit, que "
+        "cette caméra n'a pas encore indiqué.",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "Environ %1 Go au débit de %2 kbit/s réglé sur ce flux. Le dossier des "
+        "enregistrements devrait avoir cette place libre.",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg n'est pas installé : l'enregistrement continu est donc "
+        "indisponible.",
+    "Nothing had been buffered yet.": "Rien n'avait encore été mis en tampon.",
+    "That moment is no longer in the buffer.":
+        "Ce moment n'est plus dans le tampon.",
+    "The recording could not be cut out of the buffer.":
+        "L'enregistrement n'a pas pu être découpé dans le tampon.",
 }
 
 

@@ -1268,6 +1268,64 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "leolink की ओर से पहचान, प्रतिक्रियाएँ और रिकॉर्डिंग, तथा कैमरे का "
         "अपना एन्कोडर, चित्र और समय-सारणी।",
+
+    # ── the settings, split by reach ──
+    "nothing": "कुछ नहीं",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "ट्रिगर से ठीक पहले के सेकंड — आमतौर पर वही हिस्सा जो दिखाता है कि कोई "
+        "वहाँ पहुँचा कैसे। बीती हुई बात बाद में रिकॉर्ड नहीं की जा सकती, इसलिए "
+        "शून्य से ऊपर कोई भी मान स्ट्रीम को लगातार एक बफ़र में लिखता रहता है: "
+        "कैमरे से एक और संयोजन, और थोड़ी डिस्क।",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "ताकि कोई घटना दृश्य के बीच में ही न रुक जाए। इस समय के भीतर दोबारा "
+        "शुरू हुई गति दूसरी फ़ाइल शुरू करने के बजाय उसी फ़ाइल को आगे बढ़ाती "
+        "है।",
+    "Include before": "पहले का भी लें",
+    "When something happens": "जब कुछ घटे",
+    "Record without stopping": "बिना रुके रिकॉर्ड करें",
+    " h": " घं",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "संग्रह कितना पीछे तक जाता है। इतनी पुरानी हो जाने पर फ़ाइल मिटा दी "
+        "जाती है, ताकि सबसे नई के लिए जगह बने।",
+    " min": " मि",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "संग्रह एक फ़ाइल नहीं, फ़ाइलों की एक कतार है — फ़ाइल को आगे से नहीं "
+        "काटा जा सकता, और पूरा दिन एक ही फ़ाइल में रखने का अर्थ होता उसे हर "
+        "मिनट दोबारा लिखना। छोटी फ़ाइलें किसी क्षण को ज़्यादा ठीक से ढूँढ़ती "
+        "हैं; बड़ी फ़ाइलें गिनती में कम होती हैं।",
+    "Keep the last": "इतना रखें",
+    "One file per": "हर फ़ाइल",
+    "Round the clock": "चौबीसों घंटे",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "दोनों चालू हों तो एक ही बफ़र दोनों का काम करता है: घटना की रिकॉर्डिंग "
+        "संग्रह में से ही काट ली जाती है, इसलिए कैमरे की ओर कुछ अतिरिक्त नहीं "
+        "खुलता।\n\nफ़ाइलें कहाँ जाती हैं, यह हर कैमरे के लिए एक ही है और "
+        "सेटिंग ▸ रिकॉर्डिंग के नीचे तय होता है।",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 घंटे का वीडियो। वह कितनी डिस्क है, यह बिटरेट पर निर्भर करता है, जो "
+        "इस कैमरे ने अभी बताया नहीं है।",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "इस स्ट्रीम पर तय %2 kbit/s पर लगभग %1 GB। ध्यान रखें कि रिकॉर्डिंग "
+        "फ़ोल्डर में उतनी जगह खाली हो।",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg स्थापित नहीं है, इसलिए बिना रुके रिकॉर्डिंग संभव नहीं।",
+    "Nothing had been buffered yet.": "बफ़र में अभी तक कुछ नहीं था।",
+    "That moment is no longer in the buffer.": "वह क्षण अब बफ़र में नहीं है।",
+    "The recording could not be cut out of the buffer.":
+        "रिकॉर्डिंग बफ़र से काटी नहीं जा सकी।",
 }
 
 

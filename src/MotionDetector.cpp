@@ -103,10 +103,12 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
 
     m_process = new QProcess(this);
     dieWithParent(m_process);
-    const QStringList args{
+    QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),
-        QStringLiteral("-rtsp_transport"), QStringLiteral("tcp"),
+    };
+    args += rtspTransportArgs(url);
+    args += QStringList{
         QStringLiteral("-i"), url,
         QStringLiteral("-an"),
         QStringLiteral("-vf"),

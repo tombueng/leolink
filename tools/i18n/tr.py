@@ -1276,6 +1276,64 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "leolink'teki algılama, tepkiler ve kayıt ile kameranın kendi "
         "kodlayıcısı, görüntüsü ve zamanlamaları.",
+
+    # ── the settings, split by reach ──
+    "nothing": "yok",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "Tetiklemeden hemen önceki saniyeler — genellikle birinin oraya nasıl "
+        "geldiğini gösteren kısım. Geçmiş sonradan kaydedilemez; sıfırın "
+        "üzerindeki her değer bu yüzden akışı sürekli bir tampona yazar: "
+        "kameraya bir bağlantı daha, ve biraz disk.",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "Bir olay sahnenin ortasında bitmesin diye. Bu süre içinde yeniden "
+        "başlayan hareket, ikinci bir dosya açmak yerine aynı dosyayı "
+        "sürdürür.",
+    "Include before": "Öncesini de al",
+    "When something happens": "Bir şey olduğunda",
+    "Record without stopping": "Durmadan kaydet",
+    " h": " sa",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "Arşivin ne kadar geriye uzandığı. Bu yaşa gelen bir dosya, en "
+        "yenisine yer açmak için silinir.",
+    " min": " dk",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "Arşiv tek bir dosya değil, bir dosya dizisidir — bir dosya baştan "
+        "kırpılamaz, bütün bir günü tek dosyada tutmak onu her dakika yeniden "
+        "yazmak demek olurdu. Kısa dosyalar bir anı daha kesin bulur; uzun "
+        "dosyalar gezinmek için daha azdır.",
+    "Keep the last": "Şu kadarını tut",
+    "One file per": "Her dosya",
+    "Round the clock": "Günün yirmi dört saati",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "İkisi de açıkken tek bir tampon ikisine birden yeter: olayın kaydı "
+        "arşivin içinden kesilir, yani kameraya fazladan hiçbir şey "
+        "açılmaz.\n\nDosyaların nereye gideceği tüm kameralar için aynıdır ve "
+        "Ayarlar ▸ Kayıtlar altında belirlenir.",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 saatlik video. Bunun ne kadar disk ettiği bit hızına bağlı, ve bu "
+        "kamera onu henüz bildirmedi.",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "Bu akışın ayarlı olduğu %2 kbit/s ile yaklaşık %1 GB. Kayıt "
+        "klasöründe o kadar yer bulunsun.",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg kurulu değil, bu yüzden kesintisiz kayıt yapılamıyor.",
+    "Nothing had been buffered yet.": "Tamponda henüz bir şey yoktu.",
+    "That moment is no longer in the buffer.": "O an artık tamponda değil.",
+    "The recording could not be cut out of the buffer.":
+        "Kayıt tampondan kesilemedi.",
 }
 
 

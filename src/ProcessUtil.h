@@ -4,6 +4,8 @@
 #include <csignal>
 
 #include <QProcess>
+#include <QString>
+#include <QStringList>
 
 #ifdef Q_OS_LINUX
 #include <sys/prctl.h>
@@ -36,6 +38,21 @@ inline void dieWithParent(QProcess *process)
 #else
     Q_UNUSED(process)
 #endif
+}
+
+/// `-rtsp_transport tcp`, but only where it means anything.
+///
+/// UDP loses packets, and a recording with holes is worse than a slightly
+/// later one, so RTSP is always asked to run over TCP. The option belongs to
+/// ffmpeg's RTSP demuxer alone, though: handed a camera on HTTP-FLV, a custom
+/// URL or a local file, ffmpeg answers "Option rtsp_transport not found" and
+/// exits before reading a single frame. Passing it unconditionally is why
+/// recording and both detectors did nothing at all on those cameras.
+inline QStringList rtspTransportArgs(const QString &url)
+{
+    if (!url.startsWith(QLatin1String("rtsp"), Qt::CaseInsensitive))
+        return {};
+    return {QStringLiteral("-rtsp_transport"), QStringLiteral("tcp")};
 }
 
 } // namespace leolink

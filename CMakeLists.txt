@@ -50,6 +50,7 @@ qt_add_executable(leolink
     src/MqttPublisher.cpp     src/MqttPublisher.h
     src/SoundPlayer.cpp       src/SoundPlayer.h
     src/Recorder.cpp          src/Recorder.h
+    src/SegmentBuffer.cpp     src/SegmentBuffer.h
     src/MotionDetector.cpp    src/MotionDetector.h
     src/AudioDetector.cpp     src/AudioDetector.h
     src/ZoneEditor.cpp        src/ZoneEditor.h

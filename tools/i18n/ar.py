@@ -1223,6 +1223,61 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "الكشف وردود الفعل والتسجيل في leolink، ومرمِّز الكاميرا نفسها وصورتها "
         "وجداولها.",
+
+    # ── the settings, split by reach ──
+    "nothing": "لا شيء",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "الثواني السابقة للحدث — وهي عادةً الجزء الذي يُظهر كيف وصل أحدهم إلى "
+        "هناك. الماضي لا يُسجَّل بأثر رجعي، ولذا فأي قيمة فوق الصفر تُبقي البث "
+        "يجري في مخزن مؤقت: اتصال إضافي بالكاميرا، وقليل من القرص.",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "كي لا ينتهي الحدث في منتصف المشهد. والحركة التي تعود خلال هذه المدة "
+        "تُكمل الملف نفسه بدل أن تبدأ ثانياً.",
+    "Include before": "اشمل ما قبله بـ",
+    "When something happens": "عند وقوع شيء",
+    "Record without stopping": "سجّل دون توقف",
+    " h": " س",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "إلى أي مدى يعود الأرشيف. فمتى بلغ ملف هذا العمر حُذف لإفساح المجال "
+        "لأحدث واحد.",
+    " min": " د",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "الأرشيف سلسلة ملفات لا ملف واحد — إذ لا يمكن قص ملف من أوله، وحفظ يوم "
+        "كامل في ملف واحد يعني إعادة كتابته كل دقيقة. الملفات القصيرة تحدد "
+        "اللحظة بدقة أكبر، والطويلة أقل عدداً عند التصفّح.",
+    "Keep the last": "احتفظ بآخر",
+    "One file per": "ملف واحد كل",
+    "Round the clock": "على مدار الساعة",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "مع تشغيل الاثنين يكفي مخزن واحد لكليهما: تسجيل الحدث يُقتطع من "
+        "الأرشيف نفسه، فلا يُفتح شيء إضافي إلى الكاميرا.\n\nووجهة الملفات "
+        "واحدة لكل الكاميرات وتُضبط تحت الإعدادات ▸ التسجيلات.",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 ساعة من الفيديو. أما كم يشغل ذلك من القرص فيتوقف على معدل البت، "
+        "ولم تُبلغ هذه الكاميرا به بعد.",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "نحو %1 غيغابايت عند %2 kbit/s المضبوط عليها هذا البث. تأكد أن مجلد "
+        "التسجيلات يملك هذا القدر من المساحة.",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "‏ffmpeg غير مثبت، ولذا يتعذّر التسجيل دون توقف.",
+    "Nothing had been buffered yet.": "لم يكن قد خُزِّن شيء بعد.",
+    "That moment is no longer in the buffer.":
+        "تلك اللحظة لم تعد في المخزن المؤقت.",
+    "The recording could not be cut out of the buffer.":
+        "تعذّر اقتطاع التسجيل من المخزن المؤقت.",
 }
 
 

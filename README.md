@@ -49,6 +49,9 @@ software is involved.
   with the machine's details attached — **passwords, session tokens and public
   addresses removed before anything is written**, so it can be pasted into a bug
   report as it stands.
+- **Pre-recording and round-the-clock recording.** A motion recording can
+  contain the seconds *before* the trigger, and a camera can record without
+  stopping into a rolling window that always holds the last day — or week.
 - **Twelve languages.** Arabic, Chinese, English, French, German, Hindi,
   Italian, Japanese, Portuguese, Russian, Spanish and Turkish — right-to-left
   layout included.
@@ -143,6 +146,8 @@ line, and is pruned to 90 days on start.
 
 | | |
 |---|---|
+| `Ctrl+K` | cameras — the list, the grid, and the way into each one |
+| `Ctrl+,` | settings |
 | `Ctrl+M` | menu bar on/off |
 | `Ctrl+Shift+D` | window decoration on/off |
 | `Ctrl+S` | snapshot every camera |

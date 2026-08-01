@@ -1287,6 +1287,64 @@ STRINGS: dict[str, str] = {
     "encoder, picture and schedules.":
         "Обнаружение, реакции и запись в leolink, а также кодировщик, "
         "изображение и расписания самой камеры.",
+
+    # ── the settings, split by reach ──
+    "nothing": "ничего",
+    "The seconds leading up to the trigger — usually the part that shows how "
+    "someone got there. The past cannot be recorded after the fact, so "
+    "anything above zero keeps the stream running into a buffer: one more "
+    "connection to the camera, and a little disk.":
+        "Секунды перед срабатыванием — обычно как раз та часть, из которой "
+        "видно, как человек туда попал. Прошлое нельзя записать задним числом, "
+        "поэтому любое значение больше нуля держит поток в буфере постоянно: "
+        "ещё одно соединение с камерой и немного места на диске.",
+    "So an event does not stop mid-scene. Motion that resumes within this time "
+    "continues the same file instead of starting a second.":
+        "Чтобы событие не обрывалось посреди сцены. Движение, возобновившееся "
+        "за это время, продолжает тот же файл, а не начинает второй.",
+    "Include before": "Захватить до",
+    "When something happens": "Когда что-то происходит",
+    "Record without stopping": "Записывать непрерывно",
+    " h": " ч",
+    "How far back the archive reaches. Once it is this old, a file is deleted "
+    "to make room for the newest one.":
+        "Насколько далеко назад хватает архив. Файл такого возраста удаляется, "
+        "освобождая место для самого свежего.",
+    " min": " мин",
+    "The archive is a run of files, not one — a file cannot be trimmed at the "
+    "front, so keeping a day in one of them would mean rewriting it every "
+    "minute. Shorter files find a moment more precisely; longer ones are fewer "
+    "to scroll past.":
+        "Архив — это череда файлов, а не один: файл нельзя обрезать спереди, и "
+        "держать в нём целые сутки значило бы переписывать его каждую минуту. "
+        "Короткие файлы точнее находят нужный момент, длинные — их меньше "
+        "пролистывать.",
+    "Keep the last": "Хранить последние",
+    "One file per": "Один файл на",
+    "Round the clock": "Круглые сутки",
+    "With both switched on, one buffer serves both: the recording of an event "
+    "is cut out of the archive, so nothing extra is opened to the "
+    "camera.\n\nWhere the files go is the same for every camera and is set "
+    "under Settings ▸ Recordings.":
+        "Когда включено и то и другое, один буфер служит обоим: запись события "
+        "вырезается из архива, так что к камере не открывается ничего "
+        "лишнего.\n\nКуда попадают файлы — общее для всех камер и задаётся в "
+        "«Настройки ▸ Записи».",
+    "%1 hours of video. How much disk that is depends on the bit rate, which "
+    "this camera has not reported yet.":
+        "%1 часов видео. Сколько это на диске, зависит от битрейта, а его эта "
+        "камера ещё не сообщила.",
+    "About %1 GB at the %2 kbit/s this stream is set to. Make sure the "
+    "recordings folder has that much to spare.":
+        "Примерно %1 ГБ при %2 кбит/с, на которые настроен этот поток. В папке "
+        "записей стоит держать столько свободного места.",
+    "ffmpeg is not installed, so continuous recording is unavailable.":
+        "ffmpeg не установлен, поэтому непрерывная запись недоступна.",
+    "Nothing had been buffered yet.": "В буфере ещё ничего не было.",
+    "That moment is no longer in the buffer.":
+        "Этого момента в буфере уже нет.",
+    "The recording could not be cut out of the buffer.":
+        "Запись не удалось вырезать из буфера.",
 }
 
 

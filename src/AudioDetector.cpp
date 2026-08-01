@@ -79,10 +79,12 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
     m_label = camera.label();
     m_process = new QProcess(this);
     dieWithParent(m_process);
-    const QStringList args{
+    QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),
-        QStringLiteral("-rtsp_transport"), QStringLiteral("tcp"),
+    };
+    args += rtspTransportArgs(url);
+    args += QStringList{
         QStringLiteral("-i"), url,
         QStringLiteral("-vn"),
         QStringLiteral("-ac"), QStringLiteral("1"),
