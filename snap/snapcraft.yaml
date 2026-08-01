@@ -130,6 +130,11 @@ parts:
       - libqt6openglwidgets6
       - qt6-qpa-plugins
       - qt6-wayland
+      # Qt's own strings — the buttons in standard dialogs, the file dialog.
+      # leolink carries its twelve languages inside the binary, but these come
+      # from Qt and nothing links against them, so without this package they
+      # stay English no matter what language is chosen.
+      - qt6-translations-l10n
       - libgl1
       - libglx-mesa0
       - libegl1
