@@ -84,6 +84,16 @@ qt_add_translations(leolink
     TS_FILES
         translations/leolink_en.ts
         translations/leolink_de.ts
+        translations/leolink_ar.ts
+        translations/leolink_es.ts
+        translations/leolink_fr.ts
+        translations/leolink_hi.ts
+        translations/leolink_it.ts
+        translations/leolink_ja.ts
+        translations/leolink_pt_BR.ts
+        translations/leolink_ru.ts
+        translations/leolink_tr.ts
+        translations/leolink_zh_CN.ts
     RESOURCE_PREFIX "/i18n"
     LUPDATE_OPTIONS -no-obsolete
 )

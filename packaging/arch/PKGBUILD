@@ -12,7 +12,8 @@ makedepends=('cmake' 'ninja' 'qt6-tools')
 # Recording and the detection leolink does itself both run ffmpeg as a program;
 # viewing needs none of it, which is why this is optional rather than a hard
 # dependency.
-optdepends=('ffmpeg: recording to disk, and motion and sound detection')
+optdepends=('ffmpeg: recording to disk, and motion and sound detection'
+            'qt6-translations: Qt'"'"'s own dialog buttons in the twelve interface languages')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('e1bfeb34fb7b9afc3101dfe0bb1d514a2f85b886d3f6f5139abbd631fbc9df0e')
 

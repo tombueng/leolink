@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
@@ -68,7 +69,12 @@ QString CameraConfig::label() const
 {
     if (!name.isEmpty())
         return name;
-    return host.isEmpty() ? QStringLiteral("Camera") : host;
+    if (!host.isEmpty())
+        return host;
+    // Neither named nor addressed yet — a row in the settings list that has
+    // only just been added. QCoreApplication::translate rather than tr(),
+    // because this is a plain struct with no Q_OBJECT of its own.
+    return QCoreApplication::translate("leolink::CameraConfig", "Camera");
 }
 
 QString CameraConfig::secret() const

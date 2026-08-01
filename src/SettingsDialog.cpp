@@ -538,8 +538,27 @@ QWidget *SettingsDialog::buildWindowTab()
 
     m_language = new QComboBox(page);
     m_language->addItem(tr("System language"), QStringLiteral("system"));
-    m_language->addItem(QStringLiteral("English"), QStringLiteral("en"));
-    m_language->addItem(QStringLiteral("Deutsch"), QStringLiteral("de"));
+    // Each in its own language, so it can be found by someone who cannot read
+    // the one currently on screen. Sorted by that name, which puts the Latin
+    // scripts first and is at least predictable.
+    struct Language { const char *name; const char *code; };
+    static const Language languages[] = {
+        {"Deutsch",             "de"},
+        {"English",             "en"},
+        {"Español",             "es"},
+        {"Français",            "fr"},
+        {"Italiano",            "it"},
+        {"Português (Brasil)",  "pt_BR"},
+        {"Türkçe",              "tr"},
+        {"Русский",             "ru"},
+        {"العربية",              "ar"},
+        {"हिन्दी",                 "hi"},
+        {"中文（简体）",          "zh_CN"},
+        {"日本語",               "ja"},
+    };
+    for (const Language &language : languages)
+        m_language->addItem(QString::fromUtf8(language.name),
+                            QString::fromUtf8(language.code));
     for (int i = 0; i < m_language->count(); ++i)
         if (m_language->itemData(i).toString() == m_config.language)
             m_language->setCurrentIndex(i);

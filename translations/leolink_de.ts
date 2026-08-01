@@ -53,6 +53,14 @@
     </message>
 </context>
 <context>
+    <name>leolink::CameraConfig</name>
+    <message>
+        <location filename="../src/Config.cpp" line="77"/>
+        <source>Camera</source>
+        <translation>Kamera</translation>
+    </message>
+</context>
+<context>
     <name>leolink::CameraSettingsDialog</name>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="81"/>
@@ -3171,38 +3179,38 @@ Die Bildanalyse hier funktioniert mit jeder Kamera, auch mit solchen, die nichts
         <translation>Systemsprache</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="548"/>
-        <location filename="../src/SettingsDialog.cpp" line="553"/>
+        <location filename="../src/SettingsDialog.cpp" line="567"/>
+        <location filename="../src/SettingsDialog.cpp" line="572"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="549"/>
+        <location filename="../src/SettingsDialog.cpp" line="568"/>
         <source>Takes effect after restarting leolink.</source>
         <translation>Wird nach einem Neustart von leolink wirksam.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="558"/>
+        <location filename="../src/SettingsDialog.cpp" line="577"/>
         <source>Hardware (recommended)</source>
         <translation>Hardware (empfohlen)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="559"/>
+        <location filename="../src/SettingsDialog.cpp" line="578"/>
         <source>Hardware, driver&apos;s choice</source>
         <translation>Hardware, Treiberwahl</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="560"/>
+        <location filename="../src/SettingsDialog.cpp" line="579"/>
         <source>Hardware, with frame copy</source>
         <translation>Hardware, mit Bildkopie</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="561"/>
+        <location filename="../src/SettingsDialog.cpp" line="580"/>
         <source>Software only</source>
         <translation>Nur Software</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="563"/>
+        <location filename="../src/SettingsDialog.cpp" line="582"/>
         <source>“Recommended” names the decoder explicitly so that decoding and drawing stay on the same graphics API. Left to itself, mpv may decode through one API and draw through another, which on some cards turns the picture solid green.
 
 If the picture is broken, try the others in turn. “Software only” always works but costs a whole processor core at full resolution.</source>
@@ -3211,97 +3219,97 @@ If the picture is broken, try the others in turn. “Software only” always wor
 Bei kaputtem Bild die anderen der Reihe nach probieren. „Nur Software“ funktioniert immer, kostet bei voller Auflösung aber einen ganzen Prozessorkern.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="574"/>
+        <location filename="../src/SettingsDialog.cpp" line="593"/>
         <source>Favour low latency over smoothness</source>
         <translation>Niedrige Latenz wichtiger als flüssige Wiedergabe</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="577"/>
+        <location filename="../src/SettingsDialog.cpp" line="596"/>
         <source>Keeps buffering to a minimum. Turn this off if a high-bitrate stream stutters over a busy network.</source>
         <translation>Hält die Pufferung minimal. Bei ruckelnden Streams mit hoher Bitrate in einem ausgelasteten Netz besser abschalten.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="581"/>
+        <location filename="../src/SettingsDialog.cpp" line="600"/>
         <source>Decoding</source>
         <translation>Dekodierung</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="584"/>
+        <location filename="../src/SettingsDialog.cpp" line="603"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="588"/>
+        <location filename="../src/SettingsDialog.cpp" line="607"/>
         <source>Detailed logging</source>
         <translation>Ausführliche Protokollierung</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="591"/>
+        <location filename="../src/SettingsDialog.cpp" line="610"/>
         <source>Records every request to the camera, every decoder decision and every reconnect, in ~/.local/share/leolink/leolink.log.</source>
         <translation>Zeichnet jede Anfrage an die Kamera auf, jede Decoder-Entscheidung und jeden Neuaufbau, in ~/.local/share/leolink/leolink.log.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="595"/>
+        <location filename="../src/SettingsDialog.cpp" line="614"/>
         <source>Errors and warnings are always recorded. Detailed logging adds the conversation with the camera — switch it on when something is wrong, reproduce it, then send the report from Help ▸ Diagnostics. Passwords and tokens are removed before anything is written.</source>
         <translation>Fehler und Warnungen werden immer aufgezeichnet. Die ausführliche Protokollierung ergänzt den Dialog mit der Kamera — bei einem Problem einschalten, den Fehler erneut auslösen, dann unter Hilfe ▸ Diagnose den Bericht schicken. Passwörter und Sitzungsschlüssel werden vorher entfernt.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="604"/>
+        <location filename="../src/SettingsDialog.cpp" line="623"/>
         <source>Open diagnostics…</source>
         <translation>Diagnose öffnen…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="625"/>
+        <location filename="../src/SettingsDialog.cpp" line="644"/>
         <source>Diagnostics</source>
         <translation>Diagnose</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="755"/>
+        <location filename="../src/SettingsDialog.cpp" line="774"/>
         <source>New camera</source>
         <translation>Neue Kamera</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="770"/>
+        <location filename="../src/SettingsDialog.cpp" line="789"/>
         <source>Remove camera</source>
         <translation>Kamera entfernen</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="771"/>
+        <location filename="../src/SettingsDialog.cpp" line="790"/>
         <source>Remove “%1” from the list?</source>
         <translation>„%1“ aus der Liste entfernen?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="791"/>
+        <location filename="../src/SettingsDialog.cpp" line="810"/>
         <source>Enter a host first.</source>
         <translation>Bitte zuerst eine Adresse eintragen.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="798"/>
+        <location filename="../src/SettingsDialog.cpp" line="817"/>
         <source>Contacting %1…</source>
         <translation>Kontaktiere %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="808"/>
+        <location filename="../src/SettingsDialog.cpp" line="827"/>
         <source>Looking for cameras…</source>
         <translation>Suche Kameras…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="808"/>
+        <location filename="../src/SettingsDialog.cpp" line="827"/>
         <source>Stop</source>
         <translation>Abbrechen</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="822"/>
+        <location filename="../src/SettingsDialog.cpp" line="841"/>
         <source>Found %n device(s)…</source>
         <translation><numerusform>%n Gerät gefunden…</numerusform><numerusform>%n Geräte gefunden…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="832"/>
+        <location filename="../src/SettingsDialog.cpp" line="851"/>
         <source>No cameras found</source>
         <translation>Keine Kameras gefunden</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="833"/>
+        <location filename="../src/SettingsDialog.cpp" line="852"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -3310,47 +3318,47 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 Kameras antworten nur, wenn ONVIF eingeschaltet ist; die Anfrage überquert weder Router noch die meisten VPNs. Sie können die Kamera weiterhin von Hand über ihre Adresse eintragen.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="859"/>
+        <location filename="../src/SettingsDialog.cpp" line="878"/>
         <source>unnamed device</source>
         <translation>unbenanntes Gerät</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="860"/>
+        <location filename="../src/SettingsDialog.cpp" line="879"/>
         <source> (Reolink)</source>
         <translation> (Reolink)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="861"/>
+        <location filename="../src/SettingsDialog.cpp" line="880"/>
         <source>  · already added</source>
         <translation>  · schon eingetragen</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="867"/>
+        <location filename="../src/SettingsDialog.cpp" line="886"/>
         <source>Cameras found</source>
         <translation>Kameras gefunden</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="868"/>
+        <location filename="../src/SettingsDialog.cpp" line="887"/>
         <source>Add which one?</source>
         <translation>Welche hinzufügen?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="940"/>
+        <location filename="../src/SettingsDialog.cpp" line="959"/>
         <source>Incomplete camera</source>
         <translation>Unvollständige Kamera</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="941"/>
+        <location filename="../src/SettingsDialog.cpp" line="960"/>
         <source>“%1” has no host address.</source>
         <translation>„%1“ hat keine Adresse.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="949"/>
+        <location filename="../src/SettingsDialog.cpp" line="968"/>
         <source>Menu bar hidden</source>
         <translation>Menüleiste ausgeblendet</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="950"/>
+        <location filename="../src/SettingsDialog.cpp" line="969"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>Sind Menü- und Werkzeugleiste beide ausgeblendet, holt Strg+M das Menü zurück.</translation>
     </message>

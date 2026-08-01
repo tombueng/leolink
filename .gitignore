@@ -1,5 +1,6 @@
 build/
 .cache/
+__pycache__/
 *.user
 compile_commands.json
 .flatpak-builder/

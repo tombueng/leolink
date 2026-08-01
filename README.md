@@ -49,7 +49,9 @@ software is involved.
   with the machine's details attached — **passwords, session tokens and public
   addresses removed before anything is written**, so it can be pasted into a bug
   report as it stands.
-- **English and German.**
+- **Twelve languages.** Arabic, Chinese, English, French, German, Hindi,
+  Italian, Japanese, Portuguese, Russian, Spanish and Turkish — right-to-left
+  layout included.
 
 ## What it looks like
 

@@ -249,7 +249,9 @@ file is given.
 
 ### Language
 
-English and German, or whatever the system asks for. Takes effect on restart.
+Twelve languages — Arabic, Chinese, English, French, German, Hindi, Italian,
+Japanese, Portuguese, Russian, Spanish and Turkish — or whatever the system asks
+for. Takes effect on restart. Arabic mirrors the whole interface.
 
 The interface follows the desktop's light or dark palette. The video area stays
 near-black in both — dark scenes and letterbox bars read correctly against it,

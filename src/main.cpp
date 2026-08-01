@@ -98,6 +98,20 @@ int main(int argc, char *argv[])
 {
     selectPlatform();
 
+    // The language has to be settled before the QApplication exists. The
+    // desktop's own Qt integration — KDE's, for one — installs translations
+    // while the application is being built, taken from the system language,
+    // and those answer before anything installed afterwards: an Arabic window
+    // would end up with a German “Close” button. Setting LANGUAGE first makes
+    // that integration agree with us instead of fighting us.
+    //
+    // Reading the configuration this early is safe: it needs the application
+    // name, which is a static setting, and then only the file itself.
+    QCoreApplication::setApplicationName(QStringLiteral("leolink"));
+    const leolink::Config config = leolink::Config::load();
+    if (config.language != QLatin1String("system"))
+        qputenv("LANGUAGE", config.language.toUtf8());
+
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("leolink"));
     QApplication::setApplicationVersion(QStringLiteral(LEOLINK_VERSION));
@@ -112,24 +126,40 @@ int main(int argc, char *argv[])
     std::setlocale(LC_NUMERIC, "C");
 
     // Language: the configured one, or whatever the system asks for.
-    const leolink::Config config = leolink::Config::load();
-
     const QLocale locale = config.language == QLatin1String("system")
                                ? QLocale()
                                : QLocale(config.language);
     QLocale::setDefault(locale);
 
-    // Qt's own strings first (buttons in standard dialogs, and so on) …
+    // Qt's own strings first (buttons in standard dialogs, and so on). Both
+    // catalogues are needed: qt_xx is only an umbrella, and the strings that
+    // actually show up — “Close”, “Cancel”, the file dialog — live in
+    // qtbase_xx. Without it the desktop's own integration answers instead, out
+    // of the system language, and an Arabic window ends up with a German
+    // button. Installed last so it is asked first.
+    const QString qtCatalogues = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
     QTranslator qtTranslator;
     if (qtTranslator.load(locale, QStringLiteral("qt"), QStringLiteral("_"),
-                          QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+                          qtCatalogues))
         QApplication::installTranslator(&qtTranslator);
+
+    QTranslator qtBaseTranslator;
+    if (qtBaseTranslator.load(locale, QStringLiteral("qtbase"),
+                              QStringLiteral("_"), qtCatalogues))
+        QApplication::installTranslator(&qtBaseTranslator);
 
     // … then ours, which is compiled into the binary.
     QTranslator appTranslator;
     if (appTranslator.load(locale, QStringLiteral("leolink"),
                            QStringLiteral("_"), QStringLiteral(":/i18n")))
         QApplication::installTranslator(&appTranslator);
+
+    // Arabic and the other right-to-left languages need the whole interface
+    // mirrored. Qt normally works this out from its own translation catalogue,
+    // which is a separate distribution package and often simply absent — so ask
+    // the locale directly. After the translators, because installing one sends
+    // a LanguageChange event that recomputes the direction.
+    QApplication::setLayoutDirection(locale.textDirection());
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
