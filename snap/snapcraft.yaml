@@ -10,9 +10,12 @@
 # option, which runs `pass` or `secret-tool` on the host. A confined snap cannot
 # see those. The password field works as normal; that shortcut does not.
 #
-# Strict also means the kde-neon-6 extension can be used, which serves Qt from a
-# shared content snap instead of bundling it — a fraction of the size, and it
-# picks up Qt security fixes without a rebuild here.
+# Qt is staged into the snap rather than taken from the kde-neon-6 extension.
+# The extension would be smaller and would pick up Qt fixes without a rebuild
+# here, but it clones canonical/gpu-snap from GitHub while building, and the
+# LXD build container on this machine reaches the Ubuntu archive and nothing
+# else. Measured: apt works, `git ls-remote github.com` does not. Bundling Qt
+# costs size and needs a rebuild for Qt updates; it does build.
 #
 # Build:   sg lxd -c "snapcraft --use-lxd"
 # Install: sudo snap install --dangerous ./leolink_*.snap
@@ -56,8 +59,17 @@ apps:
   leolink:
     command: usr/bin/leolink
     desktop: usr/share/applications/io.github.tombueng.leolink.desktop
-    extensions: [kde-neon-6]
     plugs:
+      # The desktop ones have to be listed by hand here. With the kde-neon-6
+      # extension they come for free, and leaving them out produced a snap that
+      # started, loaded its Qt plugins and then died with "could not connect to
+      # display" — which reads like a broken build and is in fact a missing
+      # permission.
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - unity7           # the tray icon
       - network          # the cameras
       - network-bind     # the loopback port Baichuan video is re-served on
       - opengl
@@ -70,7 +82,17 @@ apps:
       # ffmpeg is bundled and run as a program: recording, and the detection
       # leolink does itself.
       PATH: $SNAP/usr/bin:$PATH
-      LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
+      # Several libraries here keep their real code in a subdirectory of their
+      # own and list it as a NEEDED — libproxy's backend and PulseAudio's
+      # common library both do. They are inside the snap; they are simply off
+      # the default path, and the binary then will not start at all with
+      # "cannot open shared object file". The rest of the subdirectories
+      # (dri, gbm, vdpau) are loaded by name at run time and are covered by the
+      # variables the graphics stack uses.
+      LD_LIBRARY_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libproxy:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/blas:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lapack:$SNAP/usr/lib:$LD_LIBRARY_PATH
+      QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins
+      QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins/platforms
+      FONTCONFIG_PATH: $SNAP/etc/fonts
 
 parts:
   leolink:
@@ -96,8 +118,29 @@ parts:
       - libmpv-dev
       - libgl-dev
     stage-packages:
-      # libmpv does the decoding, the hardware acceleration and the audio; the
-      # KDE content snap carries Qt but not this.
+      # Qt, since there is no extension to provide it — see the note at the top.
+      - libqt6widgets6
+      - libqt6gui6
+      - libqt6core6
+      - libqt6dbus6
+      - libqt6network6
+      - libqt6xml6
+      - libqt6svg6
+      - libqt6opengl6
+      - libqt6openglwidgets6
+      - qt6-qpa-plugins
+      - qt6-wayland
+      - libgl1
+      - libglx-mesa0
+      - libegl1
+      - fontconfig
+      - fonts-dejavu-core
+      # Qt Network loads libproxy at start-up, and its backend lives in a
+      # separate package that nothing links against directly — so it is not
+      # pulled in automatically, and the binary refuses to start with
+      # "libpxbackend-1.0.so: cannot open shared object file".
+      - libproxy1v5
+      # libmpv does the decoding, the hardware acceleration and the audio.
       - libmpv2
       # Recording and both detectors run ffmpeg as a separate process. Without
       # it those features report themselves unavailable rather than failing
