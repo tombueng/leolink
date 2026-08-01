@@ -1,4 +1,4 @@
-// Everything configurable, grouped into tabs.
+// The camera list and the grid they are shown in.
 #pragma once
 
 #include <QDialog>
@@ -34,15 +34,13 @@ private slots:
     void onRemove();
     void onTest();
     void onScan();
-    void onEditZones();
     void onAccept();
+    void onOpenCameraSettings();
     void refreshGridPreview();
 
 private:
     QWidget *buildCameraTab();
     QWidget *buildLayoutTab();
-    QWidget *buildEventTab();
-    QWidget *buildWindowTab();
 
     void rebuildList();
     void loadIntoForm(const CameraConfig &camera);
@@ -69,6 +67,7 @@ private:
     QLabel *m_testResult{nullptr};
     QPushButton *m_testButton{nullptr};
     QPushButton *m_scanButton{nullptr};
+    QPushButton *m_settingsButton{nullptr};
 
     // Layout tab
     QSpinBox *m_gridColumns{nullptr};
@@ -78,39 +77,6 @@ private:
     QSpinBox *m_rowSpan{nullptr};
     QSpinBox *m_colSpan{nullptr};
     QTableWidget *m_gridPreview{nullptr};
-
-    // Event tab
-    QComboBox *m_motionSource{nullptr};
-    QPushButton *m_zonesButton{nullptr};
-    QSpinBox *m_sensitivity{nullptr};
-    QSpinBox *m_minArea{nullptr};
-    QCheckBox *m_audioDetection{nullptr};
-    QSpinBox *m_audioThreshold{nullptr};
-    QSpinBox *m_audioHold{nullptr};
-    /// Held here rather than in a widget: the zone editor is modal and the
-    /// mask has nowhere else to live between opening it and saving.
-    QString m_zones;
-
-    QLineEdit *m_motionCommand{nullptr};
-    QCheckBox *m_recordOnMotion{nullptr};
-    QSpinBox *m_recordTrailing{nullptr};
-    QLineEdit *m_recordDir{nullptr};
-    QCheckBox *m_showMotion{nullptr};
-
-    // Window tab
-    QCheckBox *m_showMenuBar{nullptr};
-    QCheckBox *m_showToolBar{nullptr};
-    QCheckBox *m_showStatusBar{nullptr};
-    QCheckBox *m_frameless{nullptr};
-    QCheckBox *m_trayEnabled{nullptr};
-    QCheckBox *m_closeToTray{nullptr};
-    QCheckBox *m_minimizeToTray{nullptr};
-    QCheckBox *m_raiseOnMotion{nullptr};
-    QComboBox *m_raiseMode{nullptr};
-    QComboBox *m_language{nullptr};
-    QComboBox *m_hwdec{nullptr};
-    QCheckBox *m_lowLatency{nullptr};
-    QCheckBox *m_debugLogging{nullptr};
 
     ReolinkClient *m_tester{nullptr};
     Discovery *m_discovery{nullptr};

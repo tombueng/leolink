@@ -1167,6 +1167,115 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "Oturum açma hiçbir anahtar döndürmedi.",
     "Snapshot failed.": "Anlık görüntü alınamadı.",
     "ONVIF subscription failed.": "ONVIF aboneliği başarısız.",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n kamera adı · %h adres · %t saat · %e olay · %s açık/kapalı · %f "
+        "kayıt · %p görüntü",
+    "Run a command": "Bir komut çalıştır",
+    "Call a webhook": "Bir webhook çağır",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "Boş bırakılırsa leolink, olayı anlatan küçük bir JSON belgesi "
+        "gönderir.",
+    "Method": "Yöntem",
+    "Body": "Gövde",
+    "Publish an MQTT message": "Bir MQTT iletisi yayımla",
+    "Left empty: the same JSON document as the webhook.":
+        "Boş bırakılırsa: webhook ile aynı JSON belgesi.",
+    "Keep the last message on the broker": "Son iletiyi aracıda tut",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "Sonradan bağlanan bir istemci, bir sonraki olayı beklemek yerine "
+        "mevcut durumu hemen öğrenir. Ev otomasyonunun genellikle istediği "
+        "budur.",
+    "Broker": "Aracı",
+    "Topic": "Konu",
+    "Payload": "Yük",
+    "MQTT": "MQTT",
+    "In leolink": "leolink'te",
+    "In the camera": "Kamerada",
+    "Try again": "Yeniden dene",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>Kamera bildirir:</b> kameranın kendi algılayıcısı karar verir ve "
+        "bir ONVIF olayı gönderir. Neyi izlediği ve ne kolaylıkla tetiklendiği "
+        "aşağıdaki «Algılama» altında, kameranın kendisinde "
+        "ayarlanır.<br><br><b>leolink görüntüyü izler:</b> bu bilgisayar alt "
+        "akışa ikinci bir bağlantı açıp görüntüyü çözümler. Hiçbir şey "
+        "bildirmeyenler de dâhil her kamerayla çalışır — ve o durumda "
+        "kameranın kendi algılayıcısının bir rolü kalmaz.",
+    "Choose what is watched…": "Neyin izleneceğini seç…",
+    "How leolink learns of motion": "leolink hareketten nasıl haberdar olur",
+    "When leolink watches the picture": "leolink görüntüyü izlediğinde",
+    "Detection by leolink": "leolink tarafından algılama",
+    "Recording on this computer": "Bu bilgisayara kayıt",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "Dosyaların nereye gideceği tüm kameralar için aynıdır ve Ayarlar ▸ "
+        "Kayıtlar altında belirlenir.",
+    "Follow the defaults under Settings": "Ayarlar'daki varsayılanları izle",
+    "Use this camera's own": "Bu kameranınkini kullan",
+    "Reactions": "Tepkiler",
+    "What happens on an event": "Bir olayda ne olacağı",
+    "Muted": "Sessiz",
+    "Sound in leolink": "leolink'te ses",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "Aynı iki denetim, daha çabuk erişilen kamera karosunun üzerinde de "
+        "bulunur. Kameralar sessiz başlar: bir duvar dolusu kamerayı açmak, "
+        "odayı hepsinin sesiyle doldurmamalı.",
+    "Playback": "Oynatma",
+    "&Settings…": "&Ayarlar…",
+    "Reactions": "Tepkiler",
+    "Recordings": "Kayıtlar",
+    "General": "Genel",
+    "Tint the tile red for a moment": "Karoyu bir an kırmızıya boya",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "Bir duvar dolusu kameraya şöyle bir bakmak, hangisi olduğunu görmeye "
+        "yetsin diye.",
+    " ms": " ms",
+    "Play a sound": "Bir ses çal",
+    "Empty: the desktop's own notification sound":
+        "Boş: masaüstünün kendi bildirim sesi",
+    "Sound to play": "Çalınacak ses",
+    "For": "Süre",
+    "Sound file": "Ses dosyası",
+    "On the screen": "Ekranda",
+    "The window": "Pencere",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "Hangi kameraların olay üreteceği ve nasıl üreteceği, her kamera için "
+        "Kameralar ▸ Ayarlar ▸ leolink tarafından algılama altında belirlenir.",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "Bir kamera bir şey bildirdiğinde leolink'in ne yapacağı. Kendi "
+        "penceresi başka bir şey söylemedikçe her kamera bunlara uyar — hepsi "
+        "ya da hiçbiri, asla yarısı: kısmen devralınan ayarlar, bir şey "
+        "tetiklenmediğinde çözülmesi en zor olanlardır.",
+    "Recordings and stills": "Kayıtlar ve anlık görüntüler",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "Kayıtlar yeniden kodlanmadan Matroska olarak yazılır: görüntü "
+        "kameranın özgün kalitesini korur ve işlemci neredeyse boş "
+        "kalır.\n\nBir kameranın kayıt yapıp yapmayacağı kendi ayarıdır; "
+        "Kameralar ▸ Ayarlar ▸ Tepkiler altında.",
+    "Settings for this camera…": "Bu kameranın ayarları…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "leolink'teki algılama, tepkiler ve kayıt ile kameranın kendi "
+        "kodlayıcısı, görüntüsü ve zamanlamaları.",
 }
 
 

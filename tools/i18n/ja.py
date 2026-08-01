@@ -1015,6 +1015,99 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "ログインでトークンが返りませんでした。",
     "Snapshot failed.": "静止画の取得に失敗しました。",
     "ONVIF subscription failed.": "ONVIF の購読に失敗しました。",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n カメラ名 · %h アドレス · %t 時刻 · %e イベント · %s オン/オフ · %f 録画 · %p 画像",
+    "Run a command": "コマンドを実行する",
+    "Call a webhook": "Webhook を呼び出す",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "空のままなら、leolink がイベントを説明する小さな JSON 文書を送ります。",
+    "Method": "メソッド",
+    "Body": "本文",
+    "Publish an MQTT message": "MQTT メッセージを配信する",
+    "Left empty: the same JSON document as the webhook.":
+        "空のまま: Webhook と同じ JSON 文書。",
+    "Keep the last message on the broker": "最後のメッセージをブローカーに残す",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "あとから接続したクライアントが、次のイベントを待たずに現在の状態をすぐ知れます。ホームオートメーションでたいてい必要になるのはこちらです。",
+    "Broker": "ブローカー",
+    "Topic": "トピック",
+    "Payload": "ペイロード",
+    "MQTT": "MQTT",
+    "In leolink": "leolink 側",
+    "In the camera": "カメラ側",
+    "Try again": "再試行",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>カメラが知らせる:</b> カメラ自身の検知器が判断し、ONVIF "
+        "イベントを送ります。何を見張り、どれくらい起きやすいかは、下の「検知」— カメラ自身の設定 — "
+        "で決めます。<br><br><b>leolink が映像を見る:</b> このコンピューターがサブストリームへもう 1 "
+        "本接続して映像を解析します。何も知らせないカメラを含め、どのカメラでも使え、その場合カメラ自身の検知器は関係ありません。",
+    "Choose what is watched…": "見張る範囲を選ぶ…",
+    "How leolink learns of motion": "leolink が動きを知る経路",
+    "When leolink watches the picture": "leolink が映像を見るとき",
+    "Detection by leolink": "leolink による検知",
+    "Recording on this computer": "このコンピューターへの録画",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "ファイルの保存先はどのカメラも同じで、設定 ▸ 録画 で決めます。",
+    "Follow the defaults under Settings": "設定の既定に従う",
+    "Use this camera's own": "このカメラ独自のものを使う",
+    "Reactions": "反応",
+    "What happens on an event": "イベント時の動作",
+    "Muted": "消音",
+    "Sound in leolink": "leolink での音",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "同じ 2 "
+        "つはカメラのタイル上にもあり、そちらのほうが早く手が届きます。カメラは消音で始まります。ずらりと並べたカメラを開いたとたん、部屋が全部の音で埋まっては困るからです。",
+    "Playback": "再生",
+    "&Settings…": "設定(&S)…",
+    "Reactions": "反応",
+    "Recordings": "録画",
+    "General": "全般",
+    "Tint the tile red for a moment": "タイルを一瞬赤く染める",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "ずらりと並んだカメラをひと目見るだけで、どれだったか分かるように。",
+    " ms": " ミリ秒",
+    "Play a sound": "音を鳴らす",
+    "Empty: the desktop's own notification sound": "空: デスクトップ自身の通知音",
+    "Sound to play": "鳴らす音",
+    "For": "長さ",
+    "Sound file": "音声ファイル",
+    "On the screen": "画面上",
+    "The window": "ウィンドウ",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "どのカメラがそもそもイベントを起こすか、またその方法は、カメラごとに カメラ ▸ 設定 ▸ leolink による検知 で決めます。",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "カメラが何かを知らせたときに leolink がすることです。カメラ自身のダイアログが別のことを言わないかぎり、カメラはこれに従います — "
+        "すべてか、まったくなしか。半分だけということはありません。部分的に受け継いだ設定は、何かが起きなかったときにいちばん解きほぐしにくいからです。",
+    "Recordings and stills": "録画と静止画",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "録画は再エンコードせずに Matroska "
+        "で書き出されます。映像はカメラ本来の画質を保ち、プロセッサーはほとんど動きません。\n\nそのカメラがそもそも録画するかどうかは、カメラ "
+        "▸ 設定 ▸ 反応 にある、そのカメラ自身の設定です。",
+    "Settings for this camera…": "このカメラの設定…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "leolink 側の検知・反応・録画と、カメラ自身のエンコーダー・画質・スケジュール。",
 }
 
 

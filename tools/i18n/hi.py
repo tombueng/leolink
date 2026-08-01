@@ -1160,6 +1160,114 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "लॉगिन से कोई टोकन नहीं मिला।",
     "Snapshot failed.": "स्नैपशॉट विफल।",
     "ONVIF subscription failed.": "ONVIF सदस्यता विफल।",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n कैमरे का नाम · %h पता · %t समय · %e घटना · %s चालू/बंद · %f "
+        "रिकॉर्डिंग · %p चित्र",
+    "Run a command": "एक आदेश चलाएँ",
+    "Call a webhook": "एक वेबहुक बुलाएँ",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "खाली छोड़ने पर leolink घटना का वर्णन करता एक छोटा JSON दस्तावेज़ "
+        "भेजता है।",
+    "Method": "विधि",
+    "Body": "मुख्य भाग",
+    "Publish an MQTT message": "एक MQTT संदेश प्रकाशित करें",
+    "Left empty: the same JSON document as the webhook.":
+        "खाली छोड़ने पर: वही JSON दस्तावेज़ जो वेबहुक भेजता है।",
+    "Keep the last message on the broker": "अंतिम संदेश ब्रोकर पर बनाए रखें",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "बाद में जुड़ने वाले क्लाइंट को अगली घटना का इंतज़ार किए बिना मौजूदा "
+        "स्थिति तुरंत पता चल जाती है। घर के स्वचालन को आमतौर पर यही चाहिए।",
+    "Broker": "ब्रोकर",
+    "Topic": "विषय",
+    "Payload": "पेलोड",
+    "MQTT": "MQTT",
+    "In leolink": "leolink में",
+    "In the camera": "कैमरे में",
+    "Try again": "फिर कोशिश करें",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>कैमरा स्वयं बताता है:</b> कैमरे का अपना संसूचक तय करता है और एक "
+        "ONVIF घटना भेजता है। वह क्या देखता है और कितनी आसानी से चलता है, यह "
+        "नीचे «पहचान» में — कैमरे के भीतर ही — तय होता है।<br><br><b>leolink "
+        "चित्र देखता है:</b> यह कंप्यूटर उप-स्ट्रीम से एक दूसरा संयोजन खोलकर "
+        "चित्र का विश्लेषण करता है। हर कैमरे के साथ चलता है, उनके साथ भी जो "
+        "कुछ नहीं बताते — और तब कैमरे के अपने संसूचक की कोई भूमिका नहीं रहती।",
+    "Choose what is watched…": "चुनें कि किस पर नज़र रखी जाए…",
+    "How leolink learns of motion": "leolink को गति का पता कैसे चलता है",
+    "When leolink watches the picture": "जब leolink चित्र देखता है",
+    "Detection by leolink": "leolink द्वारा पहचान",
+    "Recording on this computer": "इस कंप्यूटर पर रिकॉर्डिंग",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "फ़ाइलें कहाँ जाती हैं, यह हर कैमरे के लिए एक ही है और सेटिंग ▸ "
+        "रिकॉर्डिंग के नीचे तय होता है।",
+    "Follow the defaults under Settings":
+        "सेटिंग में दी गई प्रविष्टियों का पालन करें",
+    "Use this camera's own": "इस कैमरे की अपनी प्रविष्टियाँ लें",
+    "Reactions": "प्रतिक्रियाएँ",
+    "What happens on an event": "किसी घटना पर क्या होता है",
+    "Muted": "मौन",
+    "Sound in leolink": "leolink में ध्वनि",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "यही दो नियंत्रण कैमरे की अपनी टाइल पर भी हैं, जहाँ वे जल्दी हाथ आते "
+        "हैं। कैमरे मौन से शुरू होते हैं: कैमरों की एक पूरी दीवार खोलने पर "
+        "कमरा हर एक की आवाज़ से नहीं भर जाना चाहिए।",
+    "Playback": "प्लेबैक",
+    "&Settings…": "&सेटिंग…",
+    "Reactions": "प्रतिक्रियाएँ",
+    "Recordings": "रिकॉर्डिंग",
+    "General": "सामान्य",
+    "Tint the tile red for a moment": "टाइल को पल भर के लिए लाल रंगें",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "ताकि कैमरों की पूरी दीवार पर एक नज़र डालना ही यह जानने को काफ़ी हो कि "
+        "कौन-सा था।",
+    " ms": " ms",
+    "Play a sound": "एक ध्वनि बजाएँ",
+    "Empty: the desktop's own notification sound":
+        "खाली: डेस्कटॉप की अपनी सूचना-ध्वनि",
+    "Sound to play": "बजाई जाने वाली ध्वनि",
+    "For": "कितनी देर",
+    "Sound file": "ध्वनि फ़ाइल",
+    "On the screen": "पर्दे पर",
+    "The window": "खिड़की",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "कौन-से कैमरे घटना उठाते ही हैं और कैसे, यह हर कैमरे के लिए कैमरे ▸ "
+        "सेटिंग ▸ leolink द्वारा पहचान के नीचे तय होता है।",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "जब कोई कैमरा कुछ बताता है तो leolink क्या करता है। जब तक कैमरे का "
+        "अपना संवाद कुछ और न कहे, वह इन्हीं का पालन करता है — या तो सब, या कुछ "
+        "नहीं, कभी आधा नहीं: आंशिक रूप से विरासत में मिली प्रविष्टियाँ ही तब "
+        "सबसे मुश्किल पड़ती हैं जब कुछ चलता ही नहीं।",
+    "Recordings and stills": "रिकॉर्डिंग और स्नैपशॉट",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "रिकॉर्डिंग बिना दोबारा एन्कोड किए Matroska में लिखी जाती हैं: चित्र "
+        "कैमरे की मूल गुणवत्ता बनाए रखता है और प्रोसेसर लगभग खाली रहता "
+        "है।\n\nकोई कैमरा रिकॉर्ड करता है या नहीं, यह उसकी अपनी प्रविष्टि है, "
+        "कैमरे ▸ सेटिंग ▸ प्रतिक्रियाएँ के नीचे।",
+    "Settings for this camera…": "इस कैमरे की सेटिंग…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "leolink की ओर से पहचान, प्रतिक्रियाएँ और रिकॉर्डिंग, तथा कैमरे का "
+        "अपना एन्कोडर, चित्र और समय-सारणी।",
 }
 
 

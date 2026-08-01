@@ -20,11 +20,9 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
-#include "DiagnosticsDialog.h"
+#include "CameraSettingsDialog.h"
 #include "Discovery.h"
 #include "Log.h"
-#include "MotionDetector.h"
-#include "ZoneEditor.h"
 #include "ReolinkClient.h"
 
 namespace leolink {
@@ -33,14 +31,14 @@ SettingsDialog::SettingsDialog(const Config &config, QWidget *parent)
     : QDialog(parent), m_config(config),
       m_tester(new ReolinkClient(this)), m_discovery(new Discovery(this))
 {
-    setWindowTitle(tr("Settings"));
+    setWindowTitle(tr("Cameras"));
     resize(820, 600);
 
+    // Which cameras there are and where they hang, and nothing else. What each
+    // one then does is in its own dialog, one button away in the list.
     auto *tabs = new QTabWidget(this);
     tabs->addTab(buildCameraTab(), tr("Cameras"));
     tabs->addTab(buildLayoutTab(), tr("Layout"));
-    tabs->addTab(buildEventTab(), tr("Events"));
-    tabs->addTab(buildWindowTab(), tr("Window"));
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Save |
                                          QDialogButtonBox::Cancel, this);
@@ -171,9 +169,25 @@ QWidget *SettingsDialog::buildCameraTab()
     testRow->addWidget(m_testButton);
     testRow->addWidget(m_testResult, 1);
 
+    // The way in that the list never had. Everything about a camera beyond
+    // reaching it — where it looks, what happens when it sees something, what
+    // the device itself is set to — is behind this one button.
+    m_settingsButton = new QPushButton(tr("Settings for this camera…"), page);
+    m_settingsButton->setToolTip(
+        tr("Detection, reactions and recording in leolink, and the camera's "
+           "own encoder, picture and schedules."));
+    connect(m_settingsButton, &QPushButton::clicked,
+            this, &SettingsDialog::onOpenCameraSettings);
+
+    auto *settingsRow = new QHBoxLayout;
+    settingsRow->addWidget(m_settingsButton);
+    settingsRow->addStretch(1);
+
     auto *right = new QVBoxLayout;
     right->addLayout(form);
     right->addLayout(testRow);
+    right->addSpacing(8);
+    right->addLayout(settingsRow);
     right->addStretch(1);
 
     auto *columns = new QHBoxLayout(page);
@@ -309,351 +323,9 @@ void SettingsDialog::refreshGridPreview()
 
 // ── events tab ──────────────────────────────────────────────────────────────
 
-QWidget *SettingsDialog::buildEventTab()
-{
-    auto *page = new QWidget(this);
-
-    // ── how each camera is watched ──────────────────────────────────────────
-    m_motionSource = new QComboBox(page);
-    m_motionSource->addItem(tr("The camera reports it (ONVIF)"),
-                            QStringLiteral("camera"));
-    m_motionSource->addItem(tr("leolink watches the picture"),
-                            QStringLiteral("local"));
-    m_motionSource->addItem(tr("Either of the two"), QStringLiteral("both"));
-    m_motionSource->addItem(tr("Do not watch"), QStringLiteral("off"));
-    m_motionSource->setToolTip(
-        tr("Cameras that report motion themselves cost nothing to watch.\n\n"
-           "Analysing the picture here works with any camera, including ones "
-           "that report nothing, but opens a second connection to the sub "
-           "stream for each."));
-
-    m_zonesButton = new QPushButton(tr("Motion zones…"), page);
-    m_zonesButton->setToolTip(
-        tr("Choose which parts of the picture are watched. Only applies when "
-           "leolink analyses the picture itself."));
-    connect(m_zonesButton, &QPushButton::clicked,
-            this, &SettingsDialog::onEditZones);
-
-    m_sensitivity = new QSpinBox(page);
-    m_sensitivity->setRange(1, 10);
-    m_sensitivity->setToolTip(
-        tr("How much a spot in the picture must change to count. Higher "
-           "notices more, including shadows and rain."));
-
-    m_minArea = new QSpinBox(page);
-    m_minArea->setRange(1, 500);
-    m_minArea->setSuffix(tr(" ‰"));
-    m_minArea->setToolTip(
-        tr("How much of the watched area must change before it counts as "
-           "motion. 20‰ is two percent of the picture — roughly a person at "
-           "middle distance."));
-
-    // Only meaningful when the picture is analysed here.
-    auto syncLocal = [this] {
-        const QString source = m_motionSource->currentData().toString();
-        const bool local = source == QLatin1String("local") ||
-                           source == QLatin1String("both");
-        m_zonesButton->setEnabled(local);
-        m_sensitivity->setEnabled(local);
-        m_minArea->setEnabled(local);
-    };
-    connect(m_motionSource, &QComboBox::currentIndexChanged, this, syncLocal);
-
-    m_audioDetection = new QCheckBox(tr("Raise an event on sound"), page);
-    m_audioDetection->setToolTip(
-        tr("Needs a camera with a microphone. Opens another connection to the "
-           "sub stream."));
-
-    m_audioThreshold = new QSpinBox(page);
-    m_audioThreshold->setRange(-90, 0);
-    m_audioThreshold->setSuffix(tr(" dB"));
-    m_audioThreshold->setToolTip(
-        tr("-60 dB is close to silence, -20 dB a raised voice nearby."));
-
-    m_audioHold = new QSpinBox(page);
-    m_audioHold->setRange(0, 120);
-    m_audioHold->setSuffix(tr(" s"));
-    m_audioHold->setToolTip(
-        tr("Keeps the event up after the noise stops, so one bark is not "
-           "reported four times."));
-
-    connect(m_audioDetection, &QCheckBox::toggled, this, [this](bool on) {
-        m_audioThreshold->setEnabled(on);
-        m_audioHold->setEnabled(on);
-    });
-
-    auto *detectForm = new QFormLayout;
-    detectForm->addRow(tr("Motion comes from"), m_motionSource);
-    detectForm->addRow(QString(), m_zonesButton);
-    detectForm->addRow(tr("Sensitivity"), m_sensitivity);
-    detectForm->addRow(tr("Minimum area"), m_minArea);
-    detectForm->addRow(QString(), m_audioDetection);
-    detectForm->addRow(tr("Sound above"), m_audioThreshold);
-    detectForm->addRow(tr("Hold for"), m_audioHold);
-
-    auto *detectBox = new QGroupBox(tr("Detection"), page);
-    detectBox->setLayout(detectForm);
-
-    m_showMotion = new QCheckBox(
-        tr("Watch cameras for motion (ONVIF push)"), page);
-    m_showMotion->setChecked(m_config.showMotion);
-    m_showMotion->setToolTip(
-        tr("The camera reports motion when it happens, rather than leolink "
-           "asking once a second."));
-
-    m_motionCommand = new QLineEdit(page);
-    m_motionCommand->setPlaceholderText(
-        tr("notify-send \"Motion at %n\""));
-    m_motionCommand->setToolTip(
-        tr("Runs when this camera reports motion.\n"
-           "%n camera name · %h host · %t timestamp · %f recording file"));
-
-    m_recordOnMotion = new QCheckBox(tr("Record while motion lasts"), page);
-    m_recordOnMotion->setToolTip(
-        tr("Records on this computer from the live stream, so it works even "
-           "when the camera has no SD card fitted."));
-
-    m_recordTrailing = new QSpinBox(page);
-    m_recordTrailing->setRange(0, 600);
-    m_recordTrailing->setSuffix(tr(" s"));
-
-    auto *cameraForm = new QFormLayout;
-    cameraForm->addRow(tr("Run command"), m_motionCommand);
-    cameraForm->addRow(QString(), m_recordOnMotion);
-    cameraForm->addRow(tr("Keep recording after"), m_recordTrailing);
-
-    auto *cameraBox =
-        new QGroupBox(tr("Selected camera"), page);
-    cameraBox->setLayout(cameraForm);
-
-    m_recordDir = new QLineEdit(page);
-    m_recordDir->setText(m_config.recordDir);
-    m_recordDir->setPlaceholderText(m_config.effectiveRecordDir());
-
-    auto *browse = new QPushButton(tr("Browse…"), page);
-    connect(browse, &QPushButton::clicked, this, [this] {
-        const QString dir = QFileDialog::getExistingDirectory(
-            this, tr("Recordings folder"), m_config.effectiveRecordDir());
-        if (!dir.isEmpty())
-            m_recordDir->setText(dir);
-    });
-
-    auto *dirRow = new QHBoxLayout;
-    dirRow->addWidget(m_recordDir, 1);
-    dirRow->addWidget(browse);
-
-    auto *globalForm = new QFormLayout;
-    globalForm->addRow(QString(), m_showMotion);
-    globalForm->addRow(tr("Recordings folder"), dirRow);
-
-    auto *globalBox = new QGroupBox(tr("All cameras"), page);
-    globalBox->setLayout(globalForm);
-
-    auto *note = new QLabel(
-        tr("Recordings are written as Matroska without re-encoding: the "
-           "picture keeps the camera's original quality and the CPU stays "
-           "nearly idle."),
-        page);
-    note->setWordWrap(true);
-    note->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
-
-    auto *layout = new QVBoxLayout(page);
-    layout->addWidget(globalBox);
-    layout->addWidget(detectBox);
-    layout->addWidget(cameraBox);
-    layout->addWidget(note);
-    layout->addStretch(1);
-    syncLocal();
-    return page;
-}
 
 // ── window tab ──────────────────────────────────────────────────────────────
 
-QWidget *SettingsDialog::buildWindowTab()
-{
-    auto *page = new QWidget(this);
-
-    m_showMenuBar = new QCheckBox(tr("Show menu bar"), page);
-    m_showMenuBar->setChecked(m_config.showMenuBar);
-    m_showMenuBar->setToolTip(tr("Ctrl+M toggles this at any time."));
-    m_showToolBar = new QCheckBox(tr("Show toolbar"), page);
-    m_showToolBar->setChecked(m_config.showToolBar);
-    m_showStatusBar = new QCheckBox(tr("Show status bar"), page);
-    m_showStatusBar->setChecked(m_config.showStatusBar);
-    m_frameless = new QCheckBox(tr("Hide window decoration"), page);
-    m_frameless->setChecked(m_config.frameless);
-    m_frameless->setToolTip(tr("For wall displays. Ctrl+Shift+D toggles it."));
-
-    auto *chromeForm = new QVBoxLayout;
-    chromeForm->addWidget(m_showMenuBar);
-    chromeForm->addWidget(m_showToolBar);
-    chromeForm->addWidget(m_showStatusBar);
-    chromeForm->addWidget(m_frameless);
-
-    auto *chromeBox = new QGroupBox(tr("Appearance"), page);
-    chromeBox->setLayout(chromeForm);
-
-    m_trayEnabled = new QCheckBox(tr("Show an icon in the notification area"), page);
-    m_trayEnabled->setChecked(m_config.trayEnabled);
-    m_closeToTray = new QCheckBox(tr("Closing the window hides it instead of quitting"), page);
-    m_closeToTray->setChecked(m_config.closeToTray);
-    m_minimizeToTray = new QCheckBox(tr("Minimising hides the window to the tray"), page);
-    m_minimizeToTray->setChecked(m_config.minimizeToTray);
-
-    // Both only mean anything while the tray icon exists.
-    auto syncTray = [this] {
-        const bool on = m_trayEnabled->isChecked();
-        m_closeToTray->setEnabled(on);
-        m_minimizeToTray->setEnabled(on);
-    };
-    connect(m_trayEnabled, &QCheckBox::toggled, this, syncTray);
-    syncTray();
-
-    auto *trayLayout = new QVBoxLayout;
-    trayLayout->addWidget(m_trayEnabled);
-    trayLayout->addWidget(m_closeToTray);
-    trayLayout->addWidget(m_minimizeToTray);
-
-    auto *trayBox = new QGroupBox(tr("Notification area"), page);
-    trayBox->setLayout(trayLayout);
-
-    m_raiseOnMotion = new QCheckBox(tr("Bring the window up when motion is detected"), page);
-    m_raiseOnMotion->setChecked(m_config.raiseOnMotion);
-
-    m_raiseMode = new QComboBox(page);
-    m_raiseMode->addItem(tr("Previous size"), QStringLiteral("restore"));
-    m_raiseMode->addItem(tr("Full screen"), QStringLiteral("fullscreen"));
-    m_raiseMode->setCurrentIndex(
-        m_config.raiseMode == QLatin1String("fullscreen") ? 1 : 0);
-    connect(m_raiseOnMotion, &QCheckBox::toggled,
-            m_raiseMode, &QComboBox::setEnabled);
-    m_raiseMode->setEnabled(m_config.raiseOnMotion);
-
-    auto *raiseForm = new QFormLayout;
-    raiseForm->addRow(QString(), m_raiseOnMotion);
-    raiseForm->addRow(tr("Come back as"), m_raiseMode);
-
-    auto *raiseBox = new QGroupBox(tr("On motion"), page);
-    raiseBox->setLayout(raiseForm);
-
-    m_language = new QComboBox(page);
-    m_language->addItem(tr("System language"), QStringLiteral("system"));
-    // Each in its own language, so it can be found by someone who cannot read
-    // the one currently on screen. Sorted by that name, which puts the Latin
-    // scripts first and is at least predictable.
-    struct Language { const char *name; const char *code; };
-    static const Language languages[] = {
-        {"Deutsch",             "de"},
-        {"English",             "en"},
-        {"Español",             "es"},
-        {"Français",            "fr"},
-        {"Italiano",            "it"},
-        {"Português (Brasil)",  "pt_BR"},
-        {"Türkçe",              "tr"},
-        {"Русский",             "ru"},
-        {"العربية",              "ar"},
-        {"हिन्दी",                 "hi"},
-        {"中文（简体）",          "zh_CN"},
-        {"日本語",               "ja"},
-    };
-    for (const Language &language : languages)
-        m_language->addItem(QString::fromUtf8(language.name),
-                            QString::fromUtf8(language.code));
-    for (int i = 0; i < m_language->count(); ++i)
-        if (m_language->itemData(i).toString() == m_config.language)
-            m_language->setCurrentIndex(i);
-
-    auto *langForm = new QFormLayout;
-    langForm->addRow(tr("Language"), m_language);
-    auto *langNote = new QLabel(tr("Takes effect after restarting leolink."), page);
-    langNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
-    langForm->addRow(QString(), langNote);
-
-    auto *langBox = new QGroupBox(tr("Language"), page);
-    langBox->setLayout(langForm);
-
-    // ── decoding ────────────────────────────────────────────────────────────
-    m_hwdec = new QComboBox(page);
-    m_hwdec->addItem(tr("Hardware (recommended)"), QStringLiteral("hw"));
-    m_hwdec->addItem(tr("Hardware, driver's choice"), QStringLiteral("auto"));
-    m_hwdec->addItem(tr("Hardware, with frame copy"), QStringLiteral("copy"));
-    m_hwdec->addItem(tr("Software only"), QStringLiteral("off"));
-    m_hwdec->setToolTip(
-        tr("“Recommended” names the decoder explicitly so that decoding and "
-           "drawing stay on the same graphics API. Left to itself, mpv may "
-           "decode through one API and draw through another, which on some "
-           "cards turns the picture solid green.\n\n"
-           "If the picture is broken, try the others in turn. “Software only” "
-           "always works but costs a whole processor core at full "
-           "resolution."));
-    for (int i = 0; i < m_hwdec->count(); ++i)
-        if (m_hwdec->itemData(i).toString() == m_config.hwdec)
-            m_hwdec->setCurrentIndex(i);
-
-    m_lowLatency = new QCheckBox(tr("Favour low latency over smoothness"), page);
-    m_lowLatency->setChecked(m_config.lowLatency);
-    m_lowLatency->setToolTip(
-        tr("Keeps buffering to a minimum. Turn this off if a high-bitrate "
-           "stream stutters over a busy network."));
-
-    auto *decodeForm = new QFormLayout;
-    decodeForm->addRow(tr("Decoding"), m_hwdec);
-    decodeForm->addRow(QString(), m_lowLatency);
-
-    auto *decodeBox = new QGroupBox(tr("Video"), page);
-    decodeBox->setLayout(decodeForm);
-
-    // ── diagnostics ─────────────────────────────────────────────────────────
-    m_debugLogging = new QCheckBox(tr("Detailed logging"), page);
-    m_debugLogging->setChecked(m_config.debugLogging);
-    m_debugLogging->setToolTip(
-        tr("Records every request to the camera, every decoder decision and "
-           "every reconnect, in ~/.local/share/leolink/leolink.log."));
-
-    auto *logNote = new QLabel(
-        tr("Errors and warnings are always recorded. Detailed logging adds the "
-           "conversation with the camera — switch it on when something is "
-           "wrong, reproduce it, then send the report from Help ▸ "
-           "Diagnostics. Passwords and tokens are removed before anything is "
-           "written."),
-        page);
-    logNote->setWordWrap(true);
-    logNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
-
-    auto *openDiagnostics = new QPushButton(tr("Open diagnostics…"), page);
-    connect(openDiagnostics, &QPushButton::clicked, this, [this] {
-        // Applied straight away: the user came here to record something, and
-        // having to press OK first would lose the very lines they wanted.
-        Log::setDebugEnabled(m_debugLogging->isChecked());
-        auto *dialog = new DiagnosticsDialog(this);
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        connect(dialog, &DiagnosticsDialog::debugLoggingChanged,
-                m_debugLogging, &QCheckBox::setChecked);
-        dialog->show();
-    });
-
-    auto *logRow = new QHBoxLayout;
-    logRow->addWidget(openDiagnostics);
-    logRow->addStretch(1);
-
-    auto *logLayout = new QVBoxLayout;
-    logLayout->addWidget(m_debugLogging);
-    logLayout->addWidget(logNote);
-    logLayout->addLayout(logRow);
-
-    auto *logBox = new QGroupBox(tr("Diagnostics"), page);
-    logBox->setLayout(logLayout);
-
-    auto *layout = new QVBoxLayout(page);
-    layout->addWidget(chromeBox);
-    layout->addWidget(decodeBox);
-    layout->addWidget(trayBox);
-    layout->addWidget(raiseBox);
-    layout->addWidget(langBox);
-    layout->addWidget(logBox);
-    layout->addStretch(1);
-    return page;
-}
 
 // ── camera list plumbing ────────────────────────────────────────────────────
 
@@ -699,20 +371,6 @@ void SettingsDialog::loadIntoForm(const CameraConfig &c)
     m_rowSpan->setValue(c.rowSpan);
     m_colSpan->setValue(c.colSpan);
 
-    m_motionSource->setCurrentIndex(
-        qMax(0, m_motionSource->findData(c.motionSource)));
-    m_zones = c.motionZones;
-    m_sensitivity->setValue(c.motionSensitivity);
-    m_minArea->setValue(c.motionMinArea);
-    m_audioDetection->setChecked(c.audioDetection);
-    m_audioThreshold->setValue(int(c.audioThresholdDb));
-    m_audioHold->setValue(c.audioHoldSeconds);
-    m_audioThreshold->setEnabled(c.audioDetection);
-    m_audioHold->setEnabled(c.audioDetection);
-    m_motionCommand->setText(c.motionCommand);
-    m_recordOnMotion->setChecked(c.recordOnMotion);
-    m_recordTrailing->setValue(c.recordTrailingSeconds);
-
     m_testResult->clear();
     m_loading = false;
 }
@@ -739,17 +397,6 @@ void SettingsDialog::storeFromForm()
     c.col = m_col->value();
     c.rowSpan = m_rowSpan->value();
     c.colSpan = m_colSpan->value();
-
-    c.motionSource = m_motionSource->currentData().toString();
-    c.motionZones = m_zones;
-    c.motionSensitivity = m_sensitivity->value();
-    c.motionMinArea = m_minArea->value();
-    c.audioDetection = m_audioDetection->isChecked();
-    c.audioThresholdDb = m_audioThreshold->value();
-    c.audioHoldSeconds = m_audioHold->value();
-    c.motionCommand = m_motionCommand->text();
-    c.recordOnMotion = m_recordOnMotion->isChecked();
-    c.recordTrailingSeconds = m_recordTrailing->value();
 
     if (c.id.isEmpty())
         c.id = Config::newId();
@@ -917,18 +564,6 @@ void SettingsDialog::onScan()
     m_discovery->start(4000);
 }
 
-void SettingsDialog::onEditZones()
-{
-    storeFromForm();
-    if (m_current < 0 || m_current >= m_config.cameras.size())
-        return;
-
-    ZoneEditor editor(m_config.cameras.at(m_current), m_zones, this);
-    if (editor.exec() == QDialog::Accepted) {
-        m_zones = editor.mask();
-        m_config.cameras[m_current].motionZones = m_zones;
-    }
-}
 
 void SettingsDialog::onAccept()
 {
@@ -936,23 +571,6 @@ void SettingsDialog::onAccept()
 
     m_config.gridColumns = m_gridColumns->value();
     m_config.gridRows = m_gridRows->value();
-    m_config.showMotion = m_showMotion->isChecked();
-    m_config.recordDir = m_recordDir->text().trimmed();
-
-    m_config.showMenuBar = m_showMenuBar->isChecked();
-    m_config.showToolBar = m_showToolBar->isChecked();
-    m_config.showStatusBar = m_showStatusBar->isChecked();
-    m_config.frameless = m_frameless->isChecked();
-    m_config.trayEnabled = m_trayEnabled->isChecked();
-    m_config.closeToTray = m_closeToTray->isChecked();
-    m_config.minimizeToTray = m_minimizeToTray->isChecked();
-    m_config.raiseOnMotion = m_raiseOnMotion->isChecked();
-    m_config.raiseMode = m_raiseMode->currentData().toString();
-    m_config.language = m_language->currentData().toString();
-    m_config.hwdec = m_hwdec->currentData().toString();
-    m_config.lowLatency = m_lowLatency->isChecked();
-    m_config.debugLogging = m_debugLogging->isChecked();
-    Log::setDebugEnabled(m_config.debugLogging);
 
     for (const CameraConfig &c : m_config.cameras) {
         if (c.host.isEmpty()) {
@@ -961,15 +579,22 @@ void SettingsDialog::onAccept()
             return;
         }
     }
-
-    // Hiding every way back into the settings would be a trap.
-    if (!m_config.showMenuBar && !m_config.showToolBar) {
-        QMessageBox::information(
-            this, tr("Menu bar hidden"),
-            tr("With both the menu bar and the toolbar hidden, press Ctrl+M "
-               "to bring the menu back."));
-    }
     accept();
+}
+
+void SettingsDialog::onOpenCameraSettings()
+{
+    storeFromForm();
+    if (m_current < 0 || m_current >= m_config.cameras.size())
+        return;
+
+    CameraSettingsDialog dialog(m_config.cameras.at(m_current), this);
+    if (dialog.exec() == QDialog::Accepted) {
+        // Only the leolink half comes back: what the dialog wrote into the
+        // camera is already in the camera, and none of it lives here.
+        m_config.cameras[m_current] = dialog.cameraConfig();
+        loadIntoForm(m_config.cameras.at(m_current));
+    }
 }
 
 } // namespace leolink

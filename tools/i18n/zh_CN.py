@@ -969,6 +969,97 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "登录没有返回令牌。",
     "Snapshot failed.": "抓拍失败。",
     "ONVIF subscription failed.": "ONVIF 订阅失败。",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n 摄像机名称 · %h 地址 · %t 时间 · %e 事件 · %s 开/关 · %f 录像 · %p 图像",
+    "Run a command": "运行一条命令",
+    "Call a webhook": "调用一个 Webhook",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "留空时，leolink 会发送一份描述该事件的小型 JSON 文档。",
+    "Method": "方法",
+    "Body": "正文",
+    "Publish an MQTT message": "发布一条 MQTT 消息",
+    "Left empty: the same JSON document as the webhook.":
+        "留空：与 Webhook 相同的那份 JSON 文档。",
+    "Keep the last message on the broker": "在代理上保留最后一条消息",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "稍后连接的客户端会立刻得知当前状态，而不必等下一次事件。智能家居通常就要这个。",
+    "Broker": "代理",
+    "Topic": "主题",
+    "Payload": "负载",
+    "MQTT": "MQTT",
+    "In leolink": "在 leolink 中",
+    "In the camera": "在摄像机中",
+    "Try again": "重试",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>由摄像机上报：</b>由摄像机自己的侦测器判断，并发出 ONVIF "
+        "事件。它看哪里、多容易触发，在下方的「侦测」中设置——那是摄像机自身的设置。<br><br><b>由 leolink "
+        "观察画面：</b>本机再开一条到子码流的连接来分析画面。任何摄像机都适用，包括什么都不上报的；此时摄像机自己的侦测器不起作用。",
+    "Choose what is watched…": "选择监看范围…",
+    "How leolink learns of motion": "leolink 如何得知移动",
+    "When leolink watches the picture": "当 leolink 观察画面时",
+    "Detection by leolink": "由 leolink 侦测",
+    "Recording on this computer": "录到本机",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "文件存到哪里对所有摄像机都一样，在「设置 ▸ 录像」中指定。",
+    "Follow the defaults under Settings": "沿用「设置」中的默认",
+    "Use this camera's own": "使用这台摄像机自己的",
+    "Reactions": "响应",
+    "What happens on an event": "发生事件时做什么",
+    "Muted": "静音",
+    "Sound in leolink": "leolink 中的声音",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "同样这两项也在摄像机自己的画面块上，那里更好按。摄像机默认静音：打开一整墙摄像机，不该让每一台的声音同时灌满房间。",
+    "Playback": "播放",
+    "&Settings…": "设置(&S)…",
+    "Reactions": "响应",
+    "Recordings": "录像",
+    "General": "常规",
+    "Tint the tile red for a moment": "让画面块短暂泛红",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "这样扫一眼整墙摄像机，就知道是哪一台。",
+    " ms": " 毫秒",
+    "Play a sound": "播放提示音",
+    "Empty: the desktop's own notification sound": "留空：使用桌面自带的通知音",
+    "Sound to play": "要播放的声音",
+    "For": "持续",
+    "Sound file": "声音文件",
+    "On the screen": "屏幕上",
+    "The window": "窗口",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "哪些摄像机会产生事件、以何种方式产生，在「摄像机 ▸ 设置 ▸ 由 leolink 侦测」中逐台指定。",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "当某台摄像机上报时 leolink "
+        "会做什么。除非某台摄像机自己的对话框另有说明，否则它就照这里来——要么全用，要么全不用，绝不用一半：部分继承的设置，在出问题却没触发时最难理清。",
+    "Recordings and stills": "录像与抓拍",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "录像以 Matroska "
+        "写出且不重新编码：画面保持摄像机的原始质量，处理器几乎不干活。\n\n某台摄像机是否录像，是它自己的设置，在「摄像机 ▸ 设置 ▸ "
+        "响应」中。",
+    "Settings for this camera…": "这台摄像机的设置…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "leolink 侧的侦测、响应与录像，以及摄像机自身的编码器、画面和时段。",
 }
 
 

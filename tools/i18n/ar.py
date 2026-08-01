@@ -1120,6 +1120,109 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "لم يُعِد تسجيل الدخول أي رمز.",
     "Snapshot failed.": "أخفقت اللقطة.",
     "ONVIF subscription failed.": "أخفق الاشتراك عبر ONVIF.",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n اسم الكاميرا · %h العنوان · %t الوقت · %e الحدث · %s تشغيل/إيقاف · "
+        "%f التسجيل · %p الصورة",
+    "Run a command": "نفّذ أمراً",
+    "Call a webhook": "استدعِ خطاف ويب",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "إن تُرك فارغاً أرسل leolink مستند JSON صغيراً يصف الحدث.",
+    "Method": "الطريقة",
+    "Body": "المتن",
+    "Publish an MQTT message": "انشر رسالة MQTT",
+    "Left empty: the same JSON document as the webhook.":
+        "إن تُرك فارغاً: مستند JSON نفسه الذي يرسله خطاف الويب.",
+    "Keep the last message on the broker": "أبقِ آخر رسالة لدى الوسيط",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "العميل الذي يتصل لاحقاً يعرف الحالة الراهنة فوراً بدل انتظار الحدث "
+        "التالي. وهذا ما تريده أتمتة المنزل عادةً.",
+    "Broker": "الوسيط",
+    "Topic": "الموضوع",
+    "Payload": "الحمولة",
+    "MQTT": "MQTT",
+    "In leolink": "في leolink",
+    "In the camera": "في الكاميرا",
+    "Try again": "أعد المحاولة",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>الكاميرا تبلّغ:</b> يقرر كاشف الكاميرا نفسه ويرسل حدث ONVIF. وما "
+        "يراقبه ومدى سهولة تنبّهه يُضبط أدناه تحت «الكشف»، داخل الكاميرا "
+        "ذاتها.<br><br><b>‏leolink يراقب الصورة:</b> يفتح هذا الحاسوب اتصالاً "
+        "ثانياً بالبث الفرعي ويحلّل الصورة. يعمل مع أي كاميرا، بما فيها التي "
+        "لا تبلّغ عن شيء — ولا دور عندئذ لكاشف الكاميرا نفسه.",
+    "Choose what is watched…": "اختر ما يُراقَب…",
+    "How leolink learns of motion": "كيف يعلم leolink بالحركة",
+    "When leolink watches the picture": "حين يراقب leolink الصورة",
+    "Detection by leolink": "الكشف بواسطة leolink",
+    "Recording on this computer": "التسجيل على هذا الحاسوب",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "وجهة الملفات واحدة لكل الكاميرات وتُضبط تحت الإعدادات ▸ التسجيلات.",
+    "Follow the defaults under Settings": "اتّبع الإعدادات الافتراضية",
+    "Use this camera's own": "استخدم ما يخص هذه الكاميرا",
+    "Reactions": "ردود الفعل",
+    "What happens on an event": "ما يحدث عند وقوع حدث",
+    "Muted": "مكتومة",
+    "Sound in leolink": "الصوت في leolink",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "يوجد الضابطان نفساهما على بطاقة الكاميرا، حيث يسهل بلوغهما أسرع. "
+        "وتبدأ الكاميرات مكتومة: فتح جدار منها ينبغي ألّا يملأ الغرفة بصوت كل "
+        "واحدة دفعة واحدة.",
+    "Playback": "التشغيل",
+    "&Settings…": "الإ&عدادات…",
+    "Reactions": "ردود الفعل",
+    "Recordings": "التسجيلات",
+    "General": "عام",
+    "Tint the tile red for a moment": "لوّن البطاقة بالأحمر لحظةً",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "حتى تكفي نظرة واحدة إلى جدار من الكاميرات لمعرفة أيها كانت.",
+    " ms": " ms",
+    "Play a sound": "شغّل صوتاً",
+    "Empty: the desktop's own notification sound":
+        "فارغ: صوت التنبيه الخاص بسطح المكتب",
+    "Sound to play": "الصوت المراد تشغيله",
+    "For": "لمدة",
+    "Sound file": "ملف الصوت",
+    "On the screen": "على الشاشة",
+    "The window": "النافذة",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "أي الكاميرات يثير حدثاً أصلاً وكيف، يُضبط لكل كاميرا تحت الكاميرات ▸ "
+        "الإعدادات ▸ الكشف بواسطة leolink.",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "ما يفعله leolink حين تبلّغ كاميرا عن شيء. وتتبع الكاميرا هذه "
+        "الإعدادات ما لم يقل حوارها الخاص غير ذلك — كلها أو لا شيء منها، ولا "
+        "نصفها أبداً: فالإعدادات الموروثة جزئياً هي أصعب ما يُتتبَّع حين لا "
+        "يعمل شيء.",
+    "Recordings and stills": "التسجيلات واللقطات",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "تُكتب التسجيلات بصيغة Matroska دون إعادة ترميز: فتحتفظ الصورة بجودة "
+        "الكاميرا الأصلية ويبقى المعالج شبه خامل.\n\nأما إن كانت الكاميرا "
+        "تسجّل أصلاً فذلك إعدادها الخاص، تحت الكاميرات ▸ الإعدادات ▸ ردود "
+        "الفعل.",
+    "Settings for this camera…": "إعدادات هذه الكاميرا…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "الكشف وردود الفعل والتسجيل في leolink، ومرمِّز الكاميرا نفسها وصورتها "
+        "وجداولها.",
 }
 
 

@@ -1179,6 +1179,116 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "O login não devolveu token algum.",
     "Snapshot failed.": "Falha ao capturar o instantâneo.",
     "ONVIF subscription failed.": "Falha na assinatura ONVIF.",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n nome da câmera · %h endereço · %t hora · %e evento · %s on/off · "
+        "%f gravação · %p imagem",
+    "Run a command": "Executar um comando",
+    "Call a webhook": "Chamar um webhook",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "Deixado vazio, o leolink envia um pequeno documento JSON descrevendo "
+        "o evento.",
+    "Method": "Método",
+    "Body": "Corpo",
+    "Publish an MQTT message": "Publicar uma mensagem MQTT",
+    "Left empty: the same JSON document as the webhook.":
+        "Deixado vazio: o mesmo documento JSON do webhook.",
+    "Keep the last message on the broker":
+        "Manter a última mensagem no broker",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "Um cliente que se conectar depois fica sabendo do estado atual na "
+        "hora, em vez de esperar o próximo evento. É o que a automação "
+        "residencial costuma querer.",
+    "Broker": "Broker",
+    "Topic": "Tópico",
+    "Payload": "Carga útil",
+    "MQTT": "MQTT",
+    "In leolink": "No leolink",
+    "In the camera": "Na câmera",
+    "Try again": "Tentar de novo",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>A câmera avisa:</b> quem decide é o detector da própria câmera, "
+        "que envia um evento ONVIF. O que ele vigia e com que facilidade "
+        "dispara se ajusta mais abaixo, em «Detecção», dentro da própria "
+        "câmera.<br><br><b>O leolink observa a imagem:</b> este computador "
+        "abre uma segunda conexão ao fluxo secundário e analisa a imagem. "
+        "Funciona com qualquer câmera, inclusive as que não avisam nada — e aí "
+        "o detector da câmera não entra em jogo.",
+    "Choose what is watched…": "Escolher o que é vigiado…",
+    "How leolink learns of motion": "Como o leolink fica sabendo do movimento",
+    "When leolink watches the picture": "Quando o leolink observa a imagem",
+    "Detection by leolink": "Detecção pelo leolink",
+    "Recording on this computer": "Gravação neste computador",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "Para onde vão os arquivos é igual para todas as câmeras e se ajusta "
+        "em Configurações ▸ Gravações.",
+    "Follow the defaults under Settings": "Seguir os padrões em Configurações",
+    "Use this camera's own": "Usar os desta câmera",
+    "Reactions": "Reações",
+    "What happens on an event": "O que acontece em um evento",
+    "Muted": "Silenciada",
+    "Sound in leolink": "Som no leolink",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "Os mesmos dois controles ficam no bloco da própria câmera, onde se "
+        "alcançam mais rápido. As câmeras começam silenciadas: abrir uma "
+        "parede delas não deve encher a sala com o som de cada uma.",
+    "Playback": "Reprodução",
+    "&Settings…": "&Configurações…",
+    "Reactions": "Reações",
+    "Recordings": "Gravações",
+    "General": "Geral",
+    "Tint the tile red for a moment":
+        "Tingir o bloco de vermelho por um instante",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "Para que uma olhada numa parede de câmeras baste para ver qual foi.",
+    " ms": " ms",
+    "Play a sound": "Tocar um som",
+    "Empty: the desktop's own notification sound":
+        "Vazio: o som de notificação do próprio sistema",
+    "Sound to play": "Som a tocar",
+    "For": "Por",
+    "Sound file": "Arquivo de som",
+    "On the screen": "Na tela",
+    "The window": "A janela",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "Quais câmeras geram um evento, e como, se ajusta em cada uma em "
+        "Câmeras ▸ Configurações ▸ Detecção pelo leolink.",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "O que o leolink faz quando uma câmera avisa algo. Uma câmera segue "
+        "isto a menos que o próprio diálogo dela diga outra coisa — tudo ou "
+        "nada, nunca pela metade: configurações herdadas em parte são as mais "
+        "difíceis de entender quando algo não dispara.",
+    "Recordings and stills": "Gravações e instantâneos",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "As gravações são escritas como Matroska sem recodificar: a imagem "
+        "mantém a qualidade original da câmera e o processador fica quase "
+        "ocioso.\n\nSe uma câmera grava ou não é configuração dela, em Câmeras "
+        "▸ Configurações ▸ Reações.",
+    "Settings for this camera…": "Configurações desta câmera…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "Detecção, reações e gravação no leolink, e o codificador, a imagem e "
+        "os horários da própria câmera.",
 }
 
 

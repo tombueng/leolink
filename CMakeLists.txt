@@ -36,6 +36,8 @@ qt_add_executable(leolink
     src/ReolinkClient.cpp     src/ReolinkClient.h
     src/MotionWatcher.cpp     src/MotionWatcher.h
     src/SettingsDialog.cpp    src/SettingsDialog.h
+    src/PreferencesDialog.cpp src/PreferencesDialog.h
+    src/ActionEditor.cpp      src/ActionEditor.h
     src/CameraSettingsDialog.cpp src/CameraSettingsDialog.h
     src/EventLog.cpp          src/EventLog.h
     src/EventLogDialog.cpp    src/EventLogDialog.h

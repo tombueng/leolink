@@ -98,7 +98,6 @@ public:
     /// gives the familiar 1x1, 2x1, 2x2, 3x3 progression.
     int gridColumns{0};
     int gridRows{0};
-    bool showMotion{true};   ///< ONVIF motion indicator on each tile
 
     /// Default reactions to an event. A camera either follows these or
     /// replaces them entirely (CameraConfig::useGlobalActions).

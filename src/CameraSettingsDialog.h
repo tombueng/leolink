@@ -16,30 +16,46 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPlainTextEdit;
+class QListWidget;
 class QPushButton;
 class QSlider;
+class QSpinBox;
+class QStackedWidget;
 class QTableWidget;
-class QTabWidget;
 
 namespace leolink {
 
+class ActionEditor;
 class ReolinkClient;
 class SectionEditor;
 class SignalIndicator;
 
-/// Changes settings on the camera itself, as opposed to how leolink displays
-/// it.
+/// Everything about one camera, in two halves.
 ///
-/// Every control is built from what the camera reports through `action=1`:
-/// resolutions, bit rates, frame rates and profiles all come from its own
-/// `range` document. Nothing here is hardcoded, which is what lets one dialog
-/// serve models with entirely different capabilities — and why a setting the
-/// camera cannot do simply does not appear.
+/// **In leolink** — how this machine treats the camera: where motion is
+/// noticed, what happens when it is, whether it is recorded here. Editable
+/// whether or not the camera answers, because none of it needs the camera.
+///
+/// **In the camera** — settings written into the device: encoder, picture,
+/// its own detector, its own recording. Every control here is built from what
+/// the camera reports through `action=1`: resolutions, bit rates, frame rates
+/// and profiles all come from its own `range` document. Nothing is hardcoded,
+/// which is what lets one dialog serve models with entirely different
+/// capabilities — and why a setting the camera cannot do simply does not
+/// appear.
+///
+/// The camera half is applied with a button because writing to the device is
+/// slow and restarts the stream. The leolink half is kept on close, and the
+/// caller reads it back with cameraConfig().
 class CameraSettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
     CameraSettingsDialog(const CameraConfig &camera, QWidget *parent = nullptr);
+
+    /// The camera as edited here. Only meaningful once exec() returned
+    /// Accepted, which closing the dialog does.
+    CameraConfig cameraConfig() const { return m_camera; }
 
     /// Prints what the dialog ended up looking like and holding. Used by
     /// LEOLINK_DIALOG_TEST; there is no other way to check a dialog from
@@ -75,8 +91,17 @@ private slots:
     void onEditPrivacyMask();
     void onProbeCapabilities();
     void onCapabilities(const QMap<QString, QString> &results);
+    void onEditMotionZones();
+    /// Stores the leolink half back into m_camera and closes.
+    void onDone();
 
 private:
+    // ── the leolink half ────────────────────────────────────────────────────
+    void buildWatchTab();
+    void buildReactionTab();
+    void buildPlaybackTab();
+    void storeLeolinkSettings();
+
     void buildEncoderTab();
     void buildPictureTab();
     void buildMaintenanceTab();
@@ -90,10 +115,19 @@ private:
     void buildTimeTab();
     void buildUserTab();
 
+    /// Starts a group in the navigation list. The heading is a plain,
+    /// unselectable row: the two halves have to read as two halves, and a tab
+    /// bar cannot say that.
+    void beginSection(const QString &title);
+    /// Adds a page under the current section, wrapped so the dialog stays
+    /// resizable.
+    void addPage(QWidget *page, const QString &title);
+    /// Asks the camera for everything the device half needs. Called on opening
+    /// and again by the retry button.
+    void queryCamera();
+
     /// Creates an editor for one camera section and registers it so the reply
     /// to Get<name> lands in the right place.
-    /// Adds a tab, wrapped so the dialog stays resizable.
-    void addPage(QWidget *page, const QString &title);
     SectionEditor *addSection(QWidget *page, const QString &command,
                               const QString &title,
                               const QList<struct FieldSpec> &fields,
@@ -115,10 +149,30 @@ private:
 
     CameraConfig m_camera;
     ReolinkClient *m_client;
-    QTabWidget *m_tabs;
+    QListWidget *m_nav;
+    QStackedWidget *m_stack;
     QLabel *m_status;
     QPushButton *m_applyButton;
+    QPushButton *m_retryButton{nullptr};
     QPushButton *m_rebootButton{nullptr};
+
+    // ── the leolink half ────────────────────────────────────────────────────
+    QComboBox *m_motionSource{nullptr};
+    QPushButton *m_zonesButton{nullptr};
+    QSpinBox *m_sensitivity{nullptr};
+    QSpinBox *m_minArea{nullptr};
+    QCheckBox *m_audioDetection{nullptr};
+    QSpinBox *m_audioThreshold{nullptr};
+    QSpinBox *m_audioHold{nullptr};
+    /// The zone mask between opening the zone editor and closing the dialog:
+    /// the editor is modal and has nowhere else to leave it.
+    QString m_zones;
+    QCheckBox *m_recordOnMotion{nullptr};
+    QSpinBox *m_recordTrailing{nullptr};
+    QComboBox *m_actionScope{nullptr};
+    ActionEditor *m_actions{nullptr};
+    QCheckBox *m_muted{nullptr};
+    QSpinBox *m_volume{nullptr};
     QLabel *m_networkInfo{nullptr};
     SignalIndicator *m_signal{nullptr};
     QComboBox *m_wifiNetworks{nullptr};

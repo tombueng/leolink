@@ -45,6 +45,7 @@ protected:
 
 private slots:
     void openSettings();
+    void openPreferences();
     void snapshotAll();
     void toggleFullscreenTile(const QString &cameraId);
     void onVolumeChanged(const QString &cameraId, int volume, bool muted);
@@ -74,6 +75,9 @@ private:
     VideoTile *createTile(const CameraConfig &camera);
     /// Brings the grid into line with the configuration without tearing it
     /// down. Streams that have not changed keep running.
+    /// Puts a configuration into force: saves it, then brings the grid, the
+    /// watchers and the window chrome into line with it.
+    void applyConfig(const Config &next);
     void reconcileGrid(const Config &previous);
     /// Same for the things that watch for motion and sound.
     void reconcileWatchers(const QHash<QString, CameraConfig> &previous);

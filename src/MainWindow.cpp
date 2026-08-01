@@ -45,6 +45,7 @@
 #include "PlaybackBrowser.h"
 #include "Recorder.h"
 #include "ReolinkClient.h"
+#include "PreferencesDialog.h"
 #include "SettingsDialog.h"
 #include "TalkSession.h"
 #include "VideoTile.h"
@@ -251,10 +252,16 @@ void MainWindow::buildMenus()
 {
     auto *fileMenu = menuBar()->addMenu(tr("&File"));
 
-    auto *settingsAction = fileMenu->addAction(tr("&Cameras…"));
+    auto *camerasAction = fileMenu->addAction(tr("&Cameras…"));
+    camerasAction->setShortcut(QKeySequence(QStringLiteral("Ctrl+K")));
+    camerasAction->setIcon(QIcon::fromTheme(QStringLiteral("camera-video")));
+    connect(camerasAction, &QAction::triggered, this, &MainWindow::openSettings);
+
+    auto *settingsAction = fileMenu->addAction(tr("&Settings…"));
     settingsAction->setShortcut(QKeySequence::Preferences);
     settingsAction->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
-    connect(settingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+    connect(settingsAction, &QAction::triggered,
+            this, &MainWindow::openPreferences);
 
     auto *snapAction = fileMenu->addAction(tr("&Save snapshots…"));
     snapAction->setShortcut(QKeySequence(QStringLiteral("Ctrl+S")));
@@ -484,6 +491,7 @@ void MainWindow::buildMenus()
     // desktop's scaling instead of staying tiny on a high-resolution screen.
     const int toolbarIcon = qMax(24, fontMetrics().height() + 10);
     toolbar->setIconSize(QSize(toolbarIcon, toolbarIcon));
+    toolbar->addAction(camerasAction);
     toolbar->addAction(settingsAction);
     toolbar->addAction(snapAction);
     toolbar->addAction(m_recordAllAction);
@@ -669,7 +677,21 @@ VideoTile *MainWindow::createTile(const CameraConfig &camera)
                                 if (auto *tile = m_tiles.value(cameraId))
                                     tile->expectDisruption(20);
                             });
-                    dialog.exec();
+                    if (dialog.exec() != QDialog::Accepted)
+                        return;
+
+                    // The dialog now also holds leolink's own settings for
+                    // this camera — where motion is noticed, what happens
+                    // then. Those have to come back and be saved, or closing
+                    // the window would quietly throw them away.
+                    Config next = m_config;
+                    for (CameraConfig &camera : next.cameras) {
+                        if (camera.id == cameraId) {
+                            camera = dialog.cameraConfig();
+                            break;
+                        }
+                    }
+                    applyConfig(next);
                 }
             });
     connect(tile, &VideoTile::moveWindowRequested,
@@ -755,9 +777,8 @@ void MainWindow::applyLayout()
 
 void MainWindow::startWatchers()
 {
-    if (!m_config.showMotion)
-        return;
-
+    // No global switch any more: a camera that is not to be watched says so
+    // itself, with a motion source of "off".
     for (const CameraConfig &camera : m_config.active()) {
         const QString source = camera.motionSource;
         const bool useCamera = source == QLatin1String("camera") ||
@@ -1463,16 +1484,40 @@ void MainWindow::onSoundChanged(const QString &cameraId, bool active)
 void MainWindow::openSettings()
 {
     SettingsDialog dialog(m_config, this);
+    if (dialog.exec() == QDialog::Accepted)
+        applyConfig(dialog.result());
+}
+
+void MainWindow::openPreferences()
+{
+    PreferencesDialog dialog(m_config, this);
     if (dialog.exec() != QDialog::Accepted)
         return;
 
+    applyConfig(dialog.result());
+
+    // Hiding every way back into the settings would be a trap.
+    if (!m_config.showMenuBar && !m_config.showToolBar) {
+        QMessageBox::information(
+            this, tr("Menu bar hidden"),
+            tr("With both the menu bar and the toolbar hidden, press Ctrl+M "
+               "to bring the menu back."));
+    }
+}
+
+/// Takes a configuration from any of the three dialogs and makes it the one in
+/// force. Shared on purpose: the camera list, the settings window and a single
+/// camera's own dialog all hand back a whole Config, and each of them used to
+/// need the same dozen lines to put it into effect.
+void MainWindow::applyConfig(const Config &next)
+{
     // Kept so the reconciliation can tell what actually changed.
     const Config previous = m_config;
     QHash<QString, CameraConfig> watched;
     for (const CameraConfig &camera : m_config.active())
         watched.insert(camera.id, camera);
 
-    m_config = dialog.result();
+    m_config = next;
     if (!m_config.save()) {
         QMessageBox::warning(this, tr("Cannot save"),
                              tr("Settings could not be written to %1.")

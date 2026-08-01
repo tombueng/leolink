@@ -1179,6 +1179,114 @@ STRINGS: dict[str, str] = {
     "Login returned no token.": "Вход не вернул ключа.",
     "Snapshot failed.": "Не удалось сделать снимок.",
     "ONVIF subscription failed.": "Не удалось оформить подписку ONVIF.",
+
+    # ── the settings, split by reach ──
+    "%n camera name · %h host · %t time · %e event · %s on/off · %f recording "
+    "· %p image":
+        "%n название камеры · %h адрес · %t время · %e событие · %s вкл/выкл · "
+        "%f запись · %p изображение",
+    "Run a command": "Выполнить команду",
+    "Call a webhook": "Вызвать вебхук",
+    "Left empty, leolink sends a small JSON document describing the event.":
+        "Если оставить пустым, leolink отправит небольшой документ JSON с "
+        "описанием события.",
+    "Method": "Метод",
+    "Body": "Тело",
+    "Publish an MQTT message": "Опубликовать сообщение MQTT",
+    "Left empty: the same JSON document as the webhook.":
+        "Если оставить пустым: тот же документ JSON, что и у вебхука.",
+    "Keep the last message on the broker":
+        "Хранить последнее сообщение на брокере",
+    "A client connecting later is told the current state straight away, "
+    "instead of waiting for the next event. This is what home automation "
+    "usually wants.":
+        "Клиент, подключившийся позже, сразу узнаёт текущее состояние, а не "
+        "ждёт следующего события. Обычно это и нужно домашней автоматизации.",
+    "Broker": "Брокер",
+    "Topic": "Тема",
+    "Payload": "Полезная нагрузка",
+    "MQTT": "MQTT",
+    "In leolink": "В leolink",
+    "In the camera": "В камере",
+    "Try again": "Повторить",
+    "<b>The camera reports it:</b> the camera's own detector decides, and "
+    "sends an ONVIF event. What it watches and how readily it triggers is set "
+    "under “Detection” further down, in the camera itself.<br><br><b>leolink "
+    "watches the picture:</b> this computer opens a second sub-stream "
+    "connection and analyses the picture. Works with any camera, including "
+    "ones that report nothing — and the camera's own detector then plays no "
+    "part.":
+        "<b>Камера сообщает сама:</b> решает собственный детектор камеры, и он "
+        "отправляет событие ONVIF. Что он наблюдает и насколько легко "
+        "срабатывает, задаётся ниже, в разделе «Обнаружение», в самой "
+        "камере.<br><br><b>leolink наблюдает за картинкой:</b> этот компьютер "
+        "открывает второе соединение к дополнительному потоку и анализирует "
+        "изображение. Работает с любой камерой, в том числе с теми, что не "
+        "сообщают ни о чём, — и тогда собственный детектор камеры ни при чём.",
+    "Choose what is watched…": "Выбрать наблюдаемую область…",
+    "How leolink learns of motion": "Как leolink узнаёт о движении",
+    "When leolink watches the picture": "Когда leolink наблюдает за картинкой",
+    "Detection by leolink": "Обнаружение силами leolink",
+    "Recording on this computer": "Запись на этот компьютер",
+    "Where the files go is the same for every camera and is set under Settings "
+    "▸ Recordings.":
+        "Куда попадают файлы — общее для всех камер и задаётся в «Настройки ▸ "
+        "Записи».",
+    "Follow the defaults under Settings": "Следовать настройкам по умолчанию",
+    "Use this camera's own": "Использовать собственные для этой камеры",
+    "Reactions": "Реакции",
+    "What happens on an event": "Что происходит при событии",
+    "Muted": "Без звука",
+    "Sound in leolink": "Звук в leolink",
+    "The same two controls sit on the camera's own tile, where they are "
+    "quicker to reach. Cameras start muted: opening a wall of them should not "
+    "fill the room with sound from every one at once.":
+        "Те же две настройки есть на плитке самой камеры, где до них ближе. "
+        "Камеры начинают без звука: открывая стену камер, не хочется наполнить "
+        "комнату звуком от каждой сразу.",
+    "Playback": "Воспроизведение",
+    "&Settings…": "&Настройки…",
+    "Reactions": "Реакции",
+    "Recordings": "Записи",
+    "General": "Общее",
+    "Tint the tile red for a moment": "Ненадолго подсветить плитку красным",
+    "So a glance at a wall of cameras is enough to see which one it was.":
+        "Чтобы одного взгляда на стену камер хватало понять, какая это была.",
+    " ms": " мс",
+    "Play a sound": "Проиграть звук",
+    "Empty: the desktop's own notification sound":
+        "Пусто: звук уведомления самой системы",
+    "Sound to play": "Какой звук проигрывать",
+    "For": "В течение",
+    "Sound file": "Звуковой файл",
+    "On the screen": "На экране",
+    "The window": "Окно",
+    "Which cameras raise an event at all, and how, is set for each camera "
+    "under Cameras ▸ Settings ▸ Detection by leolink.":
+        "Какие камеры вообще создают события и как — задаётся для каждой в "
+        "«Камеры ▸ Настройки ▸ Обнаружение силами leolink».",
+    "What leolink does when a camera reports something. A camera follows these "
+    "unless its own dialog says otherwise — all of them or none, never half: "
+    "settings that are partly inherited are the hardest kind to reason about "
+    "when something does not fire.":
+        "Что делает leolink, когда камера о чём-то сообщает. Камера следует "
+        "этому, пока её собственный диалог не скажет иначе — всё или ничего, "
+        "но не наполовину: частично унаследованные настройки труднее всего "
+        "распутать, когда что-то не срабатывает.",
+    "Recordings and stills": "Записи и снимки",
+    "Recordings are written as Matroska without re-encoding: the picture keeps "
+    "the camera's original quality and the processor stays nearly "
+    "idle.\n\nWhether a camera records at all is its own setting, under "
+    "Cameras ▸ Settings ▸ Reactions.":
+        "Записи пишутся в Matroska без перекодирования: изображение сохраняет "
+        "исходное качество камеры, а процессор остаётся почти без "
+        "нагрузки.\n\nЗаписывает ли камера вообще — её собственная настройка, "
+        "в «Камеры ▸ Настройки ▸ Реакции».",
+    "Settings for this camera…": "Настройки этой камеры…",
+    "Detection, reactions and recording in leolink, and the camera's own "
+    "encoder, picture and schedules.":
+        "Обнаружение, реакции и запись в leolink, а также кодировщик, "
+        "изображение и расписания самой камеры.",
 }
 
 

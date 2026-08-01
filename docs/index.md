@@ -85,7 +85,13 @@ the camera.
 
 ## Events
 
-**Cameras… → Events.**
+**Cameras… → pick a camera → Settings for this camera…**, then *Detection by
+leolink* and *Reactions*.
+
+Every setting in this section belongs to the camera you picked, not to all of
+them — which is the whole reason it lives in that camera's own window. What
+happens on screen once an event arrives, on the other hand, is the same
+whichever camera raised it, and is under **Settings… → On motion**.
 
 ### Who notices the motion
 
@@ -207,7 +213,7 @@ anything can read it. It is pruned to 90 days at start-up.
 
 ## Window and desktop
 
-**Cameras… → Window.**
+**Settings… → Window.**
 
 Menu bar, toolbar, status bar and the window decoration can each be hidden, for
 a wall display that should show cameras and nothing else.
@@ -243,11 +249,18 @@ size or takes over the screen, whichever you pick.
 
 ### Alerts
 
+**Settings… → On motion.**
+
 A red flash over the tile for a moment, and optionally a sound. Both are
 adjustable; the sound falls back to the desktop's own notification sound if no
-file is given.
+file is given. The same page decides whether the window comes to the front.
+
+Which cameras raise an event at all is not here — that is per camera, under
+Cameras… → Settings for this camera… → Detection by leolink.
 
 ### Language
+
+**Settings… → General.**
 
 Twelve languages — Arabic, Chinese, English, French, German, Hindi, Italian,
 Japanese, Portuguese, Russian, Spanish and Turkish — or whatever the system asks

@@ -22,10 +22,13 @@
 #include <QTableWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QListWidget>
 #include <QSlider>
-#include <QTabWidget>
+#include <QSpinBox>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 
+#include "ActionEditor.h"
 #include "Log.h"
 #include "ReolinkClient.h"
 #include "SchedulePicker.h"
@@ -78,10 +81,34 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                                            QWidget *parent)
     : QDialog(parent), m_camera(camera), m_client(new ReolinkClient(this))
 {
-    setWindowTitle(tr("%1 — camera settings").arg(camera.label()));
-    resize(560, 520);
+    setWindowTitle(camera.label());
+    resize(760, 560);
 
-    m_tabs = new QTabWidget(this);
+    m_zones = camera.motionZones;
+
+    m_nav = new QListWidget(this);
+    m_nav->setFixedWidth(190);
+    // Nothing but a list of names: a frame and alternating rows would make it
+    // look like data rather than navigation.
+    m_nav->setFrameShape(QFrame::NoFrame);
+    m_nav->setStyleSheet(QStringLiteral(
+        "QListWidget { background: transparent; }"
+        "QListWidget::item { padding: 4px 8px; }"));
+    m_stack = new QStackedWidget(this);
+    connect(m_nav, &QListWidget::currentRowChanged, this, [this](int row) {
+        if (row < 0)
+            return;
+        const QVariant page = m_nav->item(row)->data(Qt::UserRole);
+        if (page.isValid())
+            m_stack->setCurrentIndex(page.toInt());
+    });
+
+    beginSection(tr("In leolink"));
+    buildWatchTab();
+    buildReactionTab();
+    buildPlaybackTab();
+
+    beginSection(tr("In the camera"));
     buildEncoderTab();
     buildPictureTab();
     buildOverlayTab();
@@ -97,17 +124,36 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     m_status = new QLabel(tr("Reading settings from %1…").arg(camera.host), this);
     m_status->setWordWrap(true);
 
+    m_retryButton = new QPushButton(tr("Try again"), this);
+    m_retryButton->hide();
+    connect(m_retryButton, &QPushButton::clicked, this, [this] {
+        m_retryButton->hide();
+        m_status->setStyleSheet(QString());
+        m_status->setText(tr("Reading settings from %1…").arg(m_camera.host));
+        queryCamera();
+    });
+
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close, this);
     m_applyButton = buttons->addButton(tr("Apply to camera"),
                                        QDialogButtonBox::ApplyRole);
     m_applyButton->setEnabled(false);
     connect(m_applyButton, &QPushButton::clicked, this,
             &CameraSettingsDialog::onApply);
-    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    // Closing keeps the leolink half, so it is an accept, not a reject.
+    connect(buttons, &QDialogButtonBox::rejected,
+            this, &CameraSettingsDialog::onDone);
+
+    auto *panes = new QHBoxLayout;
+    panes->addWidget(m_nav);
+    panes->addWidget(m_stack, 1);
+
+    auto *statusRow = new QHBoxLayout;
+    statusRow->addWidget(m_status, 1);
+    statusRow->addWidget(m_retryButton);
 
     auto *root = new QVBoxLayout(this);
-    root->addWidget(m_tabs, 1);
-    root->addWidget(m_status);
+    root->addLayout(panes, 1);
+    root->addLayout(statusRow);
     root->addWidget(buttons);
 
     connect(m_client, &ReolinkClient::sectionReady,
@@ -213,6 +259,12 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     });
 
     m_client->setCamera(camera);
+    m_nav->setCurrentRow(1);   // the first real page, not the heading above it
+    queryCamera();
+}
+
+void CameraSettingsDialog::queryCamera()
+{
     m_client->fetchNetworkInfo();
     m_client->fetchPerformance();
     m_client->fetchUsers();
@@ -237,6 +289,257 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     m_client->fetchSection(QStringLiteral("GetAlarm"), alarmParam);
     m_client->fetchSection(QStringLiteral("GetMdAlarm"), alarmParam);
     m_client->fetchSection(QStringLiteral("GetMask"), channel);
+}
+
+void CameraSettingsDialog::onDone()
+{
+    storeLeolinkSettings();
+    accept();
+}
+
+void CameraSettingsDialog::storeLeolinkSettings()
+{
+    m_camera.motionSource = m_motionSource->currentData().toString();
+    m_camera.motionZones = m_zones;
+    m_camera.motionSensitivity = m_sensitivity->value();
+    m_camera.motionMinArea = m_minArea->value();
+    m_camera.audioDetection = m_audioDetection->isChecked();
+    m_camera.audioThresholdDb = m_audioThreshold->value();
+    m_camera.audioHoldSeconds = m_audioHold->value();
+    m_camera.recordOnMotion = m_recordOnMotion->isChecked();
+    m_camera.recordTrailingSeconds = m_recordTrailing->value();
+    m_camera.useGlobalActions = m_actionScope->currentData().toBool();
+    m_camera.actions = m_actions->actions();
+    m_camera.muted = m_muted->isChecked();
+    m_camera.volume = m_volume->value();
+}
+
+void CameraSettingsDialog::onEditMotionZones()
+{
+    ZoneEditor editor(m_camera, m_zones, this);
+    if (editor.exec() == QDialog::Accepted)
+        m_zones = editor.mask();
+}
+
+// ── the leolink half ────────────────────────────────────────────────────────
+
+void CameraSettingsDialog::buildWatchTab()
+{
+    auto *page = new QWidget;
+
+    m_motionSource = new QComboBox(page);
+    m_motionSource->addItem(tr("The camera reports it (ONVIF)"),
+                            QStringLiteral("camera"));
+    m_motionSource->addItem(tr("leolink watches the picture"),
+                            QStringLiteral("local"));
+    m_motionSource->addItem(tr("Either of the two"), QStringLiteral("both"));
+    m_motionSource->addItem(tr("Do not watch"), QStringLiteral("off"));
+    for (int i = 0; i < m_motionSource->count(); ++i)
+        if (m_motionSource->itemData(i).toString() == m_camera.motionSource)
+            m_motionSource->setCurrentIndex(i);
+
+    // The sentence the two "Detection" pages never had between them. Which
+    // detector actually fires is the one thing nobody could work out from the
+    // old dialog, because the two halves lived in different windows.
+    auto *chain = new QLabel(
+        tr("<b>The camera reports it:</b> the camera's own detector decides, "
+           "and sends an ONVIF event. What it watches and how readily it "
+           "triggers is set under “Detection” further down, in the camera "
+           "itself.<br><br>"
+           "<b>leolink watches the picture:</b> this computer opens a second "
+           "sub-stream connection and analyses the picture. Works with any "
+           "camera, including ones that report nothing — and the camera's own "
+           "detector then plays no part."), page);
+    chain->setWordWrap(true);
+    chain->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    m_zonesButton = new QPushButton(tr("Choose what is watched…"), page);
+    connect(m_zonesButton, &QPushButton::clicked,
+            this, &CameraSettingsDialog::onEditMotionZones);
+
+    m_sensitivity = new QSpinBox(page);
+    m_sensitivity->setRange(1, 10);
+    m_sensitivity->setValue(m_camera.motionSensitivity);
+    m_sensitivity->setToolTip(
+        tr("How much a spot in the picture must change to count. Higher "
+           "notices more, including shadows and rain."));
+
+    m_minArea = new QSpinBox(page);
+    m_minArea->setRange(1, 500);
+    m_minArea->setSuffix(tr(" ‰"));
+    m_minArea->setValue(m_camera.motionMinArea);
+    m_minArea->setToolTip(
+        tr("How much of the watched area must change before it counts as "
+           "motion. 20‰ is two percent of the picture — roughly a person at "
+           "middle distance."));
+
+    auto *sourceForm = new QFormLayout;
+    sourceForm->addRow(tr("Motion comes from"), m_motionSource);
+    sourceForm->addRow(QString(), chain);
+
+    auto *sourceBox = new QGroupBox(tr("How leolink learns of motion"), page);
+    sourceBox->setLayout(sourceForm);
+
+    auto *localForm = new QFormLayout;
+    localForm->addRow(QString(), m_zonesButton);
+    localForm->addRow(tr("Sensitivity"), m_sensitivity);
+    localForm->addRow(tr("Minimum area"), m_minArea);
+
+    auto *localBox = new QGroupBox(tr("When leolink watches the picture"), page);
+    localBox->setLayout(localForm);
+
+    // Only meaningful when the picture is analysed here.
+    auto syncLocal = [this, localBox] {
+        const QString source = m_motionSource->currentData().toString();
+        localBox->setEnabled(source == QLatin1String("local") ||
+                             source == QLatin1String("both"));
+    };
+    connect(m_motionSource, &QComboBox::currentIndexChanged, this, syncLocal);
+
+    m_audioDetection = new QCheckBox(tr("Raise an event on sound"), page);
+    m_audioDetection->setChecked(m_camera.audioDetection);
+    m_audioDetection->setToolTip(
+        tr("Needs a camera with a microphone. Opens another connection to the "
+           "sub stream."));
+
+    m_audioThreshold = new QSpinBox(page);
+    m_audioThreshold->setRange(-90, 0);
+    m_audioThreshold->setSuffix(tr(" dB"));
+    m_audioThreshold->setValue(static_cast<int>(m_camera.audioThresholdDb));
+    m_audioThreshold->setToolTip(
+        tr("-60 dB is close to silence, -20 dB a raised voice nearby."));
+
+    m_audioHold = new QSpinBox(page);
+    m_audioHold->setRange(0, 120);
+    m_audioHold->setSuffix(tr(" s"));
+    m_audioHold->setValue(m_camera.audioHoldSeconds);
+    m_audioHold->setToolTip(
+        tr("Keeps the event up after the noise stops, so one bark is not "
+           "reported four times."));
+
+    auto syncAudio = [this](bool on) {
+        m_audioThreshold->setEnabled(on);
+        m_audioHold->setEnabled(on);
+    };
+    connect(m_audioDetection, &QCheckBox::toggled, this, syncAudio);
+
+    auto *soundForm = new QFormLayout;
+    soundForm->addRow(QString(), m_audioDetection);
+    soundForm->addRow(tr("Sound above"), m_audioThreshold);
+    soundForm->addRow(tr("Hold for"), m_audioHold);
+
+    auto *soundBox = new QGroupBox(tr("Sound"), page);
+    soundBox->setLayout(soundForm);
+
+    auto *layout = new QVBoxLayout(page);
+    layout->addWidget(sourceBox);
+    layout->addWidget(localBox);
+    layout->addWidget(soundBox);
+    layout->addStretch(1);
+
+    syncLocal();
+    syncAudio(m_camera.audioDetection);
+    addPage(page, tr("Detection by leolink"));
+}
+
+void CameraSettingsDialog::buildReactionTab()
+{
+    auto *page = new QWidget;
+
+    m_recordOnMotion = new QCheckBox(tr("Record while motion lasts"), page);
+    m_recordOnMotion->setChecked(m_camera.recordOnMotion);
+    m_recordOnMotion->setToolTip(
+        tr("Records on this computer from the live stream, so it works even "
+           "when the camera has no SD card fitted."));
+
+    m_recordTrailing = new QSpinBox(page);
+    m_recordTrailing->setRange(0, 600);
+    m_recordTrailing->setSuffix(tr(" s"));
+    m_recordTrailing->setValue(m_camera.recordTrailingSeconds);
+
+    connect(m_recordOnMotion, &QCheckBox::toggled,
+            m_recordTrailing, &QWidget::setEnabled);
+    m_recordTrailing->setEnabled(m_camera.recordOnMotion);
+
+    auto *recordForm = new QFormLayout;
+    recordForm->addRow(QString(), m_recordOnMotion);
+    recordForm->addRow(tr("Keep recording after"), m_recordTrailing);
+
+    auto *recordBox = new QGroupBox(tr("Recording on this computer"), page);
+    recordBox->setLayout(recordForm);
+
+    auto *folderNote = new QLabel(
+        tr("Where the files go is the same for every camera and is set under "
+           "Settings ▸ Recordings."), page);
+    folderNote->setWordWrap(true);
+    folderNote->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+    recordForm->addRow(QString(), folderNote);
+
+    m_actionScope = new QComboBox(page);
+    m_actionScope->addItem(tr("Follow the defaults under Settings"), true);
+    m_actionScope->addItem(tr("Use this camera's own"), false);
+    m_actionScope->setCurrentIndex(m_camera.useGlobalActions ? 0 : 1);
+
+    m_actions = new ActionEditor(page);
+    m_actions->setActions(m_camera.actions);
+
+    auto syncScope = [this] {
+        m_actions->setEnabled(!m_actionScope->currentData().toBool());
+    };
+    connect(m_actionScope, &QComboBox::currentIndexChanged, this, syncScope);
+    syncScope();
+
+    auto *scopeForm = new QFormLayout;
+    scopeForm->addRow(tr("Reactions"), m_actionScope);
+
+    auto *actionBox = new QGroupBox(tr("What happens on an event"), page);
+    auto *actionLayout = new QVBoxLayout(actionBox);
+    actionLayout->addLayout(scopeForm);
+    actionLayout->addWidget(m_actions);
+
+    auto *layout = new QVBoxLayout(page);
+    layout->addWidget(recordBox);
+    layout->addWidget(actionBox);
+    layout->addStretch(1);
+    addPage(page, tr("Reactions"));
+}
+
+void CameraSettingsDialog::buildPlaybackTab()
+{
+    auto *page = new QWidget;
+
+    m_muted = new QCheckBox(tr("Muted"), page);
+    m_muted->setChecked(m_camera.muted);
+
+    m_volume = new QSpinBox(page);
+    m_volume->setRange(0, 100);
+    m_volume->setSuffix(QStringLiteral(" %"));
+    m_volume->setValue(m_camera.volume);
+
+    connect(m_muted, &QCheckBox::toggled, this, [this](bool on) {
+        m_volume->setEnabled(!on);
+    });
+    m_volume->setEnabled(!m_camera.muted);
+
+    auto *form = new QFormLayout;
+    form->addRow(QString(), m_muted);
+    form->addRow(tr("Volume"), m_volume);
+
+    auto *box = new QGroupBox(tr("Sound in leolink"), page);
+    box->setLayout(form);
+
+    auto *note = new QLabel(
+        tr("The same two controls sit on the camera's own tile, where they are "
+           "quicker to reach. Cameras start muted: opening a wall of them "
+           "should not fill the room with sound from every one at once."), page);
+    note->setWordWrap(true);
+    note->setStyleSheet(QStringLiteral("color:#7f8c8d;"));
+
+    auto *layout = new QVBoxLayout(page);
+    layout->addWidget(box);
+    layout->addWidget(note);
+    layout->addStretch(1);
+    addPage(page, tr("Playback"));
 }
 
 // ── layout ──────────────────────────────────────────────────────────────────
@@ -1069,6 +1372,20 @@ void CameraSettingsDialog::onReboot()
     m_client->reboot();
 }
 
+void CameraSettingsDialog::beginSection(const QString &title)
+{
+    auto *heading = new QListWidgetItem(title, m_nav);
+    heading->setFlags(Qt::NoItemFlags);   // a label, not a destination
+    QFont font = heading->font();
+    font.setBold(true);
+    font.setPointSizeF(font.pointSizeF() * 0.85);
+    heading->setFont(font);
+    heading->setForeground(palette().color(QPalette::Disabled, QPalette::Text));
+    // Air above every heading but the first, so the halves read as halves.
+    if (m_nav->count() > 1)
+        heading->setSizeHint(QSize(0, 34));
+}
+
 void CameraSettingsDialog::addPage(QWidget *page, const QString &title)
 {
     // Inside a scroll area, every one of them.
@@ -1084,7 +1401,9 @@ void CameraSettingsDialog::addPage(QWidget *page, const QString &title)
     area->setWidget(page);
     area->setWidgetResizable(true);
     area->setFrameShape(QFrame::NoFrame);
-    m_tabs->addTab(area, title);
+
+    auto *entry = new QListWidgetItem(title, m_nav);
+    entry->setData(Qt::UserRole, m_stack->addWidget(area));
 }
 
 SectionEditor *CameraSettingsDialog::addSection(QWidget *page,
@@ -2207,7 +2526,7 @@ void CameraSettingsDialog::reportForTesting() const
     std::fprintf(stderr, "size            %dx%d\n", width(), height());
     std::fprintf(stderr, "minimum         %dx%d\n",
                  minimumSizeHint().width(), minimumSizeHint().height());
-    std::fprintf(stderr, "tabs            %d\n", m_tabs->count());
+    std::fprintf(stderr, "pages           %d\n", m_stack->count());
     std::fprintf(stderr, "users           %d row(s)\n", m_userTable->rowCount());
     std::fprintf(stderr, "user status     %s\n",
                  qPrintable(m_userStatus->text()));
@@ -2217,11 +2536,16 @@ void CameraSettingsDialog::reportForTesting() const
     std::fprintf(stderr, "condition       %s\n",
                  qPrintable(m_performance->text().replace('\n', ' ')));
     std::fprintf(stderr, "status          %s\n", qPrintable(m_status->text()));
-    for (int i = 0; i < m_tabs->count(); ++i) {
-        std::fprintf(stderr, "  tab %-16s hint %dx%d\n",
-                     qPrintable(m_tabs->tabText(i)),
-                     m_tabs->widget(i)->sizeHint().width(),
-                     m_tabs->widget(i)->sizeHint().height());
+    for (int i = 0; i < m_nav->count(); ++i) {
+        const QVariant page = m_nav->item(i)->data(Qt::UserRole);
+        if (!page.isValid()) {
+            std::fprintf(stderr, "  ── %s\n", qPrintable(m_nav->item(i)->text()));
+            continue;
+        }
+        QWidget *widget = m_stack->widget(page.toInt());
+        std::fprintf(stderr, "  page %-22s hint %dx%d\n",
+                     qPrintable(m_nav->item(i)->text()),
+                     widget->sizeHint().width(), widget->sizeHint().height());
     }
 }
 
@@ -2256,6 +2580,11 @@ void CameraSettingsDialog::onFailed(const QString &reason)
 
     m_status->setText(reason);
     m_status->setStyleSheet(QStringLiteral("color:#c0392b;"));
+    // The camera half needs the camera; the leolink half does not, and stays
+    // usable. Without the button the only way to try a camera that has come
+    // back is to close the window and open it again.
+    if (m_retryButton)
+        m_retryButton->show();
 }
 
 } // namespace leolink

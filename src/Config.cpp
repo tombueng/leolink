@@ -174,7 +174,6 @@ Config Config::load()
     cfg.gridColumns = root.value(QStringLiteral("gridColumns"))
                           .toInt(root.value(QStringLiteral("columns")).toInt(0));
     cfg.gridRows = root.value(QStringLiteral("gridRows")).toInt(0);
-    cfg.showMotion = root.value(QStringLiteral("showMotion")).toBool(true);
     cfg.recordDir = root.value(QStringLiteral("recordDir")).toString();
     cfg.actions = actionsFromJson(root.value(QStringLiteral("actions")).toObject());
     cfg.showMenuBar = root.value(QStringLiteral("showMenuBar")).toBool(true);
@@ -247,6 +246,16 @@ Config Config::load()
         if (!c.host.isEmpty())
             cfg.cameras.append(c);
     }
+
+    // "showMotion" was a global switch that stopped every watcher — ONVIF and
+    // leolink's own picture analysis alike — while calling itself an ONVIF
+    // setting. Each camera already says for itself whether it is watched, so
+    // the switch is gone; an old configuration that had it off is carried over
+    // by saying so on every camera, which is what it meant all along.
+    if (!root.value(QStringLiteral("showMotion")).toBool(true)) {
+        for (CameraConfig &c : cfg.cameras)
+            c.motionSource = QStringLiteral("off");
+    }
     return cfg;
 }
 
@@ -295,7 +304,6 @@ bool Config::save() const
     root[QStringLiteral("cameras")] = arr;
     root[QStringLiteral("gridColumns")] = gridColumns;
     root[QStringLiteral("gridRows")] = gridRows;
-    root[QStringLiteral("showMotion")] = showMotion;
     root[QStringLiteral("recordDir")] = recordDir;
     root[QStringLiteral("actions")] = actionsToJson(actions);
     root[QStringLiteral("showMenuBar")] = showMenuBar;
