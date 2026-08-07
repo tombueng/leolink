@@ -1,6 +1,8 @@
 // Motion events over ONVIF PullPoint (port 8000).
 #pragma once
 
+#include <QHash>
+#include <QList>
 #include <QObject>
 #include <QString>
 
@@ -32,9 +34,18 @@ class MotionWatcher : public QObject {
 public:
     explicit MotionWatcher(QObject *parent = nullptr);
 
-    void watch(const CameraConfig &camera);
+    void watch(const CameraConfig &camera) { watch(QList<CameraConfig>{camera}); }
+    /// Watches every camera on one device with a single subscription.
+    ///
+    /// A recorder sends all of its channels' events down each subscription it
+    /// hands out, so one per camera means the same events five times over and
+    /// five long polls against a box that already refuses requests under load.
+    /// One subscription per host, fanned out by the channel the event names,
+    /// is the same information for a fifth of the traffic.
+    void watch(const QList<CameraConfig> &cameras);
     void stop();
 
+    /// True if any of the watched cameras is seeing motion.
     bool isActive() const { return m_active; }
 
 signals:
@@ -50,16 +61,22 @@ private:
     /// One <NotificationMessage> from a poll: raises motion if it says so and
     /// if it is about this camera.
     void handleMessage(const QString &message);
-    /// Whether a message concerns this camera's channel. A recorder sends
-    /// every channel's events down one subscription, so on an NVR the source
-    /// token has to be read; a camera sends only its own and is not asked.
-    bool concernsThisChannel(const QString &message) const;
+    /// The channel an event is about, or -1 when it does not say. Read from
+    /// the source token, whose shape is firmware's business — "000",
+    /// "VideoSource_2" — so the trailing digits decide it.
+    int channelOf(const QString &message) const;
     QByteArray envelope(const QString &body, const QString &action,
                         const QString &to) const;
     QString securityHeader() const;
 
     QNetworkAccessManager *m_net;
+    /// The device: host, credentials, and the label used in the log.
     CameraConfig m_camera;
+    /// Everything watched through it. One entry for a camera, one per channel
+    /// for a recorder.
+    QList<CameraConfig> m_cameras;
+    /// Last reported state per camera id, so a change is reported once.
+    QHash<QString, bool> m_activeById;
     QString m_subscription;
     bool m_active{false};
     bool m_running{false};

@@ -781,6 +781,9 @@ void MainWindow::startWatchers()
 {
     // No global switch any more: a camera that is not to be watched says so
     // itself, with a motion source of "off".
+    // Collected first, then subscribed to once each.
+    QSet<QString> watchedHosts;
+
     for (const CameraConfig &camera : m_config.active()) {
         const QString source = camera.motionSource;
         const bool useCamera = source == QLatin1String("camera") ||
@@ -788,16 +791,12 @@ void MainWindow::startWatchers()
         const bool useLocal = source == QLatin1String("local") ||
                               source == QLatin1String("both");
 
-        // Only what is missing. reconcileWatchers() removes the ones whose
-        // settings moved and leaves the rest alone, so creating a second
-        // watcher here would mean two subscriptions and doubled events.
-        if (useCamera && !m_watchers.contains(camera.id)) {
-            auto *watcher = new MotionWatcher(this);
-            connect(watcher, &MotionWatcher::motionChanged,
-                    this, &MainWindow::onMotionChanged);
-            watcher->watch(camera);
-            m_watchers.insert(camera.id, watcher);
-        }
+        // Watchers are keyed by host, not by camera: a recorder answers for
+        // all of its channels through one subscription, and taking one each
+        // would mean five long polls carrying five copies of every event.
+        // A camera has a host to itself, so nothing changes for one.
+        if (useCamera && !m_watchers.contains(camera.host))
+            watchedHosts.insert(camera.host);
 
         if (useLocal && !m_detectors.contains(camera.id) &&
             MotionDetector::available()) {
@@ -828,6 +827,27 @@ void MainWindow::startWatchers()
                             camera.audioHoldSeconds);
             m_listeners.insert(camera.id, listener);
         }
+    }
+
+    // One watcher per device, told about every camera on it, so an event can
+    // be handed to the channel it names.
+    for (const QString &host : std::as_const(watchedHosts)) {
+        QList<CameraConfig> onThisHost;
+        for (const CameraConfig &camera : m_config.active()) {
+            const QString source = camera.motionSource;
+            const bool useCamera = source == QLatin1String("camera") ||
+                                   source == QLatin1String("both");
+            if (useCamera && camera.host == host)
+                onThisHost.append(camera);
+        }
+        if (onThisHost.isEmpty())
+            continue;
+
+        auto *watcher = new MotionWatcher(this);
+        connect(watcher, &MotionWatcher::motionChanged,
+                this, &MainWindow::onMotionChanged);
+        watcher->watch(onThisHost);
+        m_watchers.insert(host, watcher);
     }
 }
 
@@ -899,25 +919,53 @@ void MainWindow::releaseStatusClients()
 
 void MainWindow::pollCameraStatus()
 {
-    // Cameras that have been removed or switched off take their session with
-    // them, rather than being polled for ever.
     const QList<CameraConfig> active = m_config.active();
-    QSet<QString> live;
+
+    // A host is a device. Several cameras on one means a recorder, and a
+    // recorder is on Ethernet by definition — asking each of its channels for
+    // a Wi-Fi strength is five logins, five sessions and five requests every
+    // thirty seconds to a box that has only a handful of sessions to give and
+    // answers -26 to all five. It was enough, with five channels, to make the
+    // recorder start refusing requests and drop every stream it was serving.
+    QHash<QString, QList<QString>> byHost;
     for (const CameraConfig &camera : active)
-        live.insert(camera.id);
-    for (const QString &id : m_statusClients.keys()) {
-        if (!live.contains(id)) {
-            delete m_statusClients.take(id);
-            LEO_DEBUG(Api, id, QStringLiteral("Camera gone, session released"));
+        byHost[camera.host].append(camera.id);
+
+    // Sessions belonging to hosts that are gone, or that have since turned out
+    // to be recorders, are handed back rather than left to lapse.
+    for (const QString &host : m_statusClients.keys()) {
+        if (!byHost.contains(host) || byHost.value(host).size() > 1) {
+            delete m_statusClients.take(host);
+            LEO_DEBUG(Api, host, QStringLiteral("Status session released"));
         }
     }
 
-    for (const CameraConfig &camera : active) {
-        ReolinkClient *client = m_statusClients.value(camera.id);
+    for (auto it = byHost.cbegin(); it != byHost.cend(); ++it) {
+        const QString host = it.key();
+        const QList<QString> ids = it.value();
+
+        if (ids.size() > 1) {
+            // Wired, and known to be, so the meter is hidden rather than left
+            // empty — which would read as a fault.
+            for (const QString &id : ids) {
+                if (auto *tile = m_tiles.value(id))
+                    tile->setLinkType(QStringLiteral("LAN"));
+            }
+            continue;
+        }
+
+        const QString id = ids.first();
+        ReolinkClient *client = m_statusClients.value(host);
         if (!client) {
+            CameraConfig config;
+            for (const CameraConfig &camera : active) {
+                if (camera.id == id) {
+                    config = camera;
+                    break;
+                }
+            }
             client = new ReolinkClient(this);
-            client->setCamera(camera);
-            const QString id = camera.id;
+            client->setCamera(config);
             connect(client, &ReolinkClient::wifiSignalReady, this,
                     [this, id](int strength) {
                         if (auto *tile = m_tiles.value(id))
@@ -934,7 +982,7 @@ void MainWindow::pollCameraStatus()
                 if (auto *tile = m_tiles.value(id))
                     tile->setWifiSignal(-1);
             });
-            m_statusClients.insert(camera.id, client);
+            m_statusClients.insert(host, client);
             // The link type is asked once; it does not change while running.
             client->fetchNetworkInfo();
         }
@@ -1847,9 +1895,21 @@ void MainWindow::reconcileWatchers(const QHash<QString, CameraConfig> &previous)
         }
         if (!changed)
             continue;
-        if (auto *watcher = m_watchers.take(id)) {
-            watcher->stop();
-            watcher->deleteLater();
+        // Keyed by host now: dropping it takes every camera on that device
+        // with it, and startWatchers() rebuilds the one subscription with
+        // whatever the list holds afterwards. Both the host it was on and the
+        // host it is on now, so a camera moved between devices is neither
+        // watched by the one it left nor missing from the one it joined.
+        QSet<QString> hosts{previous.value(id).host};
+        for (const CameraConfig &camera : m_config.active()) {
+            if (camera.id == id)
+                hosts.insert(camera.host);
+        }
+        for (const QString &host : std::as_const(hosts)) {
+            if (auto *watcher = m_watchers.take(host)) {
+                watcher->stop();
+                watcher->deleteLater();
+            }
         }
         if (auto *detector = m_detectors.take(id)) {
             detector->stop();

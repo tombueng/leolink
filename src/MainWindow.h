@@ -176,7 +176,9 @@ private:
     QLabel *m_placeholder{nullptr};
 
     QHash<QString, VideoTile *> m_tiles;
-    QHash<QString, MotionWatcher *> m_watchers;      ///< ONVIF, camera-side
+    /// ONVIF, camera-side. Keyed by **host**, not by camera id: one
+    /// subscription serves every channel of a recorder.
+    QHash<QString, MotionWatcher *> m_watchers;
     QHash<QString, MotionDetector *> m_detectors;    ///< picture analysed here
     QHash<QString, AudioDetector *> m_listeners;
     /// Per camera: stops the recording once motion has stayed clear long enough.
@@ -192,6 +194,8 @@ private:
     /// can name the file before it exists.
     QHash<QString, QString> m_bufferedPath;
     /// One client per camera, kept alive to poll the Wi-Fi strength.
+    /// Keyed by **host**. One session per device, and none at all for a
+    /// recorder, whose channels have no Wi-Fi to report.
     QHash<QString, ReolinkClient *> m_statusClients;
     /// One per camera currently being spoken through.
     QHash<QString, TalkSession *> m_talkers;

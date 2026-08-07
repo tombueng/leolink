@@ -12,6 +12,8 @@
 #include <QTimer>
 #include <QUuid>
 
+#include <algorithm>
+
 namespace leolink {
 
 namespace {
@@ -99,9 +101,16 @@ QByteArray MotionWatcher::envelope(const QString &body, const QString &action,
         .toUtf8();
 }
 
-void MotionWatcher::watch(const CameraConfig &camera)
+void MotionWatcher::watch(const QList<CameraConfig> &cameras)
 {
-    m_camera = camera;
+    if (cameras.isEmpty())
+        return;
+
+    // The first one supplies the address and the login. They are all on the
+    // same device, so any of them would do.
+    m_camera = cameras.first();
+    m_cameras = cameras;
+    m_activeById.clear();
     m_running = true;
     m_failures = 0;
     subscribe();
@@ -235,67 +244,75 @@ void MotionWatcher::pull()
     });
 }
 
-bool MotionWatcher::concernsThisChannel(const QString &message) const
+int MotionWatcher::channelOf(const QString &message) const
 {
-    // A camera has one input and no reason to say which; only a recorder's
-    // events need attributing.
-    if (m_camera.channel == 0)
-        return true;
-
     const QRegularExpression sourceRe(
         QStringLiteral("<(?:\\w+:)?Source(?:\\s[^>]*)?>(.*?)</(?:\\w+:)?Source>"),
         QRegularExpression::DotMatchesEverythingOption);
     const auto source = sourceRe.match(message);
-    if (!source.hasMatch()) {
-        LEO_DEBUG(Onvif, m_camera.label(),
-                  QStringLiteral("Event with no source, cannot tell which "
-                                 "channel it is about: %1").arg(message.left(300)));
-        return false;
-    }
+    if (!source.hasMatch())
+        return -1;
 
-    // The token is whatever this firmware calls its inputs — "000", "VideoSource_2",
-    // a channel number on its own. The digits at the end of it are the channel
-    // in every form seen so far, and the value is logged either way so a
-    // recorder that numbers them differently shows up in the log rather than
-    // as silence.
     const QRegularExpression valueRe(
         QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"([^\"]+)\"\\s+Value=\"([^\"]+)\""));
     auto it = valueRe.globalMatch(source.captured(1));
     while (it.hasNext()) {
         const auto m = it.next();
-        const QString value = m.captured(2);
         const QRegularExpression tailRe(QStringLiteral("(\\d+)\\s*$"));
-        const auto tail = tailRe.match(value);
-        LEO_DEBUG(Onvif, m_camera.label(),
-                  QStringLiteral("Event source %1=%2, want channel %3")
-                      .arg(m.captured(1), value).arg(m_camera.channel));
-        if (tail.hasMatch() && tail.captured(1).toInt() == m_camera.channel)
-            return true;
+        const auto tail = tailRe.match(m.captured(2));
+        if (tail.hasMatch()) {
+            LEO_DEBUG(Onvif, m_camera.label(),
+                      QStringLiteral("Event source %1=%2 → channel %3")
+                          .arg(m.captured(1), m.captured(2), tail.captured(1)));
+            return tail.captured(1).toInt();
+        }
     }
-    return false;
+    return -1;
 }
 
 void MotionWatcher::handleMessage(const QString &message)
 {
-    if (!concernsThisChannel(message))
-        return;
-
     const QRegularExpression itemRe(
         QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"(IsMotion|State)\"\\s+"
                        "Value=\"([^\"]+)\""));
     auto it = itemRe.globalMatch(message);
+    if (!it.hasNext())
+        return;
+
+    // Which camera this is about. A device watching one camera never asks —
+    // it has only one answer, and a firmware that names no source would
+    // otherwise go unheard, which is how this behaved before recorders.
+    const int channel = m_cameras.size() == 1 ? m_cameras.first().channel
+                                              : channelOf(message);
+    if (channel < 0 && m_cameras.size() > 1) {
+        LEO_DEBUG(Onvif, m_camera.label(),
+                  QStringLiteral("Event names no channel, ignored on a device "
+                                 "watching %1 cameras: %2")
+                      .arg(m_cameras.size()).arg(message.left(300)));
+        return;
+    }
+
     while (it.hasNext()) {
         const auto m = it.next();
         const bool active = m.captured(2).compare(QLatin1String("true"),
                                                   Qt::CaseInsensitive) == 0;
-        if (active != m_active) {
-            m_active = active;
-            LEO_INFO(Onvif, m_camera.label(),
+
+        for (const CameraConfig &camera : std::as_const(m_cameras)) {
+            if (camera.channel != channel)
+                continue;
+            if (m_activeById.value(camera.id, false) == active)
+                continue;
+            m_activeById.insert(camera.id, active);
+            LEO_INFO(Onvif, camera.label(),
                      active ? QStringLiteral("Camera reports motion")
                             : QStringLiteral("Camera reports motion ended"));
-            emit motionChanged(m_camera.id, active);
+            emit motionChanged(camera.id, active);
         }
     }
+
+    // Kept for isActive(): any watched camera seeing something.
+    m_active = std::any_of(m_activeById.cbegin(), m_activeById.cend(),
+                           [](bool on) { return on; });
 }
 
 } // namespace leolink
