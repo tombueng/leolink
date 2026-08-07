@@ -34,6 +34,10 @@ software is involved.
 - **Event log** with the still and recording captured at the time, filterable
   per camera.
 - **Finds cameras** on the network by ONVIF discovery.
+- **NVRs**: testing the connection to a recorder notices what it is and offers
+  its cameras by name, so eight of them are added in one go. Each one is then
+  an ordinary camera in the grid, with its own settings, detection and
+  recording — the recorder is only how it is reached.
 - **Fits the desktop**: follows the system light/dark palette, tray icon,
   hideable menu bar and window decoration for wall displays.
 - **Recordings on the camera's SD card**: search by period, play, download.
@@ -106,8 +110,13 @@ main-stream resolutions.
 ## Building
 
 ```bash
+# Debian, Ubuntu
 sudo apt install cmake ninja-build qt6-base-dev qt6-svg-dev qt6-tools-dev \
                  qt6-tools-dev-tools libmpv-dev
+
+# Fedora
+sudo dnf install cmake ninja-build gcc-c++ qt6-qtbase-devel qt6-qtsvg-devel \
+                 qt6-qttools-devel mpv-devel
 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build

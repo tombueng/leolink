@@ -166,6 +166,10 @@ rtsp://<user>:<pass>@<host>:554/h264Preview_01_sub       640x352 H.264 + AAC
 
 Channel is **1-based** here. TCP transport is more reliable than UDP.
 
+An NVR serves its cameras from this same path on its own address: channel 3 of
+a recorder is `/h264Preview_04_sub` on the recorder, with the recorder's own
+credentials. There is no separate port or path per camera.
+
 ### HTTP-FLV
 
 What the web interface actually uses for live view:
@@ -175,6 +179,7 @@ http://<host>/flv?port=1935&app=bcs&stream=channel0_main.bcs&user=<u>&password=<
 ```
 
 Channel is **0-based** here — the inconsistency is the vendor's, not a typo.
+An NVR's fourth camera is `channel3_main.bcs`.
 Authentication is by query parameter, no token needed, and it only requires
 port 80.
 
@@ -186,6 +191,23 @@ GET /cgi-bin/api.cgi?cmd=Snap&channel=0&rs=<nonce>&token=<token>
 
 JPEG at full main-stream resolution. Note that an error comes back as JSON with
 HTTP 200, so check for the JPEG marker rather than the status code.
+
+### Recorders
+
+A device that answers `GetDevInfo` with `channelNum` greater than one is an
+NVR. Everything else follows from that one number: the same login, the same
+address and the same port serve every camera on it, and each request that could
+be about a particular one carries `channel`.
+
+`GetChannelstatus` names them:
+
+```json
+{"cmd":"GetChannelstatus","value":{"count":8,"status":[
+  {"channel":0,"name":"Front door","typeInfo":"RLC-810A","online":1}]}}
+```
+
+Older firmware answers `-9` to it — including the RLC-410W above, which has one
+channel anyway. `channelNum` alone is then enough to offer a numbered list.
 
 ### Playback — not verified
 

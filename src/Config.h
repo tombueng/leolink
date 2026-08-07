@@ -19,6 +19,12 @@ struct CameraConfig {
     /// (`pass show reolink/hall`, `secret-tool lookup …`). Empty = use password.
     QString passwordCommand;
     QString uid;                 ///< Baichuan P2P id; empty = LAN only
+    /// Which input of the device this camera is. Zero for a camera, which is
+    /// what every standalone Reolink is; an NVR answers for all of its
+    /// channels on one host, one address and one login, so a camera behind one
+    /// is this host plus this number and nothing else. Every request that can
+    /// be about a particular input carries it.
+    int channel{0};
     QString stream{QStringLiteral("sub")};      ///< "main" or "sub"
     QString transport{QStringLiteral("rtsp")};  ///< "rtsp", "flv" or "custom"
     /// Used when transport is "custom": any URL libmpv can open. Lets leolink

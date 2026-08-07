@@ -211,24 +211,91 @@ void MotionWatcher::pull()
         m_failures = 0;
 
         const QString xml = QString::fromUtf8(reply->readAll());
-        const QRegularExpression itemRe(
-            QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"(IsMotion|State)\"\\s+"
-                           "Value=\"([^\"]+)\""));
-        auto it = itemRe.globalMatch(xml);
-        while (it.hasNext()) {
-            const auto m = it.next();
-            const bool active = m.captured(2).compare(QLatin1String("true"),
-                                                      Qt::CaseInsensitive) == 0;
-            if (active != m_active) {
-                m_active = active;
-                LEO_INFO(Onvif, m_camera.label(),
-                         active ? QStringLiteral("Camera reports motion")
-                                : QStringLiteral("Camera reports motion ended"));
-                emit motionChanged(m_camera.id, active);
-            }
+
+        // A poll can carry several events, and behind a recorder they are not
+        // all about the same camera. Splitting them up first is what makes it
+        // possible to tell whose they are; a camera's reply usually holds one
+        // message and the split changes nothing.
+        const QRegularExpression msgRe(
+            QStringLiteral("<(?:\\w+:)?NotificationMessage[^>]*>(.*?)"
+                           "</(?:\\w+:)?NotificationMessage>"),
+            QRegularExpression::DotMatchesEverythingOption);
+        auto msgs = msgRe.globalMatch(xml);
+        bool any = false;
+        while (msgs.hasNext()) {
+            any = true;
+            handleMessage(msgs.next().captured(1));
         }
+        // Firmware that does not wrap its events the way the standard says
+        // still gets read, exactly as before this could tell channels apart.
+        if (!any)
+            handleMessage(xml);
+
         pull();   // straight back into the long poll
     });
+}
+
+bool MotionWatcher::concernsThisChannel(const QString &message) const
+{
+    // A camera has one input and no reason to say which; only a recorder's
+    // events need attributing.
+    if (m_camera.channel == 0)
+        return true;
+
+    const QRegularExpression sourceRe(
+        QStringLiteral("<(?:\\w+:)?Source(?:\\s[^>]*)?>(.*?)</(?:\\w+:)?Source>"),
+        QRegularExpression::DotMatchesEverythingOption);
+    const auto source = sourceRe.match(message);
+    if (!source.hasMatch()) {
+        LEO_DEBUG(Onvif, m_camera.label(),
+                  QStringLiteral("Event with no source, cannot tell which "
+                                 "channel it is about: %1").arg(message.left(300)));
+        return false;
+    }
+
+    // The token is whatever this firmware calls its inputs — "000", "VideoSource_2",
+    // a channel number on its own. The digits at the end of it are the channel
+    // in every form seen so far, and the value is logged either way so a
+    // recorder that numbers them differently shows up in the log rather than
+    // as silence.
+    const QRegularExpression valueRe(
+        QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"([^\"]+)\"\\s+Value=\"([^\"]+)\""));
+    auto it = valueRe.globalMatch(source.captured(1));
+    while (it.hasNext()) {
+        const auto m = it.next();
+        const QString value = m.captured(2);
+        const QRegularExpression tailRe(QStringLiteral("(\\d+)\\s*$"));
+        const auto tail = tailRe.match(value);
+        LEO_DEBUG(Onvif, m_camera.label(),
+                  QStringLiteral("Event source %1=%2, want channel %3")
+                      .arg(m.captured(1), value).arg(m_camera.channel));
+        if (tail.hasMatch() && tail.captured(1).toInt() == m_camera.channel)
+            return true;
+    }
+    return false;
+}
+
+void MotionWatcher::handleMessage(const QString &message)
+{
+    if (!concernsThisChannel(message))
+        return;
+
+    const QRegularExpression itemRe(
+        QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"(IsMotion|State)\"\\s+"
+                       "Value=\"([^\"]+)\""));
+    auto it = itemRe.globalMatch(message);
+    while (it.hasNext()) {
+        const auto m = it.next();
+        const bool active = m.captured(2).compare(QLatin1String("true"),
+                                                  Qt::CaseInsensitive) == 0;
+        if (active != m_active) {
+            m_active = active;
+            LEO_INFO(Onvif, m_camera.label(),
+                     active ? QStringLiteral("Camera reports motion")
+                            : QStringLiteral("Camera reports motion ended"));
+            emit motionChanged(m_camera.id, active);
+        }
+    }
 }
 
 } // namespace leolink

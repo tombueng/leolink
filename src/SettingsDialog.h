@@ -2,6 +2,8 @@
 #pragma once
 
 #include <QDialog>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "Config.h"
 
@@ -34,6 +36,12 @@ private slots:
     void onRemove();
     void onTest();
     void onScan();
+    /// GetDevInfo came back from the Test button. A device that answers for
+    /// several channels is a recorder, and that is the moment to say so.
+    void onDeviceIdentified(const QJsonObject &devInfo);
+    /// The recorder's channel list, either its own or invented from the count
+    /// when the firmware has no GetChannelstatus.
+    void onNvrChannels(const QJsonArray &channels);
     void onAccept();
     void onOpenCameraSettings();
     void refreshGridPreview();
@@ -45,6 +53,8 @@ private:
     void rebuildList();
     void loadIntoForm(const CameraConfig &camera);
     void storeFromForm();
+    /// Asks which of a recorder's channels to add, and adds them.
+    void offerNvrChannels(const QJsonArray &channels);
 
     Config m_config;
     int m_current{-1};
@@ -59,6 +69,7 @@ private:
     QLineEdit *m_password{nullptr};
     QLineEdit *m_passwordCommand{nullptr};
     QLineEdit *m_uid{nullptr};
+    QSpinBox *m_channel{nullptr};
     QLineEdit *m_customUrl{nullptr};
     QComboBox *m_stream{nullptr};
     QComboBox *m_transport{nullptr};
@@ -77,6 +88,11 @@ private:
     QSpinBox *m_rowSpan{nullptr};
     QSpinBox *m_colSpan{nullptr};
     QTableWidget *m_gridPreview{nullptr};
+
+    /// What the last Test found, kept only until its channel list arrives.
+    int m_probedChannelCount{0};
+    QString m_probedModel;
+    QString m_probedHost;
 
     ReolinkClient *m_tester{nullptr};
     Discovery *m_discovery{nullptr};

@@ -271,8 +271,10 @@ void CameraSettingsDialog::queryCamera()
     m_client->fetchUsers();
     m_client->fetchWifiSignal();
 
+    // Behind an NVR every one of these is about one input of the recorder,
+    // so the channel goes on the request rather than a literal zero.
     QJsonObject channel;
-    channel[QStringLiteral("channel")] = 0;
+    channel[QStringLiteral("channel")] = m_client->channel();
     m_client->fetchSection(QStringLiteral("GetEnc"), channel);
     m_client->fetchSection(QStringLiteral("GetImage"), channel);
 
@@ -285,7 +287,7 @@ void CameraSettingsDialog::queryCamera()
     // The alarm section needs its type named, and its reply is handled by hand
     // rather than by a generated form.
     QJsonObject alarmParam;
-    alarmParam[QStringLiteral("channel")] = 0;
+    alarmParam[QStringLiteral("channel")] = m_client->channel();
     alarmParam[QStringLiteral("type")] = QStringLiteral("md");
     m_client->fetchSection(QStringLiteral("GetAlarm"), alarmParam);
     m_client->fetchSection(QStringLiteral("GetMdAlarm"), alarmParam);
@@ -1533,7 +1535,7 @@ SectionEditor *CameraSettingsDialog::addSection(QWidget *page,
 
     QJsonObject param;
     if (perChannel)
-        param[QStringLiteral("channel")] = 0;
+        param[QStringLiteral("channel")] = m_camera.channel;
     m_sectionParams.insert(command, param);
 
     // GetIsp → "Isp": usually the reply wraps the section under the command

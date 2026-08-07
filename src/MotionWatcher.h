@@ -47,6 +47,13 @@ signals:
 private:
     void subscribe();
     void pull();
+    /// One <NotificationMessage> from a poll: raises motion if it says so and
+    /// if it is about this camera.
+    void handleMessage(const QString &message);
+    /// Whether a message concerns this camera's channel. A recorder sends
+    /// every channel's events down one subscription, so on an NVR the source
+    /// token has to be read; a camera sends only its own and is not asked.
+    bool concernsThisChannel(const QString &message) const;
     QByteArray envelope(const QString &body, const QString &action,
                         const QString &to) const;
     QString securityHeader() const;

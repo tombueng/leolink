@@ -47,12 +47,25 @@ public:
     void setCamera(const CameraConfig &camera);
     const CameraConfig &camera() const { return m_camera; }
 
+    /// Which input of the device every request is about. Zero for a camera;
+    /// behind an NVR it is the channel that camera hangs off. Callers building
+    /// their own `param` object put this in it rather than a literal 0 — a
+    /// recorder answers for eight cameras on one address, and asking it about
+    /// channel 0 gets you the first one every time.
+    int channel() const { return m_camera.channel; }
+
     /// Logs in and reports what the camera is. Used by the settings dialog's
     /// "Test" button, so it reports failures in human terms.
     void testConnection();
 
     void fetchDeviceInfo();
     void fetchSnapshot();
+
+    /// Asks a recorder what is plugged into it: one entry per channel with the
+    /// name given on the NVR itself, the model of the camera and whether it is
+    /// online. Cameras answer -9 to this, which is how a camera is told from a
+    /// recorder without trusting any one field of GetDevInfo.
+    void fetchChannelStatus();
 
     /// Reads a configuration section together with the values the camera will
     /// accept. The camera answers action=1 with a `range` document listing
@@ -69,9 +82,11 @@ public:
     /// Cameras with no card answer -17, which is reported as such rather than
     /// as a mysterious failure — it is the single most common reason this
     /// returns nothing.
+    /// `channel` of -1 means this camera's own, which is what every caller
+    /// wants; a number overrides it.
     void searchRecordings(const QDateTime &from, const QDateTime &to,
                           const QString &streamType = QStringLiteral("main"),
-                          int channel = 0);
+                          int channel = -1);
 
     /// URL that streams a recording straight from the camera, for handing to a
     /// player. Requires a valid session, so call after any other request.
@@ -144,6 +159,11 @@ signals:
     void testSucceeded(const QString &summary);
     void testFailed(const QString &reason);
     void deviceInfoReady(const QJsonObject &info);
+    /// What testConnection() found, beyond the sentence it puts on screen.
+    /// Emitted before testSucceeded so a caller can act on it there and then.
+    void deviceIdentified(const QJsonObject &devInfo);
+    /// One object per channel of a recorder: channel, name, typeInfo, online.
+    void channelStatusReady(const QJsonArray &channels);
     /// `value` is what is set now, `ranges` what may be set.
     void sectionReady(const QString &command, const QJsonObject &value,
                       const QJsonObject &ranges);

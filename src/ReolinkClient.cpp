@@ -507,6 +507,7 @@ void ReolinkClient::testConnection()
              [this](const QJsonObject &value) {
                  const QJsonObject info =
                      value.value(QStringLiteral("DevInfo")).toObject();
+                 emit deviceIdentified(info);
                  emit testSucceeded(
                      tr("%1 — firmware %2, %3 channel(s)")
                          .arg(info.value(QStringLiteral("model")).toString(),
@@ -529,6 +530,28 @@ void ReolinkClient::fetchDeviceInfo()
              [this](const QString &e) { emit failed(e); });
     },
     [this](const QString &e) { emit failed(e); });
+}
+
+void ReolinkClient::fetchChannelStatus()
+{
+    login([this] {
+        post(QStringLiteral("GetChannelstatus"), {},
+             [this](const QJsonObject &value) {
+                 // Firmware disagrees about the case of the key, and about
+                 // whether the count is worth sending at all.
+                 QJsonArray status =
+                     value.value(QStringLiteral("status")).toArray();
+                 if (status.isEmpty())
+                     status = value.value(QStringLiteral("Status")).toArray();
+                 emit channelStatusReady(status);
+             },
+             [this](const QString &e) {
+                 emit readoutFailed(QStringLiteral("channels"), e);
+             });
+    },
+    [this](const QString &e) {
+        emit readoutFailed(QStringLiteral("channels"), e);
+    });
 }
 
 void ReolinkClient::fetchSection(const QString &command, const QJsonObject &param)
@@ -607,7 +630,8 @@ void ReolinkClient::searchRecordings(const QDateTime &from, const QDateTime &to,
 {
     login([this, from, to, streamType, channel] {
         QJsonObject search;
-        search[QStringLiteral("channel")] = channel;
+        search[QStringLiteral("channel")] =
+            channel < 0 ? m_camera.channel : channel;
         search[QStringLiteral("streamType")] = streamType;
         // onlyStatus 0 asks for the file list itself; 1 would return only
         // which days have anything, which is a useful optimisation for a
@@ -880,7 +904,7 @@ void ReolinkClient::probeCommands(const QStringList &commands)
 
         for (const QString &command : commands) {
             QJsonObject param;
-            param[QStringLiteral("channel")] = 0;
+            param[QStringLiteral("channel")] = m_camera.channel;
             // action=1 asks for the range document as well, which is what
             // reveals whether a command is genuinely implemented rather than
             // merely accepted.
@@ -966,7 +990,8 @@ void ReolinkClient::fetchSnapshot()
     login([this] {
         QUrl url = apiUrl(QStringLiteral("Snap"));
         QUrlQuery q(url.query());
-        q.addQueryItem(QStringLiteral("channel"), QStringLiteral("0"));
+        q.addQueryItem(QStringLiteral("channel"),
+                       QString::number(m_camera.channel));
         q.addQueryItem(QStringLiteral("rs"), QStringLiteral("leolink"));
         url.setQuery(q);
 

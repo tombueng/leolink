@@ -69,8 +69,15 @@ QString CameraConfig::label() const
 {
     if (!name.isEmpty())
         return name;
-    if (!host.isEmpty())
-        return host;
+    // Behind a recorder the address alone names eight cameras at once, so the
+    // channel goes with it.
+    if (!host.isEmpty()) {
+        return channel == 0
+                   ? host
+                   : QCoreApplication::translate("leolink::CameraConfig",
+                                                 "%1 channel %2")
+                         .arg(host).arg(channel + 1);
+    }
     // Neither named nor addressed yet — a row in the settings list that has
     // only just been added. QCoreApplication::translate rather than tr(),
     // because this is a plain struct with no Q_OBJECT of its own.
@@ -117,21 +124,26 @@ QString CameraConfig::streamUrl() const
         q.addQueryItem(QStringLiteral("port"), QStringLiteral("1935"));
         q.addQueryItem(QStringLiteral("app"), QStringLiteral("bcs"));
         q.addQueryItem(QStringLiteral("stream"),
-                       QStringLiteral("channel0_%1.bcs").arg(stream));
+                       QStringLiteral("channel%1_%2.bcs")
+                           .arg(channel).arg(stream));
         q.addQueryItem(QStringLiteral("user"), user);
         q.addQueryItem(QStringLiteral("password"), pass);
         url.setQuery(q);
         return url.toString();
     }
 
-    // RTSP path names the channel 1-based, unlike the FLV one.
+    // RTSP path names the channel 1-based and zero-padded, unlike the FLV one.
+    // An NVR serves every one of its channels from this same path, so channel
+    // three of a recorder is /h264Preview_04_sub on the recorder's address.
     QUrl url;
     url.setScheme(QStringLiteral("rtsp"));
     url.setHost(host);
     url.setPort(554);
     url.setUserName(user);
     url.setPassword(pass);
-    url.setPath(QStringLiteral("/h264Preview_01_%1").arg(stream));
+    url.setPath(QStringLiteral("/h264Preview_%1_%2")
+                    .arg(channel + 1, 2, 10, QLatin1Char('0'))
+                    .arg(stream));
     return url.toString(QUrl::FullyEncoded);
 }
 
@@ -208,6 +220,7 @@ Config Config::load()
         c.password = o.value(QStringLiteral("password")).toString();
         c.passwordCommand = o.value(QStringLiteral("passwordCommand")).toString();
         c.uid = o.value(QStringLiteral("uid")).toString();
+        c.channel = qMax(0, o.value(QStringLiteral("channel")).toInt(0));
         c.stream = o.value(QStringLiteral("stream")).toString(QStringLiteral("sub"));
         c.transport = o.value(QStringLiteral("transport")).toString(QStringLiteral("rtsp"));
         c.customUrl = o.value(QStringLiteral("customUrl")).toString();
@@ -282,6 +295,7 @@ bool Config::save() const
         o[QStringLiteral("password")] = c.password;
         o[QStringLiteral("passwordCommand")] = c.passwordCommand;
         o[QStringLiteral("uid")] = c.uid;
+        o[QStringLiteral("channel")] = c.channel;
         o[QStringLiteral("stream")] = c.stream;
         o[QStringLiteral("transport")] = c.transport;
         o[QStringLiteral("customUrl")] = c.customUrl;

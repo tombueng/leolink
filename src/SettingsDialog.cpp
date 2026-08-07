@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QSet>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -54,6 +55,18 @@ SettingsDialog::SettingsDialog(const Config &config, QWidget *parent)
         m_testResult->setText(QStringLiteral("✓ ") + s);
         m_testResult->setStyleSheet(QStringLiteral("color:#27ae60;"));
     });
+    connect(m_tester, &ReolinkClient::deviceIdentified,
+            this, &SettingsDialog::onDeviceIdentified);
+    connect(m_tester, &ReolinkClient::channelStatusReady,
+            this, &SettingsDialog::onNvrChannels);
+    connect(m_tester, &ReolinkClient::readoutFailed, this,
+            [this](const QString &what, const QString &) {
+                // A recorder whose firmware has no GetChannelstatus is still a
+                // recorder: it said how many channels it has, and that is
+                // enough to offer them as a numbered list.
+                if (what == QLatin1String("channels"))
+                    onNvrChannels({});
+            });
     connect(m_tester, &ReolinkClient::testFailed, this, [this](const QString &e) {
         m_testButton->setEnabled(true);
         m_testResult->setText(QStringLiteral("✗ ") + e);
@@ -111,6 +124,15 @@ QWidget *SettingsDialog::buildCameraTab()
     m_uid = new QLineEdit(page);
     m_uid->setPlaceholderText(tr("optional, for P2P access"));
 
+    m_channel = new QSpinBox(page);
+    m_channel->setRange(0, 31);
+    m_channel->setToolTip(
+        tr("Which input of the device this is. Leave at 0 for a camera.\n\n"
+           "An NVR answers for all of its cameras on one address, one login "
+           "and one port, and the channel is the only thing that tells them "
+           "apart. Testing the connection to a recorder offers to add them "
+           "all, so this rarely has to be set by hand."));
+
     m_customUrl = new QLineEdit(page);
     m_customUrl->setPlaceholderText(QStringLiteral("rtsp://…"));
     m_customUrl->setToolTip(
@@ -145,6 +167,7 @@ QWidget *SettingsDialog::buildCameraTab()
     form->addRow(tr("Password"), m_password);
     form->addRow(tr("Password command"), m_passwordCommand);
     form->addRow(tr("UID"), m_uid);
+    form->addRow(tr("Channel"), m_channel);
     form->addRow(tr("Stream"), m_stream);
     form->addRow(tr("Transport"), m_transport);
     form->addRow(tr("Custom URL"), m_customUrl);
@@ -353,6 +376,7 @@ void SettingsDialog::loadIntoForm(const CameraConfig &c)
     m_password->setText(c.password);
     m_passwordCommand->setText(c.passwordCommand);
     m_uid->setText(c.uid);
+    m_channel->setValue(c.channel);
     // Selected by the value each entry carries, not by counting positions.
     // The old version hardcoded the indices, so adding the Baichuan entry in
     // the middle silently made every "custom" camera display as Baichuan —
@@ -387,6 +411,7 @@ void SettingsDialog::storeFromForm()
     c.password = m_password->text();
     c.passwordCommand = m_passwordCommand->text().trimmed();
     c.uid = m_uid->text().trimmed();
+    c.channel = m_channel->value();
     c.stream = m_stream->currentData().toString();
     c.transport = m_transport->currentData().toString();
     c.customUrl = m_customUrl->text().trimmed();
@@ -464,6 +489,182 @@ void SettingsDialog::onTest()
     m_testResult->setText(tr("Contacting %1…").arg(c.host));
     m_tester->setCamera(c);
     m_tester->testConnection();
+}
+
+// ── recorders ───────────────────────────────────────────────────────────────
+
+void SettingsDialog::onDeviceIdentified(const QJsonObject &devInfo)
+{
+    m_probedChannelCount = devInfo.value(QStringLiteral("channelNum")).toInt(1);
+    m_probedModel = devInfo.value(QStringLiteral("model")).toString();
+    m_probedHost = m_tester->camera().host;
+
+    // One channel is a camera and there is nothing to offer. More than one is
+    // a recorder, and the next question is what is plugged into it.
+    if (m_probedChannelCount > 1)
+        m_tester->fetchChannelStatus();
+}
+
+void SettingsDialog::onNvrChannels(const QJsonArray &channels)
+{
+    // Both paths into this — the channel list and its failure — are worth
+    // exactly one offer per test.
+    const int count = m_probedChannelCount;
+    m_probedChannelCount = 0;
+    if (count <= 1)
+        return;
+
+    QJsonArray list = channels;
+    if (list.isEmpty()) {
+        for (int i = 0; i < count; ++i) {
+            QJsonObject o;
+            o[QStringLiteral("channel")] = i;
+            list.append(o);
+        }
+    }
+    offerNvrChannels(list);
+}
+
+void SettingsDialog::offerNvrChannels(const QJsonArray &channels)
+{
+    if (m_current < 0 || m_current >= m_config.cameras.size())
+        return;
+    const CameraConfig probed = m_config.cameras.at(m_current);
+
+    // A channel already in the list is not offered again, so pressing Test on
+    // a recorder that is fully set up asks nothing at all — and pressing it
+    // after adding one more camera to the recorder offers only that one.
+    QSet<int> taken;
+    for (int i = 0; i < m_config.cameras.size(); ++i) {
+        const CameraConfig &c = m_config.cameras.at(i);
+        if (i != m_current && c.host == probed.host)
+            taken.insert(c.channel);
+    }
+
+    QDialog picker(this);
+    picker.setWindowTitle(tr("Cameras on this recorder"));
+
+    auto *intro = new QLabel(
+        tr("%1 answers for %n channel(s). Which of them should be added?",
+           nullptr, channels.size())
+            .arg(m_probedModel.isEmpty() ? probed.host : m_probedModel),
+        &picker);
+    intro->setWordWrap(true);
+
+    auto *list = new QListWidget(&picker);
+    for (const QJsonValue &v : channels) {
+        const QJsonObject o = v.toObject();
+        const int channel = o.value(QStringLiteral("channel")).toInt();
+        const QString name = o.value(QStringLiteral("name")).toString();
+        const QString model = o.value(QStringLiteral("typeInfo")).toString();
+        // Firmware disagrees on the type: a number on some, true/false on
+        // others. Absent means "did not say", which is not the same as offline
+        // and must not hide a camera that is there.
+        const QJsonValue online = o.value(QStringLiteral("online"));
+        const bool offline = (online.isDouble() && online.toInt() == 0) ||
+                             (online.isBool() && !online.toBool());
+
+        QString text = tr("Channel %1").arg(channel + 1);
+        if (!name.isEmpty())
+            text = tr("%1 — %2").arg(text, name);
+        if (!model.isEmpty())
+            text = tr("%1 (%2)").arg(text, model);
+        if (taken.contains(channel))
+            text = tr("%1 — already in the list").arg(text);
+        else if (offline)
+            text = tr("%1 — nothing connected").arg(text);
+
+        auto *item = new QListWidgetItem(text, list);
+        item->setData(Qt::UserRole, channel);
+        item->setData(Qt::UserRole + 1, name);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        const bool addable = !taken.contains(channel) && !offline;
+        item->setCheckState(addable ? Qt::Checked : Qt::Unchecked);
+        if (!addable)
+            item->setForeground(Qt::gray);
+    }
+
+    auto *all = new QPushButton(tr("All"), &picker);
+    auto *none = new QPushButton(tr("None"), &picker);
+    auto check = [list](Qt::CheckState state) {
+        for (int i = 0; i < list->count(); ++i)
+            list->item(i)->setCheckState(state);
+    };
+    connect(all, &QPushButton::clicked, &picker, [check] { check(Qt::Checked); });
+    connect(none, &QPushButton::clicked, &picker, [check] { check(Qt::Unchecked); });
+
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                         QDialogButtonBox::Cancel, &picker);
+    connect(buttons, &QDialogButtonBox::accepted, &picker, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &picker, &QDialog::reject);
+
+    auto *tools = new QHBoxLayout;
+    tools->addWidget(all);
+    tools->addWidget(none);
+    tools->addStretch(1);
+
+    auto *layout = new QVBoxLayout(&picker);
+    layout->addWidget(intro);
+    layout->addWidget(list, 1);
+    layout->addLayout(tools);
+    layout->addWidget(buttons);
+    picker.resize(420, 380);
+
+    if (picker.exec() != QDialog::Accepted)
+        return;
+
+    // The entry that was just tested is the recorder itself and has no channel
+    // of its own. If it is still the untouched one that Add created, the first
+    // camera takes it over rather than leaving an empty "New camera" behind;
+    // an entry the user has named is left exactly as it is.
+    const bool consumable = probed.name.isEmpty() ||
+                            probed.name == tr("New camera");
+    bool consumed = false;
+    int added = 0;
+
+    for (int i = 0; i < list->count(); ++i) {
+        const QListWidgetItem *item = list->item(i);
+        if (item->checkState() != Qt::Checked)
+            continue;
+        const int channel = item->data(Qt::UserRole).toInt();
+        if (taken.contains(channel))
+            continue;
+
+        const QString given = item->data(Qt::UserRole + 1).toString();
+        // Everything about reaching the recorder is shared; only the channel
+        // and the name differ.
+        CameraConfig c = probed;
+        c.channel = channel;
+        c.name = given.isEmpty() ? tr("Channel %1").arg(channel + 1) : given;
+        // Placed automatically: inheriting one cell from the tested entry
+        // would stack every camera of the recorder on top of each other.
+        c.row = -1;
+        c.col = -1;
+        c.rowSpan = 1;
+        c.colSpan = 1;
+
+        if (consumable && !consumed) {
+            c.id = probed.id;
+            m_config.cameras[m_current] = c;
+            consumed = true;
+        } else {
+            c.id = Config::newId();
+            m_config.cameras.append(c);
+        }
+        ++added;
+    }
+
+    if (added == 0)
+        return;
+
+    m_current = -1;
+    rebuildList();
+    m_list->setCurrentRow(m_config.cameras.size() - 1);
+    refreshGridPreview();
+
+    m_testResult->setStyleSheet(QStringLiteral("color:#27ae60;"));
+    m_testResult->setText(tr("Added %n camera(s) from this recorder.",
+                             nullptr, added));
 }
 
 void SettingsDialog::onScan()

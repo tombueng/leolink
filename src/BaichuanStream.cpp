@@ -66,7 +66,8 @@ void BaichuanStream::run()
     }
     LEO_INFO(Baichuan, m_camera.label(), QStringLiteral("Logged in"));
 
-    if (!client.requestVideo(0, m_camera.stream == QLatin1String("main"))) {
+    if (!client.requestVideo(m_camera.channel,
+                             m_camera.stream == QLatin1String("main"))) {
         LEO_WARN(Baichuan, m_camera.label(),
                  QStringLiteral("Video request refused: %1").arg(client.lastError()));
         emit failed(tr("The camera refused to send video: %1")
