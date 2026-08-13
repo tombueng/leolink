@@ -63,6 +63,16 @@ private slots:
 private:
     /// Finds out which cameras have a speaker, so only those get the button.
     void askAboutSpeakers();
+    /// Asks the next camera waiting on one device, then the one after it.
+    void probeNextSpeaker(const QString &host);
+    /// Cameras still to be asked, per device. One is asked at a time.
+    QHash<QString, QList<CameraConfig>> m_speakerQueue;
+    /// How long the pictures get to themselves before anything else asks the
+    /// device for an RTSP session.
+    static constexpr int kSpeakerProbeDelayMs = 5000;
+    /// A probe that has not answered by now is presumed lost, and the next
+    /// camera on that device is asked regardless.
+    static constexpr int kSpeakerProbeTimeoutMs = 15000;
 
 private slots:
     void toggleRecordAll();

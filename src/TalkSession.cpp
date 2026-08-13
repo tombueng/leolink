@@ -113,7 +113,13 @@ QString TalkSession::streamUrlForTalk() const
     // The backchannel hangs off an ordinary stream URL, without credentials in
     // it: authentication is done properly with digest below, and a password in
     // the URL would end up in the camera's own log.
-    return QStringLiteral("rtsp://%1:554/h264Preview_01_sub").arg(m_camera.host);
+    //
+    // The channel matters even though no video is wanted from this URL: behind
+    // a recorder it is what says which camera's speaker to open, and _01_ is
+    // always the first one. RTSP counts from one, as it does everywhere else.
+    return QStringLiteral("rtsp://%1:554/h264Preview_%2_sub")
+        .arg(m_camera.host)
+        .arg(m_camera.channel + 1, 2, 10, QLatin1Char('0'));
 }
 
 void TalkSession::startEncoder(const QString &source)

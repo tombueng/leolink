@@ -1747,17 +1747,63 @@ void MainWindow::askAboutSpeakers()
     // Each camera is asked once, and only RTSP can answer: the CGI interface
     // has no question for "have you a loudspeaker", and a model name is a
     // guess. The probe sends nothing — it asks, reads the answer and hangs up.
-    for (const CameraConfig &camera : m_config.active()) {
-        const QString id = camera.id;
-        auto *probe = new TalkSession(this);
-        connect(probe, &TalkSession::available, this,
-                [this, id, probe](bool yes) {
-                    if (auto *tile = m_tiles.value(id))
-                        tile->setTalkAvailable(yes);
-                    probe->deleteLater();
-                });
-        probe->probe(camera);
+    //
+    // Asking is not free, though. The question goes over RTSP, on the same port
+    // and out of the same budget as the pictures, and a recorder has few
+    // sessions to give. Asking five cameras at once, at the moment five tiles
+    // were also opening streams, put ten sessions on one NVR: it served them one
+    // at a time, nine seconds apart, and the video behind them got nothing at
+    // all for the best part of a minute before mpv gave up and reconnected.
+    // Measured — first frame came up nine seconds after the last probe finished.
+    //
+    // So one at a time per device, and after the pictures. Nothing is lost by
+    // waiting: the answer only decides whether a button is offered, and nobody
+    // presses it in the first few seconds.
+    m_speakerQueue.clear();
+    for (const CameraConfig &camera : m_config.active())
+        m_speakerQueue[camera.host].append(camera);
+
+    for (const QString &host : m_speakerQueue.keys()) {
+        QTimer::singleShot(kSpeakerProbeDelayMs, this, [this, host] {
+            probeNextSpeaker(host);
+        });
     }
+}
+
+void MainWindow::probeNextSpeaker(const QString &host)
+{
+    if (!m_speakerQueue.contains(host))
+        return;
+    if (m_speakerQueue[host].isEmpty()) {
+        m_speakerQueue.remove(host);
+        return;
+    }
+
+    const CameraConfig camera = m_speakerQueue[host].takeFirst();
+    const QString id = camera.id;
+    auto *probe = new TalkSession(this);
+
+    // Whatever the answer, and whether or not it ever comes, the next camera on
+    // this device is asked. A probe that hangs must not silently take the rest
+    // of the recorder's cameras down with it, so the timer is the backstop.
+    auto next = std::make_shared<bool>(false);
+    const auto goOn = [this, host, probe, next] {
+        if (*next)
+            return;
+        *next = true;
+        probe->deleteLater();
+        probeNextSpeaker(host);
+    };
+
+    connect(probe, &TalkSession::available, this,
+            [this, id, goOn](bool yes) {
+                if (auto *tile = m_tiles.value(id))
+                    tile->setTalkAvailable(yes);
+                goOn();
+            });
+    QTimer::singleShot(kSpeakerProbeTimeoutMs, this, goOn);
+
+    probe->probe(camera);
 }
 
 void MainWindow::onTalkToggled(const QString &cameraId, bool talking)
