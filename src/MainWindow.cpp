@@ -945,6 +945,12 @@ void MainWindow::pollCameraStatus()
         const QList<QString> ids = it.value();
 
         if (ids.size() > 1) {
+            // Several cameras on one address is a recorder, which is worth
+            // saying out loud: its channel 0 looks exactly like a standalone
+            // camera from inside a client, and it is the settings dialog for
+            // that channel that would otherwise ask for too much at once.
+            ReolinkClient::noteRecorder(host);
+
             // Wired, and known to be, so the meter is hidden rather than left
             // empty — which would read as a fault.
             for (const QString &id : ids) {

@@ -8,6 +8,8 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QEventLoop>
+#include <QHash>
+#include <QPointer>
 #include <QSslConfiguration>
 #include <QTimer>
 #include <QUrlQuery>
@@ -16,7 +18,56 @@
 
 namespace leolink {
 
+/// The throttle for one address. See ReolinkClient::m_host.
+struct HostGate {
+    /// Requests on the wire to this device, from every client at once.
+    int inFlight{0};
+    /// How many of them are allowed at this moment.
+    int maxInFlight{1};
+    /// The most it may ever climb back to. Lowered by a refusal, never raised.
+    int ceiling{ReolinkClient::kMaxInFlight};
+    /// Clean answers since the last refusal.
+    int goodRun{0};
+    /// Minimum gap between requests, non-zero only after the device has balked.
+    int paceMs{0};
+    qint64 lastSentAt{0};
+    /// The device has said "not now"; nothing goes out before this.
+    qint64 backOffUntil{0};
+    /// Everyone talking to this address, so a slot that comes free is offered
+    /// to whoever is waiting rather than only to the client that freed it.
+    /// Held weakly: a client that has gone leaves a null behind, not a
+    /// dangling pointer.
+    QList<QPointer<ReolinkClient>> clients;
+};
+
 namespace {
+
+/// Gates live exactly as long as the clients using them. Weakly held, so an
+/// address nobody talks to any more leaves nothing behind but an empty slot.
+QHash<QString, std::weak_ptr<HostGate>> &hostGates()
+{
+    static QHash<QString, std::weak_ptr<HostGate>> gates;
+    return gates;
+}
+
+/// Addresses known to be recorders, remembered for the life of the process.
+/// Separate from the gates because it outlives them: a recorder whose last
+/// client has closed is still a recorder when the next one opens.
+QSet<QString> &knownRecorders()
+{
+    static QSet<QString> hosts;
+    return hosts;
+}
+
+/// What each address turned out to be able to take. Kept apart from the gate
+/// for the same reason: the last client on a recorder is usually a settings
+/// dialog, and the lesson must outlive the window that learned it.
+QHash<QString, int> &learnedCeilings()
+{
+    static QHash<QString, int> ceilings;
+    return ceilings;
+}
+
 /// How long to wait for a camera to acknowledge a logout. Long enough for a
 /// device on the same network, short enough that one which has vanished does
 /// not hold up closing the window.
@@ -34,6 +85,49 @@ ReolinkClient::ReolinkClient(QObject *parent)
 ReolinkClient::~ReolinkClient()
 {
     releaseSession();
+    if (m_host)
+        m_host->clients.removeAll(this);
+}
+
+std::shared_ptr<HostGate> ReolinkClient::gateFor(const QString &host)
+{
+    auto &gates = hostGates();
+    if (auto existing = gates.value(host).lock())
+        return existing;
+
+    auto gate = std::make_shared<HostGate>();
+    const int start = knownRecorders().contains(host) ? kMaxInFlightRecorder
+                                                      : kMaxInFlight;
+    gate->ceiling = qMin(start, learnedCeilings().value(host, start));
+    gates.insert(host, gate);
+
+    // Addresses that have gone quiet are dropped here rather than on a timer;
+    // the list is a handful of entries and this runs once per client.
+    for (auto it = gates.begin(); it != gates.end();) {
+        if (it.value().expired())
+            it = gates.erase(it);
+        else
+            ++it;
+    }
+
+    return gate;
+}
+
+void ReolinkClient::noteRecorder(const QString &host)
+{
+    if (host.isEmpty() || knownRecorders().contains(host))
+        return;
+    knownRecorders().insert(host);
+
+    // Anyone already talking to it is brought down to the recorder's ceiling
+    // now, rather than at whatever point it next refuses something.
+    if (auto gate = hostGates().value(host).lock()) {
+        gate->ceiling = qMin(gate->ceiling, kMaxInFlightRecorder);
+        gate->maxInFlight = qMin(gate->maxInFlight, gate->ceiling);
+    }
+    LEO_DEBUG(Api, host,
+              QStringLiteral("Recorder — at most %1 requests at a time")
+                  .arg(kMaxInFlightRecorder));
 }
 
 void ReolinkClient::setCamera(const CameraConfig &camera)
@@ -45,6 +139,18 @@ void ReolinkClient::setCamera(const CameraConfig &camera)
     releaseSession();
     m_camera = camera;
     m_token.clear();
+
+    // A camera on a channel other than zero is behind a recorder and says so
+    // by existing. Channel 0 cannot be told apart from a standalone camera
+    // from here, which is what noteRecorder() is for.
+    if (camera.channel > 0)
+        noteRecorder(camera.host);
+
+    if (m_host)
+        m_host->clients.removeAll(this);
+    m_host = camera.host.isEmpty() ? nullptr : gateFor(camera.host);
+    if (m_host)
+        m_host->clients.append(this);
 
     // The log must never carry these, wherever they end up being printed.
     Log::addSecret(camera.password);
@@ -189,15 +295,16 @@ void ReolinkClient::postRaw(const QString &command, const QJsonObject &param,
 
 void ReolinkClient::pump()
 {
-    if (m_queue.isEmpty())
+    if (m_queue.isEmpty() || !m_host)
         return;
 
-    // A camera that has just said "not now" gets a moment's peace.
+    // A device that has just said "not now" gets a moment's peace — from
+    // everyone, not only from whoever it said it to.
     const qint64 now = QDateTime::currentMSecsSinceEpoch();
-    if (m_backOffUntil > now) {
+    if (m_host->backOffUntil > now) {
         if (!m_backOffPending) {
             m_backOffPending = true;
-            QTimer::singleShot(int(m_backOffUntil - now), this, [this] {
+            QTimer::singleShot(int(m_host->backOffUntil - now), this, [this] {
                 m_backOffPending = false;
                 pump();
             });
@@ -205,9 +312,9 @@ void ReolinkClient::pump()
         return;
     }
 
-    // Pacing, once a camera has shown it needs it.
-    if (m_paceMs > 0 && m_inFlight > 0) {
-        const qint64 due = m_lastSentAt + m_paceMs;
+    // Pacing, once the device has shown it needs it.
+    if (m_host->paceMs > 0 && m_host->inFlight > 0) {
+        const qint64 due = m_host->lastSentAt + m_host->paceMs;
         if (due > now) {
             if (!m_backOffPending) {
                 m_backOffPending = true;
@@ -220,40 +327,71 @@ void ReolinkClient::pump()
         }
     }
 
-    while (m_inFlight < m_maxInFlight && !m_queue.isEmpty()) {
+    while (m_host->inFlight < m_host->maxInFlight && !m_queue.isEmpty()) {
         const std::function<void()> next = m_queue.takeFirst();
-        ++m_inFlight;
-        m_lastSentAt = QDateTime::currentMSecsSinceEpoch();
+        ++m_host->inFlight;
+        m_host->lastSentAt = QDateTime::currentMSecsSinceEpoch();
         next();
-        if (m_paceMs > 0)
-            break;   // one at a time while the camera is being careful
+        if (m_host->paceMs > 0)
+            break;   // one at a time while the device is being careful
+    }
+}
+
+void ReolinkClient::pumpHost()
+{
+    pump();
+    if (!m_host)
+        return;
+    // Fair enough for the numbers involved: a handful of clients, each with a
+    // queue that empties in a second. Whoever is asked first gets the slot.
+    for (const QPointer<ReolinkClient> &other : std::as_const(m_host->clients)) {
+        if (other && other != this)
+            other->pump();
     }
 }
 
 void ReolinkClient::noteRefusal()
 {
-    m_goodRun = 0;
-    if (m_maxInFlight > 1 || m_paceMs == 0) {
-        m_maxInFlight = 1;
-        m_paceMs = 250;
+    if (!m_host)
+        return;
+    m_host->goodRun = 0;
+
+    // What it was managing when it gave up is one more than it can take, and
+    // that is worth keeping. Otherwise the recovery below walks it straight
+    // back to the number that has just failed, and the next dialog on this
+    // device learns the same lesson from the same handful of 502s.
+    if (m_host->maxInFlight > 1) {
+        m_host->ceiling = qMax(1, m_host->maxInFlight - 1);
+        learnedCeilings().insert(m_camera.host, m_host->ceiling);
+        LEO_INFO(Api, m_camera.label(),
+                 QStringLiteral("Refused at %1 requests at a time — this "
+                                "device is held to %2 from now on")
+                     .arg(m_host->maxInFlight).arg(m_host->ceiling));
+    }
+
+    if (m_host->maxInFlight > 1 || m_host->paceMs == 0) {
+        m_host->maxInFlight = 1;
+        m_host->paceMs = kPaceMs;
         LEO_INFO(Api, m_camera.label(),
                  QStringLiteral("The camera is refusing requests — slowing to "
-                                "one at a time, %1 ms apart").arg(m_paceMs));
+                                "one at a time, %1 ms apart").arg(m_host->paceMs));
     }
 }
 
 void ReolinkClient::noteSuccess()
 {
-    if (m_maxInFlight >= kMaxInFlight && m_paceMs == 0)
+    if (!m_host)
         return;
-    if (++m_goodRun < kSuccessesToRelax)
+    if (m_host->maxInFlight >= m_host->ceiling && m_host->paceMs == 0)
         return;
-    m_goodRun = 0;
-    m_paceMs = 0;
-    m_maxInFlight = qMin(kMaxInFlight, m_maxInFlight + 1);
+    if (++m_host->goodRun < kSuccessesToRelax)
+        return;
+    m_host->goodRun = 0;
+    m_host->paceMs = 0;
+    m_host->maxInFlight = qMin(m_host->ceiling, m_host->maxInFlight + 1);
     LEO_DEBUG(Api, m_camera.label(),
               QStringLiteral("Answering happily again — up to %1 at a time")
-                  .arg(m_maxInFlight));
+                  .arg(m_host->maxInFlight));
 }
 
 void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
@@ -302,10 +440,13 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
 
         // The slot is freed however this ends, and the next request started —
         // after the handler has run, so a retry keeps its place in the queue.
-        --m_inFlight;
+        // The slot belongs to the device, so it is offered to every client on
+        // it and not only to this one.
+        if (m_host)
+            --m_host->inFlight;
         struct Pumper {
             ReolinkClient *self;
-            ~Pumper() { self->pump(); }
+            ~Pumper() { self->pumpHost(); }
         } pumper{this};
 
         if (reply->error() != QNetworkReply::NoError) {
@@ -324,7 +465,9 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
             // that has already said it has had enough.
             if (status == 502 || status == 503) {
                 m_lastErrorCode = kCameraOverloaded;
-                m_backOffUntil = QDateTime::currentMSecsSinceEpoch() + kBackOffMs;
+                if (m_host)
+                    m_host->backOffUntil =
+                        QDateTime::currentMSecsSinceEpoch() + kBackOffMs;
                 noteRefusal();
                 LEO_WARN(Api, m_camera.label(),
                          QStringLiteral("← %1 HTTP %2 after %3 ms — the camera "

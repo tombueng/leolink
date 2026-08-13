@@ -8,12 +8,18 @@
 #include <QObject>
 #include <QString>
 
+#include <memory>
+
 #include "Config.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
 
 namespace leolink {
+
+/// What one device can stand, shared by every client talking to it.
+/// Defined in the .cpp — nothing outside needs its shape.
+struct HostGate;
 
 /// Talks to /cgi-bin/api.cgi.
 ///
@@ -39,6 +45,9 @@ struct Recording {
 
 class ReolinkClient : public QObject {
     Q_OBJECT
+
+    /// Reads the limits below to size itself; holds no logic of its own.
+    friend struct HostGate;
 
 public:
     explicit ReolinkClient(QObject *parent = nullptr);
@@ -155,6 +164,15 @@ public:
 
     static QString describeError(int rspCode);
 
+    /// Says that this address is a recorder, from something other than a
+    /// camera's own channel number.
+    ///
+    /// A client behind an NVR usually knows — its channel is not zero. The one
+    /// case it cannot tell is channel 0, which looks exactly like a standalone
+    /// camera; the main window can tell, because it can see the other cameras
+    /// on the same address, and this is how it says so.
+    static void noteRecorder(const QString &host);
+
 signals:
     void testSucceeded(const QString &summary);
     void testFailed(const QString &reason);
@@ -216,6 +234,11 @@ private:
                  const std::function<void(const QJsonObject &entry)> &onOk,
                  const std::function<void(const QString &error)> &onErr,
                  int action, int retriesLeft);
+    /// A slot has come free on the device: offer it to this client's own queue
+    /// first, then to every other client sharing the address.
+    void pumpHost();
+    /// The gate for an address, created on first use and shared from then on.
+    static std::shared_ptr<HostGate> gateFor(const QString &host);
     /// Hands the session back. Cameras allow only a handful at once, and one
     /// that is merely dropped stays occupied until its lease runs out.
     void releaseSession();
@@ -229,7 +252,7 @@ private:
     /// Not one of the camera's own codes: our own marker for an HTTP-level
     /// refusal, so callers can tell it from a firmware that lacks a command.
     static constexpr int kCameraOverloaded = -1000;
-    qint64 m_backOffUntil{0};
+    /// A wake-up is already booked, so pump() does not book a second.
     bool m_backOffPending{false};
 
     /// Requests that arrived while a login was still in flight. A camera hands
@@ -241,7 +264,7 @@ private:
     QList<PendingLogin> m_waiting;
     bool m_loggingIn{false};
 
-    /// Requests waiting for a slot, and how many are on the wire.
+    /// Requests waiting for a slot on the device.
     ///
     /// The settings dialog asks for twenty-odd sections at once. On its own
     /// the camera copes with that; with a second leolink also talking to it,
@@ -256,35 +279,56 @@ private:
     /// Trickling a few at a time costs nothing noticeable — the dialog fills in
     /// a fraction of a second either way — and being gentle with a small
     /// embedded device is not a bad default in any case.
-    QList<std::function<void()>> m_queue;
-    int m_inFlight{0};
-
-    /// How many at once, adjusted to what this camera can stand.
     ///
-    /// Cameras differ enormously. An RLC-410W on 2023 firmware answers four at
+    /// The queue is this client's, because the callbacks in it are; how many of
+    /// them may be on the wire is the device's business and lives in the gate.
+    QList<std::function<void()>> m_queue;
+
+    /// The limit is a property of the device, not of this object.
+    ///
+    /// Every client pointed at one address shares this: how many requests are
+    /// out, how many are allowed, and how long the device is being left alone.
+    /// One camera used to be one client and the distinction did not arise. A
+    /// recorder is eight cameras on one address, and eight clients each politely
+    /// keeping to four requests is thirty-two — which is how a settings dialog
+    /// on one channel came to be answered with 502s while its neighbours were
+    /// merely polling.
+    std::shared_ptr<HostGate> m_host;
+
+    /// How many at once, adjusted to what the device can stand.
+    ///
+    /// Devices differ enormously. An RLC-410W on 2023 firmware answers four at
     /// a time without complaint; a Duo 2 on 2024 firmware returns HTTP 502 to
     /// almost everything when the settings dialog asks for thirty sections,
     /// even at four. Fixing a number that suits both means picking the slowest,
     /// which would make every other camera crawl.
     ///
-    /// So it adapts, and it starts careful: one request at a time until this
-    /// camera has shown it can take more, opening up to four after a few clean
-    /// answers and dropping straight back to one the moment it balks. Starting
-    /// at four cost the Duo 2 its first thirteen requests every time — there is
-    /// no way to know in advance which sort of camera is on the other end, so
-    /// the polite assumption is the right one.
+    /// So it adapts, and it starts careful: one request at a time until the
+    /// device has shown it can take more, opening up after a few clean answers
+    /// and dropping straight back to one the moment it balks. Starting at four
+    /// cost the Duo 2 its first thirteen requests every time — there is no way
+    /// to know in advance which sort of device is on the other end, so the
+    /// polite assumption is the right one.
+    ///
+    /// What it may climb back to is remembered per address, and a refusal
+    /// lowers it for good. Without that the recovery undid the lesson: a
+    /// device that had just proved it could not take four was walked back up to
+    /// four after three clean answers, so every settings dialog rediscovered
+    /// the same limit the same way, with the same handful of 502s.
     static constexpr int kMaxInFlight = 4;
+    /// Where a recorder starts instead. It is not one camera's worth of load —
+    /// every channel's traffic lands on the same processor and the same session
+    /// table — and it is the one kind of device that can be recognised before
+    /// asking it anything.
+    static constexpr int kMaxInFlightRecorder = 2;
     /// How many times a request is worth repeating when the camera says "not
     /// now" or the session has lapsed. One was not enough: a Duo 2 refused the
     /// same two sections on the first attempt and on the retry, and the
     /// settings page for them came up empty.
     static constexpr int kRetries = 3;
     static constexpr int kSuccessesToRelax = 3;
-    int m_maxInFlight{1};
-    int m_goodRun{0};
-    /// Minimum gap between requests, non-zero only after a camera has balked.
-    int m_paceMs{0};
-    qint64 m_lastSentAt{0};
+    /// The gap a device is held to once it has balked.
+    static constexpr int kPaceMs = 250;
     void pump();
     void noteRefusal();
     void noteSuccess();
