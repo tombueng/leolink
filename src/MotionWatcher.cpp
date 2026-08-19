@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+#include "ReolinkClient.h"
+
 namespace leolink {
 
 namespace {
@@ -279,17 +281,36 @@ void MotionWatcher::handleMessage(const QString &message)
     if (!it.hasNext())
         return;
 
-    // Which camera this is about. A device watching one camera never asks —
-    // it has only one answer, and a firmware that names no source would
-    // otherwise go unheard, which is how this behaved before recorders.
-    const int channel = m_cameras.size() == 1 ? m_cameras.first().channel
-                                              : channelOf(message);
-    if (channel < 0 && m_cameras.size() > 1) {
-        LEO_DEBUG(Onvif, m_camera.label(),
-                  QStringLiteral("Event names no channel, ignored on a device "
-                                 "watching %1 cameras: %2")
-                      .arg(m_cameras.size()).arg(message.left(300)));
+    // Which camera this is about.
+    //
+    // A camera with nothing else on its address is never asked: it has only one
+    // answer, and firmware that names no source at all would otherwise go
+    // unheard — which is how this behaved before recorders existed, and there
+    // is no reason to make it stricter.
+    //
+    // One channel of a recorder looks like exactly that case from here and is
+    // not it. A recorder sends every channel's events down the one
+    // subscription, so taking them all for the single camera configured on it
+    // reports the neighbours' motion as that camera's: an alert, a recording
+    // and a webhook, all about a doorway nobody is watching. Worse than
+    // silence, so a recorder is always routed by channel.
+    if (m_cameras.isEmpty())
         return;
+
+    const bool recorder = m_cameras.size() > 1 ||
+                          m_cameras.first().channel > 0 ||
+                          ReolinkClient::isRecorder(m_camera.host);
+
+    int channel = m_cameras.first().channel;
+    if (recorder) {
+        channel = channelOf(message);
+        if (channel < 0) {
+            LEO_DEBUG(Onvif, m_camera.label(),
+                      QStringLiteral("Event names no channel, ignored on a "
+                                     "recorder watching %1 camera(s): %2")
+                          .arg(m_cameras.size()).arg(message.left(300)));
+            return;
+        }
     }
 
     while (it.hasNext()) {

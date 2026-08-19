@@ -172,6 +172,9 @@ public:
     /// camera; the main window can tell, because it can see the other cameras
     /// on the same address, and this is how it says so.
     static void noteRecorder(const QString &host);
+    /// Whether this address has been found to be one, by any of the ways there
+    /// are of finding out. False means "not known to be", not "is not".
+    static bool isRecorder(const QString &host);
 
 signals:
     void testSucceeded(const QString &summary);
@@ -327,6 +330,14 @@ private:
     /// settings page for them came up empty.
     static constexpr int kRetries = 3;
     static constexpr int kSuccessesToRelax = 3;
+    /// How long a device must go without refusing anything before it is
+    /// offered a little more again. A refusal lowers the ceiling for good
+    /// otherwise, and a single 502 — a neighbour hammering the same camera, a
+    /// firmware hiccup — would then hold it to one request at a time until
+    /// leolink is restarted. Long enough that a settings dialog, which asks
+    /// its thirty questions in a second, cannot walk the ceiling back up
+    /// inside its own lifetime and rediscover the limit.
+    static constexpr qint64 kCeilingRecoveryMs = 5 * 60 * 1000;
     /// The gap a device is held to once it has balked.
     static constexpr int kPaceMs = 250;
     void pump();

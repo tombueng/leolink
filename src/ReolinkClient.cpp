@@ -8,8 +8,10 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QEventLoop>
+#include <QCoreApplication>
 #include <QHash>
 #include <QPointer>
+#include <QThread>
 #include <QSslConfiguration>
 #include <QTimer>
 #include <QUrlQuery>
@@ -24,8 +26,15 @@ struct HostGate {
     int inFlight{0};
     /// How many of them are allowed at this moment.
     int maxInFlight{1};
-    /// The most it may ever climb back to. Lowered by a refusal, never raised.
+    /// The most it may climb back to for now. A refusal lowers it; a long
+    /// spell without one raises it again, a step at a time, never past where
+    /// this device started.
     int ceiling{ReolinkClient::kMaxInFlight};
+    /// What this kind of device is allowed at most: four for a camera, two for
+    /// a recorder. Recovery stops here.
+    int startCeiling{ReolinkClient::kMaxInFlight};
+    /// When it last said "not now", so recovery can wait out a hiccup.
+    qint64 lastRefusalAt{0};
     /// Clean answers since the last refusal.
     int goodRun{0};
     /// Minimum gap between requests, non-zero only after the device has balked.
@@ -42,6 +51,12 @@ struct HostGate {
 
 namespace {
 
+/// The three tables below are main-thread only, and unguarded because of it:
+/// every ReolinkClient is built with a widget for a parent and lives where the
+/// widgets do. A client on a worker thread would corrupt them quietly, so the
+/// functions that touch them assert it in a debug build rather than leaving the
+/// rule to be rediscovered.
+///
 /// Gates live exactly as long as the clients using them. Weakly held, so an
 /// address nobody talks to any more leaves nothing behind but an empty slot.
 QHash<QString, std::weak_ptr<HostGate>> &hostGates()
@@ -91,6 +106,8 @@ ReolinkClient::~ReolinkClient()
 
 std::shared_ptr<HostGate> ReolinkClient::gateFor(const QString &host)
 {
+    Q_ASSERT_X(QThread::currentThread() == qApp->thread(), "ReolinkClient",
+               "the per-device tables are main-thread only");
     auto &gates = hostGates();
     if (auto existing = gates.value(host).lock())
         return existing;
@@ -98,6 +115,7 @@ std::shared_ptr<HostGate> ReolinkClient::gateFor(const QString &host)
     auto gate = std::make_shared<HostGate>();
     const int start = knownRecorders().contains(host) ? kMaxInFlightRecorder
                                                       : kMaxInFlight;
+    gate->startCeiling = start;
     gate->ceiling = qMin(start, learnedCeilings().value(host, start));
     gates.insert(host, gate);
 
@@ -115,6 +133,8 @@ std::shared_ptr<HostGate> ReolinkClient::gateFor(const QString &host)
 
 void ReolinkClient::noteRecorder(const QString &host)
 {
+    Q_ASSERT_X(QThread::currentThread() == qApp->thread(), "ReolinkClient",
+               "the per-device tables are main-thread only");
     if (host.isEmpty() || knownRecorders().contains(host))
         return;
     knownRecorders().insert(host);
@@ -122,12 +142,20 @@ void ReolinkClient::noteRecorder(const QString &host)
     // Anyone already talking to it is brought down to the recorder's ceiling
     // now, rather than at whatever point it next refuses something.
     if (auto gate = hostGates().value(host).lock()) {
-        gate->ceiling = qMin(gate->ceiling, kMaxInFlightRecorder);
+        gate->startCeiling = qMin(gate->startCeiling, kMaxInFlightRecorder);
+        gate->ceiling = qMin(gate->ceiling, gate->startCeiling);
         gate->maxInFlight = qMin(gate->maxInFlight, gate->ceiling);
     }
     LEO_DEBUG(Api, host,
               QStringLiteral("Recorder — at most %1 requests at a time")
                   .arg(kMaxInFlightRecorder));
+}
+
+bool ReolinkClient::isRecorder(const QString &host)
+{
+    Q_ASSERT_X(QThread::currentThread() == qApp->thread(), "ReolinkClient",
+               "the per-device tables are main-thread only");
+    return !host.isEmpty() && knownRecorders().contains(host);
 }
 
 void ReolinkClient::setCamera(const CameraConfig &camera)
@@ -355,6 +383,7 @@ void ReolinkClient::noteRefusal()
     if (!m_host)
         return;
     m_host->goodRun = 0;
+    m_host->lastRefusalAt = QDateTime::currentMSecsSinceEpoch();
 
     // What it was managing when it gave up is one more than it can take, and
     // that is worth keeping. Otherwise the recovery below walks it straight
@@ -382,6 +411,23 @@ void ReolinkClient::noteSuccess()
 {
     if (!m_host)
         return;
+
+    // A device that has gone a long while without refusing anything is offered
+    // a little more again, one step at a time and never past what its kind
+    // started with. The lesson a refusal teaches is worth keeping — but not
+    // for ever: a camera held to one request at a time because of a single 502
+    // an hour ago is being punished for someone else's traffic.
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (m_host->ceiling < m_host->startCeiling && m_host->paceMs == 0 &&
+        m_host->maxInFlight >= m_host->ceiling &&
+        now - m_host->lastRefusalAt > kCeilingRecoveryMs) {
+        ++m_host->ceiling;
+        learnedCeilings().insert(m_camera.host, m_host->ceiling);
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("Quiet for a while — allowed up to %1 again")
+                      .arg(m_host->ceiling));
+    }
+
     if (m_host->maxInFlight >= m_host->ceiling && m_host->paceMs == 0)
         return;
     if (++m_host->goodRun < kSuccessesToRelax)

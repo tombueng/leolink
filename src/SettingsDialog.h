@@ -92,7 +92,6 @@ private:
     /// What the last Test found, kept only until its channel list arrives.
     int m_probedChannelCount{0};
     QString m_probedModel;
-    QString m_probedHost;
 
     ReolinkClient *m_tester{nullptr};
     Discovery *m_discovery{nullptr};

@@ -497,12 +497,15 @@ void SettingsDialog::onDeviceIdentified(const QJsonObject &devInfo)
 {
     m_probedChannelCount = devInfo.value(QStringLiteral("channelNum")).toInt(1);
     m_probedModel = devInfo.value(QStringLiteral("model")).toString();
-    m_probedHost = m_tester->camera().host;
-
     // One channel is a camera and there is nothing to offer. More than one is
     // a recorder, and the next question is what is plugged into it.
-    if (m_probedChannelCount > 1)
+    if (m_probedChannelCount > 1) {
+        // It has just said what it is, in the one place that asks outright.
+        // Worth remembering: everything else has to infer it, and the channel
+        // 0 of a recorder is indistinguishable from a camera by inference.
+        ReolinkClient::noteRecorder(m_tester->camera().host);
         m_tester->fetchChannelStatus();
+    }
 }
 
 void SettingsDialog::onNvrChannels(const QJsonArray &channels)

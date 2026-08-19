@@ -921,20 +921,17 @@ void MainWindow::pollCameraStatus()
 {
     const QList<CameraConfig> active = m_config.active();
 
-    // A host is a device. Several cameras on one means a recorder, and a
-    // recorder is on Ethernet by definition — asking each of its channels for
-    // a Wi-Fi strength is five logins, five sessions and five requests every
-    // thirty seconds to a box that has only a handful of sessions to give and
-    // answers -26 to all five. It was enough, with five channels, to make the
-    // recorder start refusing requests and drop every stream it was serving.
+    // A host is a device, and one session for it is enough however many
+    // entries point at it.
     QHash<QString, QList<QString>> byHost;
     for (const CameraConfig &camera : active)
         byHost[camera.host].append(camera.id);
 
-    // Sessions belonging to hosts that are gone, or that have since turned out
-    // to be recorders, are handed back rather than left to lapse.
+    // Sessions belonging to hosts that are gone are handed back rather than
+    // left to lapse. One that has since turned out to be a recorder is let go
+    // below, where that is decided.
     for (const QString &host : m_statusClients.keys()) {
-        if (!byHost.contains(host) || byHost.value(host).size() > 1) {
+        if (!byHost.contains(host)) {
             delete m_statusClients.take(host);
             LEO_DEBUG(Api, host, QStringLiteral("Status session released"));
         }
@@ -944,13 +941,30 @@ void MainWindow::pollCameraStatus()
         const QString host = it.key();
         const QList<QString> ids = it.value();
 
-        if (ids.size() > 1) {
-            // Several cameras on one address is a recorder, which is worth
-            // saying out loud: its channel 0 looks exactly like a standalone
-            // camera from inside a client, and it is the settings dialog for
-            // that channel that would otherwise ask for too much at once.
-            ReolinkClient::noteRecorder(host);
+        // A recorder is on Ethernet by definition, and asking each of its
+        // channels for a Wi-Fi strength is a login, a session and a request
+        // each, every thirty seconds, against a box with only a handful of
+        // sessions to give. With five channels that was enough to make it
+        // refuse requests and drop every stream it was serving.
+        //
+        // What marks one is a channel other than zero, or the device having
+        // said so itself when it was tested. Several entries on one address is
+        // not enough on its own: the same camera added twice, once for its main
+        // stream and once for its sub stream, is also two entries on one
+        // address — and it has a Wi-Fi meter like any other camera.
+        bool recorder = ReolinkClient::isRecorder(host);
+        for (const CameraConfig &camera : active) {
+            if (camera.host == host && camera.channel > 0)
+                recorder = true;
+        }
 
+        if (recorder) {
+            ReolinkClient::noteRecorder(host);
+            if (m_statusClients.contains(host)) {
+                delete m_statusClients.take(host);
+                LEO_DEBUG(Api, host,
+                          QStringLiteral("Recorder — status session released"));
+            }
             // Wired, and known to be, so the meter is hidden rather than left
             // empty — which would read as a fault.
             for (const QString &id : ids) {
@@ -960,12 +974,16 @@ void MainWindow::pollCameraStatus()
             continue;
         }
 
-        const QString id = ids.first();
         ReolinkClient *client = m_statusClients.value(host);
         if (!client) {
+            // Any entry on this address will do to reach it. They are the same
+            // device, so what it answers is true of every tile on it — which is
+            // why the answers below are handed to all of them, looked up when
+            // they arrive rather than captured now, so a camera added to this
+            // address in the meantime is not left out.
             CameraConfig config;
             for (const CameraConfig &camera : active) {
-                if (camera.id == id) {
+                if (camera.host == host) {
                     config = camera;
                     break;
                 }
@@ -973,21 +991,34 @@ void MainWindow::pollCameraStatus()
             client = new ReolinkClient(this);
             client->setCamera(config);
             connect(client, &ReolinkClient::wifiSignalReady, this,
-                    [this, id](int strength) {
-                        if (auto *tile = m_tiles.value(id))
-                            tile->setWifiSignal(strength);
+                    [this, host](int strength) {
+                        for (const CameraConfig &camera : m_config.active()) {
+                            if (camera.host != host)
+                                continue;
+                            if (auto *tile = m_tiles.value(camera.id))
+                                tile->setWifiSignal(strength);
+                        }
                     });
             // A camera on Ethernet answers with an error; hide the bars rather
             // than showing an empty meter that looks like a fault.
             connect(client, &ReolinkClient::linkTypeReady, this,
-                    [this, id](const QString &link) {
-                        if (auto *tile = m_tiles.value(id))
-                            tile->setLinkType(link);
+                    [this, host](const QString &link) {
+                        for (const CameraConfig &camera : m_config.active()) {
+                            if (camera.host != host)
+                                continue;
+                            if (auto *tile = m_tiles.value(camera.id))
+                                tile->setLinkType(link);
+                        }
                     });
-            connect(client, &ReolinkClient::failed, this, [this, id](const QString &) {
-                if (auto *tile = m_tiles.value(id))
-                    tile->setWifiSignal(-1);
-            });
+            connect(client, &ReolinkClient::failed, this,
+                    [this, host](const QString &) {
+                        for (const CameraConfig &camera : m_config.active()) {
+                            if (camera.host != host)
+                                continue;
+                            if (auto *tile = m_tiles.value(camera.id))
+                                tile->setWifiSignal(-1);
+                        }
+                    });
             m_statusClients.insert(host, client);
             // The link type is asked once; it does not change while running.
             client->fetchNetworkInfo();
