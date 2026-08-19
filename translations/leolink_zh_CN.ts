@@ -161,7 +161,7 @@
     <message>
         <location filename="../src/Config.cpp" line="77"/>
         <source>%1 channel %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 通道 %2</translation>
     </message>
     <message>
         <location filename="../src/Config.cpp" line="84"/>
@@ -861,9 +861,7 @@
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1125"/>
         <source>, %n access point(s)</source>
-        <translation>
-            <numerusform>，%n 个接入点</numerusform>
-        </translation>
+        <translation><numerusform>，%n 个接入点</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1130"/>
@@ -878,9 +876,7 @@
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1134"/>
         <source>Heard from %n access point(s) — one network, several nodes. The strongest is what is shown.</source>
-        <translation>
-            <numerusform>从 %n 个接入点听到 — 一张网络，多个节点。显示的是最强的那个。</numerusform>
-        </translation>
+        <translation><numerusform>从 %n 个接入点听到 — 一张网络，多个节点。显示的是最强的那个。</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1148"/>
@@ -890,9 +886,7 @@
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1158"/>
         <source>%n network(s) found, strongest first.</source>
-        <translation>
-            <numerusform>找到 %n 个网络，最强的在前。</numerusform>
-        </translation>
+        <translation><numerusform>找到 %n 个网络，最强的在前。</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1166"/>
@@ -1107,9 +1101,7 @@ Do not cut its power during the update — a camera interrupted mid-flash usuall
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1432"/>
         <source>Asking about %n command(s)…</source>
-        <translation>
-            <numerusform>正在询问 %n 条命令…</numerusform>
-        </translation>
+        <translation><numerusform>正在询问 %n 条命令…</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1449"/>
@@ -1531,16 +1523,12 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1972"/>
         <source>%n area(s) blanked</source>
-        <translation>
-            <numerusform>已遮黑 %n 个区域</numerusform>
-        </translation>
+        <translation><numerusform>已遮黑 %n 个区域</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1974"/>
         <source>%n area(s), switched off</source>
-        <translation>
-            <numerusform>%n 个区域，已关闭</numerusform>
-        </translation>
+        <translation><numerusform>%n 个区域，已关闭</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2056"/>
@@ -2256,7 +2244,7 @@ Use “Cameras…” to add one.</source>
     <message>
         <location filename="../src/MainWindow.cpp" line="294"/>
         <location filename="../src/MainWindow.cpp" line="727"/>
-        <location filename="../src/MainWindow.cpp" line="1794"/>
+        <location filename="../src/MainWindow.cpp" line="1925"/>
         <source>No cameras configured</source>
         <translation>尚未配置摄像机</translation>
     </message>
@@ -2387,7 +2375,7 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
     <message>
         <location filename="../src/MainWindow.cpp" line="477"/>
         <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly: HTTP API, RTSP and ONVIF on the local network, and Reolink&apos;s P2P service when you want to reach a camera from elsewhere.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;面向 Reolink 摄像机的 Linux 原生客户端。&lt;/p&gt;&lt;p&gt;直接讲摄像机自己的协议：局域网内的 HTTP 接口、RTSP 和 ONVIF，以及需要从别处连上摄像机时 Reolink 的 P2P 服务。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;手册&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;源代码&lt;/a&gt;&lt;/p&gt;&lt;p&gt;与 Reolink 无关，也未获其背书。&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;面向 Reolink 摄像机的 Linux 原生客户端。&lt;/p&gt;&lt;p&gt;直接讲摄像机自己的协议：局域网内的 HTTP 接口、RTSP 和 ONVIF，以及需要从别处连上摄像机时 Reolink 的 P2P 服务。&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;手册&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;源代码&lt;/a&gt;&lt;/p&gt;&lt;p&gt;与 Reolink 无关，也未获其背书。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="489"/>
@@ -2429,174 +2417,170 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
     <message numerus="yes">
         <location filename="../src/MainWindow.cpp" line="751"/>
         <source>%n camera(s) live</source>
-        <translation>
-            <numerusform>%n 台摄像机在线</numerusform>
-        </translation>
+        <translation><numerusform>%n 台摄像机在线</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="960"/>
+        <location filename="../src/MainWindow.cpp" line="1045"/>
         <source>Esc leaves full screen</source>
         <translation>Esc 退出全屏</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="967"/>
-        <location filename="../src/MainWindow.cpp" line="1006"/>
+        <location filename="../src/MainWindow.cpp" line="1052"/>
+        <location filename="../src/MainWindow.cpp" line="1091"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>双击返回网格 · Esc 退出全屏</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1004"/>
+        <location filename="../src/MainWindow.cpp" line="1089"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>Esc 退出全屏 · 双击某台摄像机可让它铺满屏幕</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1029"/>
+        <location filename="../src/MainWindow.cpp" line="1114"/>
         <source>Grid view</source>
         <translation>网格视图</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1215"/>
-        <location filename="../src/MainWindow.cpp" line="1233"/>
-        <location filename="../src/MainWindow.cpp" line="1471"/>
+        <location filename="../src/MainWindow.cpp" line="1300"/>
+        <location filename="../src/MainWindow.cpp" line="1318"/>
+        <location filename="../src/MainWindow.cpp" line="1556"/>
         <source>Cannot create %1</source>
         <translation>无法创建 %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1361"/>
+        <location filename="../src/MainWindow.cpp" line="1446"/>
         <source>Recording %1</source>
         <translation>正在录制 %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1283"/>
-        <location filename="../src/MainWindow.cpp" line="1369"/>
+        <location filename="../src/MainWindow.cpp" line="1368"/>
+        <location filename="../src/MainWindow.cpp" line="1454"/>
         <source>Saved %1</source>
         <translation>已保存 %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1375"/>
-        <location filename="../src/MainWindow.cpp" line="1506"/>
+        <location filename="../src/MainWindow.cpp" line="1460"/>
+        <location filename="../src/MainWindow.cpp" line="1591"/>
         <source>Recording stopped</source>
         <translation>录制已停止</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1382"/>
+        <location filename="../src/MainWindow.cpp" line="1467"/>
         <source>%1: %2</source>
         <translation>%1：%2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1487"/>
+        <location filename="../src/MainWindow.cpp" line="1572"/>
         <source>Recording started</source>
         <translation>录制已开始</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1505"/>
+        <location filename="../src/MainWindow.cpp" line="1590"/>
         <source>Recording all cameras</source>
         <translation>正在录制所有摄像机</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1586"/>
+        <location filename="../src/MainWindow.cpp" line="1671"/>
         <source>%1 at %2</source>
         <translation>%2 处的 %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1606"/>
+        <location filename="../src/MainWindow.cpp" line="1691"/>
         <source>Motion detected</source>
         <translation>侦测到移动</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1618"/>
+        <location filename="../src/MainWindow.cpp" line="1703"/>
         <source>Sound detected</source>
         <translation>侦测到声音</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <location filename="../src/MainWindow.cpp" line="1726"/>
         <source>Menu bar hidden</source>
         <translation>菜单栏已隐藏</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1642"/>
+        <location filename="../src/MainWindow.cpp" line="1727"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>菜单栏和工具栏都隐藏时，按 Ctrl+M 可把菜单调回来。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1661"/>
+        <location filename="../src/MainWindow.cpp" line="1746"/>
         <source>Cannot save</source>
         <translation>无法保存</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1662"/>
+        <location filename="../src/MainWindow.cpp" line="1747"/>
         <source>Settings could not be written to %1.</source>
         <translation>设置无法写入 %1。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1729"/>
+        <location filename="../src/MainWindow.cpp" line="1860"/>
         <source>Play through %1</source>
         <translation>通过 %1 播放</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1730"/>
+        <location filename="../src/MainWindow.cpp" line="1861"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>声音文件 (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1742"/>
+        <location filename="../src/MainWindow.cpp" line="1873"/>
         <source>Speaking through the camera…</source>
         <translation>正通过摄像机讲话…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1749"/>
+        <location filename="../src/MainWindow.cpp" line="1880"/>
         <source>Finished.</source>
         <translation>已完成。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1872"/>
+        <location filename="../src/MainWindow.cpp" line="2015"/>
         <source>Nothing to capture</source>
         <translation>没有可截取的内容</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1877"/>
+        <location filename="../src/MainWindow.cpp" line="2020"/>
         <source>Save snapshots to</source>
         <translation>快照保存到</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="1895"/>
+        <location filename="../src/MainWindow.cpp" line="2038"/>
         <source>Saved %n snapshot(s)</source>
-        <translation>
-            <numerusform>已保存 %n 张快照</numerusform>
-        </translation>
+        <translation><numerusform>已保存 %n 张快照</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1913"/>
+        <location filename="../src/MainWindow.cpp" line="2056"/>
         <source>Welcome to leolink</source>
         <translation>欢迎使用 leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1915"/>
+        <location filename="../src/MainWindow.cpp" line="2058"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;还没有配置任何摄像机。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1917"/>
+        <location filename="../src/MainWindow.cpp" line="2060"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>用地址、用户名和密码添加一台摄像机。leolink 在您自己的网络里直接与摄像机通信 — 不涉及任何云账号。&lt;p&gt;各个选项的作用请见手册。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1921"/>
+        <location filename="../src/MainWindow.cpp" line="2064"/>
         <source>Add camera…</source>
         <translation>添加摄像机…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1922"/>
+        <location filename="../src/MainWindow.cpp" line="2065"/>
         <source>Open handbook</source>
         <translation>打开手册</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1998"/>
+        <location filename="../src/MainWindow.cpp" line="2141"/>
         <source>leolink is still running</source>
         <translation>leolink 仍在运行</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1999"/>
+        <location filename="../src/MainWindow.cpp" line="2142"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>摄像机仍在录制。用通知区域的图标可以回来。</translation>
     </message>
@@ -2673,7 +2657,7 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 <context>
     <name>leolink::MotionWatcher</name>
     <message>
-        <location filename="../src/MotionWatcher.cpp" line="157"/>
+        <location filename="../src/MotionWatcher.cpp" line="168"/>
         <source>ONVIF subscription failed.</source>
         <translation>ONVIF 订阅失败。</translation>
     </message>
@@ -2786,9 +2770,7 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
     <message numerus="yes">
         <location filename="../src/PlaybackBrowser.cpp" line="154"/>
         <source>%n recording(s) found.</source>
-        <translation>
-            <numerusform>找到 %n 段录像。</numerusform>
-        </translation>
+        <translation><numerusform>找到 %n 段录像。</numerusform></translation>
     </message>
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="182"/>
@@ -3151,172 +3133,172 @@ If the picture is broken, try the others in turn. “Software only” always wor
 <context>
     <name>leolink::ReolinkClient</name>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="121"/>
+        <location filename="../src/ReolinkClient.cpp" line="255"/>
         <source>File format not recognised.</source>
         <translation>无法识别的文件格式。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="122"/>
+        <location filename="../src/ReolinkClient.cpp" line="256"/>
         <source>Invalid input.</source>
         <translation>输入无效。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="123"/>
+        <location filename="../src/ReolinkClient.cpp" line="257"/>
         <source>The camera has no free sessions. It allows only a handful at once, shared with the phone app and its web page. Close those, or wait a minute for the old ones to lapse.</source>
         <translation>摄像机没有空闲会话。它一次只允许寥寥几个，还要与手机应用和它的网页共用。请关掉那些，或者等一分钟让旧会话失效。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="127"/>
+        <location filename="../src/ReolinkClient.cpp" line="261"/>
         <source>Session expired.</source>
         <translation>会话已过期。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="128"/>
+        <location filename="../src/ReolinkClient.cpp" line="262"/>
         <source>Wrong user name or password.</source>
         <translation>用户名或密码不正确。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="129"/>
+        <location filename="../src/ReolinkClient.cpp" line="263"/>
         <source>Timed out.</source>
         <translation>已超时。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="130"/>
+        <location filename="../src/ReolinkClient.cpp" line="264"/>
         <source>This firmware does not support that command.</source>
         <translation>此固件不支持该命令。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="131"/>
+        <location filename="../src/ReolinkClient.cpp" line="265"/>
         <source>Could not read the configuration.</source>
         <translation>无法读取配置。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="132"/>
+        <location filename="../src/ReolinkClient.cpp" line="266"/>
         <source>Could not verify the configuration.</source>
         <translation>无法验证配置。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="133"/>
+        <location filename="../src/ReolinkClient.cpp" line="267"/>
         <source>Part of the camera did not answer. Depending on what was asked, that means no SD card is fitted, or the camera has no way out to the internet.</source>
         <translation>摄像机的一部分没有回应。视询问内容而定，这意味着没有装存储卡，或者摄像机没有互联网出路。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="136"/>
+        <location filename="../src/ReolinkClient.cpp" line="270"/>
         <source>Not permitted — this model lacks the hardware.</source>
         <translation>不允许 — 此型号没有相应硬件。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="137"/>
+        <location filename="../src/ReolinkClient.cpp" line="271"/>
         <source>Account invalid, log in again.</source>
         <translation>账号无效，请重新登录。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="138"/>
+        <location filename="../src/ReolinkClient.cpp" line="272"/>
         <source>User name already taken.</source>
         <translation>该用户名已被占用。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="139"/>
+        <location filename="../src/ReolinkClient.cpp" line="273"/>
         <source>Maximum number of users reached.</source>
         <translation>已达到用户数量上限。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="140"/>
+        <location filename="../src/ReolinkClient.cpp" line="274"/>
         <source>Camera busy, try again shortly.</source>
         <translation>摄像机忙，请稍后再试。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="141"/>
+        <location filename="../src/ReolinkClient.cpp" line="275"/>
         <source>IP address conflict.</source>
         <translation>IP 地址冲突。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="142"/>
+        <location filename="../src/ReolinkClient.cpp" line="276"/>
         <source>Configuration test failed.</source>
         <translation>配置测试失败。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="143"/>
+        <location filename="../src/ReolinkClient.cpp" line="277"/>
         <source>FTP login failed.</source>
         <translation>FTP 登录失败。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="144"/>
+        <location filename="../src/ReolinkClient.cpp" line="278"/>
         <source>FTP could not create the directory.</source>
         <translation>FTP 无法创建目录。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="145"/>
+        <location filename="../src/ReolinkClient.cpp" line="279"/>
         <source>FTP upload failed.</source>
         <translation>FTP 上传失败。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="146"/>
+        <location filename="../src/ReolinkClient.cpp" line="280"/>
         <source>FTP could not reach the server.</source>
         <translation>FTP 无法连上服务器。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="147"/>
+        <location filename="../src/ReolinkClient.cpp" line="281"/>
         <source>Camera reported error %1.</source>
         <translation>摄像机报告错误 %1。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="348"/>
+        <location filename="../src/ReolinkClient.cpp" line="537"/>
         <source>The camera is not answering requests just now. It does this when it has had too many at once; it recovers on its own after a moment.</source>
         <translation>摄像机此刻不回应请求。当它一次收到太多请求时就会这样；过一会儿它会自行恢复。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="355"/>
+        <location filename="../src/ReolinkClient.cpp" line="544"/>
         <source>Cannot reach %1: %2</source>
         <translation>无法连上 %1：%2</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="369"/>
+        <location filename="../src/ReolinkClient.cpp" line="558"/>
         <source>Unexpected reply from %1.</source>
         <translation>来自 %1 的意外应答。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="472"/>
+        <location filename="../src/ReolinkClient.cpp" line="661"/>
         <source>Login returned no token.</source>
         <translation>登录没有返回令牌。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="512"/>
+        <location filename="../src/ReolinkClient.cpp" line="701"/>
         <source>%1 — firmware %2, %3 channel(s)</source>
         <translation>%1 — 固件 %2，%3 个通道</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="800"/>
+        <location filename="../src/ReolinkClient.cpp" line="989"/>
         <source>The camera could not join that network: %1</source>
         <translation>摄像机无法加入该网络：%1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="810"/>
+        <location filename="../src/ReolinkClient.cpp" line="999"/>
         <source>E-mail</source>
         <translation>电子邮件</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="820"/>
+        <location filename="../src/ReolinkClient.cpp" line="1009"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="860"/>
+        <location filename="../src/ReolinkClient.cpp" line="1049"/>
         <source>Update available: %1</source>
         <translation>有可用更新：%1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="861"/>
+        <location filename="../src/ReolinkClient.cpp" line="1050"/>
         <source>The firmware is up to date.</source>
         <translation>固件已是最新。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="878"/>
+        <location filename="../src/ReolinkClient.cpp" line="1067"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>正在升级。摄像机会自行重启，并有数分钟无法连接。切勿断电。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1012"/>
+        <location filename="../src/ReolinkClient.cpp" line="1201"/>
         <source>Snapshot failed.</source>
         <translation>抓拍失败。</translation>
     </message>
@@ -3376,9 +3358,7 @@ If the picture is broken, try the others in turn. “Software only” always wor
     <message numerus="yes">
         <location filename="../src/SchedulePicker.cpp" line="282"/>
         <source>%n hour(s) a week.</source>
-        <translation>
-            <numerusform>每周 %n 小时。</numerusform>
-        </translation>
+        <translation><numerusform>每周 %n 小时。</numerusform></translation>
     </message>
 </context>
 <context>
@@ -3482,7 +3462,9 @@ If the picture is broken, try the others in turn. “Software only” always wor
         <source>Which input of the device this is. Leave at 0 for a camera.
 
 An NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.</source>
-        <translation type="unfinished"></translation>
+        <translation>这是设备的哪一路输入。摄像机保持为 0。
+
+NVR 用一个地址、一个登录和一个端口代所有摄像机应答，区分它们的只有通道。测试与录像机的连接时会提示把它们全部添加，因此很少需要手动设置。</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="139"/>
@@ -3576,7 +3558,7 @@ Baichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄�
     <message>
         <location filename="../src/SettingsDialog.cpp" line="170"/>
         <source>Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>通道</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="171"/>
@@ -3657,7 +3639,7 @@ Baichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄�
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="446"/>
-        <location filename="../src/SettingsDialog.cpp" line="621"/>
+        <location filename="../src/SettingsDialog.cpp" line="624"/>
         <source>New camera</source>
         <translation>新摄像机</translation>
     </message>
@@ -3682,84 +3664,78 @@ Baichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄�
         <translation>正在联系 %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="545"/>
-        <source>Cameras on this recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
         <location filename="../src/SettingsDialog.cpp" line="548"/>
-        <source>%1 answers for %n channel(s). Which of them should be added?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="567"/>
-        <location filename="../src/SettingsDialog.cpp" line="638"/>
-        <source>Channel %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="569"/>
-        <source>%1 — %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="571"/>
-        <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="573"/>
-        <source>%1 — already in the list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="575"/>
-        <source>%1 — nothing connected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="587"/>
-        <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="588"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
+        <source>Cameras on this recorder</source>
+        <translation>此录像机上的摄像机</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="666"/>
-        <source>Added %n camera(s) from this recorder.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-        </translation>
+        <location filename="../src/SettingsDialog.cpp" line="551"/>
+        <source>%1 answers for %n channel(s). Which of them should be added?</source>
+        <translation><numerusform>%1 代 %n 个通道应答。要添加其中哪些？</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="675"/>
+        <location filename="../src/SettingsDialog.cpp" line="570"/>
+        <location filename="../src/SettingsDialog.cpp" line="641"/>
+        <source>Channel %1</source>
+        <translation>通道 %1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="572"/>
+        <source>%1 — %2</source>
+        <translation>%1 — %2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="574"/>
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="576"/>
+        <source>%1 — already in the list</source>
+        <translation>%1 — 已在列表中</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="578"/>
+        <source>%1 — nothing connected</source>
+        <translation>%1 — 未接任何设备</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="590"/>
+        <source>All</source>
+        <translation>全选</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="591"/>
+        <source>None</source>
+        <translation>全不选</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/SettingsDialog.cpp" line="669"/>
+        <source>Added %n camera(s) from this recorder.</source>
+        <translation><numerusform>已从此录像机添加 %n 台摄像机。</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="678"/>
         <source>Looking for cameras…</source>
         <translation>正在查找摄像机…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="675"/>
+        <location filename="../src/SettingsDialog.cpp" line="678"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="689"/>
+        <location filename="../src/SettingsDialog.cpp" line="692"/>
         <source>Found %n device(s)…</source>
-        <translation>
-            <numerusform>已找到 %n 台设备…</numerusform>
-        </translation>
+        <translation><numerusform>已找到 %n 台设备…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="699"/>
+        <location filename="../src/SettingsDialog.cpp" line="702"/>
         <source>No cameras found</source>
         <translation>未找到摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="700"/>
+        <location filename="../src/SettingsDialog.cpp" line="703"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -3768,37 +3744,37 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 摄像机只有在开启 ONVIF 时才会回答，而探询既穿不过路由器，也穿不过多数 VPN。您仍可以手动输入地址来添加摄像机。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="726"/>
+        <location filename="../src/SettingsDialog.cpp" line="729"/>
         <source>unnamed device</source>
         <translation>未命名设备</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="727"/>
+        <location filename="../src/SettingsDialog.cpp" line="730"/>
         <source> (Reolink)</source>
         <translation>（Reolink）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="728"/>
+        <location filename="../src/SettingsDialog.cpp" line="731"/>
         <source>  · already added</source>
         <translation>  · 已添加</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="734"/>
+        <location filename="../src/SettingsDialog.cpp" line="737"/>
         <source>Cameras found</source>
         <translation>找到摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="735"/>
+        <location filename="../src/SettingsDialog.cpp" line="738"/>
         <source>Add which one?</source>
         <translation>添加哪一台？</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="778"/>
+        <location filename="../src/SettingsDialog.cpp" line="781"/>
         <source>Incomplete camera</source>
         <translation>摄像机信息不完整</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="779"/>
+        <location filename="../src/SettingsDialog.cpp" line="782"/>
         <source>“%1” has no host address.</source>
         <translation>「%1」没有地址。</translation>
     </message>
@@ -3849,22 +3825,22 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
         <translation>摄像机在 RTSP 端口上没有回应。</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="159"/>
+        <location filename="../src/TalkSession.cpp" line="165"/>
         <source>ffmpeg is needed to send sound and could not be started.</source>
         <translation>发送声音需要 ffmpeg，而它未能启动。</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="272"/>
+        <location filename="../src/TalkSession.cpp" line="278"/>
         <source>The camera rejected the user name or password.</source>
         <translation>摄像机拒绝了该用户名或密码。</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="281"/>
+        <location filename="../src/TalkSession.cpp" line="287"/>
         <source>The camera refused: %1</source>
         <translation>摄像机已拒绝：%1</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="316"/>
+        <location filename="../src/TalkSession.cpp" line="322"/>
         <source>This camera does not offer a speaker.</source>
         <translation>这台摄像机没有扬声器。</translation>
     </message>
@@ -3891,11 +3867,9 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
         <source>%n damaged frame(s) in the last ten seconds.
 
 Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolink repairs what it can — this is what it could not.</source>
-        <translation>
-            <numerusform>最近十秒内有 %n 帧损坏。
+        <translation><numerusform>最近十秒内有 %n 帧损坏。
 
-通常是 Wi-Fi 信号弱，或者码率相对分辨率设得太低。leolink 能修的都修了 — 这些是修不了的。</numerusform>
-        </translation>
+通常是 Wi-Fi 信号弱，或者码率相对分辨率设得太低。leolink 能修的都修了 — 这些是修不了的。</numerusform></translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="223"/>

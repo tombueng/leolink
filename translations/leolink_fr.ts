@@ -27,7 +27,7 @@
     <message>
         <location filename="../src/ActionEditor.cpp" line="60"/>
         <source>Left empty, leolink sends a small JSON document describing the event.</source>
-        <translation>Laissé vide, leolink envoie un petit document JSON décrivant l&apos;événement.</translation>
+        <translation>Laissé vide, leolink envoie un petit document JSON décrivant l'événement.</translation>
     </message>
     <message>
         <location filename="../src/ActionEditor.cpp" line="67"/>
@@ -67,7 +67,7 @@
     <message>
         <location filename="../src/ActionEditor.cpp" line="104"/>
         <source>A client connecting later is told the current state straight away, instead of waiting for the next event. This is what home automation usually wants.</source>
-        <translation>Un client qui se connecte plus tard connaît aussitôt l&apos;état courant, au lieu d&apos;attendre l&apos;événement suivant. C&apos;est ce que veut d&apos;ordinaire la domotique.</translation>
+        <translation>Un client qui se connecte plus tard connaît aussitôt l'état courant, au lieu d'attendre l'événement suivant. C'est ce que veut d'ordinaire la domotique.</translation>
     </message>
     <message>
         <location filename="../src/ActionEditor.cpp" line="110"/>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../src/AudioDetector.cpp" line="57"/>
         <source>ffmpeg is not installed, so sound detection is unavailable.</source>
-        <translation>ffmpeg n&apos;est pas installé : la détection sonore est donc indisponible.</translation>
+        <translation>ffmpeg n'est pas installé : la détection sonore est donc indisponible.</translation>
     </message>
     <message>
         <location filename="../src/AudioDetector.cpp" line="74"/>
@@ -133,7 +133,7 @@
     <message>
         <location filename="../src/BaichuanStream.cpp" line="52"/>
         <source>Cannot open a local port: %1</source>
-        <translation>Impossible d&apos;ouvrir un port local : %1</translation>
+        <translation>Impossible d'ouvrir un port local : %1</translation>
     </message>
     <message>
         <location filename="../src/BaichuanStream.cpp" line="64"/>
@@ -143,17 +143,17 @@
     <message>
         <location filename="../src/BaichuanStream.cpp" line="73"/>
         <source>The camera refused to send video: %1</source>
-        <translation>La caméra a refusé d&apos;envoyer la vidéo : %1</translation>
+        <translation>La caméra a refusé d'envoyer la vidéo : %1</translation>
     </message>
     <message>
         <location filename="../src/BaichuanStream.cpp" line="81"/>
         <source>The player did not connect.</source>
-        <translation>Le lecteur ne s&apos;est pas connecté.</translation>
+        <translation>Le lecteur ne s'est pas connecté.</translation>
     </message>
     <message>
         <location filename="../src/BaichuanStream.cpp" line="133"/>
         <source>The camera stopped sending.</source>
-        <translation>La caméra a cessé d&apos;émettre.</translation>
+        <translation>La caméra a cessé d'émettre.</translation>
     </message>
 </context>
 <context>
@@ -161,7 +161,7 @@
     <message>
         <location filename="../src/Config.cpp" line="77"/>
         <source>%1 channel %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 canal %2</translation>
     </message>
     <message>
         <location filename="../src/Config.cpp" line="84"/>
@@ -215,7 +215,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="208"/>
         <source>The camera is at its limit. Lowering the resolution or frame rate will steady it.</source>
-        <translation>La caméra est à sa limite. Baisser la résolution ou la fréquence d&apos;images la stabilisera.</translation>
+        <translation>La caméra est à sa limite. Baisser la résolution ou la fréquence d'images la stabilisera.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="228"/>
@@ -242,7 +242,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="678"/>
         <source>Higher means better picture and more network traffic. The camera only offers the rates it can actually sustain.</source>
-        <translation>Plus haut signifie une meilleure image et plus de trafic réseau. La caméra ne propose que les débits qu&apos;elle peut réellement tenir.</translation>
+        <translation>Plus haut signifie une meilleure image et plus de trafic réseau. La caméra ne propose que les débits qu'elle peut réellement tenir.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="682"/>
@@ -252,7 +252,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="683"/>
         <source>Frame rate</source>
-        <translation>Fréquence d&apos;images</translation>
+        <translation>Fréquence d'images</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="684"/>
@@ -277,7 +277,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="709"/>
         <source>The camera&apos;s microphone. With this off it still puts an audio track in the stream — an entirely silent one, which is much harder to recognise than no track at all.</source>
-        <translation>Le microphone de la caméra. Éteint, elle place tout de même une piste audio dans le flux — entièrement muette, ce qui est bien plus difficile à reconnaître qu&apos;une piste absente.</translation>
+        <translation>Le microphone de la caméra. Éteint, elle place tout de même une piste audio dans le flux — entièrement muette, ce qui est bien plus difficile à reconnaître qu'une piste absente.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="438"/>
@@ -308,12 +308,12 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="340"/>
         <source>leolink watches the picture</source>
-        <translation>leolink observe l&apos;image</translation>
+        <translation>leolink observe l'image</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="342"/>
         <source>Either of the two</source>
-        <translation>L&apos;un ou l&apos;autre</translation>
+        <translation>L'un ou l'autre</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="343"/>
@@ -323,7 +323,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="352"/>
         <source>&lt;b&gt;The camera reports it:&lt;/b&gt; the camera&apos;s own detector decides, and sends an ONVIF event. What it watches and how readily it triggers is set under “Detection” further down, in the camera itself.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink watches the picture:&lt;/b&gt; this computer opens a second sub-stream connection and analyses the picture. Works with any camera, including ones that report nothing — and the camera&apos;s own detector then plays no part.</source>
-        <translation>&lt;b&gt;La caméra le signale :&lt;/b&gt; c&apos;est le détecteur de la caméra qui décide, et il envoie un événement ONVIF. Ce qu&apos;il surveille et avec quelle facilité il se déclenche se règle plus bas, sous « Détection », dans la caméra elle-même.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink observe l&apos;image :&lt;/b&gt; cet ordinateur ouvre une seconde connexion au flux secondaire et analyse l&apos;image. Fonctionne avec n&apos;importe quelle caméra, y compris celles qui ne signalent rien — et le détecteur de la caméra n&apos;y joue alors aucun rôle.</translation>
+        <translation>&lt;b&gt;La caméra le signale :&lt;/b&gt; c'est le détecteur de la caméra qui décide, et il envoie un événement ONVIF. Ce qu'il surveille et avec quelle facilité il se déclenche se règle plus bas, sous « Détection », dans la caméra elle-même.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink observe l'image :&lt;/b&gt; cet ordinateur ouvre une seconde connexion au flux secondaire et analyse l'image. Fonctionne avec n'importe quelle caméra, y compris celles qui ne signalent rien — et le détecteur de la caméra n'y joue alors aucun rôle.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="363"/>
@@ -333,7 +333,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="371"/>
         <source>How much a spot in the picture must change to count. Higher notices more, including shadows and rain.</source>
-        <translation>De combien un point de l&apos;image doit changer pour compter. Plus haut remarque davantage, ombres et pluie comprises.</translation>
+        <translation>De combien un point de l'image doit changer pour compter. Plus haut remarque davantage, ombres et pluie comprises.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="376"/>
@@ -343,7 +343,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="379"/>
         <source>How much of the watched area must change before it counts as motion. 20‰ is two percent of the picture — roughly a person at middle distance.</source>
-        <translation>Quelle part de la surface surveillée doit changer pour compter comme un mouvement. 20 ‰, c&apos;est deux pour cent de l&apos;image — à peu près une personne à distance moyenne.</translation>
+        <translation>Quelle part de la surface surveillée doit changer pour compter comme un mouvement. 20 ‰, c'est deux pour cent de l'image — à peu près une personne à distance moyenne.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="384"/>
@@ -363,7 +363,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="395"/>
         <source>When leolink watches the picture</source>
-        <translation>Quand leolink observe l&apos;image</translation>
+        <translation>Quand leolink observe l'image</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="406"/>
@@ -395,7 +395,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="424"/>
         <source>Keeps the event up after the noise stops, so one bark is not reported four times.</source>
-        <translation>Maintient l&apos;événement après la fin du bruit, pour qu&apos;un aboiement ne soit pas signalé quatre fois.</translation>
+        <translation>Maintient l'événement après la fin du bruit, pour qu'un aboiement ne soit pas signalé quatre fois.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="435"/>
@@ -420,7 +420,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="460"/>
         <source>Records on this computer from the live stream, so it works even when the camera has no SD card fitted.</source>
-        <translation>Enregistre sur cet ordinateur à partir du flux en direct : cela fonctionne donc même quand la caméra n&apos;a pas de carte SD.</translation>
+        <translation>Enregistre sur cet ordinateur à partir du flux en direct : cela fonctionne donc même quand la caméra n'a pas de carte SD.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="598"/>
@@ -441,7 +441,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="614"/>
         <source>What happens on an event</source>
-        <translation>Ce qui se passe lors d&apos;un événement</translation>
+        <translation>Ce qui se passe lors d'un événement</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="629"/>
@@ -461,7 +461,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="650"/>
         <source>The same two controls sit on the camera&apos;s own tile, where they are quicker to reach. Cameras start muted: opening a wall of them should not fill the room with sound from every one at once.</source>
-        <translation>Les deux mêmes commandes se trouvent sur la tuile de la caméra, où elles sont plus vite atteintes. Les caméras démarrent muettes : ouvrir un mur de caméras ne doit pas remplir la pièce du son de chacune d&apos;elles.</translation>
+        <translation>Les deux mêmes commandes se trouvent sur la tuile de la caméra, où elles sont plus vite atteintes. Les caméras démarrent muettes : ouvrir un mur de caméras ne doit pas remplir la pièce du son de chacune d'elles.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="660"/>
@@ -528,7 +528,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="759"/>
         <source>“Auto” switches to infrared as the light goes. Forcing colour at night gives a picture too dark to use; forcing black and white by day loses colour for nothing.</source>
-        <translation>« Auto » passe à l&apos;infrarouge à mesure que la lumière baisse. Forcer la couleur la nuit donne une image trop sombre pour servir ; forcer le noir et blanc le jour perd la couleur pour rien.</translation>
+        <translation>« Auto » passe à l'infrarouge à mesure que la lumière baisse. Forcer la couleur la nuit donne une image trop sombre pour servir ; forcer le noir et blanc le jour perd la couleur pour rien.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="764"/>
@@ -554,7 +554,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="768"/>
         <source>Match your mains frequency — 50 Hz in Europe — or indoor lighting will beat against the shutter and the picture will pulse.</source>
-        <translation>Faites correspondre à la fréquence de votre secteur — 50 Hz en Europe — sinon l&apos;éclairage intérieur battra contre l&apos;obturateur et l&apos;image pulsera.</translation>
+        <translation>Faites correspondre à la fréquence de votre secteur — 50 Hz en Europe — sinon l'éclairage intérieur battra contre l'obturateur et l'image pulsera.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="772"/>
@@ -574,7 +574,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="775"/>
         <source>For a camera mounted upside down.</source>
-        <translation>Pour une caméra montée à l&apos;envers.</translation>
+        <translation>Pour une caméra montée à l'envers.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="776"/>
@@ -594,7 +594,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="780"/>
         <source>Cleans up a dark picture, at the cost of smearing anything that moves.</source>
-        <translation>Nettoie une image sombre, au prix d&apos;un flou sur tout ce qui bouge.</translation>
+        <translation>Nettoie une image sombre, au prix d'un flou sur tout ce qui bouge.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="782"/>
@@ -619,7 +619,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="790"/>
         <source>“Auto” turns them on when it gets dark. Switch them off if the camera looks through glass — the reflection blinds it.</source>
-        <translation>« Auto » les allume à la tombée du jour. Éteignez-les si la caméra regarde à travers une vitre — le reflet l&apos;aveugle.</translation>
+        <translation>« Auto » les allume à la tombée du jour. Éteignez-les si la caméra regarde à travers une vitre — le reflet l'aveugle.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="795"/>
@@ -665,7 +665,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="833"/>
         <source>These are accounts on the camera, not in leolink. A viewer account can watch but not change anything — worth using for anything that only needs to see the picture, so a stored password cannot be turned against the camera&apos;s settings.</source>
-        <translation>Ce sont des comptes sur la caméra, pas dans leolink. Un compte spectateur peut regarder mais ne rien changer — utile pour tout ce qui n&apos;a besoin que de voir l&apos;image, afin qu&apos;un mot de passe stocké ne puisse pas se retourner contre les réglages de la caméra.</translation>
+        <translation>Ce sont des comptes sur la caméra, pas dans leolink. Un compte spectateur peut regarder mais ne rien changer — utile pour tout ce qui n'a besoin que de voir l'image, afin qu'un mot de passe stocké ne puisse pas se retourner contre les réglages de la caméra.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="850"/>
@@ -682,7 +682,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="857"/>
         <source>User name</source>
-        <translation>Nom d&apos;utilisateur</translation>
+        <translation>Nom d'utilisateur</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="862"/>
@@ -707,12 +707,12 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="898"/>
         <source>This is the account leolink uses</source>
-        <translation>C&apos;est le compte qu&apos;utilise leolink</translation>
+        <translation>C'est le compte qu'utilise leolink</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="899"/>
         <source>Change it here and leolink will be locked out until the new password is entered under Cameras as well.</source>
-        <translation>Changez-le ici et leolink restera dehors jusqu&apos;à ce que le nouveau mot de passe soit saisi sous Caméras également.</translation>
+        <translation>Changez-le ici et leolink restera dehors jusqu'à ce que le nouveau mot de passe soit saisi sous Caméras également.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="903"/>
@@ -732,7 +732,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="922"/>
         <source>Delete user</source>
-        <translation>Supprimer l&apos;utilisateur</translation>
+        <translation>Supprimer l'utilisateur</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="923"/>
@@ -758,7 +758,7 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="939"/>
         <source>Every recording on the card is deleted. This cannot be undone, and nothing that has not already been downloaded can be recovered.</source>
-        <translation>Chaque enregistrement de la carte est supprimé. C&apos;est irréversible, et rien de ce qui n&apos;a pas déjà été téléchargé ne pourra être récupéré.</translation>
+        <translation>Chaque enregistrement de la carte est supprimé. C'est irréversible, et rien de ce qui n'a pas déjà été téléchargé ne pourra être récupéré.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="942"/>
@@ -821,12 +821,12 @@
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1009"/>
         <source>The camera scans, not this computer — what it can reach is what counts. The password is tried before it is saved, so a typo is refused rather than leaving the camera on no network at all.</source>
-        <translation>C&apos;est la caméra qui explore, pas cet ordinateur — ce qui compte, c&apos;est ce qu&apos;elle atteint. Le mot de passe est essayé avant d&apos;être enregistré : une faute de frappe est donc refusée au lieu de laisser la caméra sans aucun réseau.</translation>
+        <translation>C'est la caméra qui explore, pas cet ordinateur — ce qui compte, c'est ce qu'elle atteint. Le mot de passe est essayé avant d'être enregistré : une faute de frappe est donc refusée au lieu de laisser la caméra sans aucun réseau.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1017"/>
         <source>Addresses and ports are read here but changed in the camera&apos;s own web interface. Getting one wrong takes the camera off the network entirely, and the only way back is the reset pin — a warning dialog is no substitute for the manufacturer&apos;s own screen there.</source>
-        <translation>Les adresses et les ports se lisent ici mais se modifient dans l&apos;interface web de la caméra. Se tromper sur l&apos;un d&apos;eux sort complètement la caméra du réseau, et le seul retour possible est la pointe de réinitialisation — une boîte d&apos;avertissement ne remplace pas l&apos;écran du fabricant sur ce point.</translation>
+        <translation>Les adresses et les ports se lisent ici mais se modifient dans l'interface web de la caméra. Se tromper sur l'un d'eux sort complètement la caméra du réseau, et le seul retour possible est la pointe de réinitialisation — une boîte d'avertissement ne remplace pas l'écran du fabricant sur ce point.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1062"/>
@@ -861,15 +861,12 @@
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1125"/>
         <source>, %n access point(s)</source>
-        <translation>
-            <numerusform>, %n point d&apos;accès</numerusform>
-            <numerusform>, %n points d&apos;accès</numerusform>
-        </translation>
+        <translation><numerusform>, %n point d'accès</numerusform><numerusform>, %n points d'accès</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1130"/>
         <source>Signal as the camera hears it: %1 of 4</source>
-        <translation>Signal tel que la caméra l&apos;entend : %1 sur 4</translation>
+        <translation>Signal tel que la caméra l'entend : %1 sur 4</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1132"/>
@@ -879,23 +876,17 @@
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1134"/>
         <source>Heard from %n access point(s) — one network, several nodes. The strongest is what is shown.</source>
-        <translation>
-            <numerusform>Entendu depuis %n point d&apos;accès — un réseau, plusieurs nœuds. C&apos;est le plus fort qui est affiché.</numerusform>
-            <numerusform>Entendu depuis %n points d&apos;accès — un réseau, plusieurs nœuds. C&apos;est le plus fort qui est affiché.</numerusform>
-        </translation>
+        <translation><numerusform>Entendu depuis %n point d'accès — un réseau, plusieurs nœuds. C'est le plus fort qui est affiché.</numerusform><numerusform>Entendu depuis %n points d'accès — un réseau, plusieurs nœuds. C'est le plus fort qui est affiché.</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1148"/>
         <source>Some names were heard from several access points — that is a mesh. The camera joins the name, not a particular node; the mesh decides which one it talks to and hands it over as needed. To find the best spot, move the camera and watch “Wi-Fi signal” above: that is the link it actually has.</source>
-        <translation>Certains noms ont été entendus depuis plusieurs points d&apos;accès — c&apos;est un maillage. La caméra rejoint le nom, pas un nœud précis ; le maillage décide auquel elle parle et la transfère au besoin. Pour trouver le meilleur endroit, déplacez la caméra et surveillez « Signal Wi-Fi » ci-dessus : c&apos;est la liaison qu&apos;elle a réellement.</translation>
+        <translation>Certains noms ont été entendus depuis plusieurs points d'accès — c'est un maillage. La caméra rejoint le nom, pas un nœud précis ; le maillage décide auquel elle parle et la transfère au besoin. Pour trouver le meilleur endroit, déplacez la caméra et surveillez « Signal Wi-Fi » ci-dessus : c'est la liaison qu'elle a réellement.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1158"/>
         <source>%n network(s) found, strongest first.</source>
-        <translation>
-            <numerusform>%n réseau trouvé, le plus fort en premier.</numerusform>
-            <numerusform>%n réseaux trouvés, le plus fort en premier.</numerusform>
-        </translation>
+        <translation><numerusform>%n réseau trouvé, le plus fort en premier.</numerusform><numerusform>%n réseaux trouvés, le plus fort en premier.</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1166"/>
@@ -922,7 +913,7 @@
         <source>The camera tests the password first and refuses if it is wrong, so this is safer than it sounds.
 
 It will still disappear for a minute while it reconnects, and if the new network hands out a different address you will have to update it here afterwards.</source>
-        <translation>La caméra teste d&apos;abord le mot de passe et refuse s&apos;il est faux : c&apos;est donc moins risqué qu&apos;il n&apos;y paraît.
+        <translation>La caméra teste d'abord le mot de passe et refuse s'il est faux : c'est donc moins risqué qu'il n'y paraît.
 
 Elle disparaîtra tout de même une minute le temps de se reconnecter, et si le nouveau réseau lui attribue une autre adresse, il faudra la mettre à jour ici ensuite.</translation>
     </message>
@@ -979,7 +970,7 @@ Elle disparaîtra tout de même une minute le temps de se reconnecter, et si le 
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1245"/>
         <source>The camera reported nothing.</source>
-        <translation>La caméra n&apos;a rien signalé.</translation>
+        <translation>La caméra n'a rien signalé.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1253"/>
@@ -992,9 +983,9 @@ Elle disparaîtra tout de même une minute le temps de se reconnecter, et si le 
         <source>The camera goes off the network for a minute or so and comes back on its own. Recordings on its SD card are not affected, and settings are kept.
 
 Worth trying when a camera has stopped answering, is refusing new connections, or has drifted out of step after a firmware update.</source>
-        <translation>La caméra quitte le réseau pendant une minute environ et revient d&apos;elle-même. Les enregistrements de sa carte SD ne sont pas touchés et les réglages sont conservés.
+        <translation>La caméra quitte le réseau pendant une minute environ et revient d'elle-même. Les enregistrements de sa carte SD ne sont pas touchés et les réglages sont conservés.
 
-Cela vaut la peine d&apos;essayer quand une caméra ne répond plus, refuse de nouvelles connexions ou s&apos;est déréglée après une mise à jour du micrologiciel.</translation>
+Cela vaut la peine d'essayer quand une caméra ne répond plus, refuse de nouvelles connexions ou s'est déréglée après une mise à jour du micrologiciel.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1267"/>
@@ -1005,7 +996,7 @@ Cela vaut la peine d&apos;essayer quand une caméra ne répond plus, refuse de n
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1278"/>
         <source>Factory reset is not offered here. It clears the network settings too, and a camera that has forgotten its Wi-Fi has to be taken down and reached by cable — use the camera&apos;s own web interface if you really want that.</source>
-        <translation>La remise aux réglages d&apos;usine n&apos;est pas proposée ici. Elle efface aussi les réglages réseau, et une caméra qui a oublié son Wi-Fi doit être décrochée et rejointe par câble — si vous y tenez vraiment, passez par l&apos;interface web de la caméra.</translation>
+        <translation>La remise aux réglages d'usine n'est pas proposée ici. Elle efface aussi les réglages réseau, et une caméra qui a oublié son Wi-Fi doit être décrochée et rejointe par câble — si vous y tenez vraiment, passez par l'interface web de la caméra.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1289"/>
@@ -1026,7 +1017,7 @@ Cela vaut la peine d&apos;essayer quand une caméra ne répond plus, refuse de n
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1299"/>
         <source>The camera asks Reolink, not this computer — so it needs a way out to the internet of its own.</source>
-        <translation>C&apos;est la caméra qui interroge Reolink, pas cet ordinateur — il lui faut donc sa propre sortie vers internet.</translation>
+        <translation>C'est la caméra qui interroge Reolink, pas cet ordinateur — il lui faut donc sa propre sortie vers internet.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1303"/>
@@ -1075,7 +1066,7 @@ Ne lui coupez pas le courant pendant la mise à jour — une caméra interrompue
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1349"/>
         <source>Formatting erases every recording on the card. There is no undo and no confirmation from the camera afterwards.</source>
-        <translation>Le formatage efface tous les enregistrements de la carte. Il n&apos;y a ni retour en arrière ni confirmation de la caméra ensuite.</translation>
+        <translation>Le formatage efface tous les enregistrements de la carte. Il n'y a ni retour en arrière ni confirmation de la caméra ensuite.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1366"/>
@@ -1100,7 +1091,7 @@ Ne lui coupez pas le courant pendant la mise à jour — une caméra interrompue
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1384"/>
         <source>Reolink firmware differs enormously between models, and the only reliable way to know what a camera can do is to ask it. If something is missing from leolink that your camera clearly has, this list in a bug report is what makes it possible to add.</source>
-        <translation>Le micrologiciel Reolink diffère énormément d&apos;un modèle à l&apos;autre, et le seul moyen fiable de savoir ce qu&apos;une caméra sait faire est de le lui demander. S&apos;il manque à leolink quelque chose que votre caméra possède manifestement, c&apos;est cette liste, dans un signalement de bogue, qui rend l&apos;ajout possible.</translation>
+        <translation>Le micrologiciel Reolink diffère énormément d'un modèle à l'autre, et le seul moyen fiable de savoir ce qu'une caméra sait faire est de le lui demander. S'il manque à leolink quelque chose que votre caméra possède manifestement, c'est cette liste, dans un signalement de bogue, qui rend l'ajout possible.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1401"/>
@@ -1110,10 +1101,7 @@ Ne lui coupez pas le courant pendant la mise à jour — une caméra interrompue
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1432"/>
         <source>Asking about %n command(s)…</source>
-        <translation>
-            <numerusform>Interrogation sur %n commande…</numerusform>
-            <numerusform>Interrogation sur %n commandes…</numerusform>
-        </translation>
+        <translation><numerusform>Interrogation sur %n commande…</numerusform><numerusform>Interrogation sur %n commandes…</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1449"/>
@@ -1136,7 +1124,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1477"/>
         <source>The picture will be gone for about a minute. Anything being recorded right now will stop.</source>
-        <translation>L&apos;image disparaîtra environ une minute. Tout enregistrement en cours s&apos;arrêtera.</translation>
+        <translation>L'image disparaîtra environ une minute. Tout enregistrement en cours s'arrêtera.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1489"/>
@@ -1146,7 +1134,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1567"/>
         <source>On-screen text</source>
-        <translation>Texte à l&apos;écran</translation>
+        <translation>Texte à l'écran</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1569"/>
@@ -1156,7 +1144,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1570"/>
         <source>Draws a box behind the text so it stays readable over a bright scene.</source>
-        <translation>Dessine un cadre derrière le texte pour qu&apos;il reste lisible sur une scène claire.</translation>
+        <translation>Dessine un cadre derrière le texte pour qu'il reste lisible sur une scène claire.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1572"/>
@@ -1166,7 +1154,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1573"/>
         <source>Embeds a mark in the recording itself.</source>
-        <translation>Incruste une marque dans l&apos;enregistrement lui-même.</translation>
+        <translation>Incruste une marque dans l'enregistrement lui-même.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1577"/>
@@ -1176,7 +1164,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1580"/>
         <source>Parts of the view the camera blanks before anything leaves it.</source>
-        <translation>Parties de la vue que la caméra masque avant que quoi que ce soit n&apos;en sorte.</translation>
+        <translation>Parties de la vue que la caméra masque avant que quoi que ce soit n'en sorte.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1591"/>
@@ -1186,12 +1174,12 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1595"/>
         <source>Blanked in the camera itself, so the covered part is missing from every viewer and every recording — a neighbour&apos;s window, or a desk that should not be on film.</source>
-        <translation>Masqué dans la caméra elle-même : la partie couverte manque donc dans tous les visionneurs et tous les enregistrements — la fenêtre d&apos;un voisin, ou un bureau qui n&apos;a rien à faire sur la vidéo.</translation>
+        <translation>Masqué dans la caméra elle-même : la partie couverte manque donc dans tous les visionneurs et tous les enregistrements — la fenêtre d'un voisin, ou un bureau qui n'a rien à faire sur la vidéo.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1602"/>
         <source>The camera burns this into the picture, so it appears in every recording and every client — not only here.</source>
-        <translation>La caméra grave ceci dans l&apos;image : cela apparaît donc dans chaque enregistrement et dans chaque logiciel — pas seulement ici.</translation>
+        <translation>La caméra grave ceci dans l'image : cela apparaît donc dans chaque enregistrement et dans chaque logiciel — pas seulement ici.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1610"/>
@@ -1218,12 +1206,12 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="469"/>
         <source>The seconds leading up to the trigger — usually the part that shows how someone got there. The past cannot be recorded after the fact, so anything above zero keeps the stream running into a buffer: one more connection to the camera, and a little disk.</source>
-        <translation>Les secondes qui précèdent le déclenchement — en général la partie qui montre comment quelqu&apos;un est arrivé là. Le passé ne s&apos;enregistre pas après coup : toute valeur supérieure à zéro fait donc couler le flux en continu dans un tampon, soit une connexion de plus à la caméra et un peu de disque.</translation>
+        <translation>Les secondes qui précèdent le déclenchement — en général la partie qui montre comment quelqu'un est arrivé là. Le passé ne s'enregistre pas après coup : toute valeur supérieure à zéro fait donc couler le flux en continu dans un tampon, soit une connexion de plus à la caméra et un peu de disque.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="479"/>
         <source>So an event does not stop mid-scene. Motion that resumes within this time continues the same file instead of starting a second.</source>
-        <translation>Pour qu&apos;un événement ne s&apos;arrête pas au milieu d&apos;une scène. Un mouvement qui reprend dans ce délai continue le même fichier au lieu d&apos;en ouvrir un second.</translation>
+        <translation>Pour qu'un événement ne s'arrête pas au milieu d'une scène. Un mouvement qui reprend dans ce délai continue le même fichier au lieu d'en ouvrir un second.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="491"/>
@@ -1248,7 +1236,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="506"/>
         <source>How far back the archive reaches. Once it is this old, a file is deleted to make room for the newest one.</source>
-        <translation>Jusqu&apos;où remonte l&apos;archive. Un fichier de cet âge est supprimé pour faire place au plus récent.</translation>
+        <translation>Jusqu'où remonte l'archive. Un fichier de cet âge est supprimé pour faire place au plus récent.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="511"/>
@@ -1258,7 +1246,7 @@ Non pris en charge (%3) :
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="514"/>
         <source>The archive is a run of files, not one — a file cannot be trimmed at the front, so keeping a day in one of them would mean rewriting it every minute. Shorter files find a moment more precisely; longer ones are fewer to scroll past.</source>
-        <translation>L&apos;archive est une suite de fichiers, pas un seul — un fichier ne se coupe pas par l&apos;avant, garder une journée dans un seul obligerait à le réécrire chaque minute. Des fichiers courts retrouvent un instant plus précisément ; des longs sont moins nombreux à parcourir.</translation>
+        <translation>L'archive est une suite de fichiers, pas un seul — un fichier ne se coupe pas par l'avant, garder une journée dans un seul obligerait à le réécrire chaque minute. Des fichiers courts retrouvent un instant plus précisément ; des longs sont moins nombreux à parcourir.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="535"/>
@@ -1280,14 +1268,14 @@ Non pris en charge (%3) :
         <source>With both switched on, one buffer serves both: the recording of an event is cut out of the archive, so nothing extra is opened to the camera.
 
 Where the files go is the same for every camera and is set under Settings ▸ Recordings.</source>
-        <translation>Les deux activés, un seul tampon sert aux deux : l&apos;enregistrement d&apos;un événement est découpé dans l&apos;archive, donc rien de plus n&apos;est ouvert vers la caméra.
+        <translation>Les deux activés, un seul tampon sert aux deux : l'enregistrement d'un événement est découpé dans l'archive, donc rien de plus n'est ouvert vers la caméra.
 
 Où vont les fichiers est le même pour toutes les caméras et se règle sous Réglages ▸ Enregistrements.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="579"/>
         <source>%1 hours of video. How much disk that is depends on the bit rate, which this camera has not reported yet.</source>
-        <translation>%1 heures de vidéo. Ce que cela fait en disque dépend du débit, que cette caméra n&apos;a pas encore indiqué.</translation>
+        <translation>%1 heures de vidéo. Ce que cela fait en disque dépend du débit, que cette caméra n'a pas encore indiqué.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="587"/>
@@ -1317,7 +1305,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1632"/>
         <source>Which parts of the picture the camera watches. Everything outside the area is ignored — a road at the edge of view, a tree in the wind, a neighbour&apos;s door.</source>
-        <translation>Les parties de l&apos;image que la caméra surveille. Tout ce qui est hors de la zone est ignoré — une route au bord du champ, un arbre dans le vent, la porte d&apos;un voisin.</translation>
+        <translation>Les parties de l'image que la caméra surveille. Tout ce qui est hors de la zone est ignoré — une route au bord du champ, un arbre dans le vent, la porte d'un voisin.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1638"/>
@@ -1352,7 +1340,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1673"/>
         <source>Within a day the camera can be more or less easily triggered. This is how you stop headlights at night setting everything off without making it deaf by day. The camera fixes how many periods there are; their times and sensitivities are yours.</source>
-        <translation>Au fil d&apos;une journée, la caméra peut se déclencher plus ou moins facilement. C&apos;est ainsi qu&apos;on évite que des phares déclenchent tout la nuit sans la rendre aveugle le jour. Le nombre de plages est fixé par la caméra ; leurs horaires et leurs sensibilités vous appartiennent.</translation>
+        <translation>Au fil d'une journée, la caméra peut se déclencher plus ou moins facilement. C'est ainsi qu'on évite que des phares déclenchent tout la nuit sans la rendre aveugle le jour. Le nombre de plages est fixé par la caméra ; leurs horaires et leurs sensibilités vous appartiennent.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1681"/>
@@ -1362,7 +1350,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1689"/>
         <source>What it recognises</source>
-        <translation>Ce qu&apos;elle reconnaît</translation>
+        <translation>Ce qu'elle reconnaît</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1691"/>
@@ -1396,7 +1384,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1706"/>
         <source>This is the camera&apos;s own detection, the one it reports over ONVIF. leolink&apos;s own analysis of the picture is set separately, under Cameras → Events.</source>
-        <translation>Il s&apos;agit de la détection propre à la caméra, celle qu&apos;elle signale par ONVIF. L&apos;analyse de l&apos;image faite par leolink se règle à part, sous Caméras → Événements.</translation>
+        <translation>Il s'agit de la détection propre à la caméra, celle qu'elle signale par ONVIF. L'analyse de l'image faite par leolink se règle à part, sous Caméras → Événements.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1715"/>
@@ -1411,7 +1399,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1793"/>
         <source>Drag over the picture to choose what the camera watches. Darkened areas are ignored. This is the camera&apos;s own grid, %1 by %2, so it is finer than leolink&apos;s own.</source>
-        <translation>Faites glisser sur l&apos;image pour choisir ce que la caméra surveille. Les zones assombries sont ignorées. C&apos;est la grille propre à la caméra, %1 sur %2, donc plus fine que celle de leolink.</translation>
+        <translation>Faites glisser sur l'image pour choisir ce que la caméra surveille. Les zones assombries sont ignorées. C'est la grille propre à la caméra, %1 sur %2, donc plus fine que celle de leolink.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1810"/>
@@ -1436,7 +1424,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1855"/>
         <source>This camera keeps a separate week for each kind of event. Which one?</source>
-        <translation>Cette caméra tient une semaine distincte pour chaque type d&apos;événement. Laquelle ?</translation>
+        <translation>Cette caméra tient une semaine distincte pour chaque type d'événement. Laquelle ?</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1903"/>
@@ -1456,7 +1444,7 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1910"/>
         <source>Access point (APN)</source>
-        <translation>Point d&apos;accès (APN)</translation>
+        <translation>Point d'accès (APN)</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1913"/>
@@ -1518,9 +1506,9 @@ Où vont les fichiers est le même pour toutes les caméras et se règle sous R�
         <source>&lt;b&gt;Not tested on real hardware.&lt;/b&gt; Nobody involved in leolink owns a camera with a modem, so this was written from the protocol alone. It cannot damage anything — a command the camera does not know is simply refused — but it may equally show nothing at all.
 
 If your camera has a SIM, “What this camera supports” under Maintenance lists the commands its firmware actually has. That list, in a bug report, is what would let this be finished properly.</source>
-        <translation>&lt;b&gt;Non testé sur du matériel réel.&lt;/b&gt; Personne dans leolink ne possède de caméra à modem : ceci a donc été écrit d&apos;après le seul protocole. Rien ne peut être abîmé — une commande que la caméra ignore est simplement refusée — mais il se peut tout aussi bien que rien ne s&apos;affiche.
+        <translation>&lt;b&gt;Non testé sur du matériel réel.&lt;/b&gt; Personne dans leolink ne possède de caméra à modem : ceci a donc été écrit d'après le seul protocole. Rien ne peut être abîmé — une commande que la caméra ignore est simplement refusée — mais il se peut tout aussi bien que rien ne s'affiche.
 
-Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Maintenance, énumère les commandes que son micrologiciel possède réellement. Cette liste, dans un signalement de bogue, est ce qui permettrait d&apos;achever ceci correctement.</translation>
+Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Maintenance, énumère les commandes que son micrologiciel possède réellement. Cette liste, dans un signalement de bogue, est ce qui permettrait d'achever ceci correctement.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="1953"/>
@@ -1535,18 +1523,12 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1972"/>
         <source>%n area(s) blanked</source>
-        <translation>
-            <numerusform>%n zone masquée</numerusform>
-            <numerusform>%n zones masquées</numerusform>
-        </translation>
+        <translation><numerusform>%n zone masquée</numerusform><numerusform>%n zones masquées</numerusform></translation>
     </message>
     <message numerus="yes">
         <location filename="../src/CameraSettingsDialog.cpp" line="1974"/>
         <source>%n area(s), switched off</source>
-        <translation>
-            <numerusform>%n zone, désactivée</numerusform>
-            <numerusform>%n zones, désactivées</numerusform>
-        </translation>
+        <translation><numerusform>%n zone, désactivée</numerusform><numerusform>%n zones, désactivées</numerusform></translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2056"/>
@@ -1556,7 +1538,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2057"/>
         <source>Hours in which the camera records to its own card. This needs a card fitted; recording to this computer is set under Cameras → Events and works without one.</source>
-        <translation>Les heures où la caméra enregistre sur sa propre carte. Il faut pour cela qu&apos;une carte soit installée ; l&apos;enregistrement sur cet ordinateur se règle sous Caméras → Événements et s&apos;en passe.</translation>
+        <translation>Les heures où la caméra enregistre sur sa propre carte. Il faut pour cela qu'une carte soit installée ; l'enregistrement sur cet ordinateur se règle sous Caméras → Événements et s'en passe.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2135"/>
@@ -1574,14 +1556,14 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
         <location filename="../src/CameraSettingsDialog.cpp" line="2138"/>
         <location filename="../src/CameraSettingsDialog.cpp" line="2150"/>
         <source>Record before the event</source>
-        <translation>Enregistrer avant l&apos;événement</translation>
+        <translation>Enregistrer avant l'événement</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="492"/>
         <location filename="../src/CameraSettingsDialog.cpp" line="2139"/>
         <location filename="../src/CameraSettingsDialog.cpp" line="2153"/>
         <source>Keep recording after</source>
-        <translation>Continuer d&apos;enregistrer pendant</translation>
+        <translation>Continuer d'enregistrer pendant</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2140"/>
@@ -1592,7 +1574,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2148"/>
         <source>Off means recording simply stops once the card fills up.</source>
-        <translation>Désactivé signifie que l&apos;enregistrement s&apos;arrête simplement dès que la carte est pleine.</translation>
+        <translation>Désactivé signifie que l'enregistrement s'arrête simplement dès que la carte est pleine.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2151"/>
@@ -1607,12 +1589,12 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2160"/>
         <source>Hours of the week the camera records to its card by itself.</source>
-        <translation>Les heures de la semaine où la caméra enregistre d&apos;elle-même sur sa carte.</translation>
+        <translation>Les heures de la semaine où la caméra enregistre d'elle-même sur sa carte.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2170"/>
         <source>These govern what the camera writes to its own SD card. Recording to this computer is set under Cameras → Events and needs no card.</source>
-        <translation>Ceci régit ce que la caméra écrit sur sa propre carte SD. L&apos;enregistrement sur cet ordinateur se règle sous Caméras → Événements et n&apos;a besoin d&apos;aucune carte.</translation>
+        <translation>Ceci régit ce que la caméra écrit sur sa propre carte SD. L'enregistrement sur cet ordinateur se règle sous Caméras → Événements et n'a besoin d'aucune carte.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="556"/>
@@ -1693,7 +1675,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
         <location filename="../src/CameraSettingsDialog.cpp" line="2234"/>
         <location filename="../src/CameraSettingsDialog.cpp" line="2241"/>
         <source>Sound on an alarm</source>
-        <translation>Sonner en cas d&apos;alarme</translation>
+        <translation>Sonner en cas d'alarme</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2235"/>
@@ -1740,17 +1722,17 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2273"/>
         <source>Asking the camera to send a test e-mail…</source>
-        <translation>Demande à la caméra d&apos;envoyer un courriel de test…</translation>
+        <translation>Demande à la caméra d'envoyer un courriel de test…</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2276"/>
         <source>Test the FTP upload</source>
-        <translation>Tester l&apos;envoi FTP</translation>
+        <translation>Tester l'envoi FTP</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2279"/>
         <source>Asking the camera to try the FTP server…</source>
-        <translation>Demande à la caméra d&apos;essayer le serveur FTP…</translation>
+        <translation>Demande à la caméra d'essayer le serveur FTP…</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2290"/>
@@ -1770,7 +1752,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2309"/>
         <source>Synchronise the clock</source>
-        <translation>Synchroniser l&apos;horloge</translation>
+        <translation>Synchroniser l'horloge</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2312"/>
@@ -1810,7 +1792,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2328"/>
         <source>A camera with the wrong clock stamps its recordings wrongly, which is worth more than it sounds when you need to find one.</source>
-        <translation>Une caméra à l&apos;horloge fausse date mal ses enregistrements, ce qui pèse plus qu&apos;il n&apos;y paraît le jour où il faut en retrouver un.</translation>
+        <translation>Une caméra à l'horloge fausse date mal ses enregistrements, ce qui pèse plus qu'il n'y paraît le jour où il faut en retrouver un.</translation>
     </message>
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2336"/>
@@ -1835,7 +1817,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/CameraSettingsDialog.cpp" line="2640"/>
         <source>Saved. Changing the encoder restarts the stream, so the picture may drop out for a moment.</source>
-        <translation>Enregistré. Changer le codeur redémarre le flux : l&apos;image peut donc disparaître un instant.</translation>
+        <translation>Enregistré. Changer le codeur redémarre le flux : l'image peut donc disparaître un instant.</translation>
     </message>
 </context>
 <context>
@@ -1929,7 +1911,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/DiagnosticsDialog.cpp" line="139"/>
         <source>Could not write %1.</source>
-        <translation>Impossible d&apos;écrire %1.</translation>
+        <translation>Impossible d'écrire %1.</translation>
     </message>
     <message>
         <location filename="../src/DiagnosticsDialog.cpp" line="143"/>
@@ -1944,7 +1926,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/DiagnosticsDialog.cpp" line="158"/>
         <source>Passwords, session tokens and internet addresses are removed before anything is written, so this can be shared as it is. Addresses inside your own network are kept — they are usually the first clue.</source>
-        <translation>Les mots de passe, les jetons de session et les adresses internet sont retirés avant toute écriture : ce rapport peut donc être partagé tel quel. Les adresses de votre propre réseau sont conservées — ce sont d&apos;habitude le premier indice.</translation>
+        <translation>Les mots de passe, les jetons de session et les adresses internet sont retirés avant toute écriture : ce rapport peut donc être partagé tel quel. Les adresses de votre propre réseau sont conservées — ce sont d'habitude le premier indice.</translation>
     </message>
     <message>
         <location filename="../src/DiagnosticsDialog.cpp" line="219"/>
@@ -1957,7 +1939,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/Discovery.cpp" line="66"/>
         <source>Cannot open a UDP socket for discovery.</source>
-        <translation>Impossible d&apos;ouvrir une socket UDP pour la recherche.</translation>
+        <translation>Impossible d'ouvrir une socket UDP pour la recherche.</translation>
     </message>
 </context>
 <context>
@@ -1971,7 +1953,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/EventActions.cpp" line="101"/>
         <source>could not be started</source>
-        <translation>n&apos;a pas pu être lancée</translation>
+        <translation>n'a pas pu être lancée</translation>
     </message>
     <message>
         <location filename="../src/EventActions.cpp" line="119"/>
@@ -2056,13 +2038,13 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
         <location filename="../src/EventLogDialog.cpp" line="77"/>
         <location filename="../src/EventLogDialog.cpp" line="169"/>
         <source>no preview</source>
-        <translation>pas d&apos;aperçu</translation>
+        <translation>pas d'aperçu</translation>
     </message>
     <message>
         <location filename="../src/EventLogDialog.cpp" line="83"/>
         <location filename="../src/EventLogDialog.cpp" line="190"/>
         <source>Open recording</source>
-        <translation>Ouvrir l&apos;enregistrement</translation>
+        <translation>Ouvrir l'enregistrement</translation>
     </message>
     <message>
         <location filename="../src/EventLogDialog.cpp" line="99"/>
@@ -2087,7 +2069,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/EventLogDialog.cpp" line="147"/>
         <source>no events recorded yet</source>
-        <translation>aucun événement enregistré pour l&apos;instant</translation>
+        <translation>aucun événement enregistré pour l'instant</translation>
     </message>
     <message>
         <location filename="../src/EventLogDialog.cpp" line="170"/>
@@ -2117,7 +2099,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/EventLogDialog.cpp" line="189"/>
         <source>Open image</source>
-        <translation>Ouvrir l&apos;image</translation>
+        <translation>Ouvrir l'image</translation>
     </message>
     <message>
         <location filename="../src/EventLogDialog.cpp" line="204"/>
@@ -2127,7 +2109,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
     <message>
         <location filename="../src/EventLogDialog.cpp" line="205"/>
         <source>The file for this event is no longer there.</source>
-        <translation>Le fichier de cet événement n&apos;est plus là.</translation>
+        <translation>Le fichier de cet événement n'est plus là.</translation>
     </message>
     <message>
         <location filename="../src/EventLogDialog.cpp" line="214"/>
@@ -2139,7 +2121,7 @@ Si votre caméra a une SIM, « Ce que cette caméra prend en charge », sous Mai
         <source>Delete the whole event history?
 
 Recorded videos and images stay on disk — only the log is cleared.</source>
-        <translation>Supprimer tout l&apos;historique des événements ?
+        <translation>Supprimer tout l'historique des événements ?
 
 Les vidéos et les images enregistrées restent sur le disque — seul le journal est vidé.</translation>
     </message>
@@ -2215,7 +2197,7 @@ Les vidéos et les images enregistrées restent sur le disque — seul le journa
         <source>No cameras configured yet.
 
 Use “Cameras…” to add one.</source>
-        <translation>Aucune caméra n&apos;est encore configurée.
+        <translation>Aucune caméra n'est encore configurée.
 
 Utilisez « Caméras… » pour en ajouter une.</translation>
     </message>
@@ -2262,7 +2244,7 @@ Utilisez « Caméras… » pour en ajouter une.</translation>
     <message>
         <location filename="../src/MainWindow.cpp" line="294"/>
         <location filename="../src/MainWindow.cpp" line="727"/>
-        <location filename="../src/MainWindow.cpp" line="1794"/>
+        <location filename="../src/MainWindow.cpp" line="1925"/>
         <source>No cameras configured</source>
         <translation>Aucune caméra configurée</translation>
     </message>
@@ -2304,12 +2286,12 @@ Utilisez « Caméras… » pour en ajouter une.</translation>
     <message>
         <location filename="../src/MainWindow.cpp" line="385"/>
         <source>Show &amp;toolbar</source>
-        <translation>Afficher la barre d&apos;&amp;outils</translation>
+        <translation>Afficher la barre d'&amp;outils</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="394"/>
         <source>Show status &amp;bar</source>
-        <translation>Afficher la barre d&apos;é&amp;tat</translation>
+        <translation>Afficher la barre d'é&amp;tat</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="403"/>
@@ -2366,9 +2348,9 @@ Utilisez « Caméras… » pour en ajouter une.</translation>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
-        <translation>Il consigne ce qu&apos;est votre machine, ce que les caméras ont répondu et où les choses ont dérapé — mots de passe et adresses déjà retirés. Sans lui, la plupart des signalements ne peuvent pas être suivis.
+        <translation>Il consigne ce qu'est votre machine, ce que les caméras ont répondu et où les choses ont dérapé — mots de passe et adresses déjà retirés. Sans lui, la plupart des signalements ne peuvent pas être suivis.
 
-Si vous savez provoquer le problème, activez d&apos;abord la journalisation détaillée dans la fenêtre de diagnostic, refaites-le survenir, puis copiez le rapport.</translation>
+Si vous savez provoquer le problème, activez d'abord la journalisation détaillée dans la fenêtre de diagnostic, refaites-le survenir, puis copiez le rapport.</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="460"/>
@@ -2393,7 +2375,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/MainWindow.cpp" line="477"/>
         <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly: HTTP API, RTSP and ONVIF on the local network, and Reolink&apos;s P2P service when you want to reach a camera from elsewhere.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Un client Linux natif pour les caméras Reolink.&lt;/p&gt;&lt;p&gt;Parle directement les protocoles propres à la caméra : interface HTTP, RTSP et ONVIF sur le réseau local, et le service P2P de Reolink lorsque vous voulez joindre une caméra depuis ailleurs.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Manuel&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Code source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sans lien avec Reolink, ni approuvé par Reolink.&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Un client Linux natif pour les caméras Reolink.&lt;/p&gt;&lt;p&gt;Parle directement les protocoles propres à la caméra : interface HTTP, RTSP et ONVIF sur le réseau local, et le service P2P de Reolink lorsque vous voulez joindre une caméra depuis ailleurs.&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;Manuel&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;Code source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sans lien avec Reolink, ni approuvé par Reolink.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="489"/>
@@ -2435,178 +2417,172 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message numerus="yes">
         <location filename="../src/MainWindow.cpp" line="751"/>
         <source>%n camera(s) live</source>
-        <translation>
-            <numerusform>%n caméra en direct</numerusform>
-            <numerusform>%n caméras en direct</numerusform>
-        </translation>
+        <translation><numerusform>%n caméra en direct</numerusform><numerusform>%n caméras en direct</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="960"/>
+        <location filename="../src/MainWindow.cpp" line="1045"/>
         <source>Esc leaves full screen</source>
         <translation>Échap quitte le plein écran</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="967"/>
-        <location filename="../src/MainWindow.cpp" line="1006"/>
+        <location filename="../src/MainWindow.cpp" line="1052"/>
+        <location filename="../src/MainWindow.cpp" line="1091"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>Double-clic pour la grille · Échap quitte le plein écran</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1004"/>
+        <location filename="../src/MainWindow.cpp" line="1089"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
-        <translation>Échap quitte le plein écran · double-cliquez sur une caméra pour remplir l&apos;écran</translation>
+        <translation>Échap quitte le plein écran · double-cliquez sur une caméra pour remplir l'écran</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1029"/>
+        <location filename="../src/MainWindow.cpp" line="1114"/>
         <source>Grid view</source>
         <translation>Vue en grille</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1215"/>
-        <location filename="../src/MainWindow.cpp" line="1233"/>
-        <location filename="../src/MainWindow.cpp" line="1471"/>
+        <location filename="../src/MainWindow.cpp" line="1300"/>
+        <location filename="../src/MainWindow.cpp" line="1318"/>
+        <location filename="../src/MainWindow.cpp" line="1556"/>
         <source>Cannot create %1</source>
         <translation>Impossible de créer %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1361"/>
+        <location filename="../src/MainWindow.cpp" line="1446"/>
         <source>Recording %1</source>
         <translation>Enregistrement de %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1283"/>
-        <location filename="../src/MainWindow.cpp" line="1369"/>
+        <location filename="../src/MainWindow.cpp" line="1368"/>
+        <location filename="../src/MainWindow.cpp" line="1454"/>
         <source>Saved %1</source>
         <translation>%1 enregistré</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1375"/>
-        <location filename="../src/MainWindow.cpp" line="1506"/>
+        <location filename="../src/MainWindow.cpp" line="1460"/>
+        <location filename="../src/MainWindow.cpp" line="1591"/>
         <source>Recording stopped</source>
         <translation>Enregistrement arrêté</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1382"/>
+        <location filename="../src/MainWindow.cpp" line="1467"/>
         <source>%1: %2</source>
         <translation>%1 : %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1487"/>
+        <location filename="../src/MainWindow.cpp" line="1572"/>
         <source>Recording started</source>
         <translation>Enregistrement démarré</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1505"/>
+        <location filename="../src/MainWindow.cpp" line="1590"/>
         <source>Recording all cameras</source>
         <translation>Enregistrement de toutes les caméras</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1586"/>
+        <location filename="../src/MainWindow.cpp" line="1671"/>
         <source>%1 at %2</source>
         <translation>%1 chez %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1606"/>
+        <location filename="../src/MainWindow.cpp" line="1691"/>
         <source>Motion detected</source>
         <translation>Mouvement détecté</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1618"/>
+        <location filename="../src/MainWindow.cpp" line="1703"/>
         <source>Sound detected</source>
         <translation>Son détecté</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <location filename="../src/MainWindow.cpp" line="1726"/>
         <source>Menu bar hidden</source>
         <translation>Barre de menu masquée</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1642"/>
+        <location filename="../src/MainWindow.cpp" line="1727"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
-        <translation>La barre de menu et la barre d&apos;outils étant toutes deux masquées, appuyez sur Ctrl+M pour ramener le menu.</translation>
+        <translation>La barre de menu et la barre d'outils étant toutes deux masquées, appuyez sur Ctrl+M pour ramener le menu.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1661"/>
+        <location filename="../src/MainWindow.cpp" line="1746"/>
         <source>Cannot save</source>
         <translation>Enregistrement impossible</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1662"/>
+        <location filename="../src/MainWindow.cpp" line="1747"/>
         <source>Settings could not be written to %1.</source>
-        <translation>Les réglages n&apos;ont pas pu être écrits dans %1.</translation>
+        <translation>Les réglages n'ont pas pu être écrits dans %1.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1729"/>
+        <location filename="../src/MainWindow.cpp" line="1860"/>
         <source>Play through %1</source>
         <translation>Diffuser via %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1730"/>
+        <location filename="../src/MainWindow.cpp" line="1861"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>Fichiers son (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1742"/>
+        <location filename="../src/MainWindow.cpp" line="1873"/>
         <source>Speaking through the camera…</source>
         <translation>Parole en cours à travers la caméra…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1749"/>
+        <location filename="../src/MainWindow.cpp" line="1880"/>
         <source>Finished.</source>
         <translation>Terminé.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1872"/>
+        <location filename="../src/MainWindow.cpp" line="2015"/>
         <source>Nothing to capture</source>
         <translation>Rien à capturer</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1877"/>
+        <location filename="../src/MainWindow.cpp" line="2020"/>
         <source>Save snapshots to</source>
         <translation>Enregistrer les captures dans</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="1895"/>
+        <location filename="../src/MainWindow.cpp" line="2038"/>
         <source>Saved %n snapshot(s)</source>
-        <translation>
-            <numerusform>%n capture enregistrée</numerusform>
-            <numerusform>%n captures enregistrées</numerusform>
-        </translation>
+        <translation><numerusform>%n capture enregistrée</numerusform><numerusform>%n captures enregistrées</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1913"/>
+        <location filename="../src/MainWindow.cpp" line="2056"/>
         <source>Welcome to leolink</source>
         <translation>Bienvenue dans leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1915"/>
+        <location filename="../src/MainWindow.cpp" line="2058"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Aucune caméra n&apos;est encore configurée.&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Aucune caméra n'est encore configurée.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1917"/>
+        <location filename="../src/MainWindow.cpp" line="2060"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
-        <translation>Ajoutez une caméra avec son adresse, son nom d&apos;utilisateur et son mot de passe. leolink parle à la caméra directement sur votre réseau — aucun compte dans le nuage n&apos;intervient.&lt;p&gt;Le manuel explique ce que fait chaque option.</translation>
+        <translation>Ajoutez une caméra avec son adresse, son nom d'utilisateur et son mot de passe. leolink parle à la caméra directement sur votre réseau — aucun compte dans le nuage n'intervient.&lt;p&gt;Le manuel explique ce que fait chaque option.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1921"/>
+        <location filename="../src/MainWindow.cpp" line="2064"/>
         <source>Add camera…</source>
         <translation>Ajouter une caméra…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1922"/>
+        <location filename="../src/MainWindow.cpp" line="2065"/>
         <source>Open handbook</source>
         <translation>Ouvrir le manuel</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1998"/>
+        <location filename="../src/MainWindow.cpp" line="2141"/>
         <source>leolink is still running</source>
         <translation>leolink tourne toujours</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1999"/>
+        <location filename="../src/MainWindow.cpp" line="2142"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
-        <translation>Les caméras continuent d&apos;enregistrer. Utilisez l&apos;icône de la zone de notification pour revenir.</translation>
+        <translation>Les caméras continuent d'enregistrer. Utilisez l'icône de la zone de notification pour revenir.</translation>
     </message>
 </context>
 <context>
@@ -2627,7 +2603,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/ZoneEditor.cpp" line="468"/>
         <source>Drag out the parts of the view the camera should blank. It blacks them out before anything leaves the device, so they are missing from the live picture, from recordings and from every other client — including the manufacturer&apos;s app.</source>
-        <translation>Tracez les parties de la vue que la caméra doit masquer. Elle les noircit avant que quoi que ce soit ne quitte l&apos;appareil : elles manquent donc dans l&apos;image en direct, dans les enregistrements et dans tout autre logiciel — y compris l&apos;application du fabricant.</translation>
+        <translation>Tracez les parties de la vue que la caméra doit masquer. Elle les noircit avant que quoi que ce soit ne quitte l'appareil : elles manquent donc dans l'image en direct, dans les enregistrements et dans tout autre logiciel — y compris l'application du fabricant.</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="475"/>
@@ -2642,12 +2618,12 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/ZoneEditor.cpp" line="492"/>
         <source>Fetching a picture from %1…</source>
-        <translation>Récupération d&apos;une image depuis %1…</translation>
+        <translation>Récupération d'une image depuis %1…</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="514"/>
         <source>No picture: %1 — the areas can still be drawn.</source>
-        <translation>Pas d&apos;image : %1 — les zones peuvent quand même être tracées.</translation>
+        <translation>Pas d'image : %1 — les zones peuvent quand même être tracées.</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="524"/>
@@ -2660,7 +2636,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/MotionDetector.cpp" line="59"/>
         <source>ffmpeg is not installed, so motion detection is unavailable.</source>
-        <translation>ffmpeg n&apos;est pas installé : la détection de mouvement est donc indisponible.</translation>
+        <translation>ffmpeg n'est pas installé : la détection de mouvement est donc indisponible.</translation>
     </message>
     <message>
         <location filename="../src/MotionDetector.cpp" line="100"/>
@@ -2681,9 +2657,9 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
 <context>
     <name>leolink::MotionWatcher</name>
     <message>
-        <location filename="../src/MotionWatcher.cpp" line="157"/>
+        <location filename="../src/MotionWatcher.cpp" line="168"/>
         <source>ONVIF subscription failed.</source>
-        <translation>Échec de l&apos;abonnement ONVIF.</translation>
+        <translation>Échec de l'abonnement ONVIF.</translation>
     </message>
 </context>
 <context>
@@ -2696,7 +2672,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/MqttPublisher.cpp" line="58"/>
         <source>MQTT broker did not respond.</source>
-        <translation>Le courtier MQTT n&apos;a pas répondu.</translation>
+        <translation>Le courtier MQTT n'a pas répondu.</translation>
     </message>
     <message>
         <location filename="../src/MqttPublisher.cpp" line="65"/>
@@ -2779,7 +2755,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="81"/>
         <source>Pick a period and press Search. Recordings only exist if the camera has an SD card fitted.</source>
-        <translation>Choisissez une période et appuyez sur Rechercher. Il n&apos;y a d&apos;enregistrements que si la caméra a une carte SD installée.</translation>
+        <translation>Choisissez une période et appuyez sur Rechercher. Il n'y a d'enregistrements que si la caméra a une carte SD installée.</translation>
     </message>
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="112"/>
@@ -2789,20 +2765,17 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="151"/>
         <source>Nothing found in that period. Either nothing was recorded, or the camera has no SD card.</source>
-        <translation>Rien trouvé sur cette période. Soit rien n&apos;a été enregistré, soit la caméra n&apos;a pas de carte SD.</translation>
+        <translation>Rien trouvé sur cette période. Soit rien n'a été enregistré, soit la caméra n'a pas de carte SD.</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/PlaybackBrowser.cpp" line="154"/>
         <source>%n recording(s) found.</source>
-        <translation>
-            <numerusform>%n enregistrement trouvé.</numerusform>
-            <numerusform>%n enregistrements trouvés.</numerusform>
-        </translation>
+        <translation><numerusform>%n enregistrement trouvé.</numerusform><numerusform>%n enregistrements trouvés.</numerusform></translation>
     </message>
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="182"/>
         <source>No session with the camera — search first.</source>
-        <translation>Aucune session avec la caméra — lancez d&apos;abord une recherche.</translation>
+        <translation>Aucune session avec la caméra — lancez d'abord une recherche.</translation>
     </message>
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="192"/>
@@ -2814,7 +2787,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
         <source>mpv was not found. The recording is at:
 
 %1</source>
-        <translation>mpv est introuvable. L&apos;enregistrement se trouve à :
+        <translation>mpv est introuvable. L'enregistrement se trouve à :
 
 %1</translation>
     </message>
@@ -2826,7 +2799,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="218"/>
         <source>Cannot write to %1.</source>
-        <translation>Impossible d&apos;écrire dans %1.</translation>
+        <translation>Impossible d'écrire dans %1.</translation>
     </message>
     <message>
         <location filename="../src/PlaybackBrowser.cpp" line="260"/>
@@ -2890,12 +2863,12 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="82"/>
         <source>Show toolbar</source>
-        <translation>Afficher la barre d&apos;outils</translation>
+        <translation>Afficher la barre d'outils</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="84"/>
         <source>Show status bar</source>
-        <translation>Afficher la barre d&apos;état</translation>
+        <translation>Afficher la barre d'état</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="86"/>
@@ -2940,7 +2913,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="141"/>
         <source>So a glance at a wall of cameras is enough to see which one it was.</source>
-        <translation>Pour qu&apos;un coup d&apos;œil à un mur de caméras suffise à voir laquelle c&apos;était.</translation>
+        <translation>Pour qu'un coup d'œil à un mur de caméras suffise à voir laquelle c'était.</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="147"/>
@@ -2986,7 +2959,7 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="188"/>
         <source>On the screen</source>
-        <translation>À l&apos;écran</translation>
+        <translation>À l'écran</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="192"/>
@@ -3039,9 +3012,9 @@ Si vous savez provoquer le problème, activez d&apos;abord la journalisation dé
         <source>Recordings are written as Matroska without re-encoding: the picture keeps the camera&apos;s original quality and the processor stays nearly idle.
 
 Whether a camera records at all is its own setting, under Cameras ▸ Settings ▸ Reactions.</source>
-        <translation>Les enregistrements sont écrits en Matroska sans réencodage : l&apos;image garde la qualité d&apos;origine de la caméra et le processeur reste presque au repos.
+        <translation>Les enregistrements sont écrits en Matroska sans réencodage : l'image garde la qualité d'origine de la caméra et le processeur reste presque au repos.
 
-Qu&apos;une caméra enregistre ou non est son propre réglage, sous Caméras ▸ Réglages ▸ Réactions.</translation>
+Qu'une caméra enregistre ou non est son propre réglage, sous Caméras ▸ Réglages ▸ Réactions.</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="289"/>
@@ -3068,9 +3041,9 @@ Qu&apos;une caméra enregistre ou non est son propre réglage, sous Caméras ▸
         <source>“Recommended” names the decoder explicitly so that decoding and drawing stay on the same graphics API. Left to itself, mpv may decode through one API and draw through another, which on some cards turns the picture solid green.
 
 If the picture is broken, try the others in turn. “Software only” always works but costs a whole processor core at full resolution.</source>
-        <translation>« Recommandé » nomme le décodeur explicitement pour que le décodage et l&apos;affichage restent sur la même interface graphique. Livré à lui-même, mpv peut décoder par l&apos;une et dessiner par l&apos;autre, ce qui, sur certaines cartes, rend l&apos;image d&apos;un vert uni.
+        <translation>« Recommandé » nomme le décodeur explicitement pour que le décodage et l'affichage restent sur la même interface graphique. Livré à lui-même, mpv peut décoder par l'une et dessiner par l'autre, ce qui, sur certaines cartes, rend l'image d'un vert uni.
 
-Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel uniquement » marche toujours mais coûte un cœur de processeur entier en pleine résolution.</translation>
+Si l'image est cassée, essayez les autres à tour de rôle. « Logiciel uniquement » marche toujours mais coûte un cœur de processeur entier en pleine résolution.</translation>
     </message>
     <message>
         <location filename="../src/PreferencesDialog.cpp" line="305"/>
@@ -3134,7 +3107,7 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message>
         <location filename="../src/Recorder.cpp" line="55"/>
         <source>ffmpeg is not installed, so recording is unavailable.</source>
-        <translation>ffmpeg n&apos;est pas installé : l&apos;enregistrement est donc indisponible.</translation>
+        <translation>ffmpeg n'est pas installé : l'enregistrement est donc indisponible.</translation>
     </message>
     <message>
         <location filename="../src/Recorder.cpp" line="61"/>
@@ -3144,12 +3117,12 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message>
         <location filename="../src/Recorder.cpp" line="102"/>
         <source>Recording failed: %1</source>
-        <translation>Échec de l&apos;enregistrement : %1</translation>
+        <translation>Échec de l'enregistrement : %1</translation>
     </message>
     <message>
         <location filename="../src/Recorder.cpp" line="134"/>
         <source>Recording produced no data (ffmpeg exit %1).</source>
-        <translation>L&apos;enregistrement n&apos;a produit aucune donnée (ffmpeg est sorti avec %1).</translation>
+        <translation>L'enregistrement n'a produit aucune donnée (ffmpeg est sorti avec %1).</translation>
     </message>
     <message>
         <location filename="../src/Recorder.cpp" line="150"/>
@@ -3160,172 +3133,172 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
 <context>
     <name>leolink::ReolinkClient</name>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="121"/>
+        <location filename="../src/ReolinkClient.cpp" line="255"/>
         <source>File format not recognised.</source>
         <translation>Format de fichier non reconnu.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="122"/>
+        <location filename="../src/ReolinkClient.cpp" line="256"/>
         <source>Invalid input.</source>
         <translation>Saisie non valide.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="123"/>
+        <location filename="../src/ReolinkClient.cpp" line="257"/>
         <source>The camera has no free sessions. It allows only a handful at once, shared with the phone app and its web page. Close those, or wait a minute for the old ones to lapse.</source>
-        <translation>La caméra n&apos;a plus de session libre. Elle n&apos;en accepte qu&apos;une poignée à la fois, partagées avec l&apos;application mobile et sa page web. Fermez-les, ou attendez une minute que les anciennes expirent.</translation>
+        <translation>La caméra n'a plus de session libre. Elle n'en accepte qu'une poignée à la fois, partagées avec l'application mobile et sa page web. Fermez-les, ou attendez une minute que les anciennes expirent.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="127"/>
+        <location filename="../src/ReolinkClient.cpp" line="261"/>
         <source>Session expired.</source>
         <translation>Session expirée.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="128"/>
+        <location filename="../src/ReolinkClient.cpp" line="262"/>
         <source>Wrong user name or password.</source>
-        <translation>Nom d&apos;utilisateur ou mot de passe incorrect.</translation>
+        <translation>Nom d'utilisateur ou mot de passe incorrect.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="129"/>
+        <location filename="../src/ReolinkClient.cpp" line="263"/>
         <source>Timed out.</source>
         <translation>Délai dépassé.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="130"/>
+        <location filename="../src/ReolinkClient.cpp" line="264"/>
         <source>This firmware does not support that command.</source>
         <translation>Ce micrologiciel ne prend pas en charge cette commande.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="131"/>
+        <location filename="../src/ReolinkClient.cpp" line="265"/>
         <source>Could not read the configuration.</source>
         <translation>Impossible de lire la configuration.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="132"/>
+        <location filename="../src/ReolinkClient.cpp" line="266"/>
         <source>Could not verify the configuration.</source>
         <translation>Impossible de vérifier la configuration.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="133"/>
+        <location filename="../src/ReolinkClient.cpp" line="267"/>
         <source>Part of the camera did not answer. Depending on what was asked, that means no SD card is fitted, or the camera has no way out to the internet.</source>
-        <translation>Une partie de la caméra n&apos;a pas répondu. Selon ce qui a été demandé, cela signifie qu&apos;aucune carte SD n&apos;est installée, ou que la caméra n&apos;a pas de sortie vers internet.</translation>
+        <translation>Une partie de la caméra n'a pas répondu. Selon ce qui a été demandé, cela signifie qu'aucune carte SD n'est installée, ou que la caméra n'a pas de sortie vers internet.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="136"/>
+        <location filename="../src/ReolinkClient.cpp" line="270"/>
         <source>Not permitted — this model lacks the hardware.</source>
-        <translation>Non autorisé — ce modèle n&apos;a pas le matériel nécessaire.</translation>
+        <translation>Non autorisé — ce modèle n'a pas le matériel nécessaire.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="137"/>
+        <location filename="../src/ReolinkClient.cpp" line="271"/>
         <source>Account invalid, log in again.</source>
         <translation>Compte non valide, reconnectez-vous.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="138"/>
+        <location filename="../src/ReolinkClient.cpp" line="272"/>
         <source>User name already taken.</source>
-        <translation>Ce nom d&apos;utilisateur est déjà pris.</translation>
+        <translation>Ce nom d'utilisateur est déjà pris.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="139"/>
+        <location filename="../src/ReolinkClient.cpp" line="273"/>
         <source>Maximum number of users reached.</source>
-        <translation>Nombre maximal d&apos;utilisateurs atteint.</translation>
+        <translation>Nombre maximal d'utilisateurs atteint.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="140"/>
+        <location filename="../src/ReolinkClient.cpp" line="274"/>
         <source>Camera busy, try again shortly.</source>
         <translation>Caméra occupée, réessayez sous peu.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="141"/>
+        <location filename="../src/ReolinkClient.cpp" line="275"/>
         <source>IP address conflict.</source>
-        <translation>Conflit d&apos;adresses IP.</translation>
+        <translation>Conflit d'adresses IP.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="142"/>
+        <location filename="../src/ReolinkClient.cpp" line="276"/>
         <source>Configuration test failed.</source>
         <translation>Échec du test de configuration.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="143"/>
+        <location filename="../src/ReolinkClient.cpp" line="277"/>
         <source>FTP login failed.</source>
         <translation>Échec de la connexion FTP.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="144"/>
+        <location filename="../src/ReolinkClient.cpp" line="278"/>
         <source>FTP could not create the directory.</source>
-        <translation>FTP n&apos;a pas pu créer le répertoire.</translation>
+        <translation>FTP n'a pas pu créer le répertoire.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="145"/>
+        <location filename="../src/ReolinkClient.cpp" line="279"/>
         <source>FTP upload failed.</source>
-        <translation>Échec de l&apos;envoi FTP.</translation>
+        <translation>Échec de l'envoi FTP.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="146"/>
+        <location filename="../src/ReolinkClient.cpp" line="280"/>
         <source>FTP could not reach the server.</source>
-        <translation>FTP n&apos;a pas pu joindre le serveur.</translation>
+        <translation>FTP n'a pas pu joindre le serveur.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="147"/>
+        <location filename="../src/ReolinkClient.cpp" line="281"/>
         <source>Camera reported error %1.</source>
-        <translation>La caméra a signalé l&apos;erreur %1.</translation>
+        <translation>La caméra a signalé l'erreur %1.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="348"/>
+        <location filename="../src/ReolinkClient.cpp" line="537"/>
         <source>The camera is not answering requests just now. It does this when it has had too many at once; it recovers on its own after a moment.</source>
-        <translation>La caméra ne répond pas aux requêtes en ce moment. Elle fait cela quand elle en a reçu trop d&apos;un coup ; elle se remet d&apos;elle-même après un instant.</translation>
+        <translation>La caméra ne répond pas aux requêtes en ce moment. Elle fait cela quand elle en a reçu trop d'un coup ; elle se remet d'elle-même après un instant.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="355"/>
+        <location filename="../src/ReolinkClient.cpp" line="544"/>
         <source>Cannot reach %1: %2</source>
         <translation>Impossible de joindre %1 : %2</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="369"/>
+        <location filename="../src/ReolinkClient.cpp" line="558"/>
         <source>Unexpected reply from %1.</source>
         <translation>Réponse inattendue de %1.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="472"/>
+        <location filename="../src/ReolinkClient.cpp" line="661"/>
         <source>Login returned no token.</source>
-        <translation>La connexion n&apos;a renvoyé aucun jeton.</translation>
+        <translation>La connexion n'a renvoyé aucun jeton.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="512"/>
+        <location filename="../src/ReolinkClient.cpp" line="701"/>
         <source>%1 — firmware %2, %3 channel(s)</source>
         <translation>%1 — micrologiciel %2, %3 canaux</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="800"/>
+        <location filename="../src/ReolinkClient.cpp" line="989"/>
         <source>The camera could not join that network: %1</source>
-        <translation>La caméra n&apos;a pas pu rejoindre ce réseau : %1</translation>
+        <translation>La caméra n'a pas pu rejoindre ce réseau : %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="810"/>
+        <location filename="../src/ReolinkClient.cpp" line="999"/>
         <source>E-mail</source>
         <translation>Courriel</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="820"/>
+        <location filename="../src/ReolinkClient.cpp" line="1009"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="860"/>
+        <location filename="../src/ReolinkClient.cpp" line="1049"/>
         <source>Update available: %1</source>
         <translation>Mise à jour disponible : %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="861"/>
+        <location filename="../src/ReolinkClient.cpp" line="1050"/>
         <source>The firmware is up to date.</source>
         <translation>Le micrologiciel est à jour.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="878"/>
+        <location filename="../src/ReolinkClient.cpp" line="1067"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
-        <translation>Mise à jour en cours. La caméra redémarrera d&apos;elle-même et sera injoignable plusieurs minutes. Ne lui coupez pas le courant.</translation>
+        <translation>Mise à jour en cours. La caméra redémarrera d'elle-même et sera injoignable plusieurs minutes. Ne lui coupez pas le courant.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1012"/>
+        <location filename="../src/ReolinkClient.cpp" line="1201"/>
         <source>Snapshot failed.</source>
         <translation>Échec de la capture.</translation>
     </message>
@@ -3375,7 +3348,7 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message>
         <location filename="../src/SchedulePicker.cpp" line="276"/>
         <source>Nothing is selected — this will never run.</source>
-        <translation>Rien n&apos;est sélectionné — cela ne s&apos;exécutera jamais.</translation>
+        <translation>Rien n'est sélectionné — cela ne s'exécutera jamais.</translation>
     </message>
     <message>
         <location filename="../src/SchedulePicker.cpp" line="279"/>
@@ -3385,10 +3358,7 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message numerus="yes">
         <location filename="../src/SchedulePicker.cpp" line="282"/>
         <source>%n hour(s) a week.</source>
-        <translation>
-            <numerusform>%n heure par semaine.</numerusform>
-            <numerusform>%n heures par semaine.</numerusform>
-        </translation>
+        <translation><numerusform>%n heure par semaine.</numerusform><numerusform>%n heures par semaine.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -3405,7 +3375,7 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="81"/>
         <source>ffmpeg is not installed, so continuous recording is unavailable.</source>
-        <translation>ffmpeg n&apos;est pas installé : l&apos;enregistrement continu est donc indisponible.</translation>
+        <translation>ffmpeg n'est pas installé : l'enregistrement continu est donc indisponible.</translation>
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="86"/>
@@ -3416,22 +3386,22 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
         <location filename="../src/SegmentBuffer.cpp" line="90"/>
         <location filename="../src/SegmentBuffer.cpp" line="279"/>
         <source>Cannot write to %1.</source>
-        <translation>Impossible d&apos;écrire dans %1.</translation>
+        <translation>Impossible d'écrire dans %1.</translation>
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="255"/>
         <source>Nothing had been buffered yet.</source>
-        <translation>Rien n&apos;avait encore été mis en tampon.</translation>
+        <translation>Rien n'avait encore été mis en tampon.</translation>
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="270"/>
         <source>That moment is no longer in the buffer.</source>
-        <translation>Ce moment n&apos;est plus dans le tampon.</translation>
+        <translation>Ce moment n'est plus dans le tampon.</translation>
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="325"/>
         <source>The recording could not be cut out of the buffer.</source>
-        <translation>L&apos;enregistrement n&apos;a pas pu être découpé dans le tampon.</translation>
+        <translation>L'enregistrement n'a pas pu être découpé dans le tampon.</translation>
     </message>
 </context>
 <context>
@@ -3485,19 +3455,21 @@ Si l&apos;image est cassée, essayez les autres à tour de rôle. « Logiciel un
     <message>
         <location filename="../src/SettingsDialog.cpp" line="125"/>
         <source>optional, for P2P access</source>
-        <translation>facultatif, pour l&apos;accès P2P</translation>
+        <translation>facultatif, pour l'accès P2P</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="130"/>
         <source>Which input of the device this is. Leave at 0 for a camera.
 
 An NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.</source>
-        <translation type="unfinished"></translation>
+        <translation>De quelle entrée de l'appareil il s'agit. Laissez 0 pour une caméra.
+
+Un NVR répond pour toutes ses caméras sur une seule adresse, un seul identifiant et un seul port, et le canal est la seule chose qui les distingue. Tester la connexion à un enregistreur propose de les ajouter toutes : il est donc rarement nécessaire de le régler à la main.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="139"/>
         <source>Any address libmpv can open. Use this for cameras from other makers, an NVR stream, or a local file.</source>
-        <translation>Toute adresse que libmpv sait ouvrir. À utiliser pour des caméras d&apos;autres marques, un flux de NVR ou un fichier local.</translation>
+        <translation>Toute adresse que libmpv sait ouvrir. À utiliser pour des caméras d'autres marques, un flux de NVR ou un fichier local.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="143"/>
@@ -3537,16 +3509,16 @@ An NVR answers for all of its cameras on one address, one login and one port, an
 HTTP-FLV needs only port 80, which helps where RTSP is blocked.
 
 Baichuan is what Reolink&apos;s own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera&apos;s small pool of web sessions. Video only: sound still comes over RTSP.</source>
-        <translation>RTSP convient à la plupart des caméras et c&apos;est ce qu&apos;il faut essayer en premier.
+        <translation>RTSP convient à la plupart des caméras et c'est ce qu'il faut essayer en premier.
 
-HTTP-FLV n&apos;a besoin que du port 80, ce qui aide là où RTSP est bloqué.
+HTTP-FLV n'a besoin que du port 80, ce qui aide là où RTSP est bloqué.
 
-Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse pour les caméras qui laissent RTSP éteint — les modèles sur batterie le font — et il n&apos;occupe aucune des rares sessions web de la caméra. Vidéo seulement : le son passe toujours par RTSP.</translation>
+Baichuan est ce que parle l'application de Reolink. C'est la réponse pour les caméras qui laissent RTSP éteint — les modèles sur batterie le font — et il n'occupe aucune des rares sessions web de la caméra. Vidéo seulement : le son passe toujours par RTSP.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="160"/>
         <source>Use HTTPS for the control API</source>
-        <translation>Utiliser HTTPS pour l&apos;interface de commande</translation>
+        <translation>Utiliser HTTPS pour l'interface de commande</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="161"/>
@@ -3586,7 +3558,7 @@ Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse 
     <message>
         <location filename="../src/SettingsDialog.cpp" line="170"/>
         <source>Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Canal</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="171"/>
@@ -3611,7 +3583,7 @@ Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse 
     <message>
         <location filename="../src/SettingsDialog.cpp" line="200"/>
         <source>Detection, reactions and recording in leolink, and the camera&apos;s own encoder, picture and schedules.</source>
-        <translation>Détection, réactions et enregistrement dans leolink, ainsi que le codeur, l&apos;image et les horaires de la caméra elle-même.</translation>
+        <translation>Détection, réactions et enregistrement dans leolink, ainsi que le codeur, l'image et les horaires de la caméra elle-même.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="230"/>
@@ -3663,11 +3635,11 @@ Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse 
     <message>
         <location filename="../src/SettingsDialog.cpp" line="291"/>
         <source>Leave row and column on “automatic” to let cameras fill the grid in order. Spans let one camera cover several cells.</source>
-        <translation>Laissez la ligne et la colonne sur « automatique » pour que les caméras remplissent la grille dans l&apos;ordre. En occupant plusieurs cases, une caméra peut en couvrir plusieurs.</translation>
+        <translation>Laissez la ligne et la colonne sur « automatique » pour que les caméras remplissent la grille dans l'ordre. En occupant plusieurs cases, une caméra peut en couvrir plusieurs.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="446"/>
-        <location filename="../src/SettingsDialog.cpp" line="621"/>
+        <location filename="../src/SettingsDialog.cpp" line="624"/>
         <source>New camera</source>
         <translation>Nouvelle caméra</translation>
     </message>
@@ -3684,7 +3656,7 @@ Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse 
     <message>
         <location filename="../src/SettingsDialog.cpp" line="482"/>
         <source>Enter a host first.</source>
-        <translation>Indiquez d&apos;abord une adresse.</translation>
+        <translation>Indiquez d'abord une adresse.</translation>
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="489"/>
@@ -3692,128 +3664,119 @@ Baichuan est ce que parle l&apos;application de Reolink. C&apos;est la réponse 
         <translation>Contact de %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="545"/>
-        <source>Cameras on this recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
         <location filename="../src/SettingsDialog.cpp" line="548"/>
-        <source>%1 answers for %n channel(s). Which of them should be added?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="567"/>
-        <location filename="../src/SettingsDialog.cpp" line="638"/>
-        <source>Channel %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="569"/>
-        <source>%1 — %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="571"/>
-        <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="573"/>
-        <source>%1 — already in the list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="575"/>
-        <source>%1 — nothing connected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="587"/>
-        <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/SettingsDialog.cpp" line="588"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
+        <source>Cameras on this recorder</source>
+        <translation>Caméras sur cet enregistreur</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="666"/>
-        <source>Added %n camera(s) from this recorder.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+        <location filename="../src/SettingsDialog.cpp" line="551"/>
+        <source>%1 answers for %n channel(s). Which of them should be added?</source>
+        <translation><numerusform>%1 répond pour %n canal. Faut-il l'ajouter ?</numerusform><numerusform>%1 répond pour %n canaux. Lesquels faut-il ajouter ?</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="675"/>
+        <location filename="../src/SettingsDialog.cpp" line="570"/>
+        <location filename="../src/SettingsDialog.cpp" line="641"/>
+        <source>Channel %1</source>
+        <translation>Canal %1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="572"/>
+        <source>%1 — %2</source>
+        <translation>%1 — %2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="574"/>
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="576"/>
+        <source>%1 — already in the list</source>
+        <translation>%1 — déjà dans la liste</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="578"/>
+        <source>%1 — nothing connected</source>
+        <translation>%1 — rien de connecté</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="590"/>
+        <source>All</source>
+        <translation>Tout</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="591"/>
+        <source>None</source>
+        <translation>Aucune</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/SettingsDialog.cpp" line="669"/>
+        <source>Added %n camera(s) from this recorder.</source>
+        <translation><numerusform>%n caméra ajoutée depuis cet enregistreur.</numerusform><numerusform>%n caméras ajoutées depuis cet enregistreur.</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="678"/>
         <source>Looking for cameras…</source>
         <translation>Recherche de caméras…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="675"/>
+        <location filename="../src/SettingsDialog.cpp" line="678"/>
         <source>Stop</source>
         <translation>Arrêter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="689"/>
+        <location filename="../src/SettingsDialog.cpp" line="692"/>
         <source>Found %n device(s)…</source>
-        <translation>
-            <numerusform>%n appareil trouvé…</numerusform>
-            <numerusform>%n appareils trouvés…</numerusform>
-        </translation>
+        <translation><numerusform>%n appareil trouvé…</numerusform><numerusform>%n appareils trouvés…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="699"/>
+        <location filename="../src/SettingsDialog.cpp" line="702"/>
         <source>No cameras found</source>
         <translation>Aucune caméra trouvée</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="700"/>
+        <location filename="../src/SettingsDialog.cpp" line="703"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
-        <translation>Aucun appareil ONVIF n&apos;a répondu.
+        <translation>Aucun appareil ONVIF n'a répondu.
 
 Les caméras ne répondent que si ONVIF est activé, et la sonde ne franchit ni les routeurs ni la plupart des VPN. Vous pouvez toujours ajouter une caméra en saisissant son adresse.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="726"/>
+        <location filename="../src/SettingsDialog.cpp" line="729"/>
         <source>unnamed device</source>
         <translation>appareil sans nom</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="727"/>
+        <location filename="../src/SettingsDialog.cpp" line="730"/>
         <source> (Reolink)</source>
         <translation> (Reolink)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="728"/>
+        <location filename="../src/SettingsDialog.cpp" line="731"/>
         <source>  · already added</source>
         <translation>  · déjà ajoutée</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="734"/>
+        <location filename="../src/SettingsDialog.cpp" line="737"/>
         <source>Cameras found</source>
         <translation>Caméras trouvées</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="735"/>
+        <location filename="../src/SettingsDialog.cpp" line="738"/>
         <source>Add which one?</source>
         <translation>Laquelle ajouter ?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="778"/>
+        <location filename="../src/SettingsDialog.cpp" line="781"/>
         <source>Incomplete camera</source>
         <translation>Caméra incomplète</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="779"/>
+        <location filename="../src/SettingsDialog.cpp" line="782"/>
         <source>“%1” has no host address.</source>
-        <translation>« %1 » n&apos;a pas d&apos;adresse.</translation>
+        <translation>« %1 » n'a pas d'adresse.</translation>
     </message>
 </context>
 <context>
@@ -3859,25 +3822,25 @@ Les caméras ne répondent que si ONVIF est activé, et la sonde ne franchit ni 
     <message>
         <location filename="../src/TalkSession.cpp" line="105"/>
         <source>The camera did not answer on the RTSP port.</source>
-        <translation>La caméra n&apos;a pas répondu sur le port RTSP.</translation>
+        <translation>La caméra n'a pas répondu sur le port RTSP.</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="159"/>
+        <location filename="../src/TalkSession.cpp" line="165"/>
         <source>ffmpeg is needed to send sound and could not be started.</source>
-        <translation>ffmpeg est nécessaire pour envoyer du son et n&apos;a pas pu être lancé.</translation>
+        <translation>ffmpeg est nécessaire pour envoyer du son et n'a pas pu être lancé.</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="272"/>
+        <location filename="../src/TalkSession.cpp" line="278"/>
         <source>The camera rejected the user name or password.</source>
-        <translation>La caméra a rejeté le nom d&apos;utilisateur ou le mot de passe.</translation>
+        <translation>La caméra a rejeté le nom d'utilisateur ou le mot de passe.</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="281"/>
+        <location filename="../src/TalkSession.cpp" line="287"/>
         <source>The camera refused: %1</source>
         <translation>La caméra a refusé : %1</translation>
     </message>
     <message>
-        <location filename="../src/TalkSession.cpp" line="316"/>
+        <location filename="../src/TalkSession.cpp" line="322"/>
         <source>This camera does not offer a speaker.</source>
         <translation>Cette caméra ne propose pas de haut-parleur.</translation>
     </message>
@@ -3887,7 +3850,7 @@ Les caméras ne répondent que si ONVIF est activé, et la sonde ne franchit ni 
     <message>
         <location filename="../src/VideoTile.cpp" line="144"/>
         <source>stream ended (%1) — reconnecting</source>
-        <translation>le flux s&apos;est terminé (%1) — reconnexion</translation>
+        <translation>le flux s'est terminé (%1) — reconnexion</translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="204"/>
@@ -3904,14 +3867,11 @@ Les caméras ne répondent que si ONVIF est activé, et la sonde ne franchit ni 
         <source>%n damaged frame(s) in the last ten seconds.
 
 Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolink repairs what it can — this is what it could not.</source>
-        <translation>
-            <numerusform>%n image abîmée en dix secondes.
+        <translation><numerusform>%n image abîmée en dix secondes.
 
-D&apos;habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la résolution. leolink répare ce qu&apos;il peut — voici ce qu&apos;il n&apos;a pas pu.</numerusform>
-            <numerusform>%n images abîmées en dix secondes.
+D'habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la résolution. leolink répare ce qu'il peut — voici ce qu'il n'a pas pu.</numerusform><numerusform>%n images abîmées en dix secondes.
 
-D&apos;habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la résolution. leolink répare ce qu&apos;il peut — voici ce qu&apos;il n&apos;a pas pu.</numerusform>
-        </translation>
+D'habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la résolution. leolink répare ce qu'il peut — voici ce qu'il n'a pas pu.</numerusform></translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="223"/>
@@ -4025,7 +3985,7 @@ D&apos;habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la r�
     <message>
         <location filename="../src/VideoTile.cpp" line="1006"/>
         <source>Stop recording</source>
-        <translation>Arrêter l&apos;enregistrement</translation>
+        <translation>Arrêter l'enregistrement</translation>
     </message>
 </context>
 <context>
@@ -4038,7 +3998,7 @@ D&apos;habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la r�
     <message>
         <location filename="../src/ZoneEditor.cpp" line="241"/>
         <source>Drag over the picture to choose what is watched. Darkened areas are ignored — useful for a road at the edge of view, a tree that moves in the wind, or a neighbour&apos;s doorway.</source>
-        <translation>Faites glisser sur l&apos;image pour choisir ce qui est surveillé. Les zones assombries sont ignorées — pratique pour une route au bord du champ, un arbre qui bouge au vent ou le seuil d&apos;un voisin.</translation>
+        <translation>Faites glisser sur l'image pour choisir ce qui est surveillé. Les zones assombries sont ignorées — pratique pour une route au bord du champ, un arbre qui bouge au vent ou le seuil d'un voisin.</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="248"/>
@@ -4078,22 +4038,22 @@ D&apos;habitude un signal Wi-Fi faible, ou un débit réglé trop bas pour la r�
     <message>
         <location filename="../src/ZoneEditor.cpp" line="264"/>
         <source>Drag out a rectangle to watch. Shift and drag does the same without changing tool.</source>
-        <translation>Tracez un rectangle à surveiller. Maj et glisser fait la même chose sans changer d&apos;outil.</translation>
+        <translation>Tracez un rectangle à surveiller. Maj et glisser fait la même chose sans changer d'outil.</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="267"/>
         <source>Drag out a rectangle to ignore. Ctrl and drag does the same without changing tool.</source>
-        <translation>Tracez un rectangle à ignorer. Ctrl et glisser fait la même chose sans changer d&apos;outil.</translation>
+        <translation>Tracez un rectangle à ignorer. Ctrl et glisser fait la même chose sans changer d'outil.</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="301"/>
         <source>Fetching a picture from %1…</source>
-        <translation>Récupération d&apos;une image depuis %1…</translation>
+        <translation>Récupération d'une image depuis %1…</translation>
     </message>
     <message>
         <location filename="../src/ZoneEditor.cpp" line="322"/>
         <source>No picture: %1 — the zones can still be set.</source>
-        <translation>Pas d&apos;image : %1 — les zones peuvent quand même être définies.</translation>
+        <translation>Pas d'image : %1 — les zones peuvent quand même être définies.</translation>
     </message>
 </context>
 <context>

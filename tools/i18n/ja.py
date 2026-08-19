@@ -1157,6 +1157,30 @@ STRINGS: dict[str, str] = {
     "That moment is no longer in the buffer.": "その時点はもうバッファにありません。",
     "The recording could not be cut out of the buffer.":
         "バッファから録画を切り出せませんでした。",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 チャンネル %2",
+    "%1 — already in the list":
+        "%1 — すでに一覧にあります",
+    "%1 — nothing connected":
+        "%1 — 何も接続されていません",
+    "All":
+        "すべて",
+    "None":
+        "なし",
+    "Cameras on this recorder":
+        "このレコーダーのカメラ",
+    "Channel":
+        "チャンネル",
+    "Channel %1":
+        "チャンネル %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "この機器のどの入力かを指定します。カメラの場合は 0 のままにします。\n\nNVR は一つのアドレス、一つのログイン、一つのポートで、すべてのカメラの代わりに応答します。それらを区別するものはチャンネルだけです。レコーダーへの接続をテストすると、すべてまとめて追加するか尋ねられるので、手で設定することはめったにありません。",
 }
 
 
@@ -1192,4 +1216,10 @@ PLURALS: dict[str, list[str]] = {
     "it can — this is what it could not.": [
         "直近 10 秒で %n 枚のフレームが壊れました。\n\nたいていは Wi-Fi "
         "信号が弱いか、解像度に対してビットレートが低すぎるかです。leolink は直せるものは直します — これは直せなかったぶんです。"],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 は %n 個のチャンネルに応答します。どれを追加しますか？"],
+    "Added %n camera(s) from this recorder.": [
+        "このレコーダーから %n 台のカメラを追加しました。"],
 }

@@ -1472,6 +1472,30 @@ STRINGS: dict[str, str] = {
         "Dieser Moment ist nicht mehr im Puffer.",
     "The recording could not be cut out of the buffer.":
         "Die Aufnahme ließ sich nicht aus dem Puffer schneiden.",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 Kanal %2",
+    "%1 — already in the list":
+        "%1 — schon in der Liste",
+    "%1 — nothing connected":
+        "%1 — nichts angeschlossen",
+    "All":
+        "Alle",
+    "None":
+        "Keine",
+    "Cameras on this recorder":
+        "Kameras an diesem Rekorder",
+    "Channel":
+        "Kanal",
+    "Channel %1":
+        "Kanal %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "Welcher Eingang des Geräts das ist. Bei einer Kamera auf 0 lassen.\n\nEin NVR antwortet für alle seine Kameras unter einer Adresse, einer Anmeldung und einem Port, und nur der Kanal unterscheidet sie. Beim Test der Verbindung zu einem Rekorder wird angeboten, sie alle hinzuzufügen — von Hand muss das daher selten gesetzt werden.",
 }
 
 
@@ -1510,4 +1534,13 @@ PLURALS: dict[str, list[str]] = {
         "Meist ein schwaches WLAN-Signal oder eine für die Auflösung zu "
         "niedrige Bitrate. leolink repariert, was es kann — das hier ging "
         "nicht mehr."],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 antwortet für %n Kanal. Soll er hinzugefügt werden?",
+        "%1 antwortet für %n Kanäle. Welche davon sollen hinzugefügt "
+        "werden?"],
+    "Added %n camera(s) from this recorder.": [
+        "%n Kamera von diesem Rekorder hinzugefügt.",
+        "%n Kameras von diesem Rekorder hinzugefügt."],
 }

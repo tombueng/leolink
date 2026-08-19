@@ -1345,6 +1345,30 @@ STRINGS: dict[str, str] = {
         "Этого момента в буфере уже нет.",
     "The recording could not be cut out of the buffer.":
         "Запись не удалось вырезать из буфера.",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 канал %2",
+    "%1 — already in the list":
+        "%1 — уже в списке",
+    "%1 — nothing connected":
+        "%1 — ничего не подключено",
+    "All":
+        "Все",
+    "None":
+        "Ни одной",
+    "Cameras on this recorder":
+        "Камеры на этом регистраторе",
+    "Channel":
+        "Канал",
+    "Channel %1":
+        "Канал %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "Какой это вход устройства. Для камеры оставьте 0.\n\nNVR отвечает за все свои камеры по одному адресу, с одним логином и одним портом, и различает их только канал. При проверке связи с регистратором предлагается добавить их все, поэтому вручную это нужно задавать редко.",
 }
 
 
@@ -1414,4 +1438,14 @@ PLURALS: dict[str, list[str]] = {
         "%n повреждённых кадров за последние десять секунд.\n\nОбычно это "
         "слабый сигнал Wi-Fi или битрейт, заниженный для такого разрешения. "
         "leolink исправляет что может — вот то, чего он исправить не смог."],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 отвечает за %n канал. Добавить его?",
+        "%1 отвечает за %n канала. Какие из них добавить?",
+        "%1 отвечает за %n каналов. Какие из них добавить?"],
+    "Added %n camera(s) from this recorder.": [
+        "Добавлена %n камера с этого регистратора.",
+        "Добавлено %n камеры с этого регистратора.",
+        "Добавлено %n камер с этого регистратора."],
 }

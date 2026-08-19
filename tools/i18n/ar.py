@@ -1278,6 +1278,30 @@ STRINGS: dict[str, str] = {
         "تلك اللحظة لم تعد في المخزن المؤقت.",
     "The recording could not be cut out of the buffer.":
         "تعذّر اقتطاع التسجيل من المخزن المؤقت.",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 القناة %2",
+    "%1 — already in the list":
+        "%1 — موجودة في القائمة بالفعل",
+    "%1 — nothing connected":
+        "%1 — لا شيء موصول",
+    "All":
+        "الكل",
+    "None":
+        "لا شيء",
+    "Cameras on this recorder":
+        "الكاميرات على هذا المسجل",
+    "Channel":
+        "القناة",
+    "Channel %1":
+        "القناة %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "أي مدخل من الجهاز هذا. اتركه 0 لكاميرا.\n\nيجيب المسجل الشبكي عن كل كاميراته على عنوان واحد وتسجيل دخول واحد ومنفذ واحد، والقناة وحدها هي ما يميزها. واختبار الاتصال بمسجل يعرض إضافتها جميعًا، لذا نادرًا ما يلزم ضبط هذا يدويًا.",
 }
 
 
@@ -1389,4 +1413,20 @@ PLURALS: dict[str, list[str]] = {
         "%n إطار معطوب في الثواني العشر الأخيرة.\n\nوعادةً ما يكون السبب إشارة "
         "واي‌فاي ضعيفة، أو معدل بت أقل مما تحتاجه الدقة. يصلح leolink ما "
         "يستطيع — وهذا ما عجز عنه."],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 لا يجيب عن أي قناة.",
+        "%1 يجيب عن قناة واحدة. أتريد إضافتها؟",
+        "%1 يجيب عن قناتين. أيهما تريد إضافته؟",
+        "%1 يجيب عن %n قنوات. أيها تريد إضافته؟",
+        "%1 يجيب عن %n قناة. أيها تريد إضافته؟",
+        "%1 يجيب عن %n قناة. أيها تريد إضافته؟"],
+    "Added %n camera(s) from this recorder.": [
+        "لم تُضف أي كاميرا من هذا المسجل.",
+        "أُضيفت كاميرا واحدة من هذا المسجل.",
+        "أُضيفت كاميرتان من هذا المسجل.",
+        "أُضيفت %n كاميرات من هذا المسجل.",
+        "أُضيفت %n كاميرا من هذا المسجل.",
+        "أُضيفت %n كاميرا من هذا المسجل."],
 }

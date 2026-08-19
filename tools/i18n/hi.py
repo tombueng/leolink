@@ -1326,6 +1326,30 @@ STRINGS: dict[str, str] = {
     "That moment is no longer in the buffer.": "वह क्षण अब बफ़र में नहीं है।",
     "The recording could not be cut out of the buffer.":
         "रिकॉर्डिंग बफ़र से काटी नहीं जा सकी।",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 चैनल %2",
+    "%1 — already in the list":
+        "%1 — पहले से सूची में",
+    "%1 — nothing connected":
+        "%1 — कुछ भी जुड़ा नहीं",
+    "All":
+        "सभी",
+    "None":
+        "कोई नहीं",
+    "Cameras on this recorder":
+        "इस रिकॉर्डर के कैमरे",
+    "Channel":
+        "चैनल",
+    "Channel %1":
+        "चैनल %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "यह उपकरण का कौन-सा इनपुट है। कैमरे के लिए इसे 0 ही रहने दें।\n\nएक NVR अपने सभी कैमरों के लिए एक ही पते, एक ही लॉगिन और एक ही पोर्ट पर उत्तर देता है, और उन्हें केवल चैनल ही अलग करता है। रिकॉर्डर से कनेक्शन जाँचने पर उन सबको जोड़ने की पेशकश होती है, इसलिए इसे हाथ से बहुत कम ही सेट करना पड़ता है।",
 }
 
 
@@ -1379,4 +1403,12 @@ PLURALS: dict[str, list[str]] = {
         "पिछले दस सेकंड में %n फ़्रेम बिगड़े।\n\nआमतौर पर कमज़ोर वाई-फ़ाई "
         "संकेत, या रिज़ॉल्यूशन के हिसाब से बहुत कम रखी गई बिटरेट। leolink जो "
         "सुधार सकता है सुधारता है — यह वही है जो वह नहीं सुधार सका।"],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 %n चैनल के लिए उत्तर देता है। क्या इसे जोड़ें?",
+        "%1 %n चैनलों के लिए उत्तर देता है। इनमें से कौन-से जोड़ें?"],
+    "Added %n camera(s) from this recorder.": [
+        "इस रिकॉर्डर से %n कैमरा जोड़ा गया।",
+        "इस रिकॉर्डर से %n कैमरे जोड़े गए।"],
 }

@@ -1334,6 +1334,30 @@ STRINGS: dict[str, str] = {
     "That moment is no longer in the buffer.": "O an artık tamponda değil.",
     "The recording could not be cut out of the buffer.":
         "Kayıt tampondan kesilemedi.",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 kanal %2",
+    "%1 — already in the list":
+        "%1 — zaten listede",
+    "%1 — nothing connected":
+        "%1 — bağlı bir şey yok",
+    "All":
+        "Tümü",
+    "None":
+        "Hiçbiri",
+    "Cameras on this recorder":
+        "Bu kaydedicideki kameralar",
+    "Channel":
+        "Kanal",
+    "Channel %1":
+        "Kanal %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "Cihazın hangi girişi olduğu. Bir kamera için 0 bırakın.\n\nBir NVR, tüm kameraları için tek bir adres, tek bir oturum ve tek bir bağlantı noktası üzerinden yanıt verir; onları birbirinden ayıran tek şey kanaldır. Bir kaydediciye bağlantı sınandığında hepsini eklemek önerilir, bu yüzden bunu elle ayarlamak nadiren gerekir.",
 }
 
 
@@ -1371,4 +1395,10 @@ PLURALS: dict[str, list[str]] = {
         "Son on saniyede %n bozuk kare.\n\nGenellikle zayıf bir Wi-Fi sinyali "
         "ya da çözünürlük için fazla düşük ayarlanmış bir bit hızı. leolink "
         "elinden geleni onarır — bunlar onaramadıkları."],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1, %n kanal için yanıt veriyor. Hangileri eklensin?"],
+    "Added %n camera(s) from this recorder.": [
+        "Bu kaydediciden %n kamera eklendi."],
 }

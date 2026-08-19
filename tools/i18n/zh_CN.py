@@ -1104,6 +1104,30 @@ STRINGS: dict[str, str] = {
     "Nothing had been buffered yet.": "缓冲里还什么都没有。",
     "That moment is no longer in the buffer.": "那一刻已经不在缓冲里了。",
     "The recording could not be cut out of the buffer.": "无法从缓冲中剪出这段录像。",
+
+    # ── recorders ──
+    "%1 (%2)":
+        "%1 (%2)",
+    "%1 — %2":
+        "%1 — %2",
+    "%1 channel %2":
+        "%1 通道 %2",
+    "%1 — already in the list":
+        "%1 — 已在列表中",
+    "%1 — nothing connected":
+        "%1 — 未接任何设备",
+    "All":
+        "全选",
+    "None":
+        "全不选",
+    "Cameras on this recorder":
+        "此录像机上的摄像机",
+    "Channel":
+        "通道",
+    "Channel %1":
+        "通道 %1",
+    "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
+        "这是设备的哪一路输入。摄像机保持为 0。\n\nNVR 用一个地址、一个登录和一个端口代所有摄像机应答，区分它们的只有通道。测试与录像机的连接时会提示把它们全部添加，因此很少需要手动设置。",
 }
 
 
@@ -1139,4 +1163,10 @@ PLURALS: dict[str, list[str]] = {
     "it can — this is what it could not.": [
         "最近十秒内有 %n 帧损坏。\n\n通常是 Wi-Fi 信号弱，或者码率相对分辨率设得太低。leolink 能修的都修了 — "
         "这些是修不了的。"],
+
+    # ── recorders ──
+    "%1 answers for %n channel(s). Which of them should be added?": [
+        "%1 代 %n 个通道应答。要添加其中哪些？"],
+    "Added %n camera(s) from this recorder.": [
+        "已从此录像机添加 %n 台摄像机。"],
 }
