@@ -54,6 +54,10 @@ protected:
 
 private:
     CameraConfig m_camera;
+    /// Resolved before the thread starts. A password may come from a keyring,
+    /// which is a D-Bus conversation, and that belongs on the thread the rest
+    /// of the interface runs on rather than in here.
+    QString m_secret;
     QString m_url;
     std::atomic_bool m_stop{false};
 };

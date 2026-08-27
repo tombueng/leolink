@@ -195,6 +195,10 @@ private:
     /// Frame rate the camera announced, needed because the elementary stream
     /// carries no timestamps of its own.
     int m_baichuanFps{0};
+    /// The rate the player was actually opened at. Kept so that a camera which
+    /// announces a different one can be noticed and the stream reopened —
+    /// playing at the wrong rate is a delay that grows without bound.
+    int m_playingFps{0};
 };
 
 } // namespace leolink

@@ -418,8 +418,15 @@ void VideoTile::createPlayer()
         // Telling it not to try, and giving it the rate the camera announced,
         // is mpv's own documented answer to exactly this case.
         set("correct-pts", QStringLiteral("no"));
-        set("container-fps-override",
-            QString::number(m_baichuanFps > 0 ? m_baichuanFps : 15));
+        // Whatever rate is used here is the rate the stream is played at for
+        // as long as it is open, and the camera sends at its own regardless.
+        // A guess that is too low is not a small error: the difference has
+        // nowhere to go but a queue, and the picture falls further behind for
+        // every second the window stays open. The relay waits for the camera
+        // to say before it offers the port, so this is normally the real rate;
+        // fifteen is the fallback for firmware that never says.
+        m_playingFps = m_baichuanFps > 0 ? m_baichuanFps : 15;
+        set("container-fps-override", QString::number(m_playingFps));
     }
 
     set("keep-open", QStringLiteral("no"));
@@ -487,11 +494,28 @@ void VideoTile::startBaichuan()
     m_baichuan = new BaichuanStream(this);
     connect(m_baichuan, &BaichuanStream::formatKnown, this,
             [this](int, int, int fps) {
-                // Kept for the next player start: mpv reads the rate when the
-                // stream opens, and by then the camera has usually not said
-                // what it is yet.
-                if (fps > 0)
-                    m_baichuanFps = fps;
+                if (fps <= 0)
+                    return;
+                m_baichuanFps = fps;
+
+                // The player reads the rate once, when it opens the stream.
+                // Normally it has not opened yet — the relay waits for this
+                // before offering the port. When it has, and the camera has
+                // just contradicted the guess it opened on, it is opened
+                // again: a wrong rate does not settle, it accumulates.
+                if (!m_wantPlayback || !m_surface || m_baichuanUrl.isEmpty())
+                    return;
+                if (m_playingFps <= 0 || m_playingFps == fps)
+                    return;
+
+                LEO_INFO(Stream, m_config.label(),
+                         QStringLiteral("Camera sends %1 fps, playing at %2 — "
+                                        "reopening at the rate it named")
+                             .arg(fps).arg(m_playingFps));
+                m_playingFps = fps;
+                m_surface->setOption(QStringLiteral("container-fps-override"),
+                                     QString::number(fps));
+                m_surface->play(m_baichuanUrl);
             });
     connect(m_baichuan, &BaichuanStream::ready, this, [this](const QString &url) {
         m_baichuanUrl = url;
