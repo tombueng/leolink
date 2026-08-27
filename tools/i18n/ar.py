@@ -1302,6 +1302,30 @@ STRINGS: dict[str, str] = {
         "القناة %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "أي مدخل من الجهاز هذا. اتركه 0 لكاميرا.\n\nيجيب المسجل الشبكي عن كل كاميراته على عنوان واحد وتسجيل دخول واحد ومنفذ واحد، والقناة وحدها هي ما يميزها. واختبار الاتصال بمسجل يعرض إضافتها جميعًا، لذا نادرًا ما يلزم ضبط هذا يدويًا.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "لم تُجب حلقة المفاتيح.",
+    "This build has no keyring support.":
+        "هذه النسخة لا تدعم حلقة المفاتيح.",
+    "This configuration file":
+        "ملف الإعدادات هذا",
+    "A command":
+        "أمر",
+    "The system keyring":
+        "حلقة مفاتيح النظام",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "أين تُحفظ كلمة سر هذه الكاميرا.\n\nملف الإعدادات يحفظها نصًا صريحًا، لا يقرؤه غيرك (الوضع 600). والأمر — pass أو secret-tool أو أي شيء يطبع كلمة السر — يبقيها خارج الملف. أما حلقة مفاتيح النظام فتضعها في خدمة الأسرار في سطح المكتب.\n\nوحلقة المفاتيح مقفلة عادةً حتى يلج أحد، فالجهاز الذي يبدأ دون رقيب ليعرض الكاميرات على حائط أوفق له الملف أو الأمر.",
+    "Password kept in":
+        "كلمة السر محفوظة في",
+    "The keyring would not take it":
+        "لم تقبلها حلقة المفاتيح",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "تعذّر حفظ «%1» في حلقة مفاتيح النظام: %2\n\nبقيت كلمة سرها في ملف الإعدادات.",
+    "type it once; it moves to the keyring when you save":
+        "اكتبها مرة واحدة؛ وتنتقل إلى حلقة المفاتيح عند الحفظ",
+    "no keyring is answering — it will stay in the file":
+        "لا حلقة مفاتيح تجيب — ستبقى في الملف",
 }
 
 

@@ -55,14 +55,18 @@ the player a plain video stream on a loopback port; sound still comes over RTSP.
 
 ### Keeping the password out of the file
 
-`~/.config/leolink/config.json` is mode 600, but the password is in it as clear
-text. To avoid that, leave the password field empty and give a **password
-command** instead. leolink runs it and reads the secret from its output:
+`~/.config/leolink/config.json` is mode 600, but by default the password is in
+it as clear text. **Password kept in** offers two other places: a **command**
+whose output is the password, or the **system keyring**. Both leave the file
+with no secret in it.
 
 ```
 pass show reolink/hall
 secret-tool lookup service reolink host 192.168.1.10
 ```
+
+See [Where passwords are kept](#where-passwords-are-kept) for what each costs —
+in particular why a machine that starts unattended should stay with the file.
 
 ---
 
@@ -269,6 +273,31 @@ with them, leaving nothing but the picture. Any movement brings them back.
 - `Ctrl+Shift+D` brings the window frame back
 - **right-click anywhere** — the context menu always has these
 - with no frame, **drag the strip beneath any camera** to move the window
+
+### Where passwords are kept
+
+Each camera says for itself, under **Password kept in**:
+
+**This configuration file** holds it in clear text in
+`~/.config/leolink/config.json`, mode 600 — readable by you and by root, and by
+anything running as you. It is the default because it is the only one that
+needs nothing else to be running.
+
+**A command** is run and its output used as the password: `pass show
+reolink/hall`, `secret-tool lookup service reolink host 192.168.1.10`, or
+anything else that prints a secret and exits. Nothing is stored in the file.
+
+**The system keyring** stores it in the desktop's secret service. Type the
+password once, choose the keyring, and it moves there when you press Save — the
+file then holds only the fact that the keyring has it. Removing the camera
+takes its entry with it.
+
+The catch is worth stating plainly: a keyring is usually locked until somebody
+logs in, and a machine that boots straight into leolink to show cameras on a
+wall has nobody to unlock it. Such a machine wants the file, or a command that
+reads from somewhere already unlocked. leolink says so rather than failing
+quietly — if the keyring will not answer when the password is wanted, the log
+says which camera and why.
 
 ### Tray
 

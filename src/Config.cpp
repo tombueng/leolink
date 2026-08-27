@@ -1,5 +1,8 @@
 #include "Config.h"
 
+#include "Keyring.h"
+#include "Log.h"
+
 #include <cmath>
 
 #include <QCoreApplication>
@@ -86,8 +89,28 @@ QString CameraConfig::label() const
 
 QString CameraConfig::secret() const
 {
+    // Registered wherever it came from, not only when it sits in the file.
+    // The log redacts by pattern as well, but a password that never entered
+    // the list is one pattern away from a report that carries it.
+    const auto remember = [](const QString &value) {
+        if (!value.isEmpty())
+            Log::addSecret(value);
+        return value;
+    };
+
+    if (passwordSource == QLatin1String("keyring")) {
+        QString error;
+        const QString stored = Keyring::read(Keyring::keyForCamera(id), &error);
+        if (!error.isEmpty()) {
+            LEO_WARN(App, label(),
+                     QStringLiteral("The keyring did not give up the password: "
+                                    "%1").arg(error));
+        }
+        return remember(stored);
+    }
+
     if (passwordCommand.isEmpty())
-        return password;
+        return remember(password);
 
     // Deliberately synchronous and short-lived: this runs once per stream
     // start, and a hanging helper should fail fast rather than wedge the UI.
@@ -95,7 +118,7 @@ QString CameraConfig::secret() const
     proc.start(QStringLiteral("/bin/sh"), {QStringLiteral("-c"), passwordCommand});
     if (!proc.waitForFinished(15000) || proc.exitCode() != 0)
         return {};
-    return QString::fromUtf8(proc.readAllStandardOutput()).trimmed();
+    return remember(QString::fromUtf8(proc.readAllStandardOutput()).trimmed());
 }
 
 QString CameraConfig::streamUrl() const
@@ -219,6 +242,13 @@ Config Config::load()
         c.user = o.value(QStringLiteral("user")).toString(QStringLiteral("admin"));
         c.password = o.value(QStringLiteral("password")).toString();
         c.passwordCommand = o.value(QStringLiteral("passwordCommand")).toString();
+        // Older configurations say only where the password is by what they
+        // filled in, so that is what decides when nothing says otherwise.
+        c.passwordSource =
+            o.value(QStringLiteral("passwordSource"))
+                .toString(c.passwordCommand.isEmpty()
+                              ? QStringLiteral("config")
+                              : QStringLiteral("command"));
         c.uid = o.value(QStringLiteral("uid")).toString();
         c.channel = qMax(0, o.value(QStringLiteral("channel")).toInt(0));
         c.stream = o.value(QStringLiteral("stream")).toString(QStringLiteral("sub"));
@@ -294,6 +324,7 @@ bool Config::save() const
         o[QStringLiteral("user")] = c.user;
         o[QStringLiteral("password")] = c.password;
         o[QStringLiteral("passwordCommand")] = c.passwordCommand;
+        o[QStringLiteral("passwordSource")] = c.passwordSource;
         o[QStringLiteral("uid")] = c.uid;
         o[QStringLiteral("channel")] = c.channel;
         o[QStringLiteral("stream")] = c.stream;

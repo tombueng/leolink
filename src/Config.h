@@ -18,6 +18,11 @@ struct CameraConfig {
     /// Instead of a stored password, run this and read the secret from stdout
     /// (`pass show reolink/hall`, `secret-tool lookup …`). Empty = use password.
     QString passwordCommand;
+    /// Where this camera's password actually lives: "config" in the file
+    /// below, "command" from passwordCommand, "keyring" in the desktop's
+    /// secret store. The file stays the default: a wall display that comes up
+    /// on its own has nobody to unlock a keyring for it.
+    QString passwordSource{QStringLiteral("config")};
     QString uid;                 ///< Baichuan P2P id; empty = LAN only
     /// Which input of the device this camera is. Zero for a camera, which is
     /// what every standalone Reolink is; an NVR answers for all of its
@@ -92,7 +97,10 @@ struct CameraConfig {
     int continuousSegmentMinutes{10};
 
     QString label() const;
-    /// Resolves passwordCommand if set, otherwise returns password.
+    /// The password, from wherever this camera keeps it. Blocks: a command is
+    /// run, a keyring is asked, and both are wanted before a stream can start.
+    /// Whatever comes back is registered with the log so it cannot appear in a
+    /// diagnostics report, however it got here.
     QString secret() const;
     /// rtsp://…  or  http://…/flv?…  depending on `transport`.
     QString streamUrl() const;

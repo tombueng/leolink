@@ -7,8 +7,8 @@ arch=('x86_64' 'aarch64')
 url="https://github.com/tombueng/leolink"
 license=('MIT')
 # mpv provides libmpv, which does the decoding and the audio.
-depends=('qt6-base' 'qt6-svg' 'mpv' 'hicolor-icon-theme')
-makedepends=('cmake' 'ninja' 'qt6-tools')
+depends=('qt6-base' 'qt6-svg' 'mpv' 'hicolor-icon-theme' 'qtkeychain-qt6')
+makedepends=('cmake' 'ninja' 'qt6-tools' 'qtkeychain-qt6')
 # Recording and the detection leolink does itself both run ffmpeg as a program;
 # viewing needs none of it, which is why this is optional rather than a hard
 # dependency.

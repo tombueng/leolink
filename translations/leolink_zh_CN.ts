@@ -2,6 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN" sourcelanguage="en">
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/Keyring.cpp" line="43"/>
+        <source>The keyring did not answer.</source>
+        <translation>密钥环没有响应。</translation>
+    </message>
+    <message>
+        <location filename="../src/Keyring.cpp" line="113"/>
+        <location filename="../src/Keyring.cpp" line="129"/>
+        <location filename="../src/Keyring.cpp" line="150"/>
+        <source>This build has no keyring support.</source>
+        <translation>此版本不支持密钥环。</translation>
+    </message>
+</context>
+<context>
     <name>leolink::ActionEditor</name>
     <message>
         <location filename="../src/ActionEditor.cpp" line="22"/>
@@ -131,27 +146,27 @@
 <context>
     <name>leolink::BaichuanStream</name>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="52"/>
+        <location filename="../src/BaichuanStream.cpp" line="75"/>
         <source>Cannot open a local port: %1</source>
         <translation>无法打开本地端口：%1</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="64"/>
+        <location filename="../src/BaichuanStream.cpp" line="87"/>
         <source>Baichuan login failed: %1</source>
         <translation>Baichuan 登录失败：%1</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="73"/>
+        <location filename="../src/BaichuanStream.cpp" line="96"/>
         <source>The camera refused to send video: %1</source>
         <translation>摄像机拒绝发送视频：%1</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="81"/>
+        <location filename="../src/BaichuanStream.cpp" line="230"/>
         <source>The player did not connect.</source>
         <translation>播放器未能连接。</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="133"/>
+        <location filename="../src/BaichuanStream.cpp" line="240"/>
         <source>The camera stopped sending.</source>
         <translation>摄像机已停止发送。</translation>
     </message>
@@ -159,12 +174,12 @@
 <context>
     <name>leolink::CameraConfig</name>
     <message>
-        <location filename="../src/Config.cpp" line="77"/>
+        <location filename="../src/Config.cpp" line="80"/>
         <source>%1 channel %2</source>
         <translation>%1 通道 %2</translation>
     </message>
     <message>
-        <location filename="../src/Config.cpp" line="84"/>
+        <location filename="../src/Config.cpp" line="87"/>
         <source>Camera</source>
         <translation>摄像机</translation>
     </message>
@@ -3407,58 +3422,86 @@ If the picture is broken, try the others in turn. “Software only” always wor
 <context>
     <name>leolink::SettingsDialog</name>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="35"/>
-        <location filename="../src/SettingsDialog.cpp" line="41"/>
+        <location filename="../src/SettingsDialog.cpp" line="38"/>
+        <location filename="../src/SettingsDialog.cpp" line="44"/>
         <source>Cameras</source>
         <translation>摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="42"/>
+        <location filename="../src/SettingsDialog.cpp" line="45"/>
         <source>Layout</source>
         <translation>布局</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="93"/>
+        <location filename="../src/SettingsDialog.cpp" line="96"/>
         <source>Add</source>
         <translation>添加</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="94"/>
+        <location filename="../src/SettingsDialog.cpp" line="97"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="98"/>
+        <location filename="../src/SettingsDialog.cpp" line="101"/>
         <source>Scan network…</source>
         <translation>扫描网络…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="100"/>
+        <location filename="../src/SettingsDialog.cpp" line="103"/>
         <source>Ask the network which ONVIF cameras are present. This sends one multicast probe; devices that stay quiet are never contacted.</source>
         <translation>向网络询问有哪些 ONVIF 摄像机。只发出一次组播探询；保持沉默的设备绝不会被联系。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="115"/>
+        <location filename="../src/SettingsDialog.cpp" line="118"/>
         <source>192.168.1.10 or camera.lan</source>
         <translation>192.168.1.10 或 camera.lan</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="120"/>
+        <location filename="../src/SettingsDialog.cpp" line="123"/>
         <source>optional: pass show reolink/hall</source>
         <translation>可选：pass show reolink/menting</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="122"/>
+        <location filename="../src/SettingsDialog.cpp" line="125"/>
         <source>If set, this command runs and its output is used as the password. Keeps the secret out of the configuration file.</source>
         <translation>若已填写，则运行该命令，并把它的输出用作密码。这样密码就不必写进配置文件。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="125"/>
+        <location filename="../src/SettingsDialog.cpp" line="129"/>
+        <source>This configuration file</source>
+        <translation>本配置文件</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="131"/>
+        <source>A command</source>
+        <translation>一条命令</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="132"/>
+        <source>The system keyring</source>
+        <translation>系统密钥环</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="135"/>
+        <source>Where this camera&apos;s password is kept.
+
+The configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop&apos;s own secret service.
+
+The keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.</source>
+        <translation>这台摄像机的密码存放在哪里。
+
+配置文件以明文保存，只有你能读取（模式 600）。命令 — pass、secret-tool，任何能打印密码的东西 — 可让密码不进入文件。系统密钥环把它交给桌面自己的机密服务。
+
+密钥环通常在有人登录前处于锁定状态，因此无人值守启动、在墙上显示画面的机器更适合用文件或命令。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="161"/>
         <source>optional, for P2P access</source>
         <translation>可选，用于 P2P 访问</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="130"/>
+        <location filename="../src/SettingsDialog.cpp" line="166"/>
         <source>Which input of the device this is. Leave at 0 for a camera.
 
 An NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.</source>
@@ -3467,43 +3510,43 @@ An NVR answers for all of its cameras on one address, one login and one port, an
 NVR 用一个地址、一个登录和一个端口代所有摄像机应答，区分它们的只有通道。测试与录像机的连接时会提示把它们全部添加，因此很少需要手动设置。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="139"/>
+        <location filename="../src/SettingsDialog.cpp" line="175"/>
         <source>Any address libmpv can open. Use this for cameras from other makers, an NVR stream, or a local file.</source>
         <translation>任何 libmpv 能打开的地址。可用于其他厂商的摄像机、NVR 码流或本地文件。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="143"/>
+        <location filename="../src/SettingsDialog.cpp" line="179"/>
         <source>Sub stream (low bandwidth)</source>
         <translation>子码流（带宽小）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="144"/>
+        <location filename="../src/SettingsDialog.cpp" line="180"/>
         <source>Main stream (full resolution)</source>
         <translation>主码流（完整分辨率）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="147"/>
+        <location filename="../src/SettingsDialog.cpp" line="183"/>
         <source>RTSP</source>
         <translation>RTSP</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="148"/>
+        <location filename="../src/SettingsDialog.cpp" line="184"/>
         <source>HTTP-FLV (lower latency)</source>
         <translation>HTTP-FLV（延迟更低）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="149"/>
+        <location filename="../src/SettingsDialog.cpp" line="185"/>
         <source>Baichuan (the camera&apos;s own protocol)</source>
         <translation>Baichuan（摄像机自有协议）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="151"/>
-        <location filename="../src/SettingsDialog.cpp" line="173"/>
+        <location filename="../src/SettingsDialog.cpp" line="187"/>
+        <location filename="../src/SettingsDialog.cpp" line="210"/>
         <source>Custom URL</source>
         <translation>自定义地址</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="153"/>
+        <location filename="../src/SettingsDialog.cpp" line="189"/>
         <source>RTSP suits most cameras and is what to try first.
 
 HTTP-FLV needs only port 80, which helps where RTSP is blocked.
@@ -3516,226 +3559,241 @@ HTTP-FLV 只需要 80 端口，在 RTSP 被封的地方很有用。
 Baichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄像机 — 电池款就是如此 — 它就是答案，而且不占用摄像机那少得可怜的 Web 会话。仅限视频：声音仍走 RTSP。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="160"/>
+        <location filename="../src/SettingsDialog.cpp" line="196"/>
         <source>Use HTTPS for the control API</source>
         <translation>控制接口使用 HTTPS</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="161"/>
+        <location filename="../src/SettingsDialog.cpp" line="197"/>
         <source>Show this camera</source>
         <translation>显示这台摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="164"/>
+        <location filename="../src/SettingsDialog.cpp" line="200"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="165"/>
+        <location filename="../src/SettingsDialog.cpp" line="201"/>
         <source>Host</source>
         <translation>地址</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="166"/>
+        <location filename="../src/SettingsDialog.cpp" line="202"/>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="167"/>
+        <location filename="../src/SettingsDialog.cpp" line="203"/>
+        <source>Password kept in</source>
+        <translation>密码存放于</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="204"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="168"/>
+        <location filename="../src/SettingsDialog.cpp" line="205"/>
         <source>Password command</source>
         <translation>取密码的命令</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="169"/>
+        <location filename="../src/SettingsDialog.cpp" line="206"/>
         <source>UID</source>
         <translation>UID</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="170"/>
+        <location filename="../src/SettingsDialog.cpp" line="207"/>
         <source>Channel</source>
         <translation>通道</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="171"/>
+        <location filename="../src/SettingsDialog.cpp" line="208"/>
         <source>Stream</source>
         <translation>码流</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="172"/>
+        <location filename="../src/SettingsDialog.cpp" line="209"/>
         <source>Transport</source>
         <translation>传输</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="186"/>
+        <location filename="../src/SettingsDialog.cpp" line="223"/>
         <source>Test connection</source>
         <translation>测试连接</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="198"/>
+        <location filename="../src/SettingsDialog.cpp" line="235"/>
         <source>Settings for this camera…</source>
         <translation>这台摄像机的设置…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="200"/>
+        <location filename="../src/SettingsDialog.cpp" line="237"/>
         <source>Detection, reactions and recording in leolink, and the camera&apos;s own encoder, picture and schedules.</source>
         <translation>leolink 侧的侦测、响应与录像，以及摄像机自身的编码器、画面和时段。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="230"/>
-        <location filename="../src/SettingsDialog.cpp" line="239"/>
-        <location filename="../src/SettingsDialog.cpp" line="258"/>
+        <location filename="../src/SettingsDialog.cpp" line="267"/>
+        <location filename="../src/SettingsDialog.cpp" line="276"/>
+        <location filename="../src/SettingsDialog.cpp" line="295"/>
         <source>automatic</source>
         <translation>自动</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="247"/>
+        <location filename="../src/SettingsDialog.cpp" line="284"/>
         <source>Columns</source>
         <translation>列数</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="248"/>
+        <location filename="../src/SettingsDialog.cpp" line="285"/>
         <source>Rows</source>
         <translation>行数</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="250"/>
+        <location filename="../src/SettingsDialog.cpp" line="287"/>
         <source>Grid size</source>
         <translation>网格大小</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="275"/>
+        <location filename="../src/SettingsDialog.cpp" line="312"/>
         <source>Row</source>
         <translation>行</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="276"/>
+        <location filename="../src/SettingsDialog.cpp" line="313"/>
         <source>Column</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="277"/>
+        <location filename="../src/SettingsDialog.cpp" line="314"/>
         <source>Row span</source>
         <translation>跨行</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="278"/>
+        <location filename="../src/SettingsDialog.cpp" line="315"/>
         <source>Column span</source>
         <translation>跨列</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="280"/>
+        <location filename="../src/SettingsDialog.cpp" line="317"/>
         <source>Position of the selected camera</source>
         <translation>所选摄像机的位置</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="291"/>
+        <location filename="../src/SettingsDialog.cpp" line="328"/>
         <source>Leave row and column on “automatic” to let cameras fill the grid in order. Spans let one camera cover several cells.</source>
         <translation>把行和列留在「自动」，摄像机就会按顺序填满网格。通过跨格，一台摄像机可以占据多个格子。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="446"/>
-        <location filename="../src/SettingsDialog.cpp" line="624"/>
+        <location filename="../src/SettingsDialog.cpp" line="487"/>
+        <location filename="../src/SettingsDialog.cpp" line="688"/>
         <source>New camera</source>
         <translation>新摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="461"/>
+        <location filename="../src/SettingsDialog.cpp" line="502"/>
         <source>Remove camera</source>
         <translation>移除摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="462"/>
+        <location filename="../src/SettingsDialog.cpp" line="503"/>
         <source>Remove “%1” from the list?</source>
         <translation>要把「%1」从列表中移除吗？</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="482"/>
+        <location filename="../src/SettingsDialog.cpp" line="531"/>
+        <source>type it once; it moves to the keyring when you save</source>
+        <translation>输入一次；保存时会移入密钥环</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="532"/>
+        <source>no keyring is answering — it will stay in the file</source>
+        <translation>没有密钥环响应 — 密码将留在文件中</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="546"/>
         <source>Enter a host first.</source>
         <translation>请先填写地址。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="489"/>
+        <location filename="../src/SettingsDialog.cpp" line="553"/>
         <source>Contacting %1…</source>
         <translation>正在联系 %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="548"/>
+        <location filename="../src/SettingsDialog.cpp" line="612"/>
         <source>Cameras on this recorder</source>
         <translation>此录像机上的摄像机</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="551"/>
+        <location filename="../src/SettingsDialog.cpp" line="615"/>
         <source>%1 answers for %n channel(s). Which of them should be added?</source>
         <translation><numerusform>%1 代 %n 个通道应答。要添加其中哪些？</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="570"/>
-        <location filename="../src/SettingsDialog.cpp" line="641"/>
+        <location filename="../src/SettingsDialog.cpp" line="634"/>
+        <location filename="../src/SettingsDialog.cpp" line="705"/>
         <source>Channel %1</source>
         <translation>通道 %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="572"/>
+        <location filename="../src/SettingsDialog.cpp" line="636"/>
         <source>%1 — %2</source>
         <translation>%1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="574"/>
+        <location filename="../src/SettingsDialog.cpp" line="638"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="576"/>
+        <location filename="../src/SettingsDialog.cpp" line="640"/>
         <source>%1 — already in the list</source>
         <translation>%1 — 已在列表中</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="578"/>
+        <location filename="../src/SettingsDialog.cpp" line="642"/>
         <source>%1 — nothing connected</source>
         <translation>%1 — 未接任何设备</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="590"/>
+        <location filename="../src/SettingsDialog.cpp" line="654"/>
         <source>All</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="591"/>
+        <location filename="../src/SettingsDialog.cpp" line="655"/>
         <source>None</source>
         <translation>全不选</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="669"/>
+        <location filename="../src/SettingsDialog.cpp" line="733"/>
         <source>Added %n camera(s) from this recorder.</source>
         <translation><numerusform>已从此录像机添加 %n 台摄像机。</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="678"/>
+        <location filename="../src/SettingsDialog.cpp" line="742"/>
         <source>Looking for cameras…</source>
         <translation>正在查找摄像机…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="678"/>
+        <location filename="../src/SettingsDialog.cpp" line="742"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="692"/>
+        <location filename="../src/SettingsDialog.cpp" line="756"/>
         <source>Found %n device(s)…</source>
         <translation><numerusform>已找到 %n 台设备…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="702"/>
+        <location filename="../src/SettingsDialog.cpp" line="766"/>
         <source>No cameras found</source>
         <translation>未找到摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="703"/>
+        <location filename="../src/SettingsDialog.cpp" line="767"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -3744,39 +3802,53 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 摄像机只有在开启 ONVIF 时才会回答，而探询既穿不过路由器，也穿不过多数 VPN。您仍可以手动输入地址来添加摄像机。</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="729"/>
+        <location filename="../src/SettingsDialog.cpp" line="793"/>
         <source>unnamed device</source>
         <translation>未命名设备</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="730"/>
+        <location filename="../src/SettingsDialog.cpp" line="794"/>
         <source> (Reolink)</source>
         <translation>（Reolink）</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="731"/>
+        <location filename="../src/SettingsDialog.cpp" line="795"/>
         <source>  · already added</source>
         <translation>  · 已添加</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="737"/>
+        <location filename="../src/SettingsDialog.cpp" line="801"/>
         <source>Cameras found</source>
         <translation>找到摄像机</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="738"/>
+        <location filename="../src/SettingsDialog.cpp" line="802"/>
         <source>Add which one?</source>
         <translation>添加哪一台？</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="781"/>
+        <location filename="../src/SettingsDialog.cpp" line="845"/>
         <source>Incomplete camera</source>
         <translation>摄像机信息不完整</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="782"/>
+        <location filename="../src/SettingsDialog.cpp" line="846"/>
         <source>“%1” has no host address.</source>
         <translation>「%1」没有地址。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="862"/>
+        <source>The keyring would not take it</source>
+        <translation>密钥环未接受</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDialog.cpp" line="863"/>
+        <source>“%1” could not be saved in the system keyring: %2
+
+Its password has been left in the configuration file.</source>
+        <translation>“%1”无法保存到系统密钥环：%2
+
+其密码仍留在配置文件中。</translation>
     </message>
 </context>
 <context>
@@ -3880,7 +3952,7 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="295"/>
-        <location filename="../src/VideoTile.cpp" line="703"/>
+        <location filename="../src/VideoTile.cpp" line="727"/>
         <source>Mute this camera</source>
         <translation>静音这台摄像机</translation>
     </message>
@@ -3891,13 +3963,13 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="311"/>
-        <location filename="../src/VideoTile.cpp" line="1007"/>
+        <location filename="../src/VideoTile.cpp" line="1031"/>
         <source>Record this camera</source>
         <translation>录制这台摄像机</translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="322"/>
-        <location filename="../src/VideoTile.cpp" line="985"/>
+        <location filename="../src/VideoTile.cpp" line="1009"/>
         <source>Speak through the camera</source>
         <translation>通过摄像机讲话</translation>
     </message>
@@ -3907,81 +3979,81 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
         <translation>摄像机设置</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="455"/>
+        <location filename="../src/VideoTile.cpp" line="462"/>
         <source>no host configured</source>
         <translation>未填写地址</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="529"/>
+        <location filename="../src/VideoTile.cpp" line="553"/>
         <source>connecting over Baichuan…</source>
         <translation>正通过 Baichuan 连接…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="552"/>
-        <location filename="../src/VideoTile.cpp" line="938"/>
+        <location filename="../src/VideoTile.cpp" line="576"/>
+        <location filename="../src/VideoTile.cpp" line="962"/>
         <source>custom stream</source>
         <translation>自定义流</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="554"/>
-        <location filename="../src/VideoTile.cpp" line="940"/>
+        <location filename="../src/VideoTile.cpp" line="578"/>
+        <location filename="../src/VideoTile.cpp" line="964"/>
         <source>main stream</source>
         <translation>主码流</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="555"/>
-        <location filename="../src/VideoTile.cpp" line="941"/>
+        <location filename="../src/VideoTile.cpp" line="579"/>
+        <location filename="../src/VideoTile.cpp" line="965"/>
         <source>sub stream</source>
         <translation>子码流</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="702"/>
+        <location filename="../src/VideoTile.cpp" line="726"/>
         <source>Unmute this camera</source>
         <translation>取消这台摄像机的静音</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="720"/>
+        <location filename="../src/VideoTile.cpp" line="744"/>
         <source>MOTION</source>
         <translation>移动</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="838"/>
-        <location filename="../src/VideoTile.cpp" line="858"/>
+        <location filename="../src/VideoTile.cpp" line="862"/>
+        <location filename="../src/VideoTile.cpp" line="882"/>
         <source>camera is reconfiguring… %1 s</source>
         <translation>摄像机正在重新配置… %1 秒</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="860"/>
+        <location filename="../src/VideoTile.cpp" line="884"/>
         <source>camera is reconfiguring…</source>
         <translation>摄像机正在重新配置…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="913"/>
+        <location filename="../src/VideoTile.cpp" line="937"/>
         <source>stream lost — reconnecting (%1)</source>
         <translation>码流丢失 — 正在重连（%1）</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="944"/>
+        <location filename="../src/VideoTile.cpp" line="968"/>
         <source>%1 fps</source>
         <translation>%1 fps</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="947"/>
+        <location filename="../src/VideoTile.cpp" line="971"/>
         <source>%1 Mbit/s</source>
         <translation>%1 Mbit/s</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="948"/>
+        <location filename="../src/VideoTile.cpp" line="972"/>
         <source>%1 kbit/s</source>
         <translation>%1 kbit/s</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="984"/>
+        <location filename="../src/VideoTile.cpp" line="1008"/>
         <source>Stop speaking</source>
         <translation>结束讲话</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1006"/>
+        <location filename="../src/VideoTile.cpp" line="1030"/>
         <source>Stop recording</source>
         <translation>停止录制</translation>
     </message>

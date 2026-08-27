@@ -1369,6 +1369,30 @@ STRINGS: dict[str, str] = {
         "Канал %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Какой это вход устройства. Для камеры оставьте 0.\n\nNVR отвечает за все свои камеры по одному адресу, с одним логином и одним портом, и различает их только канал. При проверке связи с регистратором предлагается добавить их все, поэтому вручную это нужно задавать редко.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "Хранилище ключей не ответило.",
+    "This build has no keyring support.":
+        "В этой сборке нет поддержки хранилища ключей.",
+    "This configuration file":
+        "В этом файле настроек",
+    "A command":
+        "В команде",
+    "The system keyring":
+        "В хранилище ключей системы",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Где хранится пароль этой камеры.\n\nФайл настроек держит его открытым текстом, доступным только вам (режим 600). Команда — pass, secret-tool, что угодно, что печатает пароль — оставляет файл без секрета. Хранилище ключей системы кладёт его в службу секретов рабочего стола.\n\nХранилище обычно заперто, пока кто-нибудь не войдёт в систему, поэтому машине, которая запускается сама и показывает камеры на стене, лучше подходит файл или команда.",
+    "Password kept in":
+        "Пароль хранится",
+    "The keyring would not take it":
+        "Хранилище ключей его не приняло",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "«%1»: не удалось сохранить в хранилище ключей системы: %2\n\nПароль остался в файле настроек.",
+    "type it once; it moves to the keyring when you save":
+        "введите один раз — при сохранении он уйдёт в хранилище",
+    "no keyring is answering — it will stay in the file":
+        "хранилище не отвечает — пароль останется в файле",
 }
 
 

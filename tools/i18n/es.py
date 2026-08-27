@@ -1383,6 +1383,30 @@ STRINGS: dict[str, str] = {
         "Canal %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Qué entrada del dispositivo es esta. Déjelo en 0 para una cámara.\n\nUn NVR responde por todas sus cámaras en una dirección, un inicio de sesión y un puerto, y el canal es lo único que las distingue. Al probar la conexión con un grabador se ofrece añadirlas todas, así que rara vez hay que ponerlo a mano.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "El llavero no respondió.",
+    "This build has no keyring support.":
+        "Esta compilación no admite el llavero.",
+    "This configuration file":
+        "Este archivo de configuración",
+    "A command":
+        "Un comando",
+    "The system keyring":
+        "El llavero del sistema",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Dónde se guarda la contraseña de esta cámara.\n\nEl archivo de configuración la guarda en texto claro, legible solo por usted (modo 600). Un comando — pass, secret-tool, cualquier cosa que imprima la contraseña — la mantiene fuera del archivo. El llavero del sistema la guarda en el servicio de secretos del escritorio.\n\nEl llavero suele estar bloqueado hasta que alguien inicia sesión, así que una máquina que arranca sin vigilancia y muestra cámaras en una pared se sirve mejor del archivo o de un comando.",
+    "Password kept in":
+        "Contraseña guardada en",
+    "The keyring would not take it":
+        "El llavero no la aceptó",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "«%1» no se pudo guardar en el llavero del sistema: %2\n\nSu contraseña se ha dejado en el archivo de configuración.",
+    "type it once; it moves to the keyring when you save":
+        "escríbala una vez; pasará al llavero al guardar",
+    "no keyring is answering — it will stay in the file":
+        "ningún llavero responde — se quedará en el archivo",
 }
 
 

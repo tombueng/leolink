@@ -1421,6 +1421,30 @@ STRINGS: dict[str, str] = {
         "Canale %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Quale ingresso del dispositivo è questo. Per una telecamera lascia 0.\n\nUn NVR risponde per tutte le sue telecamere su un solo indirizzo, un solo accesso e una sola porta, e il canale è l'unica cosa che le distingue. Provando la connessione a un registratore viene proposto di aggiungerle tutte, quindi raramente va impostato a mano.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "Il portachiavi non ha risposto.",
+    "This build has no keyring support.":
+        "Questa versione non gestisce il portachiavi.",
+    "This configuration file":
+        "Questo file di configurazione",
+    "A command":
+        "Un comando",
+    "The system keyring":
+        "Il portachiavi di sistema",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Dove è conservata la password di questa telecamera.\n\nIl file di configurazione la tiene in chiaro, leggibile solo da te (modo 600). Un comando — pass, secret-tool, qualsiasi cosa che stampi la password — la tiene fuori dal file. Il portachiavi di sistema la mette nel servizio dei segreti del desktop.\n\nUn portachiavi è di norma bloccato finché qualcuno non accede, quindi una macchina che si avvia da sola per mostrare telecamere su una parete è servita meglio dal file o da un comando.",
+    "Password kept in":
+        "Password conservata in",
+    "The keyring would not take it":
+        "Il portachiavi non l'ha accettata",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "«%1» non è stato possibile salvarla nel portachiavi di sistema: %2\n\nLa sua password è rimasta nel file di configurazione.",
+    "type it once; it moves to the keyring when you save":
+        "scrivila una volta; al salvataggio passa nel portachiavi",
+    "no keyring is answering — it will stay in the file":
+        "nessun portachiavi risponde — resterà nel file",
 }
 
 

@@ -57,6 +57,7 @@ qt_add_executable(leolink
     src/PlaybackBrowser.cpp   src/PlaybackBrowser.h
     src/Baichuan.cpp          src/Baichuan.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
+    src/Keyring.cpp           src/Keyring.h
     src/Log.cpp               src/Log.h
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
     src/SchedulePicker.cpp    src/SchedulePicker.h
@@ -83,6 +84,19 @@ qt_add_resources(leolink "assets"
 # ── Translations ────────────────────────────────────────────────────────────
 # Compiled into the binary, so a single executable carries every language and
 # nothing has to be found on disk at run time.
+# ── optional: the system keyring ─────────────────────────────────────────────
+# qtkeychain talks to Secret Service, which is what GNOME Keyring and KWallet
+# both answer to. Optional on purpose: without it the setting is simply not
+# offered, and a build on a machine that has no such library is unaffected.
+find_package(Qt6Keychain QUIET)
+if(Qt6Keychain_FOUND)
+    target_link_libraries(leolink PRIVATE qt6keychain)
+    target_compile_definitions(leolink PRIVATE LEOLINK_HAVE_KEYCHAIN)
+    message(STATUS "qtkeychain found — passwords may be kept in the system keyring")
+else()
+    message(STATUS "qtkeychain not found — passwords in the configuration file only")
+endif()
+
 qt_add_translations(leolink
     TS_FILES
         translations/leolink_en.ts

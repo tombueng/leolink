@@ -1128,6 +1128,30 @@ STRINGS: dict[str, str] = {
         "通道 %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "这是设备的哪一路输入。摄像机保持为 0。\n\nNVR 用一个地址、一个登录和一个端口代所有摄像机应答，区分它们的只有通道。测试与录像机的连接时会提示把它们全部添加，因此很少需要手动设置。",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "密钥环没有响应。",
+    "This build has no keyring support.":
+        "此版本不支持密钥环。",
+    "This configuration file":
+        "本配置文件",
+    "A command":
+        "一条命令",
+    "The system keyring":
+        "系统密钥环",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "这台摄像机的密码存放在哪里。\n\n配置文件以明文保存，只有你能读取（模式 600）。命令 — pass、secret-tool，任何能打印密码的东西 — 可让密码不进入文件。系统密钥环把它交给桌面自己的机密服务。\n\n密钥环通常在有人登录前处于锁定状态，因此无人值守启动、在墙上显示画面的机器更适合用文件或命令。",
+    "Password kept in":
+        "密码存放于",
+    "The keyring would not take it":
+        "密钥环未接受",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "“%1”无法保存到系统密钥环：%2\n\n其密码仍留在配置文件中。",
+    "type it once; it moves to the keyring when you save":
+        "输入一次；保存时会移入密钥环",
+    "no keyring is answering — it will stay in the file":
+        "没有密钥环响应 — 密码将留在文件中",
 }
 
 

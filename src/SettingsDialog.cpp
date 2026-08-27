@@ -1,5 +1,8 @@
 #include "SettingsDialog.h"
 
+#include "Keyring.h"
+#include "Log.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -121,6 +124,39 @@ QWidget *SettingsDialog::buildCameraTab()
     m_passwordCommand->setToolTip(
         tr("If set, this command runs and its output is used as the password. "
            "Keeps the secret out of the configuration file."));
+
+    m_passwordSource = new QComboBox(page);
+    m_passwordSource->addItem(tr("This configuration file"),
+                              QStringLiteral("config"));
+    m_passwordSource->addItem(tr("A command"), QStringLiteral("command"));
+    m_passwordSource->addItem(tr("The system keyring"),
+                              QStringLiteral("keyring"));
+    m_passwordSource->setToolTip(
+        tr("Where this camera's password is kept.\n\n"
+           "The configuration file holds it in clear text, readable only by "
+           "you (mode 600). A command — pass, secret-tool, anything that "
+           "prints the password — keeps it out of the file. The system keyring "
+           "stores it in the desktop's own secret service.\n\n"
+           "The keyring is usually locked until somebody logs in, so a machine "
+           "that starts unattended and shows cameras on a wall is better "
+           "served by the file or by a command."));
+    connect(m_passwordSource, &QComboBox::currentIndexChanged,
+            this, &SettingsDialog::updatePasswordFields);
+
+    // Asked once. A build without qtkeychain does not offer the choice at all;
+    // one that has it, on a desktop where nothing answers, offers it and says
+    // so — the keyring may simply be locked, and unlocked a minute later.
+    if (!Keyring::compiledIn()) {
+        m_passwordSource->removeItem(
+            m_passwordSource->findData(QStringLiteral("keyring")));
+    } else {
+        m_keyringAvailable = Keyring::available();
+        if (!m_keyringAvailable) {
+            LEO_INFO(App, QString(),
+                     QStringLiteral("No keyring answered; the setting is "
+                                    "offered but may not work here"));
+        }
+    }
     m_uid = new QLineEdit(page);
     m_uid->setPlaceholderText(tr("optional, for P2P access"));
 
@@ -164,6 +200,7 @@ QWidget *SettingsDialog::buildCameraTab()
     form->addRow(tr("Name"), m_name);
     form->addRow(tr("Host"), m_host);
     form->addRow(tr("User"), m_user);
+    form->addRow(tr("Password kept in"), m_passwordSource);
     form->addRow(tr("Password"), m_password);
     form->addRow(tr("Password command"), m_passwordCommand);
     form->addRow(tr("UID"), m_uid);
@@ -375,6 +412,9 @@ void SettingsDialog::loadIntoForm(const CameraConfig &c)
     m_user->setText(c.user);
     m_password->setText(c.password);
     m_passwordCommand->setText(c.passwordCommand);
+    const int sourceRow = m_passwordSource->findData(c.passwordSource);
+    m_passwordSource->setCurrentIndex(sourceRow >= 0 ? sourceRow : 0);
+    updatePasswordFields();
     m_uid->setText(c.uid);
     m_channel->setValue(c.channel);
     // Selected by the value each entry carries, not by counting positions.
@@ -410,6 +450,7 @@ void SettingsDialog::storeFromForm()
     c.user = m_user->text().trimmed();
     c.password = m_password->text();
     c.passwordCommand = m_passwordCommand->text().trimmed();
+    c.passwordSource = m_passwordSource->currentData().toString();
     c.uid = m_uid->text().trimmed();
     c.channel = m_channel->value();
     c.stream = m_stream->currentData().toString();
@@ -463,12 +504,35 @@ void SettingsDialog::onRemove()
         != QMessageBox::Yes)
         return;
 
+    // A camera that kept its password in the keyring takes it with it, rather
+    // than leaving an entry behind that nothing will ever ask for again.
+    const CameraConfig &going = m_config.cameras.at(row);
+    if (going.passwordSource == QLatin1String("keyring"))
+        Keyring::remove(Keyring::keyForCamera(going.id));
+
     m_config.cameras.removeAt(row);
     m_current = -1;
     rebuildList();
     if (!m_config.cameras.isEmpty())
         m_list->setCurrentRow(qMin(row, m_config.cameras.size() - 1));
     refreshGridPreview();
+}
+
+void SettingsDialog::updatePasswordFields()
+{
+    const QString source = m_passwordSource->currentData().toString();
+
+    m_password->setEnabled(source != QLatin1String("command"));
+    m_passwordCommand->setEnabled(source == QLatin1String("command"));
+
+    if (source == QLatin1String("keyring")) {
+        m_password->setPlaceholderText(
+            m_keyringAvailable
+                ? tr("type it once; it moves to the keyring when you save")
+                : tr("no keyring is answering — it will stay in the file"));
+    } else {
+        m_password->setPlaceholderText(QString());
+    }
 }
 
 void SettingsDialog::onTest()
@@ -783,6 +847,31 @@ void SettingsDialog::onAccept()
             return;
         }
     }
+
+    // Passwords bound for the keyring move now, on the way out, rather than on
+    // every keystroke: this is the one moment the user has said they mean it.
+    for (CameraConfig &c : m_config.cameras) {
+        if (c.passwordSource != QLatin1String("keyring"))
+            continue;
+        if (c.password.isEmpty())
+            continue;   // already moved, or never given one
+
+        QString error;
+        if (!Keyring::write(Keyring::keyForCamera(c.id), c.password, &error)) {
+            QMessageBox::warning(
+                this, tr("The keyring would not take it"),
+                tr("“%1” could not be saved in the system keyring: %2\n\n"
+                   "Its password has been left in the configuration file.")
+                    .arg(c.label(), error));
+            c.passwordSource = QStringLiteral("config");
+            continue;
+        }
+        // Out of the file, which was the point of the exercise.
+        c.password.clear();
+        LEO_INFO(App, c.label(),
+                 QStringLiteral("Password moved into the system keyring"));
+    }
+
     accept();
 }
 

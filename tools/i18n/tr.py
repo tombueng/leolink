@@ -1358,6 +1358,30 @@ STRINGS: dict[str, str] = {
         "Kanal %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Cihazın hangi girişi olduğu. Bir kamera için 0 bırakın.\n\nBir NVR, tüm kameraları için tek bir adres, tek bir oturum ve tek bir bağlantı noktası üzerinden yanıt verir; onları birbirinden ayıran tek şey kanaldır. Bir kaydediciye bağlantı sınandığında hepsini eklemek önerilir, bu yüzden bunu elle ayarlamak nadiren gerekir.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "Anahtarlık yanıt vermedi.",
+    "This build has no keyring support.":
+        "Bu yapıda anahtarlık desteği yok.",
+    "This configuration file":
+        "Bu yapılandırma dosyası",
+    "A command":
+        "Bir komut",
+    "The system keyring":
+        "Sistem anahtarlığı",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Bu kameranın parolasının nerede tutulduğu.\n\nYapılandırma dosyası parolayı düz metin olarak tutar; yalnızca siz okuyabilirsiniz (mod 600). Bir komut — pass, secret-tool, parolayı yazdıran herhangi bir şey — parolayı dosyanın dışında tutar. Sistem anahtarlığı ise onu masaüstünün kendi gizli bilgi servisine koyar.\n\nAnahtarlık genellikle biri oturum açana kadar kilitlidir; kendi başına açılıp duvarda kamera gösteren bir makine için dosya ya da komut daha uygundur.",
+    "Password kept in":
+        "Parolanın tutulduğu yer",
+    "The keyring would not take it":
+        "Anahtarlık kabul etmedi",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "“%1” sistem anahtarlığına kaydedilemedi: %2\n\nParolası yapılandırma dosyasında bırakıldı.",
+    "type it once; it moves to the keyring when you save":
+        "bir kez yazın; kaydederken anahtarlığa taşınır",
+    "no keyring is answering — it will stay in the file":
+        "yanıt veren bir anahtarlık yok — dosyada kalacak",
 }
 
 

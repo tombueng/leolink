@@ -47,6 +47,9 @@ software is involved.
   protocol, or a URL of your own. Baichuan is the answer for cameras that keep
   RTSP switched off, and it does not consume one of the camera's few web
   sessions.
+- **Passwords where you want them**: in the configuration file, in the system
+  keyring, or read from a command such as `pass` or `secret-tool` — chosen per
+  camera, because a wall display that starts on its own cannot unlock a keyring.
 - **Diagnostics that can be handed to somebody else.** Errors and warnings are
   always recorded; switching on detailed logging adds the whole conversation
   with the camera. Help ▸ Diagnostics shows it, filters it, and copies a report
@@ -112,11 +115,11 @@ main-stream resolutions.
 ```bash
 # Debian, Ubuntu
 sudo apt install cmake ninja-build qt6-base-dev qt6-svg-dev qt6-tools-dev \
-                 qt6-tools-dev-tools libmpv-dev
+                 qt6-tools-dev-tools libmpv-dev qtkeychain-qt6-dev
 
 # Fedora
 sudo dnf install cmake ninja-build gcc-c++ qt6-qtbase-devel qt6-qtsvg-devel \
-                 qt6-qttools-devel mpv-devel
+                 qt6-qttools-devel mpv-devel qtkeychain-qt6-devel
 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
@@ -137,15 +140,27 @@ cd build && cpack
 
 ## Configuration
 
-Settings live in `~/.config/leolink/config.json`, mode 600. The file holds
-camera passwords in clear text; if that bothers you, leave the password empty
-and set a **password command** instead — leolink runs it and reads the secret
-from its output:
+Settings live in `~/.config/leolink/config.json`, mode 600. Where each camera's
+password lives is per camera, under **Password kept in**:
 
-```
-pass show reolink/hall
-secret-tool lookup service reolink host 192.168.1.10
-```
+- **This configuration file** — in clear text, readable only by you. The
+  default, and the only one that works on a machine which starts unattended.
+- **A command** — leolink runs it and reads the secret from its output, so the
+  password never enters the file:
+
+  ```
+  pass show reolink/hall
+  secret-tool lookup service reolink host 192.168.1.10
+  ```
+
+- **The system keyring** — the desktop's own secret service, which is what
+  GNOME Keyring and KWallet both answer to. Type the password once and it moves
+  there when you save. Needs `qtkeychain` at build time; without it the choice
+  is not offered.
+
+A keyring is normally locked until somebody logs in, so a wall display that
+boots straight into leolink with nobody at the keyboard is better served by the
+file or by a command. That is why the file remains the default.
 
 Recordings and event stills go to `~/Videos/leolink` unless told otherwise.
 The event log is `~/.local/share/leolink/events.jsonl`, one JSON object per

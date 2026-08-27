@@ -1181,6 +1181,30 @@ STRINGS: dict[str, str] = {
         "チャンネル %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "この機器のどの入力かを指定します。カメラの場合は 0 のままにします。\n\nNVR は一つのアドレス、一つのログイン、一つのポートで、すべてのカメラの代わりに応答します。それらを区別するものはチャンネルだけです。レコーダーへの接続をテストすると、すべてまとめて追加するか尋ねられるので、手で設定することはめったにありません。",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "キーリングが応答しませんでした。",
+    "This build has no keyring support.":
+        "このビルドはキーリングに対応していません。",
+    "This configuration file":
+        "この設定ファイル",
+    "A command":
+        "コマンド",
+    "The system keyring":
+        "システムのキーリング",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "このカメラのパスワードをどこに保管するか。\n\n設定ファイルは平文で保持します（モード 600、読めるのは本人だけです）。コマンド — pass、secret-tool など、パスワードを出力するもの — を使えばファイルには残りません。システムのキーリングはデスクトップのシークレットサービスに預けます。\n\nキーリングは誰かがログインするまで施錠されているのが普通です。無人で起動して壁にカメラを映す機械には、ファイルかコマンドのほうが向いています。",
+    "Password kept in":
+        "パスワードの保管先",
+    "The keyring would not take it":
+        "キーリングが受け取りませんでした",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "「%1」をシステムのキーリングに保存できませんでした: %2\n\nパスワードは設定ファイルに残してあります。",
+    "type it once; it moves to the keyring when you save":
+        "一度入力すれば、保存時にキーリングへ移ります",
+    "no keyring is answering — it will stay in the file":
+        "応答するキーリングがありません — ファイルに残ります",
 }
 
 

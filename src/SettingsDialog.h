@@ -35,6 +35,8 @@ private slots:
     void onAdd();
     void onRemove();
     void onTest();
+    /// Greys out whichever password field the chosen source does not use.
+    void updatePasswordFields();
     void onScan();
     /// GetDevInfo came back from the Test button. A device that answers for
     /// several channels is a recorder, and that is the moment to say so.
@@ -68,6 +70,10 @@ private:
     QLineEdit *m_user{nullptr};
     QLineEdit *m_password{nullptr};
     QLineEdit *m_passwordCommand{nullptr};
+    QComboBox *m_passwordSource{nullptr};
+    /// Asked once, when the dialog opens: a keyring that is not there should
+    /// say so before a password is typed into it, not afterwards.
+    bool m_keyringAvailable{false};
     QLineEdit *m_uid{nullptr};
     QSpinBox *m_channel{nullptr};
     QLineEdit *m_customUrl{nullptr};

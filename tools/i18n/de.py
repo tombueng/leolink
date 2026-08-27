@@ -1496,6 +1496,30 @@ STRINGS: dict[str, str] = {
         "Kanal %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Welcher Eingang des Geräts das ist. Bei einer Kamera auf 0 lassen.\n\nEin NVR antwortet für alle seine Kameras unter einer Adresse, einer Anmeldung und einem Port, und nur der Kanal unterscheidet sie. Beim Test der Verbindung zu einem Rekorder wird angeboten, sie alle hinzuzufügen — von Hand muss das daher selten gesetzt werden.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "Der Schlüsselbund hat nicht geantwortet.",
+    "This build has no keyring support.":
+        "Diese Fassung hat keine Schlüsselbund-Unterstützung.",
+    "This configuration file":
+        "Dieser Einstellungsdatei",
+    "A command":
+        "Einem Befehl",
+    "The system keyring":
+        "Dem Schlüsselbund des Systems",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Wo das Passwort dieser Kamera aufbewahrt wird.\n\nDie Einstellungsdatei enthält es im Klartext, lesbar nur für Sie (Modus 600). Ein Befehl — pass, secret-tool, alles, was das Passwort ausgibt — hält es aus der Datei heraus. Der Schlüsselbund des Systems legt es im Geheimnisdienst des Desktops ab.\n\nDer Schlüsselbund ist normalerweise gesperrt, bis sich jemand anmeldet. Ein Rechner, der unbeaufsichtigt startet und Kameras an einer Wand zeigt, ist mit der Datei oder einem Befehl besser bedient.",
+    "Password kept in":
+        "Passwort liegt in",
+    "The keyring would not take it":
+        "Der Schlüsselbund hat es nicht angenommen",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "„%1“ konnte nicht im Schlüsselbund des Systems gespeichert werden: %2\n\nDas Passwort bleibt in der Einstellungsdatei.",
+    "type it once; it moves to the keyring when you save":
+        "einmal eingeben; beim Speichern wandert es in den Schlüsselbund",
+    "no keyring is answering — it will stay in the file":
+        "kein Schlüsselbund antwortet — es bleibt in der Datei",
 }
 
 

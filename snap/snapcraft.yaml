@@ -117,6 +117,9 @@ parts:
       - qt6-tools-dev-tools
       - libmpv-dev
       - libgl-dev
+      # Camera passwords in the keyring. The snap reaches it through the
+      # password-manager-service interface plugged above.
+      - qtkeychain-qt6-dev
     stage-packages:
       # Qt, since there is no extension to provide it — see the note at the top.
       - libqt6widgets6
@@ -128,6 +131,7 @@ parts:
       - libqt6svg6
       - libqt6opengl6
       - libqt6openglwidgets6
+      - libqt6keychain1
       - qt6-qpa-plugins
       - qt6-wayland
       # Qt's own strings — the buttons in standard dialogs, the file dialog.

@@ -1409,6 +1409,30 @@ STRINGS: dict[str, str] = {
         "Canal %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "De quelle entrée de l'appareil il s'agit. Laissez 0 pour une caméra.\n\nUn NVR répond pour toutes ses caméras sur une seule adresse, un seul identifiant et un seul port, et le canal est la seule chose qui les distingue. Tester la connexion à un enregistreur propose de les ajouter toutes : il est donc rarement nécessaire de le régler à la main.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "Le trousseau n'a pas répondu.",
+    "This build has no keyring support.":
+        "Cette version ne gère pas le trousseau.",
+    "This configuration file":
+        "Ce fichier de configuration",
+    "A command":
+        "Une commande",
+    "The system keyring":
+        "Le trousseau du système",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Où le mot de passe de cette caméra est conservé.\n\nLe fichier de configuration le garde en clair, lisible par vous seul (mode 600). Une commande — pass, secret-tool, tout ce qui affiche le mot de passe — le laisse hors du fichier. Le trousseau du système le range dans le service de secrets du bureau.\n\nUn trousseau est habituellement verrouillé jusqu'à ce que quelqu'un ouvre une session : une machine qui démarre sans surveillance pour afficher des caméras sur un mur est mieux servie par le fichier ou par une commande.",
+    "Password kept in":
+        "Mot de passe conservé dans",
+    "The keyring would not take it":
+        "Le trousseau n'en a pas voulu",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "« %1 » n'a pas pu être enregistré dans le trousseau du système : %2\n\nSon mot de passe est resté dans le fichier de configuration.",
+    "type it once; it moves to the keyring when you save":
+        "saisissez-le une fois ; il ira au trousseau à l'enregistrement",
+    "no keyring is answering — it will stay in the file":
+        "aucun trousseau ne répond — il restera dans le fichier",
 }
 
 

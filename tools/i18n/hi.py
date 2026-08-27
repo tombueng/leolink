@@ -1350,6 +1350,30 @@ STRINGS: dict[str, str] = {
         "चैनल %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "यह उपकरण का कौन-सा इनपुट है। कैमरे के लिए इसे 0 ही रहने दें।\n\nएक NVR अपने सभी कैमरों के लिए एक ही पते, एक ही लॉगिन और एक ही पोर्ट पर उत्तर देता है, और उन्हें केवल चैनल ही अलग करता है। रिकॉर्डर से कनेक्शन जाँचने पर उन सबको जोड़ने की पेशकश होती है, इसलिए इसे हाथ से बहुत कम ही सेट करना पड़ता है।",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "कीरिंग ने उत्तर नहीं दिया।",
+    "This build has no keyring support.":
+        "इस बिल्ड में कीरिंग समर्थन नहीं है।",
+    "This configuration file":
+        "इसी सेटिंग फ़ाइल में",
+    "A command":
+        "एक कमांड से",
+    "The system keyring":
+        "सिस्टम कीरिंग में",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "इस कैमरे का पासवर्ड कहाँ रखा जाता है।\n\nसेटिंग फ़ाइल इसे सादे पाठ में रखती है, जिसे केवल आप पढ़ सकते हैं (मोड 600)। एक कमांड — pass, secret-tool, या कुछ भी जो पासवर्ड छापे — इसे फ़ाइल से बाहर रखता है। सिस्टम कीरिंग इसे डेस्कटॉप की अपनी सीक्रेट सेवा में रखती है।\n\nकीरिंग आम तौर पर तब तक बंद रहती है जब तक कोई लॉग इन न करे, इसलिए जो मशीन बिना किसी की मौजूदगी के चालू होकर दीवार पर कैमरे दिखाती है, उसके लिए फ़ाइल या कमांड बेहतर है।",
+    "Password kept in":
+        "पासवर्ड यहाँ रखा है",
+    "The keyring would not take it":
+        "कीरिंग ने इसे नहीं लिया",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "“%1” को सिस्टम कीरिंग में सहेजा नहीं जा सका: %2\n\nइसका पासवर्ड सेटिंग फ़ाइल में ही छोड़ दिया गया है।",
+    "type it once; it moves to the keyring when you save":
+        "एक बार लिखें; सहेजते ही यह कीरिंग में चला जाएगा",
+    "no keyring is answering — it will stay in the file":
+        "कोई कीरिंग उत्तर नहीं दे रही — यह फ़ाइल में ही रहेगा",
 }
 
 

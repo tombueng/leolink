@@ -35,7 +35,8 @@ finish-args:
   - --talk-name=org.kde.StatusNotifierWatcher
   - --talk-name=org.freedesktop.Notifications
 
-  # A password command (`pass`, `secret-tool`) reads from the keyring.
+  # Camera passwords kept in the keyring, and password commands (`pass`,
+  # `secret-tool`) that read from it.
   - --talk-name=org.freedesktop.secrets
 
 modules:
@@ -109,6 +110,20 @@ modules:
       - /include
       - /lib/pkgconfig
       - /share/doc
+
+  # Optional at build time, but a Flatpak that lacks it can never offer the
+  # setting: the runtime carries no keyring library of its own.
+  - name: qtkeychain
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_WITH_QT6=ON
+      - -DBUILD_TRANSLATIONS=OFF
+      - -DBUILD_TEST_APPLICATION=OFF
+    sources:
+      - type: archive
+        url: https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/0.15.0.tar.gz
+        sha256: f4254dc8f0933b06d90672d683eab08ef770acd8336e44dfa030ce041dc2ca22
 
   - name: leolink
     buildsystem: cmake-ninja

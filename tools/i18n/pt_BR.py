@@ -1372,6 +1372,30 @@ STRINGS: dict[str, str] = {
         "Canal %1",
     "Which input of the device this is. Leave at 0 for a camera.\n\nAn NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.":
         "Qual entrada do dispositivo é esta. Deixe em 0 para uma câmera.\n\nUm NVR responde por todas as suas câmeras em um endereço, um login e uma porta, e o canal é a única coisa que as distingue. Ao testar a conexão com um gravador é oferecido adicionar todas elas, então isso raramente precisa ser definido à mão.",
+
+    # ── where a password is kept ──
+    "The keyring did not answer.":
+        "O chaveiro não respondeu.",
+    "This build has no keyring support.":
+        "Esta versão não tem suporte a chaveiro.",
+    "This configuration file":
+        "Este arquivo de configuração",
+    "A command":
+        "Um comando",
+    "The system keyring":
+        "O chaveiro do sistema",
+    "Where this camera's password is kept.\n\nThe configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop's own secret service.\n\nThe keyring is usually locked until somebody logs in, so a machine that starts unattended and shows cameras on a wall is better served by the file or by a command.":
+        "Onde a senha desta câmera fica guardada.\n\nO arquivo de configuração a mantém em texto claro, legível apenas por você (modo 600). Um comando — pass, secret-tool, qualquer coisa que imprima a senha — a mantém fora do arquivo. O chaveiro do sistema a guarda no serviço de segredos da área de trabalho.\n\nUm chaveiro costuma ficar trancado até alguém entrar na sessão, então uma máquina que inicia sozinha para mostrar câmeras numa parede é melhor servida pelo arquivo ou por um comando.",
+    "Password kept in":
+        "Senha guardada em",
+    "The keyring would not take it":
+        "O chaveiro não aceitou",
+    "“%1” could not be saved in the system keyring: %2\n\nIts password has been left in the configuration file.":
+        "Não foi possível salvar “%1” no chaveiro do sistema: %2\n\nA senha dela foi mantida no arquivo de configuração.",
+    "type it once; it moves to the keyring when you save":
+        "digite uma vez; ela vai para o chaveiro ao salvar",
+    "no keyring is answering — it will stay in the file":
+        "nenhum chaveiro respondeu — ela ficará no arquivo",
 }
 
 
