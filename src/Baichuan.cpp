@@ -46,10 +46,17 @@ constexpr char kMagicPFrame[] = "01dc";
 constexpr char kMagicAac[] = "05wb";
 constexpr char kMagicAdpcm[] = "01wb";
 
-/// Bytes of header before the payload, per block type. Verified by checking
-/// that the byte at that offset is the start of an Annex-B start code.
+/// Bytes of header before the payload, per block type. True of an RLC-410W,
+/// and only of it: an E1 Pro puts 152 bytes in front of a key frame and either
+/// 120 or 144 in front of a predicted one — varying between frames of the same
+/// stream, because the header carries a metadata section whose length changes.
+/// So these are the fallback, not the rule; see the search in feed().
 constexpr int kIFrameHeaderLen = 32;
 constexpr int kPFrameHeaderLen = 24;
+
+/// How far into a block to look for the start of the picture before giving up
+/// and trusting the constants above. Generous: the longest header seen is 152.
+constexpr int kMaxVideoHeaderLen = 512;
 constexpr int kAudioHeaderLen = 8;
 
 /// Field offsets inside a video block header.
@@ -190,8 +197,8 @@ void BcMediaParser::feed(const QByteArray &data)
 
         const bool iFrame = magic == kMagicIFrame;
         if (iFrame || magic == kMagicPFrame) {
-            const int headerLen = iFrame ? kIFrameHeaderLen : kPFrameHeaderLen;
-            if (short_of(headerLen))
+            const int assumed = iFrame ? kIFrameHeaderLen : kPFrameHeaderLen;
+            if (short_of(assumed))
                 return;
             const int payload = int(readU32(m_buffer, kVideoSizeOffset));
             if (payload <= 0 || payload > 16 * 1024 * 1024) {
@@ -201,6 +208,53 @@ void BcMediaParser::feed(const QByteArray &data)
                 m_buffer.remove(0, 4);
                 continue;
             }
+
+            // Where the header ends is measured, not assumed. It differs by
+            // firmware and, on an E1 Pro, between one frame and the next — but
+            // what follows it never differs, because H.264 in Annex-B framing
+            // always opens on a start code. Taking the header on trust cost a
+            // camera every frame it sent: the parser stepped into the middle of
+            // the picture, reported an unrecognised block, resynchronised on
+            // the next magic, and handed the decoder a frame with the first
+            // hundred-odd bytes of header on the front and the same number
+            // missing off the end.
+            int headerLen = -1;
+            const int window = qMin(m_buffer.size(), kMaxVideoHeaderLen);
+            const QByteArray head = m_buffer.left(window);
+            const bool h265 =
+                m_buffer.mid(kVideoCodecOffset, 4) == QByteArrayLiteral("H265");
+            const QByteArray startCode("\x00\x00\x00\x01", 4);
+
+            for (int at = head.indexOf(startCode, kVideoSizeOffset + 4); at >= 0;
+                 at = head.indexOf(startCode, at + 1)) {
+                if (at + 4 >= head.size())
+                    break;
+                // Not every start code in a header is one. A timestamp whose
+                // lowest byte is 01, sitting behind a field of zeroes, reads as
+                // a start code from four bytes away — which is one frame in a
+                // hundred, measured. What tells them apart is the byte after:
+                // it is a NAL header, and its top bit is a reserved zero.
+                const quint8 nal = quint8(head.at(at + 4));
+                if (nal & 0x80)
+                    continue;
+                if (!h265) {
+                    // Slice, IDR, SEI, parameter sets, access unit delimiter —
+                    // the only things a camera opens a frame with.
+                    const int type = nal & 0x1f;
+                    if (type != 1 && type != 5 && type != 6 && type != 7 &&
+                        type != 8 && type != 9)
+                        continue;
+                }
+                headerLen = at;
+                break;
+            }
+
+            if (headerLen < 0) {
+                if (m_buffer.size() < kMaxVideoHeaderLen)
+                    return;              // not enough in hand to say yet
+                headerLen = assumed;     // nothing found: trust the constant
+            }
+
             if (short_of(headerLen + payload))
                 return;
 
