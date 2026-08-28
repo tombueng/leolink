@@ -357,10 +357,22 @@ hardware actually sends, verified on an RLC-410W:
 | On the wire | Block | Header |
 |---|---|---|
 | `1001` / `1002` | stream info | 32 bytes (length is stated at +4) |
-| `00dc` | key frame | 32 bytes |
-| `01dc` | predicted frame | 24 bytes |
+| `00dc` | key frame | 32 bytes on an RLC-410W — **not a constant, see below** |
+| `01dc` | predicted frame | 24 bytes on an RLC-410W — **not a constant** |
 | `05wb` | AAC audio | 8 bytes |
 | `01wb` | ADPCM audio | 8 bytes |
+
+**The video header length varies by firmware, and within one stream.** An E1
+Pro (capture supplied in issue #2) puts **152** bytes in front of a key frame
+and **120 or 144** in front of a predicted one, changing from frame to frame:
+the header carries a metadata section whose length is not fixed, containing an
+`lz4 ` marker and an LZ4 frame — camera metadata, not the picture, which is
+plain Annex-B behind it as usual.
+
+Taking 32 and 24 for constants therefore does not merely mis-parse an unfamiliar
+camera; it hands the decoder every frame with a hundred-odd bytes of header on
+the front and the same number missing off the end, which H.264 survives well
+enough that nothing looks wrong. Measure the header instead — see below.
 
 The names are AVI's, which is presumably where they came from: `00dc` is
 compressed video on stream 0, `wb` is audio.
@@ -372,8 +384,8 @@ Video block layout:
 +4   codec          "H264" / "H265"
 +8   payload size   u32
 +12  unknown        u32
-+16  microseconds   u32
-+20  unknown        u32
++16  microseconds   u32   (low word of a 64-bit count — see below)
++20  microseconds   u32   (high word; 118 on a camera up for 141 hours)
 +24  unix time      u32   (key frames only)
 +28  unknown        u32   (key frames only)
 ```
@@ -390,8 +402,29 @@ Info block:
 
 The payload is plain Annex-B, so **the check that the layout is right is that
 the first bytes of every payload are `00 00 00 01`**. That is what turned this
-from guesswork into something verifiable — and it is worth keeping in any parser
-as an assertion.
+from guesswork into something verifiable — and rather than an assertion, it is
+better used as the measurement itself: search the block for the first start
+code and take that as the end of the header. It costs a scan of a few dozen
+bytes per frame and it is right on every firmware, instead of on the one the
+constants were taken from.
+
+One trap comes with that. A start code is four bytes and three of them are
+zero, so a field of zeroes followed by a timestamp whose lowest byte is `01`
+reads as one — about one frame in a hundred on the E1 Pro capture. The byte
+after a real start code is a NAL header, whose top bit is a reserved zero and
+whose type is one of the handful a camera opens a frame with (1, 5, 6, 7, 8,
+9), and that is enough to tell them apart.
+
+**The two words at +16 and +20 are one 64-bit microsecond counter, low word
+first.** Measured across 495 frames of the E1 Pro capture: steps of exactly
+40,000 µs, against a stream announcing 25 fps and counted off the wire at 25.1.
+The high word was 118 throughout, which is 118 × 2³² µs ≈ 141 hours — the
+camera's uptime, and consistent with reading the pair as one number.
+
+That timestamp is worth more than it looks. The stream carries no container, so
+a player has to be told what rate to play at, and a rate that is wrong by a
+frame or two a second becomes a delay that grows for as long as the window is
+open. A per-frame timestamp removes the guess.
 
 Two details a parser needs:
 
