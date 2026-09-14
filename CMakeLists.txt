@@ -58,6 +58,7 @@ qt_add_executable(leolink
     src/Baichuan.cpp          src/Baichuan.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
     src/Keyring.cpp           src/Keyring.h
+    src/TsMuxer.cpp           src/TsMuxer.h
     src/Log.cpp               src/Log.h
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
     src/SchedulePicker.cpp    src/SchedulePicker.h

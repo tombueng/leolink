@@ -435,19 +435,42 @@ Two details a parser needs:
 * **Media bodies are not obfuscated.** The XOR applies to the XML control
   messages only.
 
-leolink unpacks this into an H.264 elementary stream and re-serves it on a
-loopback port, which mpv opens as `tcp://127.0.0.1:<port>`. Since a raw stream
-carries no timestamps, the player needs `--no-correct-pts` and
-`--container-fps-override` set to the rate the info block announced; without
-them mpv invents timing and says so.
+leolink unpacks this into H.264 pictures, wraps them in MPEG-TS with the
+timestamp out of each block header, and serves that on a loopback port, which
+mpv opens as `tcp://127.0.0.1:<port>`. It used to hand over the bare elementary
+stream, which carries no timing at all: the player then had to be told a rate
+with `--no-correct-pts` and `--container-fps-override`, and believe it. See
+*What leolink does with it* below for why that had to change.
 
 ```
 leolink --baichuan-video <host> --user admin --password … --out /tmp/x.h264
 ```
 
-reports what the container held and writes the elementary stream out, so it can
-be checked with `ffprobe`. Measured on an RLC-410W sub stream: 150 frames in
-10 seconds, 640x352 High profile, zero decode errors.
+reports what the container held and writes the elementary stream out — the
+probe talks to the parser directly, so this is the pictures as the camera sent
+them, without the transport wrapping. Handy for `ffprobe`. Measured on an
+RLC-410W sub stream: 150 frames in 10 seconds, 640x352 High profile, zero
+decode errors.
+
+### What leolink does with it
+
+The blocks above are an elementary stream: pictures one after another, with
+nothing to say when each is due. Handed to a player like that, the player has to
+be told a frame rate and then trusts it absolutely — and a camera that announces
+25 while the player was told 15 puts ten surplus frames a second into a queue
+that never drains. That was issue #2, and it is a bug the format invites rather
+than one anybody wrote.
+
+So the relay wraps the frames in MPEG-TS on the way out, using the timestamp
+from each block header. It is the smallest container that carries a time per
+picture, every player reads it, it is designed to be joined mid-stream — which
+is exactly what connecting to a camera is — and it takes about 200 lines and no
+library to write. The overhead is roughly six per cent.
+
+What that buys, beyond the bug: the rate no longer has to be guessed or
+corrected, clock drift between camera and computer stops accumulating, and a
+player that reconnects can be handed the tables and the last key frame and
+start immediately.
 
 ### What it adds over the CGI API
 

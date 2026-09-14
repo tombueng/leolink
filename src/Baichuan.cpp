@@ -57,11 +57,34 @@ constexpr int kPFrameHeaderLen = 24;
 /// How far into a block to look for the start of the picture before giving up
 /// and trusting the constants above. Generous: the longest header seen is 152.
 constexpr int kMaxVideoHeaderLen = 512;
+
+/// The largest picture worth believing in. A 1440p key frame runs to a few
+/// hundred kilobytes and a 4K one to about a megabyte and a half, so this is
+/// well over twice anything real. Past it, the number was read out of the
+/// wrong place.
+constexpr int kMaxFrameBytes = 4 * 1024 * 1024;
+
+/// And the most that will be held waiting for one block to complete. A frame
+/// that never finishes arriving is not a frame, and waiting for it for ever is
+/// how a parser falls silent while its log stays perfectly clean — no errors,
+/// no unrecognised blocks, no pictures either.
+constexpr int kMaxHeldBytes = 12 * 1024 * 1024;
 constexpr int kAudioHeaderLen = 8;
 
 /// Field offsets inside a video block header.
 constexpr int kVideoCodecOffset = 4;    ///< "H264" / "H265"
 constexpr int kVideoSizeOffset = 8;     ///< payload length, u32
+/// Microseconds, u32, wrapping every 71 minutes. The word after it carries the
+/// high half on an E1 Pro — 118 on a camera up for 141 hours — but what that
+/// word means is firmware's business, so only this one is read and the wrap is
+/// undone by watching it.
+constexpr int kVideoTimeOffset = 16;
+/// A step larger than this is not a gap between two pictures. It is a clock
+/// that jumped, or a field that means something else on this firmware.
+constexpr qint64 kMaxPlausibleStepUs = 5000000;
+/// What to advance by when the timestamps cannot be believed and nothing
+/// better is known: 25 frames a second, which is what these cameras send.
+constexpr qint64 kDefaultStepUs = 40000;
 
 /// Bytes between blocks that count as alignment or a frame trailer rather than
 /// as damage. Measured: four after the first key frame, three after later ones.
@@ -201,7 +224,7 @@ void BcMediaParser::feed(const QByteArray &data)
             if (short_of(assumed))
                 return;
             const int payload = int(readU32(m_buffer, kVideoSizeOffset));
-            if (payload <= 0 || payload > 16 * 1024 * 1024) {
+            if (payload <= 0 || payload > kMaxFrameBytes) {
                 if (onUnknown)
                     onUnknown(QStringLiteral("%1 claiming a %2 byte frame")
                                   .arg(QString::fromLatin1(magic)).arg(payload));
@@ -249,26 +272,105 @@ void BcMediaParser::feed(const QByteArray &data)
                 break;
             }
 
-            if (headerLen < 0) {
-                if (m_buffer.size() < kMaxVideoHeaderLen)
-                    return;              // not enough in hand to say yet
-                headerLen = assumed;     // nothing found: trust the constant
+            const int measured = headerLen;
+            if (measured < 0 && m_buffer.size() < kMaxVideoHeaderLen)
+                return;                  // not enough in hand to say yet
+
+            // A measurement can be wrong too, and a wrong one is worse than a
+            // wrong constant: it consumes the wrong number of bytes, so the
+            // parser loses the stream rather than merely mangling one picture.
+            // Where the two answers disagree, the one that ends where another
+            // block begins is right.
+            //
+            // Ending on nothing recognisable is not proof of error, though: a
+            // firmware may put a block here that this parser has never met,
+            // which is what the resynchronising further down is for. So this
+            // decides between two answers and never throws a picture away.
+            auto landsOnABlock = [&](int candidate) {
+                int at = candidate + payload;
+                int zeros = 0;
+                while (at < m_buffer.size() && m_buffer.at(at) == '\0' &&
+                       zeros < kMaxTrailerBytes) {
+                    ++at;
+                    ++zeros;
+                }
+                if (at + 4 > m_buffer.size())
+                    return false;
+                const QByteArray next = m_buffer.mid(at, 4);
+                return next == kMagicIFrame || next == kMagicPFrame ||
+                       next == kMagicInfoV1 || next == kMagicInfoV2 ||
+                       next == kMagicAac || next == kMagicAdpcm;
+            };
+
+            headerLen = measured >= 0 ? measured : assumed;
+            if (measured >= 0 && measured != assumed) {
+                // Judged with everything in hand, or not at all: an answer
+                // weighed against half a buffer is worse than no answer.
+                const int enough =
+                    qMax(measured, assumed) + payload + kMaxTrailerBytes + 4;
+                if (m_buffer.size() < enough)
+                    return;
+                if (!landsOnABlock(measured) && landsOnABlock(assumed))
+                    headerLen = assumed;
             }
 
-            if (short_of(headerLen + payload))
+            if (short_of(headerLen + payload)) {
+                if (m_buffer.size() > kMaxHeldBytes) {
+                    if (onUnknown) {
+                        onUnknown(QStringLiteral("%1 claiming %2 bytes that "
+                                                 "never arrived")
+                                      .arg(QString::fromLatin1(magic))
+                                      .arg(payload));
+                    }
+                    m_buffer.remove(0, 4);
+                    continue;            // rather than hold the stream for ever
+                }
                 return;
+            }
+
+            // Counted so a log can say which answer this camera needed. A
+            // firmware nobody here owns is then diagnosed from these two
+            // numbers and the count of unrecognised blocks, without anybody
+            // having to send a packet capture of their living room.
+            // "Found" means the picture was located, whether or not that
+            // agreed with the constant — on some cameras it does, and counting
+            // those as guesses would report a working measurement as a broken
+            // one.
+            if (measured >= 0 && headerLen == measured)
+                ++m_measuredHeaders;
+            else
+                ++m_assumedHeaders;
 
             if (m_codec.isEmpty()) {
                 m_codec = QString::fromLatin1(
                               m_buffer.mid(kVideoCodecOffset, 4)).trimmed();
             }
 
+            // When this picture is to be shown. Counted from the first frame
+            // rather than passed on as the camera's own clock: the camera
+            // counts from its last boot, and a player handed a timeline that
+            // starts at 141 hours has to be told to seek before it will show
+            // anything.
+            const quint32 raw = readU32(m_buffer, kVideoTimeOffset);
+            if (!m_haveTime) {
+                m_haveTime = true;
+                m_timeUs = 0;
+            } else {
+                qint64 step = qint64(quint32(raw - m_lastRawTime));
+                if (step <= 0 || step > kMaxPlausibleStepUs)
+                    step = m_lastStepUs > 0 ? m_lastStepUs : kDefaultStepUs;
+                else
+                    m_lastStepUs = step;
+                m_timeUs += step;
+            }
+            m_lastRawTime = raw;
+
             const QByteArray frame = m_buffer.mid(headerLen, payload);
             m_buffer.remove(0, headerLen + payload);
             m_videoBytes += payload;
             ++m_frames;
             if (onVideo)
-                onVideo(frame, iFrame);
+                onVideo(frame, iFrame, m_timeUs);
             continue;
         }
 
@@ -628,7 +730,7 @@ int runBaichuanVideoProbe(const QString &host, const QString &user,
     parser.onUnknown = [&unknown](const QString &magic) {
         ++unknown[magic];
     };
-    parser.onVideo = [&](const QByteArray &frame, bool keyFrame) {
+    parser.onVideo = [&](const QByteArray &frame, bool keyFrame, qint64) {
         if (keyFrame)
             ++keyFrames;
         // The strongest check there is that the header layout is right: an

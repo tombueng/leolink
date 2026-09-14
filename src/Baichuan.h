@@ -110,7 +110,10 @@ public:
     void feed(const QByteArray &data);
 
     /// Annex-B video, ready for a decoder.
-    std::function<void(const QByteArray &nalUnits, bool keyFrame)> onVideo;
+    /// `ptsUs` is when this picture is to be shown, in microseconds, counted
+    /// from the first frame of this stream and only ever going forward.
+    std::function<void(const QByteArray &nalUnits, bool keyFrame,
+                       qint64 ptsUs)> onVideo;
     /// Called once the camera has announced picture size and frame rate.
     std::function<void(int width, int height, int fps)> onFormat;
     /// A block whose magic is not one of the known ones. Carries the four
@@ -124,6 +127,12 @@ public:
     /// Alignment and frame trailers stepped over. A handful per key frame is
     /// normal; a steadily growing figure would mean the layout is wrong.
     qint64 skippedBytes() const { return m_skippedBytes; }
+    /// How the end of the header was decided, per frame: found by looking for
+    /// the picture, or fallen back to the constant for this block type. A
+    /// camera that needs the constant everywhere is one whose pictures this
+    /// parser cannot find, and that is worth knowing from a log alone.
+    int measuredHeaders() const { return m_measuredHeaders; }
+    int assumedHeaders() const { return m_assumedHeaders; }
 
 private:
     QByteArray m_buffer;
@@ -131,6 +140,17 @@ private:
     qint64 m_videoBytes{0};
     qint64 m_skippedBytes{0};
     int m_frames{0};
+    int m_measuredHeaders{0};
+    int m_assumedHeaders{0};
+
+    /// Presentation time, unwrapped. The camera counts microseconds in 32
+    /// bits, which runs out every 71 minutes; what a player wants is a number
+    /// that only goes up, so the wrap is undone here and the count starts at
+    /// zero with the first frame.
+    bool m_haveTime{false};
+    quint32 m_lastRawTime{0};
+    qint64 m_timeUs{0};
+    qint64 m_lastStepUs{0};
 };
 
 /// Diagnostic entry points used by --baichuan-test / --baichuan-p2p.

@@ -407,26 +407,12 @@ void VideoTile::createPlayer()
     set("hwdec", m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec);
 
     if (m_config.transport == QLatin1String("baichuan")) {
-        // Raw H.264 with no container: nothing in the byte stream says what it
-        // is, so the demuxer has to be told. Without this mpv probes, guesses
-        // and usually gives up.
+        // The relay wraps the camera's pictures in MPEG-TS, so the stream says
+        // what it is and when each picture is due. Naming the format saves the
+        // probe; everything else — the rate, the timing — mpv now reads for
+        // itself, which is the point of the container being there at all.
         set("demuxer", QStringLiteral("lavf"));
-        set("demuxer-lavf-format", QStringLiteral("h264"));
-        // The elementary stream carries no timestamps either, and mpv says so
-        // in as many words: without this it invents them, warns that seeking
-        // and buffering will be wrong, and plays at whatever rate it guessed.
-        // Telling it not to try, and giving it the rate the camera announced,
-        // is mpv's own documented answer to exactly this case.
-        set("correct-pts", QStringLiteral("no"));
-        // Whatever rate is used here is the rate the stream is played at for
-        // as long as it is open, and the camera sends at its own regardless.
-        // A guess that is too low is not a small error: the difference has
-        // nowhere to go but a queue, and the picture falls further behind for
-        // every second the window stays open. The relay waits for the camera
-        // to say before it offers the port, so this is normally the real rate;
-        // fifteen is the fallback for firmware that never says.
-        m_playingFps = m_baichuanFps > 0 ? m_baichuanFps : 15;
-        set("container-fps-override", QString::number(m_playingFps));
+        set("demuxer-lavf-format", QStringLiteral("mpegts"));
     }
 
     set("keep-open", QStringLiteral("no"));
@@ -494,29 +480,14 @@ void VideoTile::startBaichuan()
     m_baichuan = new BaichuanStream(this);
     connect(m_baichuan, &BaichuanStream::formatKnown, this,
             [this](int, int, int fps) {
-                if (fps <= 0)
-                    return;
-                m_baichuanFps = fps;
-
-                // The player reads the rate once, when it opens the stream.
-                // Normally it has not opened yet — the relay waits for this
-                // before offering the port. When it has, and the camera has
-                // just contradicted the guess it opened on, it is opened
-                // again: a wrong rate does not settle, it accumulates.
-                if (!m_wantPlayback || !m_surface || m_baichuanUrl.isEmpty())
-                    return;
-                if (m_playingFps <= 0 || m_playingFps == fps)
-                    return;
-
-                LEO_INFO(Stream, m_config.label(),
-                         QStringLiteral("Camera sends %1 fps, playing at %2 — "
-                                        "reopening at the rate it named")
-                             .arg(fps).arg(m_playingFps));
-                m_playingFps = fps;
-                m_surface->setOption(QStringLiteral("container-fps-override"),
-                                     QString::number(fps));
-                m_surface->play(m_baichuanUrl);
+                // Kept for the line under the picture. Nothing depends on it
+                // any more: the stream carries its own timing, so a camera that
+                // announces one rate and sends another is no longer a problem
+                // that accumulates — it is not a problem at all.
+                if (fps > 0)
+                    m_baichuanFps = fps;
             });
+
     connect(m_baichuan, &BaichuanStream::ready, this, [this](const QString &url) {
         m_baichuanUrl = url;
         if (m_wantPlayback && m_surface)

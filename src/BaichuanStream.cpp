@@ -6,6 +6,7 @@
 
 #include "Baichuan.h"
 #include "Log.h"
+#include "TsMuxer.h"
 
 namespace leolink {
 
@@ -99,11 +100,18 @@ void BaichuanStream::run()
     }
 
     BcMediaParser parser;
+    // Wrapped rather than handed over bare, so every picture carries the time
+    // the camera took it. Without that a player has to be told a frame rate and
+    // believe it, and a rate that is wrong by two frames a second is a delay
+    // that grows for as long as the window is open.
+    TsMuxer muxer;
     QTcpSocket *player = nullptr;
     bool started = false;      ///< has this player been given a key frame yet
     bool announced = false;    ///< has the player been told where to connect
     bool dropping = false;     ///< shedding frames until the player catches up
     QByteArray primer;         ///< the last key frame, to open a new connection with
+    qint64 primerPts = 0;
+    QString codec;             ///< as the camera named it: H264 or H265
     qint64 sent = 0;
     int frames = 0;
     int dropped = 0;
@@ -144,12 +152,14 @@ void BaichuanStream::run()
         }
     };
 
-    parser.onVideo = [&](const QByteArray &frame, bool keyFrame) {
+    parser.onVideo = [&](const QByteArray &frame, bool keyFrame, qint64 ptsUs) {
         // Kept whether or not anyone is listening: a player that connects, or
         // reconnects, can then be handed a picture straight away instead of
         // waiting out the rest of the group of pictures.
-        if (keyFrame)
+        if (keyFrame) {
             primer = frame;
+            primerPts = ptsUs;
+        }
 
         if (!player || player->state() != QAbstractSocket::ConnectedState)
             return;
@@ -189,8 +199,16 @@ void BaichuanStream::run()
             return;
         }
 
-        player->write(frame);
-        sent += frame.size();
+        // The camera names its codec in the first frame it sends, which is
+        // before the first key frame and therefore before any tables go out.
+        if (!parser.videoCodec().isEmpty() && parser.videoCodec() != codec) {
+            codec = parser.videoCodec();
+            muxer.setCodec(codec);
+        }
+
+        const QByteArray wrapped = muxer.frame(frame, keyFrame, ptsUs);
+        player->write(wrapped);
+        sent += wrapped.size();
         ++frames;
     };
 
@@ -201,7 +219,11 @@ void BaichuanStream::run()
         // meant a new port every time, a fresh login on a camera that was
         // still holding the last one, and a retry loop that never converged.
         if (!player || player->state() != QAbstractSocket::ConnectedState) {
-            if (server.hasPendingConnections()) {
+            // waitForNewConnection() rather than hasPendingConnections(): this
+            // thread runs no event loop, so nothing delivers the connection to
+            // the server by itself. A zero timeout makes it a poll of the
+            // listening socket, which is exactly what is wanted here.
+            if (server.waitForNewConnection(0)) {
                 if (player) {
                     player->abort();
                     delete player;
@@ -214,8 +236,11 @@ void BaichuanStream::run()
                                         kSendBufferBytes);
                 started = false;
                 dropping = false;
+                // Whoever has just connected needs the tables before anything
+                // else means anything, and then a picture to start from.
+                player->write(muxer.tables());
                 if (!primer.isEmpty()) {
-                    player->write(primer);
+                    player->write(muxer.frame(primer, true, primerPts));
                     started = true;
                 }
                 LEO_DEBUG(Baichuan, m_camera.label(),
@@ -277,9 +302,11 @@ void BaichuanStream::run()
 
     LEO_INFO(Baichuan, m_camera.label(),
              QStringLiteral("Finished: %1 frames, %2 KiB, %3 dropped, %4 "
-                            "unrecognised block(s), %5 bytes of padding skipped")
+                            "unrecognised block(s), %5 bytes of padding "
+                            "skipped, header found %6 / assumed %7")
                  .arg(frames).arg(sent / 1024).arg(dropped)
-                 .arg(unknownBlocks).arg(parser.skippedBytes()));
+                 .arg(unknownBlocks).arg(parser.skippedBytes())
+                 .arg(parser.measuredHeaders()).arg(parser.assumedHeaders()));
 
     // Not deleted here: the socket belongs to the server on this stack and goes
     // with it. Only a socket that has been replaced by a reconnecting player is
