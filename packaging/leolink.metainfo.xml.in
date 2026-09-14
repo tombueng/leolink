@@ -542,6 +542,108 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.0" date="2026-09-14">
+      <description>
+        <p>A larger release: cameras behind a recorder, a full-screen mode, somewhere better than the configuration file to keep a password, and recording that can include the seconds before the trigger.</p>
+        <p xml:lang="ar">إصدار أكبر: الكاميرات خلف مسجل، ووضع ملء الشاشة، ومكان أفضل من ملف الإعدادات لحفظ كلمة السر، وتسجيل يمكنه أن يضم الثواني السابقة للحدث.</p>
+        <p xml:lang="de">Eine größere Ausgabe: Kameras hinter einem Rekorder, ein Vollbildmodus, ein besserer Ort als die Einstellungsdatei für ein Passwort, und Aufnahmen, die die Sekunden vor dem Auslöser enthalten können.</p>
+        <p xml:lang="es">Una versión mayor: cámaras detrás de un grabador, un modo de pantalla completa, un lugar mejor que el archivo de configuración para guardar una contraseña, y grabaciones que pueden incluir los segundos anteriores al disparo.</p>
+        <p xml:lang="fr">Une version plus large : des caméras derrière un enregistreur, un mode plein écran, un meilleur endroit que le fichier de configuration pour un mot de passe, et un enregistrement qui peut contenir les secondes précédant le déclenchement.</p>
+        <p xml:lang="hi">एक बड़ा संस्करण: रिकॉर्डर के पीछे लगे कैमरे, पूर्ण-स्क्रीन मोड, पासवर्ड रखने के लिए सेटिंग फ़ाइल से बेहतर जगह, और ऐसी रिकॉर्डिंग जो ट्रिगर से पहले के सेकंड भी समेट सके।</p>
+        <p xml:lang="it">Una versione più ampia: telecamere dietro a un registratore, una modalità a schermo intero, un posto migliore del file di configurazione per una password, e registrazioni che possono contenere i secondi precedenti all'evento.</p>
+        <p xml:lang="ja">大きめのリリースです。レコーダーの先にあるカメラ、全画面表示、設定ファイルより安全なパスワードの置き場所、そして記録のきっかけより前の数秒を含められる録画。</p>
+        <p xml:lang="pt_BR">Uma versão maior: câmeras atrás de um gravador, um modo de tela cheia, um lugar melhor que o arquivo de configuração para guardar uma senha, e gravações que podem incluir os segundos anteriores ao disparo.</p>
+        <p xml:lang="ru">Более крупный выпуск: камеры за регистратором, полноэкранный режим, место для пароля получше файла настроек и запись, способная включить секунды до срабатывания.</p>
+        <p xml:lang="tr">Daha büyük bir sürüm: bir kaydedicinin ardındaki kameralar, tam ekran kipi, parola için yapılandırma dosyasından daha iyi bir yer ve tetiklenmeden önceki saniyeleri de içerebilen kayıt.</p>
+        <p xml:lang="zh_CN">一个较大的版本：录像机后面的摄像机、全屏模式、比配置文件更妥当的密码存放处，以及可以包含触发之前几秒的录制。</p>
+        <ul>
+          <li>Cameras behind an NVR, offered by name and added together</li>
+          <li xml:lang="ar">الكاميرات خلف مسجل شبكي، تُعرض بأسمائها وتُضاف دفعة واحدة</li>
+          <li xml:lang="de">Kameras hinter einem NVR, mit Namen angeboten und gemeinsam hinzugefügt</li>
+          <li xml:lang="es">Cámaras detrás de un NVR, ofrecidas por su nombre y añadidas juntas</li>
+          <li xml:lang="fr">Caméras derrière un NVR, proposées par leur nom et ajoutées ensemble</li>
+          <li xml:lang="hi">NVR के पीछे लगे कैमरे, नाम के साथ सामने आते हैं और एक साथ जुड़ते हैं</li>
+          <li xml:lang="it">Telecamere dietro a un NVR, proposte per nome e aggiunte insieme</li>
+          <li xml:lang="ja">NVR の先にあるカメラを名前つきで提示し、まとめて追加</li>
+          <li xml:lang="pt_BR">Câmeras atrás de um NVR, oferecidas pelo nome e adicionadas juntas</li>
+          <li xml:lang="ru">Камеры за регистратором — предлагаются по именам и добавляются разом</li>
+          <li xml:lang="tr">Bir NVR'ın ardındaki kameralar, adlarıyla sunulup birlikte eklenir</li>
+          <li xml:lang="zh_CN">录像机后面的摄像机，按名称列出并一次性添加</li>
+          <li>Full screen for the grid or one camera, with the controls withdrawing when the pointer stops</li>
+          <li xml:lang="ar">ملء الشاشة للشبكة أو لكاميرا واحدة، مع انسحاب عناصر التحكم عند سكون المؤشر</li>
+          <li xml:lang="de">Vollbild für das Gitter oder eine Kamera; die Bedienelemente ziehen sich zurück, sobald der Zeiger ruht</li>
+          <li xml:lang="es">Pantalla completa para la cuadrícula o una sola cámara, con los controles retirándose cuando el puntero se detiene</li>
+          <li xml:lang="fr">Plein écran pour la grille ou une seule caméra, les commandes s'effaçant quand le pointeur s'arrête</li>
+          <li xml:lang="hi">जाली या किसी एक कैमरे के लिए पूर्ण स्क्रीन; पॉइंटर रुकते ही नियंत्रण हट जाते हैं</li>
+          <li xml:lang="it">Schermo intero per la griglia o per una sola telecamera, con i comandi che si ritirano quando il puntatore si ferma</li>
+          <li xml:lang="ja">グリッドでも 1 台でも全画面に。ポインタが止まると操作部は引っ込みます</li>
+          <li xml:lang="pt_BR">Tela cheia para a grade ou para uma câmera, com os controles se recolhendo quando o ponteiro para</li>
+          <li xml:lang="ru">Полный экран для сетки или одной камеры; органы управления убираются, когда указатель замирает</li>
+          <li xml:lang="tr">Izgara ya da tek kamera için tam ekran; işaretçi durunca denetimler çekilir</li>
+          <li xml:lang="zh_CN">整幅画面或单台摄像机全屏，指针停下后控件自动隐去</li>
+          <li>A password can live in the system keyring, or come from a command, instead of the configuration file</li>
+          <li xml:lang="ar">يمكن أن تُحفظ كلمة السر في حلقة مفاتيح النظام أو تأتي من أمر، بدل ملف الإعدادات</li>
+          <li xml:lang="de">Ein Passwort kann im Schlüsselbund des Systems liegen oder aus einem Befehl kommen statt aus der Einstellungsdatei</li>
+          <li xml:lang="es">La contraseña puede guardarse en el llavero del sistema o venir de un comando, en vez del archivo de configuración</li>
+          <li xml:lang="fr">Un mot de passe peut résider dans le trousseau du système ou provenir d'une commande, plutôt que du fichier de configuration</li>
+          <li xml:lang="hi">पासवर्ड सेटिंग फ़ाइल के बजाय सिस्टम कीरिंग में रह सकता है या किसी कमांड से आ सकता है</li>
+          <li xml:lang="it">La password può stare nel portachiavi di sistema o arrivare da un comando, invece che dal file di configurazione</li>
+          <li xml:lang="ja">パスワードは設定ファイルではなく、システムのキーリングやコマンドの出力から取れます</li>
+          <li xml:lang="pt_BR">A senha pode ficar no chaveiro do sistema, ou vir de um comando, em vez do arquivo de configuração</li>
+          <li xml:lang="ru">Пароль может храниться в хранилище ключей системы или приходить из команды, а не из файла настроек</li>
+          <li xml:lang="tr">Parola, yapılandırma dosyası yerine sistem anahtarlığında durabilir ya da bir komuttan gelebilir</li>
+          <li xml:lang="zh_CN">密码可存放在系统密钥环，或由命令提供，而不必写在配置文件里</li>
+          <li>Recording that keeps the seconds before the trigger, and recording round the clock into a rolling archive</li>
+          <li xml:lang="ar">تسجيل يحتفظ بالثواني السابقة للحدث، وتسجيل على مدار الساعة في أرشيف متجدد</li>
+          <li xml:lang="de">Aufnahmen, die die Sekunden vor dem Auslöser enthalten, und Aufnahme rund um die Uhr in ein rollendes Archiv</li>
+          <li xml:lang="es">Grabación que conserva los segundos anteriores al disparo, y grabación continua en un archivo rotatorio</li>
+          <li xml:lang="fr">Un enregistrement qui garde les secondes précédant le déclenchement, et un enregistrement continu dans une archive glissante</li>
+          <li xml:lang="hi">ऐसी रिकॉर्डिंग जो ट्रिगर से पहले के सेकंड रखती है, और चौबीसों घंटे चलने वाला घूमता संग्रह</li>
+          <li xml:lang="it">Registrazione che conserva i secondi prima dell'evento e registrazione continua in un archivio a scorrimento</li>
+          <li xml:lang="ja">きっかけより前の数秒を残す録画と、巻き取り式の保存領域への 24 時間録画</li>
+          <li xml:lang="pt_BR">Gravação que guarda os segundos anteriores ao disparo, e gravação ininterrupta em um arquivo rotativo</li>
+          <li xml:lang="ru">Запись, сохраняющая секунды до срабатывания, и круглосуточная запись в скользящий архив</li>
+          <li xml:lang="tr">Tetiklenmeden önceki saniyeleri saklayan kayıt ve dönen bir arşive kesintisiz kayıt</li>
+          <li xml:lang="zh_CN">保留触发之前几秒的录制，以及写入滚动归档的全天候录制</li>
+          <li>Baichuan video is read correctly on firmware whose frames are not laid out like an RLC-410W's, where every picture was arriving damaged</li>
+          <li xml:lang="ar">تُقرأ فيديوهات Baichuan قراءة صحيحة على البرمجيات التي تختلف بنية إطاراتها عن RLC-410W، حيث كانت كل صورة تصل تالفة</li>
+          <li xml:lang="de">Baichuan-Video wird auch auf Firmware richtig gelesen, deren Bilder anders aufgebaut sind als bei einer RLC-410W — dort kam bisher jedes Bild beschädigt an</li>
+          <li xml:lang="es">El vídeo Baichuan se lee correctamente en firmware cuyos fotogramas no están dispuestos como los de una RLC-410W, donde cada imagen llegaba dañada</li>
+          <li xml:lang="fr">La vidéo Baichuan est lue correctement sur les firmwares dont les trames ne sont pas disposées comme celles d'une RLC-410W, où chaque image arrivait abîmée</li>
+          <li xml:lang="hi">जिन फ़र्मवेयर में फ़्रेम की बनावट RLC-410W जैसी नहीं है, वहाँ भी Baichuan वीडियो सही पढ़ा जाता है — पहले हर तस्वीर खराब पहुँचती थी</li>
+          <li xml:lang="it">Il video Baichuan viene letto correttamente anche sui firmware in cui i fotogrammi non sono disposti come su una RLC-410W, dove ogni immagine arrivava danneggiata</li>
+          <li xml:lang="ja">フレームの並びが RLC-410W と異なるファームウェアでも Baichuan の映像を正しく読み取ります。これまではすべての画が壊れて届いていました</li>
+          <li xml:lang="pt_BR">O vídeo Baichuan é lido corretamente em firmwares cujos quadros não seguem o layout de uma RLC-410W, onde cada imagem chegava danificada</li>
+          <li xml:lang="ru">Видео Baichuan читается правильно и на прошивках, где кадры устроены не так, как у RLC-410W: раньше каждая картинка приходила повреждённой</li>
+          <li xml:lang="tr">Kareleri bir RLC-410W'ninki gibi dizilmemiş ürün yazılımlarında da Baichuan videosu doğru okunur; daha önce her görüntü bozuk geliyordu</li>
+          <li xml:lang="zh_CN">在帧结构与 RLC-410W 不同的固件上也能正确读取 Baichuan 视频——此前每一幅画面都是损坏的</li>
+          <li>The player is handed the camera's own timestamps, so the picture can no longer fall further and further behind</li>
+          <li xml:lang="ar">يُسلَّم المشغّل أختام الوقت من الكاميرا نفسها، فلم تعد الصورة تتأخر أكثر فأكثر</li>
+          <li xml:lang="de">Der Player bekommt die Zeitstempel der Kamera selbst, sodass das Bild nicht mehr immer weiter zurückfällt</li>
+          <li xml:lang="es">Al reproductor se le entregan las marcas de tiempo de la propia cámara, así que la imagen ya no se retrasa cada vez más</li>
+          <li xml:lang="fr">Le lecteur reçoit les horodatages de la caméra elle-même : l'image ne prend plus un retard qui ne cesse de croître</li>
+          <li xml:lang="hi">प्लेयर को कैमरे की अपनी समय-मुहरें मिलती हैं, इसलिए तस्वीर अब लगातार पीछे नहीं छूटती</li>
+          <li xml:lang="it">Al lettore vengono passati i tempi della telecamera stessa, così l'immagine non resta sempre più indietro</li>
+          <li xml:lang="ja">カメラ自身のタイムスタンプを再生側に渡すため、映像がどんどん遅れていくことはなくなりました</li>
+          <li xml:lang="pt_BR">O reprodutor recebe as marcas de tempo da própria câmera, de modo que a imagem não fica cada vez mais atrasada</li>
+          <li xml:lang="ru">Проигрыватель получает метки времени самой камеры, поэтому картинка больше не отстаёт всё сильнее</li>
+          <li xml:lang="tr">Oynatıcıya kameranın kendi zaman damgaları verilir; görüntü artık giderek geride kalmaz</li>
+          <li xml:lang="zh_CN">把摄像机自己的时间戳交给播放器，画面不会再越拖越迟</li>
+          <li>Twelve languages</li>
+          <li xml:lang="ar">اثنتا عشرة لغة</li>
+          <li xml:lang="de">Zwölf Sprachen</li>
+          <li xml:lang="es">Doce idiomas</li>
+          <li xml:lang="fr">Douze langues</li>
+          <li xml:lang="hi">बारह भाषाएँ</li>
+          <li xml:lang="it">Dodici lingue</li>
+          <li xml:lang="ja">12 の言語</li>
+          <li xml:lang="pt_BR">Doze idiomas</li>
+          <li xml:lang="ru">Двенадцать языков</li>
+          <li xml:lang="tr">On iki dil</li>
+          <li xml:lang="zh_CN">十二种语言</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.1" date="2026-07-28">
       <description>
         <p>
