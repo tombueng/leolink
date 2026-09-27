@@ -51,6 +51,13 @@ jobs:
           cpack -G RPM
           cpack -G TGZ
 
+      # This runner is the reason the dependencies are written by hand: its Qt
+      # packages still carry the time_t transition's t64 suffix, and a .deb that
+      # asks for those cannot be configured on Ubuntu 25.10 or later. The check
+      # is that nothing the binary loads has been left out of the list.
+      - name: Check the .deb asks for what it loads
+        run: python3 tools/check_deb_depends.py build/leolink-*-Linux.deb build/leolink
+
       - uses: actions/upload-artifact@v4
         with:
           name: native-packages

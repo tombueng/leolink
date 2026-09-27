@@ -170,13 +170,55 @@ set(CPACK_GENERATOR "DEB;RPM")
 
 set(CPACK_DEBIAN_PACKAGE_SECTION "video")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-# Reads the real ELF dependencies rather than a hand-written list that would
-# drift the moment Qt bumps a soname.
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-# ffmpeg is run as a program, not linked, so shlibdeps cannot see it. Recording
-# and both detectors need it; plain viewing does not, which is why it is a
-# recommendation rather than a hard dependency — apt installs it by default
-# either way.
+
+# ── what the .deb depends on ────────────────────────────────────────────────
+# Written out rather than read off the build machine, because dpkg-shlibdeps
+# answers with the name each library has *there*. The release is built on
+# Ubuntu 24.04, which is mid-way through the 64-bit time_t transition, so it
+# named libqt6gui6t64 and four others that do not exist on 25.10 or later,
+# where the transition is over and the plain names are back. The result
+# unpacked and even ran, but could not be configured on a current Ubuntu at
+# all.
+#
+# Both names are given as alternatives, so apt takes whichever its release
+# has; every version is the 6.4 this project requires, which is also what
+# keeps Ubuntu 22.04's pre-transition Qt 6.2 packages from matching.
+#
+# The cost of a hand-written list is that it has to be revisited when Qt moves.
+# tools/check_deb_depends.py is what notices: it maps the libraries the binary
+# actually loads back to their packages and fails if one of them is not covered
+# here.
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS OFF)
+set(leolink_deb_depends
+    "libc6 (>= 2.34)"
+    "libgcc-s1 (>= 3.0)"
+    "libstdc++6 (>= 5)"
+    "libmpv2 (>= 0.29)"
+    # Still t64 on 26.04, where it also provides the plain name.
+    "libqt6core6t64 (>= 6.4.0) | libqt6core6 (>= 6.4.0)"
+    "libqt6gui6 (>= 6.4.0) | libqt6gui6t64 (>= 6.4.0)"
+    "libqt6network6 (>= 6.4.0) | libqt6network6t64 (>= 6.4.0)"
+    "libqt6widgets6 (>= 6.4.0) | libqt6widgets6t64 (>= 6.4.0)"
+    "libqt6openglwidgets6 (>= 6.4.0) | libqt6openglwidgets6t64 (>= 6.4.0)"
+    # The application and tray icons are vector art, and so are the menu icons
+    # every desktop theme ships, so the SVG icon engine is not optional — but
+    # it is a plugin, loaded by name at run time, which means nothing links it
+    # and no automatic dependency could ever have found it. Split out of
+    # libqt6svg6 in 26.04; inside it before that, hence the alternative and
+    # this order.
+    "qt6-svg-plugins (>= 6.4.0) | libqt6svg6 (>= 6.4.0)"
+)
+# Linked only where it was found, so the dependency belongs to that build and
+# not to the list.
+if(Qt6Keychain_FOUND)
+    list(APPEND leolink_deb_depends "libqt6keychain1 (>= 0.13.2)")
+endif()
+list(JOIN leolink_deb_depends ", " CPACK_DEBIAN_PACKAGE_DEPENDS)
+
+# ffmpeg is run as a program, not linked, so shlibdeps could not have seen it
+# either. Recording and both detectors need it; plain viewing does not, which is
+# why it is a recommendation rather than a hard dependency — apt installs it by
+# default either way.
 set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "ffmpeg")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS "mpv")
 
@@ -185,6 +227,15 @@ set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
 set(CPACK_RPM_PACKAGE_URL "${PROJECT_HOMEPAGE_URL}")
 set(CPACK_RPM_PACKAGE_AUTOREQ ON)
 set(CPACK_RPM_PACKAGE_REQUIRES_POST "ffmpeg")
+# The same plugin the .deb asks for, and invisible to the automatic requirements
+# for the same reason. Named by soname rather than by package, which is what
+# makes the rest of this file's requirements portable between RPM distributions:
+# the package that ships libQt6Svg is the one that ships its plugins.
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt6Svg.so.6()(64bit)")
+else()
+    set(CPACK_RPM_PACKAGE_REQUIRES "libQt6Svg.so.6")
+endif()
 # These directories belong to filesystem and hicolor-icon-theme; claiming them
 # would make the package conflict with half the distribution.
 set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION

@@ -50,6 +50,13 @@ jobs:
           sudo apt-get install -y rpm
           cd build && cpack
 
+      # The Debian dependencies are written by hand, because shlibdeps names
+      # each library after the package that ships it *here* — and this runner's
+      # Qt still carries the time_t transition's t64 suffix that current Ubuntu
+      # has dropped. This is what keeps the hand-written list complete.
+      - name: Check the .deb asks for what it loads
+        run: python3 tools/check_deb_depends.py build/leolink-*-Linux.deb build/leolink
+
       - uses: actions/upload-artifact@v4
         with:
           name: leolink-packages
