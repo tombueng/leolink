@@ -18,10 +18,15 @@ namespace leolink {
 /// transport that works without opening the camera's HTTP interface, which
 /// matters on a device whose session pool is small.
 ///
-/// The player cannot speak it, so this sits in between: the container is
-/// unpacked into a plain H.264 elementary stream and offered on a loopback
-/// port, which mpv opens like any other stream. The alternative — teaching the
-/// player a proprietary protocol — would mean a custom demuxer for no gain.
+/// The player cannot speak it, so this sits in between: the pictures are taken
+/// out of the camera's container, wrapped in MPEG-TS so that each one keeps the
+/// time the camera took it, and offered on a loopback port that mpv opens like
+/// any other stream. The alternative — teaching the player a proprietary
+/// protocol — would mean a custom demuxer for no gain.
+///
+/// The timeline it serves is the camera's, with one deliberate exception: where
+/// pictures have been given up because the player fell behind, the gap they
+/// would have left is taken out of it as well. See kBacklogBudgetMs.
 ///
 /// Runs on its own thread. The protocol client is written synchronously, and
 /// blocking the interface for the length of a network read is not acceptable

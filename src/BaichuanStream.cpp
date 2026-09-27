@@ -23,13 +23,42 @@ constexpr int kReadTimeoutMs = 5000;
 constexpr int kAnnounceGraceMs = 2000;
 /// The loopback socket is kept deliberately small. It is a live stream: a
 /// large send buffer does not smooth anything, it only stores a backlog that
-/// is watched later as a delay. What the kernel will not take is what tells us
-/// the player has fallen behind, so the smaller it is, the sooner that shows.
-constexpr int kSendBufferBytes = 256 * 1024;
-/// Queued beyond that, the player is behind and frames are dropped until it
-/// has caught up. Without this the backlog is unbounded: the camera sends at
-/// its rate whatever the player does with it.
-constexpr int kMaxQueuedBytes = 256 * 1024;
+/// is watched later as a delay — and it hides that backlog from the only place
+/// that can measure it. What the kernel has not taken is what tells us how far
+/// behind the player is, so the less it holds, the truer that reading: 64 KiB
+/// is about a tenth of a second on a main stream, which is the error in it.
+constexpr int kSendBufferBytes = 64 * 1024;
+/// How far behind the player may fall before pictures are given up.
+///
+/// In time rather than in bytes, which is what this used to be: 256 KiB is a
+/// fifth of a second on a 2560x1440 main stream and four seconds on a sub
+/// stream, so one number meant two entirely different things depending on which
+/// camera it was applied to. What a viewer minds is the delay, and that is now
+/// what is bounded.
+///
+/// A second, and the delay a viewer sees is a little more than that: what the
+/// two kernels and the player's own buffer hold cannot be seen from here, and
+/// adds itself to this. Generous on purpose all the same — a player only ever
+/// reads a little ahead of what it is showing, so every hiccup on the way here,
+/// and a camera on Wi-Fi delivers in bursts, leaves surplus standing that
+/// nothing but this bound will take out again. Set tight it fires constantly;
+/// set here it fires when the delay has actually become worth the pictures it
+/// costs to remove.
+constexpr qint64 kBacklogBudgetMs = 1000;
+/// ... and how little it must be behind to count as caught up again. Not zero:
+/// the socket is never quite empty on a stream that never stops.
+constexpr qint64 kBacklogClearedMs = 250;
+/// A ceiling on what may be held for a player whatever the clock says, because
+/// the timings cannot be trusted before the first few pictures have arrived.
+constexpr int kMaxQueuedBytes = 4 * 1024 * 1024;
+/// How often a picture is expected before the stream has said otherwise. The
+/// real spacing is measured as it goes; this is only somewhere to start.
+constexpr qint64 kAssumedIntervalUs = 40000;
+/// A step larger than this in the camera's clock is not a slow frame rate but a
+/// break in it: a camera that stalled, restarted, or wrapped its counter. Five
+/// seconds is far slower than the slowest rate any of these cameras offers, so
+/// nothing legitimate is caught by it.
+constexpr qint64 kTimelineBreakUs = 5000000;
 /// The first few unrecognised blocks are worth a line each. After that they
 /// are counted and reported once a minute — a firmware that has one such block
 /// per frame produced nineteen warnings a second and a log that was 99 per
@@ -115,7 +144,25 @@ void BaichuanStream::run()
     qint64 sent = 0;
     int frames = 0;
     int dropped = 0;
+    int droppedThisTime = 0;   ///< ... and of those, in the episode under way
     int announcedFps = 0;
+
+    // ── the timeline handed to the player ───────────────────────────────────
+    qint64 skewUs = 0;              ///< time taken out of it, in total
+    qint64 lastCameraPts = -1;      ///< camera clock of the last picture sent
+    qint64 intervalUs = kAssumedIntervalUs;
+    bool closeSeam = false;         ///< the next picture follows on from the last
+
+    // ── what the player has not taken yet ───────────────────────────────────
+    /// A write, and when it was made: how much had been handed to the socket by
+    /// then. Comparing that with what the socket still holds says which write
+    /// the player has got to, and therefore how long it has been waiting.
+    struct Handover {
+        qint64 upTo;
+        qint64 at;
+    };
+    QList<Handover> handovers;
+    qint64 handedOver = 0;
 
     int unknownBlocks = 0;
     int unknownLogged = 0;
@@ -123,6 +170,27 @@ void BaichuanStream::run()
     unknownWindow.start();
     QElapsedTimer since;
     since.start();
+    /// Never restarted, unlike `since`: everything above is timed against it.
+    QElapsedTimer clock;
+    clock.start();
+
+    // Every write goes through here, so that what the player has taken can be
+    // told from what it has not.
+    auto hand = [&](const QByteArray &data) {
+        player->write(data);
+        handedOver += data.size();
+        handovers.append({handedOver, clock.elapsed()});
+    };
+
+    /// How long the oldest thing the player has not taken has been waiting —
+    /// which is how far behind it is. The socket's own buffer cannot be seen
+    /// from here and counts as taken, which is why it is kept small.
+    auto behindMs = [&]() -> qint64 {
+        const qint64 taken = handedOver - player->bytesToWrite();
+        while (!handovers.isEmpty() && handovers.constFirst().upTo <= taken)
+            handovers.removeFirst();
+        return handovers.isEmpty() ? 0 : clock.elapsed() - handovers.constFirst().at;
+    };
 
     parser.onFormat = [&](int width, int height, int fps) {
         announcedFps = fps;
@@ -173,31 +241,62 @@ void BaichuanStream::run()
             started = true;
         }
 
-        // What the player has not taken yet. The camera sends at its own rate
-        // regardless of what the player does with it, so without this the
-        // difference is stored rather than resolved — which is a delay that
-        // grows for as long as the window is open and never comes back.
-        const qint64 queued = player->bytesToWrite();
+        // How far behind the player is. The camera sends at its own rate
+        // regardless of what the player does with it, so without a bound the
+        // difference is stored rather than resolved — a delay that grows for as
+        // long as the window is open and never comes back.
+        const qint64 behind = behindMs();
         if (dropping) {
             // Only a key frame can start a picture again, and only once the
             // backlog has actually drained.
-            if (!keyFrame || queued > 0) {
+            if (!keyFrame || behind > kBacklogClearedMs) {
                 ++dropped;
+                ++droppedThisTime;
                 return;
             }
             dropping = false;
-            LEO_INFO(Baichuan, m_camera.label(),
-                     QStringLiteral("Player caught up — %1 frame(s) dropped")
-                         .arg(dropped));
-        } else if (queued > kMaxQueuedBytes) {
+            closeSeam = true;
+        } else if (behind > kBacklogBudgetMs ||
+                   player->bytesToWrite() > kMaxQueuedBytes) {
             dropping = true;
             ++dropped;
+            droppedThisTime = 1;
             LEO_WARN(Baichuan, m_camera.label(),
-                     QStringLiteral("The player is %1 KiB behind — dropping "
-                                    "frames until it catches up")
-                         .arg(queued / 1024));
+                     QStringLiteral("The player is %1 s behind — giving up "
+                                    "pictures until it catches up")
+                         .arg(behind / 1000.0, 0, 'f', 1));
             return;
         }
+
+        // The camera's clock is passed on untouched, except across a place where
+        // pictures are missing. A gap left in the timeline is a gap the player
+        // sits out: it holds the last picture for exactly as long as the ones
+        // given up would have taken, and the delay that giving them up was meant
+        // to remove survives it completely. Closing the seam — declaring the
+        // next picture due one interval after the last one sent — is what turns
+        // shedding back into something that recovers delay rather than merely
+        // freeing memory. The same arithmetic covers a camera whose clock jumps
+        // or starts again, which would otherwise be handed to the player as time
+        // running backwards.
+        if (lastCameraPts >= 0) {
+            const qint64 step = ptsUs - lastCameraPts;
+            if (closeSeam || step <= 0 || step > kTimelineBreakUs) {
+                skewUs += step - intervalUs;
+                if (closeSeam)
+                    LEO_INFO(Baichuan, m_camera.label(),
+                             QStringLiteral("Player caught up — %1 picture(s) "
+                                            "given up, %2 s of delay recovered")
+                                 .arg(droppedThisTime)
+                                 .arg((step - intervalUs) / 1000000.0, 0, 'f', 1));
+            } else {
+                // What this stream calls a frame interval, smoothed: cameras
+                // deliver a little unevenly, and this decides what "one picture
+                // later" means above.
+                intervalUs = (intervalUs * 3 + step) / 4;
+            }
+        }
+        lastCameraPts = ptsUs;
+        closeSeam = false;
 
         // The camera names its codec in the first frame it sends, which is
         // before the first key frame and therefore before any tables go out.
@@ -206,8 +305,8 @@ void BaichuanStream::run()
             muxer.setCodec(codec);
         }
 
-        const QByteArray wrapped = muxer.frame(frame, keyFrame, ptsUs);
-        player->write(wrapped);
+        const QByteArray wrapped = muxer.frame(frame, keyFrame, ptsUs - skewUs);
+        hand(wrapped);
         sent += wrapped.size();
         ++frames;
     };
@@ -236,11 +335,15 @@ void BaichuanStream::run()
                                         kSendBufferBytes);
                 started = false;
                 dropping = false;
+                // A new socket holds nothing, and what the last one was owed
+                // went with it.
+                handedOver = 0;
+                handovers.clear();
                 // Whoever has just connected needs the tables before anything
                 // else means anything, and then a picture to start from.
-                player->write(muxer.tables());
+                hand(muxer.tables());
                 if (!primer.isEmpty()) {
-                    player->write(muxer.frame(primer, true, primerPts));
+                    hand(muxer.frame(primer, true, primerPts - skewUs));
                     started = true;
                 }
                 LEO_DEBUG(Baichuan, m_camera.label(),
@@ -303,10 +406,12 @@ void BaichuanStream::run()
     LEO_INFO(Baichuan, m_camera.label(),
              QStringLiteral("Finished: %1 frames, %2 KiB, %3 dropped, %4 "
                             "unrecognised block(s), %5 bytes of padding "
-                            "skipped, header found %6 / assumed %7")
+                            "skipped, header found %6 / assumed %7, %8 s of "
+                            "delay recovered")
                  .arg(frames).arg(sent / 1024).arg(dropped)
                  .arg(unknownBlocks).arg(parser.skippedBytes())
-                 .arg(parser.measuredHeaders()).arg(parser.assumedHeaders()));
+                 .arg(parser.measuredHeaders()).arg(parser.assumedHeaders())
+                 .arg(skewUs / 1000000.0, 0, 'f', 1));
 
     // Not deleted here: the socket belongs to the server on this stack and goes
     // with it. Only a socket that has been replaced by a reconnecting player is

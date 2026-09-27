@@ -472,6 +472,22 @@ corrected, clock drift between camera and computer stops accumulating, and a
 player that reconnects can be handed the tables and the last key frame and
 start immediately.
 
+What it also changed, which took a second look to see: **giving up pictures only
+helps if the gap goes with them.** A player reads a little ahead of what it is
+showing and no further, so every hiccup on the way — a camera on Wi-Fi delivers
+in bursts — leaves surplus standing in the relay's socket that nothing takes out
+again. Shedding it was how that was bounded, and with a bare elementary stream
+that worked: the pictures that were left played back to back at the rate the
+player had been told, so the delay came off with them. With a timestamp on every
+picture it does not. The player honours the gap, holds the last picture for
+exactly as long as the ones given up would have taken, and is precisely as far
+behind afterwards as before — measured here as a three-second freeze with no
+delay recovered at all. So the relay now closes the seam: after shedding, the
+next picture is stamped one interval after the last one sent, and the time
+that the discarded pictures occupied is taken out of the timeline as well. The
+same arithmetic covers a camera whose clock restarts or jumps, which would
+otherwise reach the player as time running backwards.
+
 ### What it adds over the CGI API
 
 ```xml
