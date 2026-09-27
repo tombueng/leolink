@@ -35,6 +35,16 @@ jobs:
       - name: Validate desktop entry and AppStream data
         run: cmake --build build --target validate-metadata
 
+      # The AUR reads .SRCINFO rather than the PKGBUILD, and nothing regenerates
+      # it. By 0.2.0 it still described 0.1.1, and the checksum beside it was
+      # 0.1.1's too, so every AUR build failed verification, and it took somebody
+      # building the package to find out. This is the nag: after a release, main
+      # does not go green again until the PKGBUILD carries the new tag's
+      # checksum. Before the tag exists there is nothing to download and nothing
+      # to fail on.
+      - name: Check the Arch packaging matches
+        run: python3 tools/check_arch_package.py --download
+
       - name: Check translations are current
         run: |
           cmake --build build --target update_translations

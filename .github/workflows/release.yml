@@ -44,6 +44,16 @@ jobs:
       - name: Validate desktop entry and AppStream data
         run: cmake --build build --target validate-metadata
 
+      # The tag is pushed by now, so the tarball the AUR will download exists
+      # and its checksum can be compared with the one the PKGBUILD promises.
+      # Advisory here and only here: the checksum of a tarball GitHub has not
+      # generated yet cannot be in the PKGBUILD before the tag that creates it,
+      # so this is where the right value is printed rather than demanded. The
+      # build on main insists on it afterwards.
+      - name: Check the Arch packaging matches the tag
+        continue-on-error: true
+        run: python3 tools/check_arch_package.py --download
+
       - name: Package
         working-directory: build
         run: |
