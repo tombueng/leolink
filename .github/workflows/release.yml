@@ -94,7 +94,7 @@ jobs:
             cmake ninja-build g++ \
             qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
             qt6-tools-dev qt6-tools-dev-tools libmpv-dev \
-            qtkeychain-qt6-dev libfuse2t64 wget file desktop-file-utils
+            qtkeychain-qt6-dev libfuse2t64 wget file librsvg2-bin desktop-file-utils
 
       - name: Build and stage
         run: |
@@ -109,9 +109,18 @@ jobs:
           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
           chmod +x linuxdeploy*.AppImage
           export QMAKE=/usr/lib/qt6/bin/qmake6
+          # The AppImage catalog wants a PNG icon it can use as a thumbnail.
+          # linuxdeploy prefers an SVG for the AppDir root whenever there is
+          # one, so the SVG gives way to a rendered PNG. The window icon is
+          # unaffected: it is compiled into the binary.
+          icons=AppDir/usr/share/icons/hicolor
+          mkdir -p $icons/256x256/apps
+          rsvg-convert -w 256 -h 256 resources/icons/leolink.svg \
+            -o $icons/256x256/apps/io.github.tombueng.leolink.png
+          rm $icons/scalable/apps/io.github.tombueng.leolink.svg
           ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage \
             --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
-            --icon-file AppDir/usr/share/icons/hicolor/scalable/apps/io.github.tombueng.leolink.svg
+            --icon-file $icons/256x256/apps/io.github.tombueng.leolink.png
 
       # Named, not globbed: linuxdeploy and its Qt plugin are AppImages too,
       # and a glob happily shipped both of them as if they were part of
