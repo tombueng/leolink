@@ -1,6 +1,6 @@
 pkgbase = leolink
 	pkgdesc = Native Linux client for Reolink cameras: live view, motion alerts, recording
-	pkgver = 0.2.1
+	pkgver = 0.2.2
 	pkgrel = 1
 	url = https://github.com/tombueng/leolink
 	arch = x86_64
@@ -17,7 +17,7 @@ pkgbase = leolink
 	depends = qtkeychain-qt6
 	optdepends = ffmpeg: recording to disk, and motion and sound detection
 	optdepends = qt6-translations: Qt's own dialog buttons in the twelve interface languages
-	source = leolink-0.2.1.tar.gz::https://github.com/tombueng/leolink/archive/refs/tags/v0.2.1.tar.gz
+	source = leolink-0.2.2.tar.gz::https://github.com/tombueng/leolink/archive/refs/tags/v0.2.2.tar.gz
 	sha256sums = 049cd650cb1c0360d007b6e0f8784e1d3e0d785e0c5276681eaf10ca8ada5988
 
 pkgname = leolink

@@ -542,6 +542,22 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.2" date="2026-09-30">
+      <description>
+        <p>The AppImage starts on systems without PipeWire or JACK installed, instead of not starting at all.</p>
+        <p xml:lang="ar">يعمل AppImage الآن على الأنظمة التي لا تثبّت PipeWire أو JACK، بدل ألا يعمل إطلاقًا.</p>
+        <p xml:lang="de">Das AppImage startet jetzt auch auf Systemen ohne PipeWire oder JACK, statt gar nicht zu starten.</p>
+        <p xml:lang="es">El AppImage arranca en sistemas sin PipeWire o JACK instalados, en lugar de no arrancar en absoluto.</p>
+        <p xml:lang="fr">L'AppImage démarre sur les systèmes où PipeWire ou JACK ne sont pas installés, au lieu de ne pas démarrer du tout.</p>
+        <p xml:lang="hi">AppImage अब उन सिस्टम पर भी चलता है जिन पर PipeWire या JACK इंस्टॉल नहीं है, पहले की तरह बिल्कुल न चलने के बजाय।</p>
+        <p xml:lang="it">L'AppImage si avvia sui sistemi senza PipeWire o JACK installati, invece di non avviarsi affatto.</p>
+        <p xml:lang="ja">PipeWire や JACK が入っていないシステムでも、AppImage が起動しないということがなくなりました。</p>
+        <p xml:lang="pt_BR">O AppImage inicia em sistemas sem PipeWire ou JACK instalados, em vez de simplesmente não iniciar.</p>
+        <p xml:lang="ru">AppImage теперь запускается в системах без PipeWire или JACK, а не отказывается запускаться вовсе.</p>
+        <p xml:lang="tr">AppImage artık PipeWire ya da JACK kurulu olmayan sistemlerde hiç açılmamak yerine açılıyor.</p>
+        <p xml:lang="zh_CN">在未安装 PipeWire 或 JACK 的系统上，AppImage 现在可以正常启动，而不再完全无法运行。</p>
+      </description>
+    </release>
     <release version="0.2.1" date="2026-09-30">
       <description>
         <p>A repair release: the packages now hold what 0.2.0 promised, and live view stops giving up pictures in bursts.</p>
