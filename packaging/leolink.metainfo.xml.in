@@ -542,6 +542,60 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.1" date="2026-09-30">
+      <description>
+        <p>A repair release: the packages now hold what 0.2.0 promised, and live view stops giving up pictures in bursts.</p>
+        <p xml:lang="ar">إصدار إصلاح: الحزم تحوي الآن ما وعد به 0.2.0، والعرض المباشر لم يعد يُسقط الصور على دفعات.</p>
+        <p xml:lang="de">Eine Reparaturausgabe: Die Pakete enthalten jetzt, was 0.2.0 versprochen hat, und die Live-Ansicht verwirft keine Bilder mehr in Schüben.</p>
+        <p xml:lang="es">Una versión de reparación: los paquetes contienen ahora lo que 0.2.0 prometía, y la vista en directo deja de descartar imágenes a ráfagas.</p>
+        <p xml:lang="fr">Une version de réparation : les paquets contiennent désormais ce que 0.2.0 promettait, et la vue en direct cesse d'abandonner des images par salves.</p>
+        <p xml:lang="hi">एक सुधार संस्करण: पैकेजों में अब वह सब है जिसका 0.2.0 ने वादा किया था, और लाइव दृश्य अब झटकों में तस्वीरें नहीं छोड़ता।</p>
+        <p xml:lang="it">Una versione di riparazione: i pacchetti ora contengono ciò che la 0.2.0 prometteva, e la visione dal vivo smette di scartare immagini a raffiche.</p>
+        <p xml:lang="ja">修正リリースです。パッケージに 0.2.0 で約束した内容がようやく揃い、ライブ表示で画像がまとめて抜け落ちることもなくなりました。</p>
+        <p xml:lang="pt_BR">Uma versão de correção: os pacotes agora contêm o que a 0.2.0 prometia, e a visualização ao vivo deixa de descartar imagens em rajadas.</p>
+        <p xml:lang="ru">Исправительный выпуск: пакеты теперь содержат то, что обещал 0.2.0, а живой просмотр больше не теряет кадры пачками.</p>
+        <p xml:lang="tr">Bir onarım sürümü: paketler artık 0.2.0'ın vaat ettiklerini içeriyor ve canlı görüntü kareleri toplu hâlde atmayı bırakıyor.</p>
+        <p xml:lang="zh_CN">一个修复版本：软件包现在真正包含了 0.2.0 所承诺的内容，实时画面也不再成批丢帧。</p>
+        <ul>
+          <li>The deb, rpm and AppImage keep passwords in the system keyring, as 0.2.0 said they would</li>
+          <li xml:lang="ar">حزم deb وrpm وAppImage تحفظ كلمات السر في حلقة مفاتيح النظام، كما قال 0.2.0</li>
+          <li xml:lang="de">Das deb-, rpm- und AppImage-Paket legen Passwörter im Schlüsselbund des Systems ab, wie es 0.2.0 angekündigt hatte</li>
+          <li xml:lang="es">Los paquetes deb, rpm y AppImage guardan las contraseñas en el llavero del sistema, como anunciaba 0.2.0</li>
+          <li xml:lang="fr">Les paquets deb, rpm et AppImage gardent les mots de passe dans le trousseau du système, comme l'annonçait 0.2.0</li>
+          <li xml:lang="hi">deb, rpm और AppImage पासवर्ड सिस्टम कीरिंग में रखते हैं, जैसा 0.2.0 ने कहा था</li>
+          <li xml:lang="it">I pacchetti deb, rpm e AppImage tengono le password nel portachiavi di sistema, come annunciava la 0.2.0</li>
+          <li xml:lang="ja">deb・rpm・AppImage でも、0.2.0 の告知どおりパスワードをシステムのキーリングに保存できます</li>
+          <li xml:lang="pt_BR">Os pacotes deb, rpm e AppImage guardam as senhas no chaveiro do sistema, como a 0.2.0 anunciava</li>
+          <li xml:lang="ru">Пакеты deb, rpm и AppImage хранят пароли в хранилище ключей системы, как и было обещано в 0.2.0</li>
+          <li xml:lang="tr">deb, rpm ve AppImage paketleri, 0.2.0'da söylendiği gibi parolaları sistem anahtarlığında tutar</li>
+          <li xml:lang="zh_CN">deb、rpm 和 AppImage 软件包按 0.2.0 所说，将密码保存在系统密钥环中</li>
+          <li>The deb installs on Ubuntu 25.10 and 26.04</li>
+          <li xml:lang="ar">حزمة deb تُثبَّت على Ubuntu 25.10 و26.04</li>
+          <li xml:lang="de">Das deb-Paket lässt sich unter Ubuntu 25.10 und 26.04 installieren</li>
+          <li xml:lang="es">El paquete deb se instala en Ubuntu 25.10 y 26.04</li>
+          <li xml:lang="fr">Le paquet deb s'installe sur Ubuntu 25.10 et 26.04</li>
+          <li xml:lang="hi">deb पैकेज Ubuntu 25.10 और 26.04 पर इंस्टॉल होता है</li>
+          <li xml:lang="it">Il pacchetto deb si installa su Ubuntu 25.10 e 26.04</li>
+          <li xml:lang="ja">deb パッケージが Ubuntu 25.10 と 26.04 にインストールできます</li>
+          <li xml:lang="pt_BR">O pacote deb instala no Ubuntu 25.10 e 26.04</li>
+          <li xml:lang="ru">Пакет deb устанавливается в Ubuntu 25.10 и 26.04</li>
+          <li xml:lang="tr">deb paketi Ubuntu 25.10 ve 26.04 üzerine kurulur</li>
+          <li xml:lang="zh_CN">deb 软件包可在 Ubuntu 25.10 和 26.04 上安装</li>
+          <li>A camera that falls behind catches up instead of dropping pictures in recurring bursts</li>
+          <li xml:lang="ar">الكاميرا التي تتأخر تلحق بالركب بدل إسقاط الصور في دفعات متكررة</li>
+          <li xml:lang="de">Eine Kamera, die in Rückstand gerät, holt auf, statt immer wieder Bilder in Schüben zu verwerfen</li>
+          <li xml:lang="es">Una cámara que se retrasa se pone al día en lugar de descartar imágenes a ráfagas una y otra vez</li>
+          <li xml:lang="fr">Une caméra qui prend du retard le rattrape au lieu d'abandonner des images par salves répétées</li>
+          <li xml:lang="hi">पीछे छूटा कैमरा बार-बार झटकों में तस्वीरें छोड़ने के बजाय बराबरी पर आ जाता है</li>
+          <li xml:lang="it">Una telecamera rimasta indietro recupera, invece di scartare immagini a raffiche ricorrenti</li>
+          <li xml:lang="ja">遅れたカメラは、画像を繰り返しまとめて捨てるのではなく、きちんと追いつきます</li>
+          <li xml:lang="pt_BR">Uma câmera que fica para trás se recupera, em vez de descartar imagens em rajadas recorrentes</li>
+          <li xml:lang="ru">Отставшая камера догоняет, а не теряет кадры повторяющимися пачками</li>
+          <li xml:lang="tr">Geride kalan bir kamera, kareleri tekrar tekrar toplu hâlde atmak yerine arayı kapatır</li>
+          <li xml:lang="zh_CN">落后的摄像机会追上进度，而不是反复成批丢帧</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.0" date="2026-09-14">
       <description>
         <p>A larger release: cameras behind a recorder, a full-screen mode, somewhere better than the configuration file to keep a password, and recording that can include the seconds before the trigger.</p>
