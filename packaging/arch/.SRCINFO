@@ -18,6 +18,6 @@ pkgbase = leolink
 	optdepends = ffmpeg: recording to disk, and motion and sound detection
 	optdepends = qt6-translations: Qt's own dialog buttons in the twelve interface languages
 	source = leolink-0.2.1.tar.gz::https://github.com/tombueng/leolink/archive/refs/tags/v0.2.1.tar.gz
-	sha256sums = 6ed255b37863dc98630db20f71cf311b01c526783091e18af13855261ee544aa
+	sha256sums = 049cd650cb1c0360d007b6e0f8784e1d3e0d785e0c5276681eaf10ca8ada5988
 
 pkgname = leolink

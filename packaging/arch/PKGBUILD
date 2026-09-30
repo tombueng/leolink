@@ -15,7 +15,7 @@ makedepends=('cmake' 'ninja' 'qt6-tools' 'qtkeychain-qt6')
 optdepends=('ffmpeg: recording to disk, and motion and sound detection'
             'qt6-translations: Qt'"'"'s own dialog buttons in the twelve interface languages')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('6ed255b37863dc98630db20f71cf311b01c526783091e18af13855261ee544aa')
+sha256sums=('049cd650cb1c0360d007b6e0f8784e1d3e0d785e0c5276681eaf10ca8ada5988')
 
 build() {
     cmake -S "$pkgname-$pkgver" -B build -G Ninja \
