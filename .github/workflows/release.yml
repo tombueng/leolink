@@ -118,7 +118,19 @@ jobs:
           rsvg-convert -w 256 -h 256 resources/icons/leolink.svg \
             -o $icons/256x256/apps/io.github.tombueng.leolink.png
           rm $icons/scalable/apps/io.github.tombueng.leolink.svg
+          # libpipewire and libjack have to match the host's sound server, so
+          # linuxdeploy never bundles them; without them libmpv, and with it
+          # leolink, cannot start at all. A copy of each rides along for hosts
+          # that lack one, and packaging/appimage/AppRun decides at start-up.
+          fallback=AppDir/usr/lib/fallback
+          mkdir -p $fallback/pipewire $fallback/jack
+          for lib in pipewire:libpipewire-0.3.so.0 jack:libjack.so.0; do
+            cp -L "$(ldconfig -p | awk -v l="${lib#*:}" '$1 == l { print $NF; exit }')" \
+              $fallback/${lib%%:*}/${lib#*:}
+          done
           ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage \
+            --custom-apprun packaging/appimage/AppRun \
+            --deploy-deps-only $fallback/pipewire --deploy-deps-only $fallback/jack \
             --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
             --icon-file $icons/256x256/apps/io.github.tombueng.leolink.png
 
