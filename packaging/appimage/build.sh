@@ -68,5 +68,16 @@ echo 'PIPEWIRE_CONFIG_DIR=${SHARUN_DIR}/share/pipewire' >> "$APPDIR/.env"
 mkdir -p "$APPDIR/share/metainfo"
 cp /usr/share/metainfo/$app_id.metainfo.xml "$APPDIR/share/metainfo/"
 
+# sharun keeps share/ at the top of the AppDir; the AppImage catalog and
+# AppImage managers look in usr/share, as in a classic AppDir. Without this
+# the catalog finds no metainfo, and with it neither the description nor the
+# screenshots.
+mkdir -p "$APPDIR/usr"
+ln -s ../share "$APPDIR/usr/share"
+
+# Update information, so that AppImageUpdate and the like can fetch only what
+# changed: they read the .zsync published beside the AppImage in the latest
+# release, which appimagetool writes next to it.
 ARCH=$arch ./appimagetool --appimage-extract-and-run --no-appstream \
+    -u "gh-releases-zsync|tombueng|leolink|latest|leolink-$arch.AppImage.zsync" \
     "$APPDIR" "$out/leolink-$arch.AppImage"

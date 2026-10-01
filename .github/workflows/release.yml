@@ -121,7 +121,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: appimage
-          path: leolink*.AppImage
+          path: |
+            leolink*.AppImage
+            leolink*.AppImage.zsync
           if-no-files-found: error
 
   publish:
@@ -140,7 +142,8 @@ jobs:
           mkdir -p release
           find artifacts -type f \
             \( -name 'leolink*.deb' -o -name 'leolink*.rpm' \
-               -o -name 'leolink*.tar.gz' -o -name 'leolink*.AppImage' \) \
+               -o -name 'leolink*.tar.gz' -o -name 'leolink*.AppImage' \
+               -o -name 'leolink*.AppImage.zsync' \) \
             -exec cp {} release/ \;
           # Checksums so anyone can tell that what they downloaded is what was
           # built. Generated here, from the artefacts themselves.
