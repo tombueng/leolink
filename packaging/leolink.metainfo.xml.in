@@ -445,6 +445,21 @@
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/01-grid.png</image>
     </screenshot>
     <screenshot>
+      <caption>Arranging the grid: how many cells, and which camera goes where</caption>
+      <caption xml:lang="ar">ترتيب الشبكة: عدد الخانات، وأين توضع كل كاميرا</caption>
+      <caption xml:lang="de">Das Gitter anordnen: wie viele Felder, und welche Kamera wohin kommt</caption>
+      <caption xml:lang="es">Organizar la cuadrícula: cuántas celdas y qué cámara va en cada una</caption>
+      <caption xml:lang="fr">Organiser la grille : combien de cases, et quelle caméra va où</caption>
+      <caption xml:lang="hi">जाली सजाना: कितने खाने, और कौन-सा कैमरा कहाँ</caption>
+      <caption xml:lang="it">Disporre la griglia: quante celle, e quale telecamera va dove</caption>
+      <caption xml:lang="ja">グリッドの配置：マス目の数と、どのカメラをどこに置くか</caption>
+      <caption xml:lang="pt_BR">Arrumando a grade: quantas células, e qual câmera vai onde</caption>
+      <caption xml:lang="ru">Расстановка сетки: сколько ячеек и какая камера где</caption>
+      <caption xml:lang="tr">Izgarayı düzenlemek: kaç hücre olacağı ve hangi kameranın nereye gideceği</caption>
+      <caption xml:lang="zh_CN">排布网格：分几格，以及每台摄像机放在哪里</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-02-layout.png</image>
+    </screenshot>
+    <screenshot>
       <caption>Motion, recording and what happens when a camera sees something</caption>
       <caption xml:lang="ar">الحركة والتسجيل وما يحدث حين ترى الكاميرا شيئاً</caption>
       <caption xml:lang="de">Bewegung, Aufnahme und was geschieht, wenn eine Kamera etwas sieht</caption>
@@ -475,6 +490,21 @@
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-01-video.png</image>
     </screenshot>
     <screenshot>
+      <caption>The camera's picture: brightness, exposure, day and night, infrared</caption>
+      <caption xml:lang="ar">صورة الكاميرا: السطوع، والتعريض، والنهار والليل، والأشعة تحت الحمراء</caption>
+      <caption xml:lang="de">Das Bild der Kamera: Helligkeit, Belichtung, Tag und Nacht, Infrarot</caption>
+      <caption xml:lang="es">La imagen de la cámara: brillo, exposición, día y noche, infrarrojos</caption>
+      <caption xml:lang="fr">L'image de la caméra : luminosité, exposition, jour et nuit, infrarouge</caption>
+      <caption xml:lang="hi">कैमरे की तस्वीर: चमक, एक्सपोज़र, दिन और रात, इन्फ्रारेड</caption>
+      <caption xml:lang="it">L'immagine della telecamera: luminosità, esposizione, giorno e notte, infrarossi</caption>
+      <caption xml:lang="ja">カメラの映像：明るさ、露出、昼夜切り替え、赤外線</caption>
+      <caption xml:lang="pt_BR">A imagem da câmera: brilho, exposição, dia e noite, infravermelho</caption>
+      <caption xml:lang="ru">Изображение камеры: яркость, экспозиция, день и ночь, ИК-подсветка</caption>
+      <caption xml:lang="tr">Kameranın görüntüsü: parlaklık, pozlama, gündüz ve gece, kızılötesi</caption>
+      <caption xml:lang="zh_CN">摄像机画面：亮度、曝光、日夜模式、红外</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-02-picture.png</image>
+    </screenshot>
+    <screenshot>
       <caption>Where the camera looks, when it reports, and how readily it triggers</caption>
       <caption xml:lang="ar">أين تنظر الكاميرا، ومتى تبلّغ، وما مدى سهولة تنبّهها</caption>
       <caption xml:lang="de">Wohin die Kamera schaut, wann sie meldet und wie leicht sie anspricht</caption>
@@ -488,6 +518,21 @@
       <caption xml:lang="tr">Kameranın nereye baktığı, ne zaman bildirdiği ve ne kolaylıkla tetiklendiği</caption>
       <caption xml:lang="zh_CN">摄像机看向哪里、何时上报，以及多容易被触发</caption>
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-04-detection.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>How the window behaves: decoding, the tray icon, the language</caption>
+      <caption xml:lang="ar">سلوك النافذة: فك الترميز، وأيقونة منطقة الإشعارات، واللغة</caption>
+      <caption xml:lang="de">Wie sich das Fenster verhält: Dekodierung, Symbol im Systembereich, Sprache</caption>
+      <caption xml:lang="es">Cómo se comporta la ventana: decodificación, icono de la bandeja, idioma</caption>
+      <caption xml:lang="fr">Le comportement de la fenêtre : décodage, icône de la zone de notification, langue</caption>
+      <caption xml:lang="hi">विंडो का व्यवहार: डिकोडिंग, सूचना क्षेत्र का आइकन, भाषा</caption>
+      <caption xml:lang="it">Come si comporta la finestra: decodifica, icona nell'area di notifica, lingua</caption>
+      <caption xml:lang="ja">ウィンドウの動作：デコード方法、通知領域のアイコン、言語</caption>
+      <caption xml:lang="pt_BR">Como a janela se comporta: decodificação, ícone na bandeja, idioma</caption>
+      <caption xml:lang="ru">Поведение окна: декодирование, значок в области уведомлений, язык</caption>
+      <caption xml:lang="tr">Pencerenin davranışı: kod çözme, bildirim alanı simgesi, dil</caption>
+      <caption xml:lang="zh_CN">窗口行为：解码方式、托盘图标、界面语言</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-04-window.png</image>
     </screenshot>
   </screenshots>
 
