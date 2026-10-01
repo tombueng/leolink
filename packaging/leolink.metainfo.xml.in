@@ -587,6 +587,22 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.5" date="2026-10-01">
+      <description>
+        <p>More screenshots in software centres and the AppImage catalog: arranging the grid, the camera's picture settings, and the window settings.</p>
+        <p xml:lang="ar">لقطات شاشة أكثر في مراكز البرمجيات وفهرس AppImage: ترتيب الشبكة، وإعدادات صورة الكاميرا، وإعدادات النافذة.</p>
+        <p xml:lang="de">Mehr Bildschirmfotos in Softwarezentren und im AppImage-Katalog: das Gitter anordnen, die Bildeinstellungen der Kamera und die Fenstereinstellungen.</p>
+        <p xml:lang="es">Más capturas en los centros de software y en el catálogo de AppImage: organizar la cuadrícula, los ajustes de imagen de la cámara y los ajustes de la ventana.</p>
+        <p xml:lang="fr">Davantage de captures d'écran dans les logithèques et le catalogue AppImage : l'organisation de la grille, les réglages d'image de la caméra et ceux de la fenêtre.</p>
+        <p xml:lang="hi">सॉफ़्टवेयर केंद्रों और AppImage सूची में और स्क्रीनशॉट: जाली सजाना, कैमरे की तस्वीर की सेटिंग, और विंडो की सेटिंग।</p>
+        <p xml:lang="it">Più schermate nei centri software e nel catalogo AppImage: la disposizione della griglia, le impostazioni dell'immagine della telecamera e quelle della finestra.</p>
+        <p xml:lang="ja">ソフトウェアセンターと AppImage カタログのスクリーンショットを追加しました：グリッドの配置、カメラの映像設定、ウィンドウの設定。</p>
+        <p xml:lang="pt_BR">Mais capturas de tela nas centrais de software e no catálogo de AppImage: arrumar a grade, as configurações de imagem da câmera e as da janela.</p>
+        <p xml:lang="ru">Больше снимков экрана в центрах приложений и каталоге AppImage: расстановка сетки, настройки изображения камеры и настройки окна.</p>
+        <p xml:lang="tr">Yazılım merkezlerinde ve AppImage kataloğunda daha fazla ekran görüntüsü: ızgarayı düzenlemek, kameranın görüntü ayarları ve pencere ayarları.</p>
+        <p xml:lang="zh_CN">软件中心和 AppImage 目录中新增截图：排布网格、摄像机画面设置和窗口设置。</p>
+      </description>
+    </release>
     <release version="0.2.4" date="2026-10-01">
       <description>
         <p>The AppImage can update itself through AppImageUpdate or an AppImage manager, downloading only what changed, and carries its description and screenshots where software centres look for them.</p>
