@@ -542,6 +542,22 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.3" date="2026-10-01">
+      <description>
+        <p>The AppImage now brings everything it needs, its C library included, so it runs on older and unusual distributions too, and decodes video on the graphics card where the previous one could not.</p>
+        <p xml:lang="ar">يحمل AppImage الآن كل ما يحتاجه، بما في ذلك مكتبة C، فيعمل على التوزيعات الأقدم وغير المألوفة أيضًا، ويفك ترميز الفيديو على بطاقة الرسوميات حيث لم يكن السابق يستطيع ذلك.</p>
+        <p xml:lang="de">Das AppImage bringt jetzt alles mit, was es braucht, die C-Bibliothek eingeschlossen. Es läuft damit auch auf älteren und ungewöhnlichen Distributionen und dekodiert Video auf der Grafikkarte, wo das vorige es nicht konnte.</p>
+        <p xml:lang="es">El AppImage trae ahora todo lo que necesita, incluida su biblioteca de C, así que funciona también en distribuciones antiguas o poco comunes, y decodifica el vídeo en la tarjeta gráfica donde el anterior no podía.</p>
+        <p xml:lang="fr">L'AppImage apporte désormais tout ce dont elle a besoin, sa bibliothèque C comprise : elle fonctionne aussi sur des distributions anciennes ou inhabituelles, et décode la vidéo sur la carte graphique là où la précédente n'y parvenait pas.</p>
+        <p xml:lang="hi">AppImage अब अपनी ज़रूरत की हर चीज़ साथ लाता है, अपनी C लाइब्रेरी समेत, इसलिए यह पुराने और असामान्य वितरणों पर भी चलता है, और वहाँ ग्राफ़िक्स कार्ड पर वीडियो डिकोड करता है जहाँ पिछला नहीं कर पाता था।</p>
+        <p xml:lang="it">L'AppImage porta ora con sé tutto ciò che le serve, libreria C compresa, quindi funziona anche su distribuzioni vecchie o insolite, e decodifica il video sulla scheda grafica dove la precedente non ci riusciva.</p>
+        <p xml:lang="ja">AppImage が C ライブラリを含め必要なものをすべて同梱するようになり、古いディストリビューションや一般的でないディストリビューションでも動作します。以前の AppImage ではできなかった環境でも、グラフィックカードで動画をデコードします。</p>
+        <p xml:lang="pt_BR">O AppImage agora traz tudo de que precisa, inclusive sua biblioteca C, então funciona também em distribuições antigas ou incomuns, e decodifica o vídeo na placa de vídeo onde o anterior não conseguia.</p>
+        <p xml:lang="ru">AppImage теперь содержит всё необходимое, включая библиотеку C, поэтому работает и на старых или необычных дистрибутивах, а видео декодирует на видеокарте там, где прежний этого не умел.</p>
+        <p xml:lang="tr">AppImage artık C kütüphanesi de dahil ihtiyaç duyduğu her şeyi yanında getiriyor; böylece eski ve alışılmadık dağıtımlarda da çalışıyor ve öncekinin yapamadığı yerlerde videoyu ekran kartında çözüyor.</p>
+        <p xml:lang="zh_CN">AppImage 现在自带所需的一切，包括 C 库，因此在较旧或不常见的发行版上也能运行，并且能在以前的版本无法做到的环境中用显卡解码视频。</p>
+      </description>
+    </release>
     <release version="0.2.2" date="2026-09-30">
       <description>
         <p>The AppImage starts on systems without PipeWire or JACK installed, instead of not starting at all.</p>
