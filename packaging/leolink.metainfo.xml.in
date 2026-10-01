@@ -542,6 +542,22 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.2.4" date="2026-10-01">
+      <description>
+        <p>The AppImage can update itself through AppImageUpdate or an AppImage manager, downloading only what changed, and carries its description and screenshots where software centres look for them.</p>
+        <p xml:lang="ar">يمكن لـ AppImage أن يحدّث نفسه عبر AppImageUpdate أو مدير AppImage، فيُنزّل ما تغيّر فقط، ويحمل وصفه ولقطات شاشته حيث تبحث عنها مراكز البرمجيات.</p>
+        <p xml:lang="de">Das AppImage kann sich über AppImageUpdate oder eine AppImage-Verwaltung selbst aktualisieren und lädt dabei nur, was sich geändert hat; Beschreibung und Bildschirmfotos liegen dort, wo Softwarezentren sie suchen.</p>
+        <p xml:lang="es">El AppImage puede actualizarse a sí mismo con AppImageUpdate o un gestor de AppImage, descargando solo lo que ha cambiado, y lleva su descripción y capturas donde los centros de software las buscan.</p>
+        <p xml:lang="fr">L'AppImage peut se mettre à jour via AppImageUpdate ou un gestionnaire d'AppImage, en ne téléchargeant que ce qui a changé, et porte sa description et ses captures d'écran là où les logithèques les cherchent.</p>
+        <p xml:lang="hi">AppImage अब AppImageUpdate या किसी AppImage प्रबंधक से खुद को अपडेट कर सकता है और केवल बदला हुआ हिस्सा डाउनलोड करता है; इसका विवरण और स्क्रीनशॉट वहीं रहते हैं जहाँ सॉफ़्टवेयर केंद्र उन्हें खोजते हैं।</p>
+        <p xml:lang="it">L'AppImage può aggiornarsi da sé tramite AppImageUpdate o un gestore di AppImage, scaricando solo ciò che è cambiato, e porta la descrizione e le schermate dove i centri software le cercano.</p>
+        <p xml:lang="ja">AppImage は AppImageUpdate や AppImage マネージャーで変更部分だけをダウンロードして自身を更新できるようになり、説明とスクリーンショットもソフトウェアセンターが探す場所に収められています。</p>
+        <p xml:lang="pt_BR">O AppImage pode se atualizar pelo AppImageUpdate ou por um gerenciador de AppImage, baixando só o que mudou, e traz sua descrição e capturas de tela onde as centrais de software as procuram.</p>
+        <p xml:lang="ru">AppImage теперь может обновляться через AppImageUpdate или менеджер AppImage, скачивая только изменившееся, а его описание и снимки экрана лежат там, где их ищут центры приложений.</p>
+        <p xml:lang="tr">AppImage artık AppImageUpdate ya da bir AppImage yöneticisiyle yalnızca değişen kısmı indirerek kendini güncelleyebiliyor; açıklaması ve ekran görüntüleri de yazılım merkezlerinin aradığı yerde.</p>
+        <p xml:lang="zh_CN">AppImage 现在可以通过 AppImageUpdate 或 AppImage 管理器自我更新，只下载有变化的部分，并把说明和截图放在软件中心查找的位置。</p>
+      </description>
+    </release>
     <release version="0.2.3" date="2026-10-01">
       <description>
         <p>The AppImage now brings everything it needs, its C library included, so it runs on older and unusual distributions too, and decodes video on the graphics card where the previous one could not.</p>
