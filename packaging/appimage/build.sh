@@ -77,7 +77,10 @@ ln -s ../share "$APPDIR/usr/share"
 
 # Update information, so that AppImageUpdate and the like can fetch only what
 # changed: they read the .zsync published beside the AppImage in the latest
-# release, which appimagetool writes next to it.
+# release.
 ARCH=$arch ./appimagetool --appimage-extract-and-run --no-appstream \
     -u "gh-releases-zsync|tombueng|leolink|latest|leolink-$arch.AppImage.zsync" \
     "$APPDIR" "$out/leolink-$arch.AppImage"
+# appimagetool writes the .zsync into the directory it runs in, not beside the
+# AppImage, where the release would never find it.
+mv "leolink-$arch.AppImage.zsync" "$out/"
