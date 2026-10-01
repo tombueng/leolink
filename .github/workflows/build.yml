@@ -82,53 +82,33 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install build dependencies
+        # Beyond what leolink needs to build: whatever the AppImage must carry
+        # for it to run elsewhere (VA-API drivers, PipeWire's modules and
+        # configuration, ALSA plugins, Qt's Wayland plugin), since quick-sharun
+        # bundles only what is installed; and quick-sharun's own tools.
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             cmake ninja-build g++ \
             qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
             qt6-tools-dev qt6-tools-dev-tools libmpv-dev \
-            qtkeychain-qt6-dev libfuse2t64 wget file librsvg2-bin
+            qtkeychain-qt6-dev qt6-wayland \
+            mesa-va-drivers intel-media-va-driver i965-va-driver \
+            libpipewire-0.3-modules libspa-0.2-modules libpipewire-0.3-common \
+            pipewire-alsa libasound2-plugins libpulse0 \
+            wget file patchelf strace xvfb xauth librsvg2-bin
 
-      - name: Build and stage
+      - name: Build and install
+        # Installed into /usr as a package would be: quick-sharun works from
+        # an installed program, and runs it to see what it loads.
         run: |
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_INSTALL_PREFIX=/usr
           cmake --build build
-          DESTDIR=$PWD/AppDir cmake --install build
+          sudo cmake --install build
 
-      # linuxdeploy pulls in Qt and libmpv so the result runs on any
-      # reasonably current distribution without installing anything.
       - name: Package
-        run: |
-          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-          chmod +x linuxdeploy*.AppImage
-          export QMAKE=/usr/lib/qt6/bin/qmake6
-          # The AppImage catalog wants a PNG icon it can use as a thumbnail.
-          # linuxdeploy prefers an SVG for the AppDir root whenever there is
-          # one, so the SVG gives way to a rendered PNG. The window icon is
-          # unaffected: it is compiled into the binary.
-          icons=AppDir/usr/share/icons/hicolor
-          mkdir -p $icons/256x256/apps
-          rsvg-convert -w 256 -h 256 resources/icons/leolink.svg \
-            -o $icons/256x256/apps/io.github.tombueng.leolink.png
-          rm $icons/scalable/apps/io.github.tombueng.leolink.svg
-          # libpipewire and libjack have to match the host's sound server, so
-          # linuxdeploy never bundles them; without them libmpv, and with it
-          # leolink, cannot start at all. A copy of each rides along for hosts
-          # that lack one, and packaging/appimage/AppRun decides at start-up.
-          fallback=AppDir/usr/lib/fallback
-          mkdir -p $fallback/pipewire $fallback/jack
-          for lib in pipewire:libpipewire-0.3.so.0 jack:libjack.so.0; do
-            cp -L "$(ldconfig -p | awk -v l="${lib#*:}" '$1 == l { print $NF; exit }')" \
-              $fallback/${lib%%:*}/${lib#*:}
-          done
-          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage \
-            --custom-apprun packaging/appimage/AppRun \
-            --deploy-deps-only $fallback/pipewire --deploy-deps-only $fallback/jack \
-            --desktop-file AppDir/usr/share/applications/io.github.tombueng.leolink.desktop \
-            --icon-file $icons/256x256/apps/io.github.tombueng.leolink.png
+        run: packaging/appimage/build.sh
 
       - uses: actions/upload-artifact@v4
         with:
