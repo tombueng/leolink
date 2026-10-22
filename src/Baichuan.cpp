@@ -21,7 +21,18 @@ constexpr quint16 kClassLegacy = 0x6514;       // legacy request
 constexpr quint16 kClassLegacyReply = 0x6614;  // its reply — also 20 bytes
 constexpr quint16 kClassModern = 0x6414;
 
-constexpr quint16 kEncXor = 0xDC01;
+// What the legacy login asks for, and what the camera's reply says it granted.
+// Asking for XOR would be 0xDC01, but an E1 Pro on 3.1.0.3149 leaves that
+// unanswered and replies only to a request for AES; an E1 on 3.1.0.1643
+// answers either and grants what is asked.
+constexpr quint16 kEncAes = 0xDC12;
+constexpr quint16 kGrantedAes = 0xDD12;
+
+// Fixed, and the same for every message: each one starts a fresh keystream.
+// The IV, the key derivation in login() and the 0xDC12 request follow
+// reolink_aio's Baichuan client (MIT, Copyright (c) 2023 starkillerOG; the
+// notice is in LICENSE).
+constexpr char kAesIv[] = "0123456789abcdef";
 
 constexpr quint32 kMsgLogin = 1;
 constexpr quint32 kMsgLogout = 2;
@@ -492,16 +503,29 @@ bool BaichuanClient::readMessage(BcHeader &header, QByteArray &body,
     return true;
 }
 
-QString BaichuanClient::bodyText(const BcHeader &header, const QByteArray &body)
+QString BaichuanClient::bodyText(const BcHeader &header, const QByteArray &body) const
 {
     if (body.isEmpty())
         return {};
     if (body.startsWith("<?xml"))
         return QString::fromUtf8(body);
+    if (m_aes) {
+        const QByteArray plain =
+            m_aes->decrypt(body, QByteArray::fromRawData(kAesIv, 16));
+        if (plain.startsWith("<?xml") || plain.contains("<body"))
+            return QString::fromUtf8(plain);
+    }
     const QByteArray plain = xorCrypt(body, header.encOffset);
     if (plain.startsWith("<?xml") || plain.contains("<body"))
         return QString::fromUtf8(plain);
     return {};
+}
+
+QByteArray BaichuanClient::encryptXml(const QString &xml) const
+{
+    if (m_aes)
+        return m_aes->encrypt(xml.toUtf8(), QByteArray::fromRawData(kAesIv, 16));
+    return xorCrypt(xml.toUtf8(), 0);
 }
 
 bool BaichuanClient::login()
@@ -514,11 +538,13 @@ bool BaichuanClient::login()
         return false;
     }
 
-    // 1. Legacy login, asking for XOR obfuscation.
+    // 1. Legacy login, asking for AES. Older firmware that grants XOR instead
+    //    says so in the reply, and the rest of the session follows suit.
+    m_aes.reset();
     QByteArray body;
     body += md5Trunc(m_user).toLatin1().leftJustified(32, '\0');
     body += md5Trunc(m_password).toLatin1().leftJustified(32, '\0');
-    m_socket->write(legacyHeader(kMsgLogin, body.size(), kEncXor) + body);
+    m_socket->write(legacyHeader(kMsgLogin, body.size(), kEncAes) + body);
     m_socket->flush();
 
     // 2. Nonce.
@@ -534,8 +560,11 @@ bool BaichuanClient::login()
         return false;
     }
 
+    const bool aesGranted = header.field16 == kGrantedAes;
+
     // 3. Modern login. Binding the credentials to the nonce is what stops a
-    //    captured login from being replayed.
+    //    captured login from being replayed. XOR'd even when AES was granted:
+    //    the camera refuses this one with status 400 if it arrives encrypted.
     const QString xml =
         QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<body>\n"
                        "<LoginUser version=\"1.1\">\n"
@@ -549,6 +578,16 @@ bool BaichuanClient::login()
     const QByteArray encrypted = xorCrypt(xml.toUtf8(), 0);
     m_socket->write(modernHeader(kMsgLogin, encrypted.size()) + encrypted);
     m_socket->flush();
+
+    // AES starts here, with the reply. The key is the first sixteen characters
+    // of the upper-case MD5 of "<nonce>-<password>", used as text.
+    if (aesGranted) {
+        const QByteArray keyPhrase = (nonce + QLatin1Char('-') + m_password).toUtf8();
+        m_aes.emplace(QCryptographicHash::hash(keyPhrase, QCryptographicHash::Md5)
+                          .toHex()
+                          .toUpper()
+                          .left(16));
+    }
 
     // 4. Device info.
     if (!readMessage(header, reply))
@@ -583,7 +622,9 @@ bool BaichuanClient::requestVideo(int channel, bool mainStream)
             .arg(mainStream ? QStringLiteral("mainStream")
                             : QStringLiteral("subStream"));
 
-    const QByteArray encrypted = xorCrypt(xml.toUtf8(), 0);
+    // Under AES the request must be encrypted too: sent XOR'd it is refused
+    // with status 400 and no video follows.
+    const QByteArray encrypted = encryptXml(xml);
     m_socket->write(modernHeader(kMsgVideo, encrypted.size()) + encrypted);
     m_socket->flush();
 
@@ -620,16 +661,32 @@ bool BaichuanClient::readMediaChunk(QByteArray &media, int timeoutMs)
         return true;   // status replies and keep-alives share the connection
 
     // The first `payloadOffset` bytes are an XML preamble, not media. The
-    // camera puts one in front of the very first video message and none after
-    // that; feeding it to the container parser produced an unrecognised block
-    // before every stream started.
+    // camera puts one in front of the very first video message, and under AES
+    // in front of most of the others too; feeding it to the container parser
+    // produced an unrecognised block before every stream started.
+    QString preamble;
     if (header.payloadOffset > 0 &&
-        header.payloadOffset < quint32(body.size()))
+        header.payloadOffset < quint32(body.size())) {
+        preamble = bodyText(header, body.left(int(header.payloadOffset)));
         body = body.mid(int(header.payloadOffset));
+    }
 
-    // Media bodies are not obfuscated: the XOR applies to the XML control
-    // messages. Sending a video stream through it would cost a pass over every
-    // frame for no benefit, and the hardware does not do it.
+    // Media bodies are not obfuscated under XOR: it applies to the XML control
+    // messages only. Under AES the camera encrypts the start of some messages
+    // and says how much in the preamble, <encryptLen>; the rest of that
+    // message, and every message without a preamble, is plain. On an E1 Pro
+    // that is the first 1024 bytes of a key frame, the whole of a short
+    // predicted frame or audio block, and nothing of the stream info.
+    if (m_aes && !preamble.isEmpty()) {
+        const int encrypted =
+            tagText(preamble, QStringLiteral("encryptLen")).toInt();
+        if (encrypted > 0 && encrypted <= body.size()) {
+            body.replace(0, encrypted,
+                         m_aes->decrypt(body.left(encrypted),
+                                        QByteArray::fromRawData(kAesIv, 16)));
+        }
+    }
+
     media += body;
     return true;
 }
@@ -668,7 +725,8 @@ int runBaichuanProbe(const QString &host, const QString &user,
         return 1;
     }
 
-    out() << "Login succeeded.\n\n";
+    out() << "Login succeeded, " << (client.usesAes() ? "AES" : "XOR")
+          << " encryption.\n\n";
     const QStringList fields{
         QStringLiteral("type"),        QStringLiteral("channelNum"),
         QStringLiteral("ptzMode"),     QStringLiteral("diskNum"),

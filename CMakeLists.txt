@@ -55,6 +55,7 @@ qt_add_executable(leolink
     src/AudioDetector.cpp     src/AudioDetector.h
     src/ZoneEditor.cpp        src/ZoneEditor.h
     src/PlaybackBrowser.cpp   src/PlaybackBrowser.h
+    src/Aes128.cpp            src/Aes128.h
     src/Baichuan.cpp          src/Baichuan.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
     src/Keyring.cpp           src/Keyring.h

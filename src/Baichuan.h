@@ -2,9 +2,12 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 #include <QByteArray>
 #include <QString>
+
+#include "Aes128.h"
 
 class QTcpSocket;
 
@@ -39,8 +42,11 @@ struct BcHeader {
 ///   3. client → modern login, credentials hashed together with that nonce
 ///   4. camera → device info, status 200
 ///
-/// Bodies are XML behind a fixed-key XOR. That is obfuscation, not encryption;
-/// the key is a constant in this file.
+/// Bodies are XML, either behind a fixed-key XOR or under AES-128-CFB, as the
+/// camera chooses in step 2. leolink asks for AES, since newer firmware answers
+/// nothing else; a camera that grants only XOR gets XOR. Even under AES the
+/// login of step 3 still travels XOR'd — sent encrypted it is refused with
+/// status 400 — and AES starts with the camera's reply to it.
 ///
 /// leolink does not need Baichuan for ordinary viewing — the HTTP API, RTSP
 /// and ONVIF cover wired cameras completely. It matters for battery models
@@ -76,6 +82,8 @@ public:
     /// One element out of the device info, e.g. "ptzMode" or "diskNum".
     QString field(const QString &name) const;
     const QString &lastError() const { return m_error; }
+    /// Whether the camera granted AES in step 2, rather than XOR.
+    bool usesAes() const { return m_aes.has_value(); }
 
     /// Symmetric. `offset` comes from the header field at byte 12.
     static QByteArray xorCrypt(const QByteArray &data, quint8 offset);
@@ -86,13 +94,16 @@ public:
 private:
     bool readMessage(BcHeader &header, QByteArray &body,
                      int timeoutMs = 10000);
-    static QString bodyText(const BcHeader &header, const QByteArray &body);
+    QString bodyText(const BcHeader &header, const QByteArray &body) const;
+    /// XML on its way out, under whichever cipher the session settled on.
+    QByteArray encryptXml(const QString &xml) const;
 
     QString m_host, m_user, m_password;
     quint16 m_port;
     QTcpSocket *m_socket{nullptr};
     QString m_deviceInfo;
     QString m_error;
+    std::optional<Aes128Cfb> m_aes;
 };
 
 /// Splits the BcMedia container into elementary streams.

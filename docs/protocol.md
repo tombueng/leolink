@@ -309,24 +309,59 @@ plain[i] = raw[i] ^ key[(i + off) % 8] ^ off
 obfuscation, not encryption — the key is a constant in the vendor's own SDK.
 
 The encryption request goes in the legacy header's field at offset 16:
-`0xdc00` none, `0xdc01` XOR, `0xdc12` AES. The camera confirms with `0xdd01`.
+`0xdc00` none, `0xdc01` XOR, `0xdc12` AES. The camera's reply confirms what it
+granted in the same field: `0xdd01` for XOR, `0xdd12` for AES.
+
+**Some firmware answers only an AES request.** An E1 Pro on
+`v3.1.0.3149_2401092478` leaves a login asking for `0xdc01` unanswered — no
+reply at all, so the client simply times out — and replies at once to `0xdc12`.
+An E1 on `v3.1.0.1643_22122300` answers either and grants what was asked. So
+leolink asks for AES and follows whatever the reply grants.
+
+### AES
+
+Once `0xdd12` is granted, XML bodies are AES-128 in CFB mode with a 128-bit
+segment:
+
+```
+key = first 16 characters of upper-case hex MD5("<nonce>-<password>"), as text
+iv  = "0123456789abcdef"
+```
+
+Every message part starts a fresh keystream from that IV; nothing carries from
+one message to the next. Two things are not what one would guess:
+
+- **The modern login itself stays XOR.** Encrypting step 3 with the AES key gets
+  status 400. AES starts with the camera's reply to it, the device info.
+- **Media is only partly encrypted.** A type-3 message whose XML preamble carries
+  `<encryptLen>N</encryptLen>` has its first N bytes of media encrypted and the
+  rest plain; a message with no preamble is plain throughout. On an E1 Pro that
+  is the first 1024 bytes of a key frame, all of a short predicted frame or
+  audio block, and none of the stream info.
+
+The video request (type 3) must be encrypted like any other XML: sent XOR'd in
+an AES session it is refused with status 400.
 
 ### Login — four messages
 
 Verified against the device:
 
-1. **Client → legacy login** (class `0x6514`, type 1), field@16 = `0xdc01`.
+1. **Client → legacy login** (class `0x6514`, type 1), field@16 = `0xdc12`
+   (AES; see above for why not `0xdc01`).
    Body: `MD5(user)` and `MD5(password)` as upper-case hex clipped to 31
    characters, in 32-byte NUL-padded fields.
-2. **Camera → nonce** (class `0x6614`, 20-byte header, XOR body):
+2. **Camera → nonce** (class `0x6614`, 20-byte header), field@16 saying what
+   was granted:
    ```xml
    <Encryption version="1.1"><type>md5</type>
    <nonce>9F89BBCE447CAB52</nonce></Encryption>
    ```
-3. **Client → modern login** (class `0x6414`, type 1), XOR-obfuscated XML, with
+3. **Client → modern login** (class `0x6414`, type 1), XOR-obfuscated XML even
+   when AES was granted, with
    the credentials now bound to the nonce: `MD5(user + nonce)` and
    `MD5(password + nonce)`. That binding is the replay protection.
-4. **Camera → device info**, class `0x0000`, **status 200**, ~3.7 KB of XML.
+4. **Camera → device info**, class `0x0000`, **status 200**, ~3.7 KB of XML —
+   under AES if it was granted.
 
 The 31-character clip is deliberate on the vendor's side: the string has to fit
 a 32-byte field with a trailing NUL.
@@ -347,7 +382,8 @@ The camera then sends a run of type-3 messages whose bodies carry a stream of
 blocks. The first message has a non-zero `payload_offset` in its 24-byte header:
 that many bytes at the front are an XML preamble
 (`<Extension><binaryData>1</binaryData></Extension>`), not media. Feed those to
-a parser and it finds nothing.
+a parser and it finds nothing. Under AES the preamble appears on most media
+messages, not just the first, and carries `<encryptLen>` — see [AES](#aes).
 
 Each block starts with four ASCII characters. **These are not what the published
 notes say.** Those give the magics as little-endian `u32` constants, which spell
