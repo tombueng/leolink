@@ -50,6 +50,11 @@ public:
     /// Video width as mpv reports it, 0 before the first frame.
     int videoWidth() const;
 
+    /// Whether an OpenGL renderer string names one that runs on the CPU:
+    /// llvmpipe, softpipe, or a driver that says "software". Those get mpv's
+    /// plainest drawing path; see initializeGL().
+    static bool isSoftwareRenderer(const QString &renderer);
+
     /// What is actually being played, as opposed to what was configured. Empty
     /// or zero until the first frame has arrived.
     struct StreamInfo {

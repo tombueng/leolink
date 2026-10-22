@@ -182,11 +182,50 @@ void MpvWidget::setPropertyFlag(const QString &name, bool value)
     }
 }
 
+bool MpvWidget::isSoftwareRenderer(const QString &renderer)
+{
+    return renderer.contains(QLatin1String("llvmpipe"), Qt::CaseInsensitive) ||
+           renderer.contains(QLatin1String("softpipe"), Qt::CaseInsensitive) ||
+           renderer.contains(QLatin1String("software"), Qt::CaseInsensitive);
+}
+
 void MpvWidget::initializeGL()
 {
     ensureCreated();
     if (!m_mpv || m_render)
         return;
+
+    // A software renderer gets mpv's plainest drawing path: the frame straight
+    // onto the screen, with no intermediate framebuffers.
+    //
+    // On llvmpipe — what a machine without a GPU draws with, and every xrdp or
+    // VNC session — the intermediate framebuffers went wrong at random: tiles
+    // came out plain black, or, with the framebuffer format set to rgba8,
+    // plain green, which is the brightness plane arriving without its colour.
+    // Two to six of six tiles per start, a different set each time. The
+    // decoder was never at fault: mpv's own screenshot of every one of those
+    // frames was correct. Turning off direct rendering, the shader cache,
+    // Mesa's GL thread or llvmpipe's own threads changed nothing; dumb mode
+    // gave six of six correct tiles in every run. It is also the cheaper path
+    // for a renderer that runs on the CPU, and what it gives up — scaling
+    // filters and colour management — is not something llvmpipe could afford
+    // anyway. A real GPU keeps the full renderer.
+    if (QOpenGLContext *context = QOpenGLContext::currentContext()) {
+        const GLubyte *name = context->functions()->glGetString(GL_RENDERER);
+        const QString renderer = name ? QString::fromUtf8(reinterpret_cast<const char *>(name))
+                                      : QString();
+        if (isSoftwareRenderer(renderer)) {
+            mpv_set_option_string(m_mpv, "gpu-dumb-mode", "yes");
+            static bool logged = false;
+            if (!logged) {
+                logged = true;
+                LEO_INFO(Stream, QString(),
+                         QStringLiteral("Software OpenGL (%1): drawing frames "
+                                        "directly, without intermediate "
+                                        "framebuffers").arg(renderer));
+            }
+        }
+    }
 
     if (mpv_initialize(m_mpv) < 0)
         return;
