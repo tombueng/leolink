@@ -165,7 +165,12 @@ QByteArray TsMuxer::tables()
     // Programme map: one stream, and where the clock comes from.
     QByteArray pmt;
     pmt.append(char(0x02));
-    appendU16(pmt, 0xb011);                       // section length 17
+    // Section length 18: nine bytes of programme header, five for the one
+    // stream, four of CRC. It said 17 once, which put the CRC's last byte
+    // outside the section and the stream entry one byte short of fitting, so a
+    // strict demuxer read a programme with no streams in it. ffmpeg 6.1 does,
+    // and on a live stream, with nothing further to scan, never found the video.
+    appendU16(pmt, 0xb012);
     appendU16(pmt, 0x0001);                       // programme number
     pmt.append(char(0xc1));
     pmt.append(char(0x00));
