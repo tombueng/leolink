@@ -68,6 +68,40 @@ ActionConfig actionsFromJson(const QJsonObject &o)
 
 } // namespace
 
+QString CameraConfig::effectiveTransport() const
+{
+    if (transport != QLatin1String("auto"))
+        return transport;
+    if (!caps.known)
+        return QStringLiteral("rtsp");
+
+    // Ordered by what each costs this machine, cheapest first. HTTP-FLV is
+    // one HTTP connection whose container the player reads as it comes. RTSP
+    // adds a session to negotiate and a stream to reassemble from RTP
+    // packets. Baichuan is all of that done by leolink itself — login,
+    // decryption, the camera's own container taken apart and wrapped again as
+    // MPEG-TS — plus a loopback hop before the player sees a byte.
+    const auto usable = [this](const QString &name, bool offered) {
+        return offered && !caps.failed.contains(name);
+    };
+    if (usable(QStringLiteral("flv"), (caps.http || caps.https) && caps.rtmp))
+        return QStringLiteral("flv");
+    if (usable(QStringLiteral("rtsp"), caps.rtsp))
+        return QStringLiteral("rtsp");
+    if (usable(QStringLiteral("baichuan"), caps.baichuan))
+        return QStringLiteral("baichuan");
+    // Everything offered has failed, or nothing was found at all. RTSP is the
+    // one most likely to come back by itself.
+    return QStringLiteral("rtsp");
+}
+
+bool CameraConfig::effectiveHttps() const
+{
+    if (caps.known && !caps.http && caps.https)
+        return true;
+    return https;
+}
+
 QString CameraConfig::label() const
 {
     if (!name.isEmpty())
@@ -127,20 +161,22 @@ QString CameraConfig::streamUrl() const
 
     // Anything libmpv understands: another maker's RTSP path, an NVR stream,
     // an HTTP source, or a local file.
-    if (transport == QLatin1String("custom"))
+    const QString chosen = effectiveTransport();
+    if (chosen == QLatin1String("custom"))
         return customUrl;
 
     // Baichuan has no URL of its own: the protocol is spoken by leolink and
     // re-served on a loopback port whose number is only known once the
     // connection is up. VideoTile asks BaichuanStream for the address instead.
-    if (transport == QLatin1String("baichuan"))
+    if (chosen == QLatin1String("baichuan"))
         return {};
 
-    if (transport == QLatin1String("flv")) {
+    if (chosen == QLatin1String("flv")) {
         // What the camera's own web UI uses. Lower latency than RTSP and it
         // only needs port 80, which helps when RTSP is filtered.
         QUrl url;
-        url.setScheme(https ? QStringLiteral("https") : QStringLiteral("http"));
+        url.setScheme(effectiveHttps() ? QStringLiteral("https")
+                                       : QStringLiteral("http"));
         url.setHost(host);
         url.setPath(QStringLiteral("/flv"));
         QUrlQuery q;

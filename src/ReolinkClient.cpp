@@ -208,7 +208,7 @@ void ReolinkClient::releaseSession()
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("application/json"));
-    if (m_camera.https) {
+    if (m_camera.effectiveHttps()) {
         QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
         ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
         request.setSslConfiguration(ssl);
@@ -285,7 +285,7 @@ QString ReolinkClient::describeError(int rspCode)
 QUrl ReolinkClient::apiUrl(const QString &command, bool withToken) const
 {
     QUrl url;
-    url.setScheme(m_camera.https ? QStringLiteral("https") : QStringLiteral("http"));
+    url.setScheme(m_camera.effectiveHttps() ? QStringLiteral("https") : QStringLiteral("http"));
     url.setHost(m_camera.host);
     url.setPath(QStringLiteral("/cgi-bin/api.cgi"));
 
@@ -456,7 +456,7 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
     QNetworkRequest req(apiUrl(command));
     req.setHeader(QNetworkRequest::ContentTypeHeader,
                   QStringLiteral("application/json"));
-    if (m_camera.https) {
+    if (m_camera.effectiveHttps()) {
         // Cameras ship a self-signed certificate; refusing it would make HTTPS
         // unusable on every device out there.
         QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
@@ -1185,7 +1185,7 @@ void ReolinkClient::fetchSnapshot()
         url.setQuery(q);
 
         QNetworkRequest req(url);
-        if (m_camera.https) {
+        if (m_camera.effectiveHttps()) {
             QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
             ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
             req.setSslConfiguration(ssl);

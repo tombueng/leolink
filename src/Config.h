@@ -3,10 +3,36 @@
 
 #include <QList>
 #include <QString>
+#include <QStringList>
 
 #include "EventActions.h"
 
 namespace leolink {
+
+/// What a camera was found to offer when leolink asked it. Learned at run
+/// time, never written to the configuration file: a camera's ports can be
+/// switched on and off from its own app, and an answer saved last month would
+/// be a guess today.
+struct Capabilities {
+    /// False until the camera has been asked. Everything below is then
+    /// assumed present, which is how leolink behaved before it asked anything.
+    bool known{false};
+    bool http{false};
+    bool https{false};
+    bool rtsp{false};
+    /// What HTTP-FLV is served from inside the camera; the web server's /flv
+    /// path closes the connection without an answer when RTMP is off.
+    bool rtmp{false};
+    bool onvif{false};
+    bool baichuan{false};
+    /// Transports that were tried this session and never produced a picture,
+    /// so "auto" moves on to the next one rather than retrying it forever.
+    QStringList failed;
+
+    bool api() const { return !known || http || https; }
+    bool events() const { return !known || onvif; }
+    bool rtspReachable() const { return !known || rtsp; }
+};
 
 /// One configured camera.
 struct CameraConfig {
@@ -31,7 +57,9 @@ struct CameraConfig {
     /// be about a particular input carries it.
     int channel{0};
     QString stream{QStringLiteral("sub")};      ///< "main" or "sub"
-    QString transport{QStringLiteral("rtsp")};  ///< "rtsp", "flv" or "custom"
+    /// "auto", "flv", "rtsp", "baichuan" or "custom". Automatic takes the first
+    /// of HTTP-FLV, RTSP and Baichuan that the camera turns out to offer.
+    QString transport{QStringLiteral("rtsp")};
     /// Used when transport is "custom": any URL libmpv can open. Lets leolink
     /// show cameras from other makers, an NVR sub-stream, or a local file.
     QString customUrl;
@@ -102,8 +130,20 @@ struct CameraConfig {
     /// Whatever comes back is registered with the log so it cannot appear in a
     /// diagnostics report, however it got here.
     QString secret() const;
-    /// rtsp://…  or  http://…/flv?…  depending on `transport`.
+    /// rtsp://…  or  http://…/flv?…  depending on effectiveTransport().
     QString streamUrl() const;
+
+    /// Run-time only; see Capabilities.
+    Capabilities caps;
+    /// The transport actually used: `transport`, unless that is "auto", in
+    /// which case the first of flv, rtsp and baichuan the camera offers and
+    /// that has not already failed. Before the camera has been asked, RTSP.
+    QString effectiveTransport() const;
+    /// `https`, or true when the camera is known to offer HTTPS and not HTTP —
+    /// an E1 Zoom answers port 80 only with a redirect to 443, and following
+    /// that redirect without this flag meant verifying a self-signed
+    /// certificate and failing every login.
+    bool effectiveHttps() const;
 };
 
 /// Whole configuration. Load/save are total: a broken file yields defaults

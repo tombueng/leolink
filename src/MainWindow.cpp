@@ -32,6 +32,7 @@
 #include <QUrl>
 #include <QWindow>
 
+#include "CameraProbe.h"
 #include "CameraSettingsDialog.h"
 #include "DiagnosticsDialog.h"
 #include "EventActions.h"
@@ -117,9 +118,16 @@ MainWindow::MainWindow(QWidget *parent)
     buildContextMenu();
     buildTray();
     applyChrome();
-    rebuildGrid();
-    startWatchers();
-    reconcileBuffers();
+    // Asked before anything opens a connection, so that nothing is opened to a
+    // service the camera does not have. All cameras at once: the wait is the
+    // slowest camera's, a few hundred milliseconds on a LAN.
+    statusBar()->showMessage(tr("Asking the cameras what they offer…"));
+    probeCameras([this] {
+        statusBar()->clearMessage();
+        rebuildGrid();
+        startWatchers();
+        reconcileBuffers();
+    });
 
     // LEOLINK_SCREENSHOT=<dir> saves a picture of the window and quits. Grabbed
     // through Qt rather than off the X server: under a software renderer only
@@ -700,6 +708,8 @@ VideoTile *MainWindow::createTile(const CameraConfig &camera)
             this, &MainWindow::startWindowDrag);
     connect(tile, &VideoTile::recordToggled,
             this, &MainWindow::onRecordToggled);
+    connect(tile, &VideoTile::transportFailed,
+            this, &MainWindow::onTransportFailed);
     // The tiles cover the central widget, so they need the escape hatch too.
     tile->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tile, &QWidget::customContextMenuRequested, this,
@@ -786,8 +796,11 @@ void MainWindow::startWatchers()
 
     for (const CameraConfig &camera : m_config.active()) {
         const QString source = camera.motionSource;
-        const bool useCamera = source == QLatin1String("camera") ||
-                               source == QLatin1String("both");
+        // The camera's own events come over ONVIF; without it there is
+        // nothing to subscribe to, only a refusal to retry every few seconds.
+        const bool useCamera = (source == QLatin1String("camera") ||
+                                source == QLatin1String("both")) &&
+                               camera.caps.events();
         const bool useLocal = source == QLatin1String("local") ||
                               source == QLatin1String("both");
 
@@ -835,8 +848,9 @@ void MainWindow::startWatchers()
         QList<CameraConfig> onThisHost;
         for (const CameraConfig &camera : m_config.active()) {
             const QString source = camera.motionSource;
-            const bool useCamera = source == QLatin1String("camera") ||
-                                   source == QLatin1String("both");
+            const bool useCamera = (source == QLatin1String("camera") ||
+                                    source == QLatin1String("both")) &&
+                                   camera.caps.events();
             if (useCamera && camera.host == host)
                 onThisHost.append(camera);
         }
@@ -952,6 +966,16 @@ void MainWindow::pollCameraStatus()
         // not enough on its own: the same camera added twice, once for its main
         // stream and once for its sub stream, is also two entries on one
         // address — and it has a Wi-Fi meter like any other camera.
+        // No web server, no status: the Wi-Fi meter comes from the HTTP API,
+        // and asking a camera without one is a refused login every half minute.
+        bool hasApi = true;
+        for (const CameraConfig &camera : active) {
+            if (camera.host == host && !camera.caps.api())
+                hasApi = false;
+        }
+        if (!hasApi)
+            continue;
+
         bool recorder = ReolinkClient::isRecorder(host);
         for (const CameraConfig &camera : active) {
             if (camera.host == host && camera.channel > 0)
@@ -1747,6 +1771,9 @@ void MainWindow::applyConfig(const Config &next)
                              tr("Settings could not be written to %1.")
                                  .arg(Config::path()));
     }
+    // What the cameras offer lives here, not in the file the dialog edited,
+    // so it is put back on every camera before anything below looks at it.
+    attachCapabilities(m_config);
     // Back to the grid before anything is reconciled: the single camera on
     // screen may be the one that was just deleted, and forgetting its id
     // without showing the others again would leave them hidden for good.
@@ -1768,9 +1795,80 @@ void MainWindow::applyConfig(const Config &next)
     // them went black for a few seconds. The tiles already know how to take a
     // new configuration and only restart when the stream itself has changed;
     // they were simply never asked.
-    reconcileGrid(previous);
-    reconcileWatchers(watched);
-    reconcileBuffers();
+    // A camera on an address not asked yet — just added, or moved — is asked
+    // first, so its tile opens over what it actually has.
+    probeCameras([this, previous, watched] {
+        reconcileGrid(previous);
+        reconcileWatchers(watched);
+        reconcileBuffers();
+    });
+}
+
+void MainWindow::probeCameras(const std::function<void()> &then)
+{
+    // One camera per address is enough to ask: it is the same device.
+    QHash<QString, CameraConfig> toAsk;
+    for (const CameraConfig &camera : m_config.active()) {
+        if (!m_caps.value(camera.host).known && !toAsk.contains(camera.host))
+            toAsk.insert(camera.host, camera);
+    }
+    if (toAsk.isEmpty()) {
+        attachCapabilities(m_config);
+        then();
+        return;
+    }
+
+    auto remaining = std::make_shared<int>(int(toAsk.size()));
+    for (const CameraConfig &camera : std::as_const(toAsk)) {
+        // Resolved here, not on the worker: a keyring or a password command
+        // wants the interface thread.
+        const QString secret = camera.secret();
+        QThread *worker = QThread::create([this, camera, secret, remaining, then] {
+            const Capabilities caps = CameraProbe::run(camera, secret);
+            QMetaObject::invokeMethod(this, [this, camera, caps, remaining, then] {
+                m_caps.insert(camera.host, caps);
+                CameraConfig described = camera;
+                described.caps = caps;
+                LEO_INFO(App, camera.label(), CameraProbe::describe(described));
+                if (--*remaining == 0) {
+                    attachCapabilities(m_config);
+                    then();
+                }
+            }, Qt::QueuedConnection);
+        });
+        connect(worker, &QThread::finished, worker, &QObject::deleteLater);
+        worker->start();
+    }
+}
+
+void MainWindow::attachCapabilities(Config &config) const
+{
+    for (CameraConfig &camera : config.cameras) {
+        const Capabilities caps = m_caps.value(camera.host);
+        // What has failed is kept per camera, not per address: two entries on
+        // one device can be on different streams, and one of them not playing
+        // over a transport says nothing about the other.
+        const QStringList failed = camera.caps.failed;
+        camera.caps = caps;
+        camera.caps.failed = failed;
+    }
+}
+
+void MainWindow::onTransportFailed(const QString &cameraId, const QString &transport)
+{
+    for (CameraConfig &camera : m_config.cameras) {
+        if (camera.id != cameraId)
+            continue;
+        if (!camera.caps.failed.contains(transport))
+            camera.caps.failed.append(transport);
+        const QString next = camera.effectiveTransport();
+        LEO_WARN(App, camera.label(),
+                 QStringLiteral("Giving up on %1 for this session; trying %2")
+                     .arg(transport, next));
+        if (VideoTile *tile = m_tiles.value(cameraId))
+            tile->applyConfig(camera);
+        return;
+    }
 }
 
 void MainWindow::askAboutSpeakers()
@@ -1791,8 +1889,12 @@ void MainWindow::askAboutSpeakers()
     // waiting: the answer only decides whether a button is offered, and nobody
     // presses it in the first few seconds.
     m_speakerQueue.clear();
-    for (const CameraConfig &camera : m_config.active())
-        m_speakerQueue[camera.host].append(camera);
+    for (const CameraConfig &camera : m_config.active()) {
+        // The question is asked over RTSP, so a camera without it cannot
+        // answer — and would be asked again every time the grid is built.
+        if (camera.caps.rtspReachable())
+            m_speakerQueue[camera.host].append(camera);
+    }
 
     for (const QString &host : m_speakerQueue.keys()) {
         QTimer::singleShot(kSpeakerProbeDelayMs, this, [this, host] {

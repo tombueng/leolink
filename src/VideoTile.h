@@ -100,6 +100,10 @@ signals:
     void recordToggled(const QString &cameraId, bool recording);
     /// The user pressed the talk button.
     void talkToggled(const QString &cameraId, bool talking);
+    /// A camera on the automatic transport has not shown one picture over
+    /// `transport` in several attempts. Whoever owns the camera's capabilities
+    /// marks it failed and hands the tile a configuration that picks the next.
+    void transportFailed(const QString &cameraId, const QString &transport);
 
 protected:
     /// What to hand the player: the camera's own address, or the loopback port
@@ -157,6 +161,10 @@ private:
     quint64 m_lastFrameCount{0};
     int m_stalledChecks{0};
     int m_reconnectAttempts{0};
+    /// Whether this stream has shown anything since it was opened. A transport
+    /// that never has is a candidate for giving up on; one that worked and then
+    /// stalled is a camera having a bad minute.
+    bool m_everDecoded{false};
     /// While set, the stream is expected to be broken and the watchdog holds
     /// off: the camera has just been reconfigured and is rebuilding it.
     QTimer *m_settleTimer{nullptr};

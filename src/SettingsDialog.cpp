@@ -180,13 +180,18 @@ QWidget *SettingsDialog::buildCameraTab()
     m_stream->addItem(tr("Main stream (full resolution)"), QStringLiteral("main"));
 
     m_transport = new QComboBox(page);
+    m_transport->addItem(tr("Automatic (HTTP-FLV, then RTSP, then Baichuan)"),
+                         QStringLiteral("auto"));
     m_transport->addItem(tr("RTSP"), QStringLiteral("rtsp"));
     m_transport->addItem(tr("HTTP-FLV (lower latency)"), QStringLiteral("flv"));
     m_transport->addItem(tr("Baichuan (the camera's own protocol)"),
                          QStringLiteral("baichuan"));
     m_transport->addItem(tr("Custom URL"), QStringLiteral("custom"));
     m_transport->setToolTip(
-        tr("RTSP suits most cameras and is what to try first.\n\n"
+        tr("Automatic asks the camera what it offers and takes the first of "
+           "HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If "
+           "one never shows a picture it moves on to the next.\n\n"
+           "RTSP suits most cameras.\n\n"
            "HTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\n"
            "Baichuan is what Reolink's own app speaks. It is the answer for "
            "cameras that keep RTSP switched off — battery models do — and it "
@@ -485,6 +490,9 @@ void SettingsDialog::onAdd()
     CameraConfig c;
     c.id = Config::newId();
     c.name = tr("New camera");
+    // New cameras choose for themselves. Existing ones keep what they were
+    // given: a camera somebody set to RTSP by hand stays on RTSP.
+    c.transport = QStringLiteral("auto");
     m_config.cameras.append(c);
 
     rebuildList();
@@ -812,6 +820,7 @@ void SettingsDialog::onScan()
                     if (index >= 0) {
                         CameraConfig c;
                         c.id = Config::newId();
+                        c.transport = QStringLiteral("auto");
                         c.host = found->at(index).address;
                         c.name = found->at(index).name.isEmpty()
                                      ? c.host

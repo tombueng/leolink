@@ -73,6 +73,15 @@ public:
     /// `media`. Returns false when the connection ends or times out.
     bool readMediaChunk(QByteArray &media, int timeoutMs = 10000);
 
+    /// One XML request and its answer: the `<body>` the camera sends back, or
+    /// an empty string with lastError() filled. `extension` is an optional
+    /// `<Extension>` document sent ahead of the body — most settings messages
+    /// want one naming the channel. `status` receives the reply's status code,
+    /// 200 on success. Not for use once video has been requested on this
+    /// connection: the reply would be somewhere in the media.
+    QString request(quint32 msgType, const QString &body = QString(),
+                    const QString &extension = QString(), int *status = nullptr);
+
     /// Set to receive a line per message while probing: body length and
     /// payload offset. Only used by --baichuan-video.
     std::function<void(const BcHeader &)> onMessage;
@@ -104,6 +113,7 @@ private:
     QString m_deviceInfo;
     QString m_error;
     std::optional<Aes128Cfb> m_aes;
+    quint16 m_handle{0};
 };
 
 /// Splits the BcMedia container into elementary streams.

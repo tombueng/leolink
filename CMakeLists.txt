@@ -58,6 +58,7 @@ qt_add_executable(leolink
     src/Aes128.cpp            src/Aes128.h
     src/Baichuan.cpp          src/Baichuan.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
+    src/CameraProbe.cpp       src/CameraProbe.h
     src/Keyring.cpp           src/Keyring.h
     src/TsMuxer.cpp           src/TsMuxer.h
     src/Log.cpp               src/Log.h

@@ -29,6 +29,10 @@ const QColor kAlertRed{0xc0, 0x39, 0x2b};
 
 /// Width of the frame drawn around the picture during an alert.
 constexpr int kAlertBorder = 6;
+/// Reconnects without a single picture before the automatic transport moves
+/// on: about forty-five seconds, enough for a camera that is merely slow to
+/// open a stream, short of leaving a black tile for minutes.
+constexpr int kFallbackAttempts = 3;
 
 QString motionStyle()
 {
@@ -406,7 +410,7 @@ void VideoTile::createPlayer()
     // came out solid green. Keeping decode and rendering on one API fixes it.
     set("hwdec", m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec);
 
-    if (m_config.transport == QLatin1String("baichuan")) {
+    if (m_config.effectiveTransport() == QLatin1String("baichuan")) {
         // The relay wraps the camera's pictures in MPEG-TS, so the stream says
         // what it is and when each picture is due. Naming the format saves the
         // probe; everything else — the rate, the timing — mpv now reads for
@@ -467,7 +471,7 @@ QString VideoTile::playbackUrl() const
 {
     // Baichuan is spoken by leolink itself and re-served on a loopback port,
     // so the address only exists once that connection is up.
-    if (m_config.transport == QLatin1String("baichuan"))
+    if (m_config.effectiveTransport() == QLatin1String("baichuan"))
         return m_baichuanUrl;
     return m_config.streamUrl();
 }
@@ -520,7 +524,7 @@ void VideoTile::beginPlayback()
 {
     createPlayer();
 
-    if (m_config.transport == QLatin1String("baichuan")) {
+    if (m_config.effectiveTransport() == QLatin1String("baichuan")) {
         setStatusText(tr("connecting over Baichuan…"));
         m_spinner->setGeometry(m_surface->geometry());
         m_spinner->show();
@@ -529,6 +533,7 @@ void VideoTile::beginPlayback()
         m_infoTimer->start();
         m_lastFrameCount = 0;
         m_stalledChecks = 0;
+        m_everDecoded = false;
         m_watchdog->start();
         startBaichuan();
         return;
@@ -539,7 +544,7 @@ void VideoTile::beginPlayback()
     LEO_INFO(Stream, m_config.label(),
              QStringLiteral("Opening %1 (transport=%2, stream=%3, decoder=%4, "
                             "low latency=%5)")
-                 .arg(playbackUrl(), m_config.transport, m_config.stream,
+                 .arg(playbackUrl(), m_config.effectiveTransport(), m_config.stream,
                       m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec,
                       m_lowLatency ? QStringLiteral("yes") : QStringLiteral("no")));
     m_surface->play(playbackUrl());
@@ -551,6 +556,7 @@ void VideoTile::beginPlayback()
     m_infoTimer->start();
     m_lastFrameCount = 0;
     m_stalledChecks = 0;
+    m_everDecoded = false;
     m_watchdog->start();
     m_spinner->setGeometry(m_surface->geometry());
     m_spinner->show();
@@ -646,9 +652,10 @@ void VideoTile::applyConfig(const CameraConfig &config)
     // Compared as configuration, not as URL: the Baichuan transport has no URL
     // until its connection is up, and comparing empty against empty would make
     // a switch between stream types look like no change at all.
-    const bool streamChanged = config.streamUrl() != m_config.streamUrl() ||
-                               config.transport != m_config.transport ||
-                               config.stream != m_config.stream;
+    const bool streamChanged =
+        config.streamUrl() != m_config.streamUrl() ||
+        config.effectiveTransport() != m_config.effectiveTransport() ||
+        config.stream != m_config.stream;
     m_config = config;
 
     m_title->setText(m_config.label());
@@ -879,6 +886,7 @@ void VideoTile::checkAlive()
         m_lastFrameCount = frames;
         m_stalledChecks = 0;
         m_reconnectAttempts = 0;
+        m_everDecoded = true;
         return;
     }
 
@@ -891,6 +899,17 @@ void VideoTile::checkAlive()
     m_stalledChecks = 0;
 
     ++m_reconnectAttempts;
+    if (m_config.transport == QLatin1String("auto") && !m_everDecoded &&
+        m_reconnectAttempts >= kFallbackAttempts) {
+        LEO_WARN(Stream, m_config.label(),
+                 QStringLiteral("No picture over %1 in %2 attempts — trying the "
+                                "next transport")
+                     .arg(m_config.effectiveTransport())
+                     .arg(m_reconnectAttempts));
+        m_reconnectAttempts = 0;
+        emit transportFailed(m_config.id, m_config.effectiveTransport());
+        return;
+    }
     // Logged at warning level with everything needed to tell the two causes
     // apart: a camera that stopped sending, and a decoder that stopped
     // accepting what it sends.

@@ -134,14 +134,15 @@ QByteArray legacyHeader(quint32 msgType, quint32 bodyLen, quint16 enc)
     return out;
 }
 
-QByteArray modernHeader(quint32 msgType, quint32 bodyLen, quint8 encOffset = 0)
+QByteArray modernHeader(quint32 msgType, quint32 bodyLen, quint8 encOffset = 0,
+                        quint32 payloadOffset = 0, quint16 handle = 0)
 {
     QByteArray out;
     QDataStream s(&out, QIODevice::WriteOnly);
     s.setByteOrder(QDataStream::LittleEndian);
     s << kMagic << msgType << bodyLen
-      << encOffset << quint8(0) << quint16(0) << quint16(0) << kClassModern
-      << quint32(0);
+      << encOffset << quint8(0) << handle << quint16(0) << kClassModern
+      << payloadOffset;
     return out;
 }
 
@@ -689,6 +690,49 @@ bool BaichuanClient::readMediaChunk(QByteArray &media, int timeoutMs)
 
     media += body;
     return true;
+}
+
+QString BaichuanClient::request(quint32 msgType, const QString &body,
+                                const QString &extension, int *status)
+{
+    if (status)
+        *status = -1;
+    if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState) {
+        m_error = QStringLiteral("not connected");
+        return {};
+    }
+
+    // Extension and body are encrypted separately, each from the start of the
+    // keystream, and the header says where one ends: that is the payload
+    // offset, here the length of the encrypted extension.
+    const QByteArray ext = extension.isEmpty() ? QByteArray() : encryptXml(extension);
+    const QByteArray payload = body.isEmpty() ? QByteArray() : encryptXml(body);
+    // A handle of our own, so the answer can be told from anything else the
+    // camera chooses to send on the same connection meanwhile.
+    const quint16 handle = ++m_handle;
+    m_socket->write(modernHeader(msgType, ext.size() + payload.size(), 0,
+                                 quint32(ext.size()), handle) +
+                    ext + payload);
+    m_socket->flush();
+
+    for (;;) {
+        BcHeader header;
+        QByteArray reply;
+        if (!readMessage(header, reply))
+            return {};
+        if (header.msgType != msgType || header.handle != handle)
+            continue;
+        if (status)
+            *status = header.status();
+        if (header.status() != 200) {
+            m_error = QStringLiteral("message %1 answered with status %2")
+                          .arg(msgType).arg(header.status());
+            return {};
+        }
+        if (header.payloadOffset > 0 && header.payloadOffset <= quint32(reply.size()))
+            reply = reply.mid(int(header.payloadOffset));
+        return bodyText(header, reply);
+    }
 }
 
 void BaichuanClient::close()

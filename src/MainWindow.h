@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QHash>
+#include <functional>
 #include <QMainWindow>
 
 #include "Config.h"
@@ -61,6 +62,20 @@ private slots:
     void onTalkToggled(const QString &cameraId, bool talking);
 
 private:
+    /// Asks every camera not yet asked what it offers (CameraProbe), all at
+    /// once and off the interface thread, then runs `then`. Runs it at once if
+    /// there is nobody to ask.
+    void probeCameras(const std::function<void()> &then);
+    /// Copies what is known about each address onto the cameras in `config`,
+    /// which is where everything else looks for it.
+    void attachCapabilities(Config &config) const;
+    /// A tile on the automatic transport got nothing over the one it was
+    /// using: mark it failed for that address and give the tile the next.
+    void onTransportFailed(const QString &cameraId, const QString &transport);
+    /// What each address was found to offer. Keyed by host, like the status
+    /// clients: one device, one answer, however many entries point at it.
+    QHash<QString, Capabilities> m_caps;
+
     /// Finds out which cameras have a speaker, so only those get the button.
     void askAboutSpeakers();
     /// Asks the next camera waiting on one device, then the one after it.
