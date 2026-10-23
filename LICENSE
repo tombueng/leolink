@@ -58,11 +58,13 @@ Protocol documentation
     such as message numbers, which are not covered by copyright.
 
 reolink_aio (github.com/starkillerOG/reolink_aio), MIT
-    The AES session in src/Baichuan.cpp follows reolink_aio's Baichuan
-    client: its AES-128-CFB scheme (fixed IV, key from the MD5 of
-    "<nonce>-<password>"). leolink reimplements it in C++, and no Python source
-    was copied, but it is derived from that work, so its notice is reproduced
-    here as its licence asks:
+    The Baichuan settings messages in src/BaichuanApi.cpp and the AES session
+    in src/Baichuan.cpp follow reolink_aio's Baichuan client: its message
+    numbers, the XML element names it reads and writes, and its AES-128-CFB
+    scheme (fixed IV, key from the MD5 of "<nonce>-<password>"). leolink
+    reimplements these in C++, and no Python source was copied, but they are
+    derived from that work, so its notice is reproduced here as its licence
+    asks:
 
         MIT License
 

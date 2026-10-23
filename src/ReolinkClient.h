@@ -20,6 +20,7 @@ namespace leolink {
 /// What one device can stand, shared by every client talking to it.
 /// Defined in the .cpp — nothing outside needs its shape.
 struct HostGate;
+class BaichuanApi;
 
 /// Talks to /cgi-bin/api.cgi.
 ///
@@ -247,6 +248,19 @@ private:
     void releaseSession();
     void login(const std::function<void()> &then,
                const std::function<void(const QString &)> &onErr);
+
+    /// Whether this camera is spoken to over Baichuan instead: it has no web
+    /// server and does have port 9000. An E1 Pro is like that out of the box.
+    /// Decided by what the camera was found to offer when leolink started; a
+    /// camera nobody has asked yet is assumed to have HTTP, as before.
+    bool overBaichuan() const;
+    /// sendNow() for such a camera. Same callbacks, same queue, same error
+    /// codes: BaichuanApi answers in the HTTP API's own terms.
+    void sendOverBaichuan(const QString &command, const QJsonObject &param,
+                          const std::function<void(const QJsonObject &entry)> &onOk,
+                          const std::function<void(const QString &error)> &onErr,
+                          int action);
+    std::shared_ptr<BaichuanApi> m_baichuan;
 
     QNetworkAccessManager *m_net;
     CameraConfig m_camera;

@@ -16,6 +16,7 @@
 #include <QTimer>
 #include <QUrlQuery>
 
+#include "BaichuanApi.h"
 #include "Log.h"
 
 namespace leolink {
@@ -167,6 +168,7 @@ void ReolinkClient::setCamera(const CameraConfig &camera)
     releaseSession();
     m_camera = camera;
     m_token.clear();
+    m_baichuan.reset();
 
     // A camera on a channel other than zero is behind a recorder and says so
     // by existing. Channel 0 cannot be told apart from a standalone camera
@@ -445,6 +447,11 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                             const std::function<void(const QString &)> &onErr,
                             int action, int retriesLeft)
 {
+    if (overBaichuan()) {
+        sendOverBaichuan(command, param, onOk, onErr, action);
+        return;
+    }
+
     QJsonObject entry;
     entry[QStringLiteral("cmd")] = command;
     entry[QStringLiteral("action")] = action;
@@ -609,9 +616,69 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
     });
 }
 
+bool ReolinkClient::overBaichuan() const
+{
+    return m_camera.caps.settingsOverBaichuan();
+}
+
+void ReolinkClient::sendOverBaichuan(const QString &command, const QJsonObject &param,
+                                     const std::function<void(const QJsonObject &)> &onOk,
+                                     const std::function<void(const QString &)> &onErr,
+                                     int action)
+{
+    if (!m_baichuan)
+        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
+
+    LEO_DEBUG(Api, m_camera.label(),
+              QStringLiteral("→ %1 action=%2 over Baichuan").arg(command).arg(action));
+    const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
+    m_baichuan->call(command, param, action, this,
+                     [this, command, startedAt, onOk, onErr](const QJsonObject &entry) {
+        const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
+        // The slot is the device's, as on the HTTP path, and the next request
+        // goes once this one's handler has run.
+        if (m_host)
+            --m_host->inFlight;
+        struct Pumper {
+            ReolinkClient *self;
+            ~Pumper() { self->pumpHost(); }
+        } pumper{this};
+
+        if (entry.value(QStringLiteral("code")).toInt(-1) != 0) {
+            const QJsonObject err = entry.value(QStringLiteral("error")).toObject();
+            const int rspCode = err.value(QStringLiteral("rspCode")).toInt();
+            const QString detail = err.value(QStringLiteral("detail")).toString();
+            m_lastErrorCode = rspCode;
+            if (meansUnsupported(rspCode)) {
+                LEO_DEBUG(Api, m_camera.label(),
+                          QStringLiteral("← %1 not available over Baichuan")
+                              .arg(command));
+                // Not "this firmware cannot": the firmware may well, through
+                // the web server this camera lacks.
+                onErr(tr("Not available without the camera's web server."));
+            } else {
+                LEO_WARN(Api, m_camera.label(),
+                         QStringLiteral("← %1 failed over Baichuan after %2 ms: %3")
+                             .arg(command).arg(elapsed).arg(detail));
+                onErr(detail);
+            }
+            return;
+        }
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("← %1 ok over Baichuan after %2 ms")
+                      .arg(command).arg(elapsed));
+        onOk(entry);
+    });
+}
+
 void ReolinkClient::login(const std::function<void()> &then,
                           const std::function<void(const QString &)> &onErr)
 {
+    // No HTTP session to open: BaichuanApi logs in on its own connection.
+    if (overBaichuan()) {
+        then();
+        return;
+    }
     if (!m_token.isEmpty()) {
         then();
         return;
@@ -1176,6 +1243,11 @@ void ReolinkClient::changePassword(const QString &name, const QString &password)
 
 void ReolinkClient::fetchSnapshot()
 {
+    if (overBaichuan()) {
+        emit failed(tr("Snapshots from %1 need its web server, which it does "
+                       "not have.").arg(m_camera.label()));
+        return;
+    }
     login([this] {
         QUrl url = apiUrl(QStringLiteral("Snap"));
         QUrlQuery q(url.query());

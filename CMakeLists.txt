@@ -57,6 +57,7 @@ qt_add_executable(leolink
     src/PlaybackBrowser.cpp   src/PlaybackBrowser.h
     src/Aes128.cpp            src/Aes128.h
     src/Baichuan.cpp          src/Baichuan.h
+    src/BaichuanApi.cpp       src/BaichuanApi.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
     src/CameraProbe.cpp       src/CameraProbe.h
     src/Keyring.cpp           src/Keyring.h

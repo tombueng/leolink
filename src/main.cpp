@@ -12,6 +12,8 @@
 #include <QTranslator>
 
 #include "Baichuan.h"
+#include "BaichuanApi.h"
+#include "CameraProbe.h"
 #include "CameraSettingsDialog.h"
 #include "Config.h"
 #include "Log.h"
@@ -183,6 +185,14 @@ int main(int argc, char *argv[])
                        "the container holds. Writes the elementary stream to "
                        "the file given by --out."),
         QStringLiteral("host"));
+    const QCommandLineOption bcApi(
+        QStringList{QStringLiteral("baichuan-api")},
+        QStringLiteral("Answer one HTTP API command over Baichuan, as leolink "
+                       "does for cameras without a web server, and print the "
+                       "reply. Takes the command, and optionally its JSON "
+                       "parameters, as arguments. Uses the password stored for "
+                       "that camera unless --password is given."),
+        QStringLiteral("host"));
     const QCommandLineOption bcOut(
         QStringList{QStringLiteral("out")},
         QStringLiteral("Where to write the probed stream."),
@@ -201,6 +211,7 @@ int main(int argc, char *argv[])
     parser.addOption(bcTest);
     parser.addOption(bcUid);
     parser.addOption(bcVideo);
+    parser.addOption(bcApi);
     parser.addOption(bcOut);
     parser.addOption(bcSeconds);
     parser.addOption(bcUser);
@@ -235,6 +246,22 @@ int main(int argc, char *argv[])
             parser.value(bcVideo), parser.value(bcUser), parser.value(bcPass),
             parser.value(bcOut), parser.value(bcSeconds).toInt());
     }
+    if (parser.isSet(bcApi)) {
+        const QString host = parser.value(bcApi);
+        QString user = parser.value(bcUser);
+        QString password = parser.value(bcPass);
+        // From the configuration where it can be, so that comparing a camera's
+        // two answers does not mean typing its password onto a command line.
+        for (const leolink::CameraConfig &camera : config.cameras) {
+            if (camera.host != host || parser.isSet(bcPass))
+                continue;
+            user = camera.user;
+            password = camera.secret();
+        }
+        const QStringList args = parser.positionalArguments();
+        return leolink::runBaichuanApiProbe(host, user, password, args.value(0),
+                                            args.value(1));
+    }
     if (parser.isSet(bcUid)) {
         return leolink::runP2PProbe(parser.value(bcUid),
                                     parser.value(bcUser),
@@ -262,6 +289,12 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        // Asked first, as the main window does at start, so the dialog talks
+        // to the camera the way it would in use — over Baichuan where there is
+        // no web server.
+        subject.caps = leolink::CameraProbe::run(subject, subject.secret());
+        std::fprintf(stderr, "probe           %s\n",
+                     qPrintable(leolink::CameraProbe::describe(subject)));
         auto *dialog = new leolink::CameraSettingsDialog(subject);
         dialog->show();
         // Long enough for every section to have come back. Six seconds was not,

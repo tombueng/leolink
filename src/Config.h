@@ -32,6 +32,9 @@ struct Capabilities {
     bool api() const { return !known || http || https; }
     bool events() const { return !known || onvif; }
     bool rtspReachable() const { return !known || rtsp; }
+    /// Settings go over Baichuan only on a camera known to have no web server.
+    /// One not asked yet keeps the HTTP API, as it always did.
+    bool settingsOverBaichuan() const { return known && !api() && baichuan; }
 };
 
 /// One configured camera.
@@ -135,6 +138,9 @@ struct CameraConfig {
 
     /// Run-time only; see Capabilities.
     Capabilities caps;
+    /// The Baichuan port. Not in the file: every camera seen uses 9000, and
+    /// only a test, pointing leolink at a camera of its own, changes it.
+    quint16 baichuanPort{9000};
     /// The transport actually used: `transport`, unless that is "auto", in
     /// which case the first of flv, rtsp and baichuan the camera offers and
     /// that has not already failed. Before the camera has been asked, RTSP.

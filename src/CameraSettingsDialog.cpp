@@ -234,7 +234,12 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 // Each panel gets its own answer. A label left reading "Asking
                 // Reolink…" for ever is indistinguishable from a program that
                 // has stopped responding, and that is what this was.
-                const QString style = QStringLiteral("color:#c0392b;");
+                // Grey, not red, for "this camera has no such thing": it is
+                // an answer, not a fault.
+                const QString style =
+                    ReolinkClient::meansUnsupported(m_client->lastErrorCode())
+                        ? QStringLiteral("color:#7f8c8d;")
+                        : QStringLiteral("color:#c0392b;");
                 if (what == QLatin1String("firmware")) {
                     m_firmware->setText(reason);
                     m_firmware->setStyleSheet(style);

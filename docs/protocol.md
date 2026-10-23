@@ -546,6 +546,76 @@ From the dissector; only type 1 verified here.
 18 PTZ    25–107 configuration           145 ping   234 UDP keep-alive
 ```
 
+### Settings
+
+A camera with no web server — an E1 Pro, or an E1 with HTTP switched off —
+still carries every setting over Baichuan. leolink answers the CGI API's
+commands from these messages (`src/BaichuanApi.cpp`), so the settings dialog
+works on such a camera without knowing the difference. Message numbers from
+[reolink_aio](https://github.com/starkillerOG/reolink_aio) (MIT, notice in
+[LICENSE](../LICENSE)); each mapping checked field by field against an E1 Zoom answering
+both ways (`leolink --baichuan-api <host> <command>`), and every write tried on
+an E1 (3.1.0.1643) and an E1 Pro (3.1.0.3149): write, read back, restore,
+compare the raw XML.
+
+Requests carry `<Extension><channelId>0</channelId></Extension>`. A write sends
+the whole `<body>` the read returned, changed. Status 200 is success; a read
+answered 400 or 405 is how the camera says it has no such thing.
+
+```
+read/write  XML                         CGI API
+80          VersionInfo                 GetDevInfo
+56/57       Compression                 GetEnc/SetEnc     (range: 146 StreamInfoList)
+26/25       VideoInput                  GetImage/SetImage
+26/25       InputAdvanceCfg             GetIsp/SetIsp     (threshold: 296/297)
+44/45       OsdDatetime, OsdChannelName GetOsd/SetOsd
+52/53       Shelter                     GetMask/SetMask
+46/47       MD                          GetMdAlarm/SetMdAlarm
+299/300     AiCfg                       GetAiCfg/SetAiCfg
+54/55, 81/82 RecordCfg, Record          GetRecV20/SetRecV20
+217/216     EmailTask                   Get/SetEmailV20   (switch and schedule)
+70/71       FtpTask                     Get/SetFtpV20     (switch and schedule)
+219/218     PushTask                    Get/SetPushV20
+232/231     AudioTask                   Get/SetAudioAlarmV20
+37/36       ServerPort, HttpPort, …     GetNetPort/SetNetPort
+76          Dhcp, Ip, Dns               GetLocalLink
+116         Wifi (and the scan list)    GetWifi, ScanWifi
+115         WifiSignal                  GetWifiSignal
+114         Uid                         GetP2p
+104/105     SystemGeneral               GetTime/SetTime
+208/209     LedState                    Get/SetIrLights, Get/SetPowerLed
+102         HddInfoList                 GetHddInfo
+190         PtzPreset                   GetPtzPreset
+23          —                           Reboot
+```
+
+What does not map one to one:
+
+- **OSD positions** are `topLeftX`/`topLeftY`: 1 for the near edge, 65536 for
+  the far one, 65537 for the centre. Upper Left is 1/1, Top Center 65537/1,
+  Lower Right 65536/65536.
+- **The motion grid** is a 96×64 bitmap, base64, most significant bit first,
+  with the active 80×60 in its top left corner. The CGI API's is a string of
+  '0' and '1', 80×60. Bit order confirmed by clearing cells over Baichuan and
+  reading them back over HTTP.
+- **Motion sensitivity.** Firmware with `<sensInfoNew>` goes by its
+  `sensitivityDefault` alone. A per-period band written to the older
+  `<sensitivityInfoList>` is answered 200 and ignored, and so is
+  `<MD><enable>0</enable>`. leolink offers the default sensitivity and no
+  switch.
+- **AI kinds.** `detectType` lists the kinds switched on; the CGI API lists
+  people, vehicle, dog_cat and face whatever the model, each 0 or 1.
+- **Schedules** are `typeScheduleList` items, 168 characters each: `MD`,
+  `Normal` (the CGI API's `TIMING`), `people`, `vehicle`, `dog_cat`.
+- **Storage** sizes come in two parts; the CGI API's figure is G × 1024 + M.
+- **Wi-Fi signal** is in dBm. The CGI API's 0–4 is roughly (dBm + 64) / 4,
+  fitted to two cameras answering both ways.
+
+Not found over Baichuan yet: user accounts, the e-mail and FTP server
+settings, daylight-saving rules, NTP, firmware updates, formatting the card,
+recording search. Those answer -9, as a CGI command the firmware does not know
+would, and the dialog leaves them out.
+
 ### P2P — implemented, never run
 
 Reaching a camera by UID goes through Reolink's rendezvous servers,
