@@ -2508,6 +2508,13 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
                                 : QStringLiteral("MdAlarm");
         m_alarmCommand = command;
         onAlarmReady(value.value(key).toObject());
+        // The generated form above the area and schedule edits the same
+        // section. It used never to be filled, since this branch returned
+        // before the generic one below could reach it, and it sat empty on
+        // every camera. It is written back together with the rest of the
+        // alarm in onApply — two writes of one section undo each other.
+        if (SectionEditor *editor = m_sections.value(QStringLiteral("GetMdAlarm")))
+            editor->populate(value.value(key).toObject(), ranges.value(key).toObject());
         return;
     }
     if (command == QLatin1String("GetRec") ||
@@ -2707,6 +2714,8 @@ void CameraSettingsDialog::onApply()
         SectionEditor *editor = it.value();
         if (!editor->hasAnything())
             continue;   // the camera never offered this section
+        if (it.key() == QLatin1String("GetMdAlarm"))
+            continue;   // goes with the alarm, below
         const QString wrapper = m_sectionWrappers.value(it.key());
         QJsonObject section = editor->collect();
 
@@ -2734,15 +2743,22 @@ void CameraSettingsDialog::onApply()
         m_client->applySection(QStringLiteral("SetMask"), param);
     }
 
-    // The alarm section has no generated form of its own. Written only when
-    // something in it was actually changed: it carries fields this dialog does
-    // not show, and handing them all back on every Apply is a good way to
-    // overwrite a setting nobody touched.
-    if (m_alarmDirty && !m_alarm.isEmpty()) {
+    // The alarm section: the area, the schedule and the sensitivity bands,
+    // plus whatever the generated motion form above them shows. Written once,
+    // and only when something in it was actually changed: it carries fields
+    // this dialog does not show, and handing them all back on every Apply is a
+    // good way to overwrite a setting nobody touched.
+    QJsonObject alarm = m_alarm.isEmpty() ? QJsonObject() : collectAlarm();
+    bool alarmChanged = m_alarmDirty;
+    if (SectionEditor *editor = m_sections.value(QStringLiteral("GetMdAlarm"));
+        editor && editor->hasAnything() && !alarm.isEmpty()) {
+        if (mergeFormEdits(alarm, editor->collect(), m_alarm))
+            alarmChanged = true;
+    }
+    if (alarmChanged && !m_alarm.isEmpty()) {
         const bool isMd = m_alarmCommand == QLatin1String("GetMdAlarm");
         QJsonObject param;
-        param[isMd ? QStringLiteral("MdAlarm") : QStringLiteral("Alarm")] =
-            collectAlarm();
+        param[isMd ? QStringLiteral("MdAlarm") : QStringLiteral("Alarm")] = alarm;
         ++m_pending;
         m_client->applySection(isMd ? QStringLiteral("SetMdAlarm")
                                     : QStringLiteral("SetAlarm"),

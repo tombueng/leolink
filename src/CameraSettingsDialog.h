@@ -95,6 +95,25 @@ private slots:
     /// Stores the leolink half back into m_camera and closes.
     void onDone();
 
+public:
+    /// The motion form's edits, folded into the alarm section it shares with
+    /// the area and schedule editors. Only a field the form changed from
+    /// `original` is taken: the form hands back every field it shows, and
+    /// taking the unchanged ones would undo an edit made to the area or the
+    /// schedule meanwhile. True when the form changed anything.
+    static bool mergeFormEdits(QJsonObject &alarm, const QJsonObject &form,
+                               const QJsonObject &original)
+    {
+        bool changed = false;
+        for (auto f = form.constBegin(); f != form.constEnd(); ++f) {
+            if (f.value() != original.value(f.key())) {
+                alarm[f.key()] = f.value();
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
 private:
     // ── the leolink half ────────────────────────────────────────────────────
     void buildWatchTab();
