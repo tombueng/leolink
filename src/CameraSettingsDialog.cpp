@@ -29,6 +29,7 @@
 #include <QVBoxLayout>
 
 #include "ActionEditor.h"
+#include "CameraProbe.h"
 #include "Log.h"
 #include "ReolinkClient.h"
 #include "SchedulePicker.h"
@@ -103,6 +104,9 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
             m_stack->setCurrentIndex(page.toInt());
     });
 
+    beginSection(tr("This camera"));
+    buildAboutTab();
+
     beginSection(tr("In leolink"));
     buildWatchTab();
     buildRecordTab();
@@ -157,6 +161,26 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     root->addLayout(statusRow);
     root->addWidget(buttons);
 
+    connect(m_client, &ReolinkClient::deviceInfoReady, this,
+            [this](const QJsonObject &info) {
+                // A dash for what this model does not report — an E1 has no
+                // item number — rather than an ellipsis that never resolves.
+                auto field = [&info](const char *key) {
+                    const QJsonValue v = info.value(QLatin1String(key));
+                    const QString text = v.isString() ? v.toString().trimmed()
+                                         : v.isDouble() ? QString::number(v.toInt())
+                                                        : QString();
+                    return text.isEmpty() ? QStringLiteral("—") : text;
+                };
+                setAbout(QStringLiteral("name"), field("name"));
+                setAbout(QStringLiteral("model"), field("model"));
+                setAbout(QStringLiteral("itemNo"), field("itemNo"));
+                setAbout(QStringLiteral("hardware"), field("hardVer"));
+                setAbout(QStringLiteral("firmware"), field("firmVer"));
+                setAbout(QStringLiteral("build"), field("buildDay"));
+                setAbout(QStringLiteral("serial"), field("serial"));
+                setAbout(QStringLiteral("detail"), field("detail"));
+            });
     connect(m_client, &ReolinkClient::sectionReady,
             this, &CameraSettingsDialog::onSectionReady);
     connect(m_client, &ReolinkClient::sectionApplied,
@@ -271,6 +295,8 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
 
 void CameraSettingsDialog::queryCamera()
 {
+    m_client->fetchDeviceInfo();
+    m_client->fetchSection(QStringLiteral("GetP2p"));
     m_client->fetchNetworkInfo();
     m_client->fetchPerformance();
     m_client->fetchUsers();
@@ -1212,6 +1238,13 @@ void CameraSettingsDialog::onNetworkInfo(const QJsonObject &info)
     const QJsonObject dns = link.value(QStringLiteral("dns")).toObject();
     const QJsonObject stat = link.value(QStringLiteral("static")).toObject();
 
+    setAbout(QStringLiteral("mac"), link.value(QStringLiteral("mac")).toString());
+    setAbout(QStringLiteral("ip"), stat.value(QStringLiteral("ip")).toString());
+    const QString ssid = wifi.value(QStringLiteral("ssid")).toString();
+    setAbout(QStringLiteral("link"),
+             ssid.isEmpty() ? link.value(QStringLiteral("activeLink")).toString()
+                            : tr("Wi-Fi, %1").arg(ssid));
+
     QStringList rows;
     auto add = [&rows](const QString &label, const QString &value) {
         if (!value.isEmpty())
@@ -1249,6 +1282,92 @@ void CameraSettingsDialog::onNetworkInfo(const QJsonObject &info)
 
     m_networkInfo->setText(rows.isEmpty() ? tr("The camera reported nothing.")
                                           : rows.join(QStringLiteral("<br>")));
+}
+
+void CameraSettingsDialog::buildAboutTab()
+{
+    auto *page = new QWidget(this);
+
+    auto *form = new QFormLayout;
+    form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    auto row = [this, form, page](const QString &key, const QString &label) {
+        auto *value = new QLabel(QStringLiteral("…"), page);
+        value->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        value->setWordWrap(true);
+        form->addRow(label, value);
+        m_about.insert(key, value);
+    };
+    row(QStringLiteral("name"), tr("Name"));
+    row(QStringLiteral("model"), tr("Model"));
+    row(QStringLiteral("itemNo"), tr("Item number"));
+    row(QStringLiteral("hardware"), tr("Hardware"));
+    row(QStringLiteral("firmware"), tr("Firmware"));
+    row(QStringLiteral("build"), tr("Build"));
+    row(QStringLiteral("detail"), tr("Board"));
+    row(QStringLiteral("serial"), tr("Serial number"));
+    row(QStringLiteral("uid"), tr("UID"));
+    row(QStringLiteral("mac"), tr("MAC address"));
+    row(QStringLiteral("ip"), tr("IP address"));
+    row(QStringLiteral("link"), tr("Network"));
+
+    auto *identity = new QGroupBox(tr("What it is"), page);
+    identity->setLayout(form);
+
+    // How leolink reaches it, which is known before the camera answers
+    // anything: it was asked when leolink started.
+    auto *reach = new QFormLayout;
+    auto addFixed = [reach, page](const QString &label, const QString &text) {
+        auto *value = new QLabel(text, page);
+        value->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        value->setWordWrap(true);
+        reach->addRow(label, value);
+        return value;
+    };
+    addFixed(tr("Address"), m_camera.host);
+    addFixed(tr("Found"), CameraProbe::describe(m_camera));
+    const bool overBaichuan = m_camera.caps.settingsOverBaichuan();
+    addFixed(tr("Settings"),
+             overBaichuan ? tr("Over Baichuan, port 9000 — this camera has no web "
+                               "server. Most settings are available; some, such as "
+                               "user accounts and e-mail server details, are only "
+                               "reachable through Reolink's own app.")
+                          : tr("Over the camera's web interface (HTTP API)."));
+
+    auto *connection = new QGroupBox(tr("How leolink reaches it"), page);
+    connection->setLayout(reach);
+
+    auto *copy = new QPushButton(tr("Copy"), page);
+    copy->setToolTip(tr("Puts all of this on the clipboard, for a bug report or "
+                        "a support request."));
+    connect(copy, &QPushButton::clicked, this, [this, identity, connection] {
+        QStringList lines;
+        for (QGroupBox *box : {identity, connection}) {
+            auto *f = qobject_cast<QFormLayout *>(box->layout());
+            for (int i = 0; f && i < f->rowCount(); ++i) {
+                auto *label = qobject_cast<QLabel *>(
+                    f->itemAt(i, QFormLayout::LabelRole)->widget());
+                auto *value = qobject_cast<QLabel *>(
+                    f->itemAt(i, QFormLayout::FieldRole)->widget());
+                if (label && value)
+                    lines << QStringLiteral("%1: %2").arg(label->text(), value->text());
+            }
+        }
+        QApplication::clipboard()->setText(lines.join(QLatin1Char('\n')));
+    });
+
+    auto *layout = new QVBoxLayout(page);
+    layout->addWidget(identity);
+    layout->addWidget(connection);
+    layout->addWidget(copy, 0, Qt::AlignLeft);
+    layout->addStretch(1);
+
+    addPage(page, tr("About"));
+}
+
+void CameraSettingsDialog::setAbout(const QString &key, const QString &value)
+{
+    if (QLabel *label = m_about.value(key); label && !value.isEmpty())
+        label->setText(value);
 }
 
 void CameraSettingsDialog::buildMaintenanceTab()
@@ -2368,6 +2487,11 @@ void CameraSettingsDialog::onSectionReady(const QString &command,
                                           const QJsonObject &value,
                                           const QJsonObject &ranges)
 {
+    if (command == QLatin1String("GetP2p")) {
+        setAbout(QStringLiteral("uid"), value.value(QStringLiteral("P2p")).toObject()
+                                            .value(QStringLiteral("uid")).toString());
+        return;
+    }
     if (command == QLatin1String("GetMask")) {
         onMaskReady(value.value(QStringLiteral("Mask")).toObject(),
                     ranges.value(QStringLiteral("Mask")).toObject());
@@ -2661,6 +2785,9 @@ void CameraSettingsDialog::reportForTesting() const
     std::fprintf(stderr, "condition       %s\n",
                  qPrintable(m_performance->text().replace('\n', ' ')));
     std::fprintf(stderr, "status          %s\n", qPrintable(m_status->text()));
+    for (auto it = m_about.cbegin(); it != m_about.cend(); ++it)
+        std::fprintf(stderr, "about %-10s %s\n", qPrintable(it.key()),
+                     qPrintable(it.value()->text()));
     for (int i = 0; i < m_nav->count(); ++i) {
         const QVariant page = m_nav->item(i)->data(Qt::UserRole);
         if (!page.isValid()) {

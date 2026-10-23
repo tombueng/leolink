@@ -110,6 +110,9 @@ private:
     void buildEncoderTab();
     void buildPictureTab();
     void buildMaintenanceTab();
+    void buildAboutTab();
+    /// Fills one line of the About page; empty values leave it as it was.
+    void setAbout(const QString &key, const QString &value);
     void buildNetworkTab();
     void buildMobileTab();
     void buildPictureSections();
@@ -228,6 +231,8 @@ private:
     /// The same list in a form worth pasting into a bug report.
     QString m_capabilityReport;
     QLabel *m_firmware{nullptr};
+    /// The About page's values, by field: "model", "firmware", "mac", …
+    QMap<QString, QLabel *> m_about;
     QPushButton *m_checkFirmwareButton{nullptr};
     /// Says why the user list is empty, rather than leaving an empty table.
     QLabel *m_userStatus{nullptr};
