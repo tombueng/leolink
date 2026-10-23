@@ -13,6 +13,7 @@
 #include <QGridLayout>
 #include <QInputDialog>
 #include <QLabel>
+#include <QListWidget>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -154,6 +155,29 @@ MainWindow::MainWindow(QWidget *parent)
                 dialog.show();
                 QApplication::processEvents();
                 auto *tabs = dialog.findChild<QTabWidget *>();
+                // The camera dialog has a list down the side rather than tabs:
+                // one picture per entry that leads somewhere, headings skipped.
+                auto *list = dialog.findChild<QListWidget *>();
+                if (!tabs && list) {
+                    for (int i = 0; i < list->count(); ++i) {
+                        if (!list->item(i)->data(Qt::UserRole).isValid())
+                            continue;
+                        list->setCurrentRow(i);
+                        QApplication::processEvents();
+                        QThread::msleep(120);
+                        QApplication::processEvents();
+                        QString name = list->item(i)->text();
+                        name.replace(QRegularExpression(QStringLiteral("[^\\w]+")),
+                                     QStringLiteral("-"));
+                        const QString path = QStringLiteral("%1/%2-%3-%4.png")
+                                                 .arg(shotDir, prefix)
+                                                 .arg(i + 1, 2, 10, QLatin1Char('0'))
+                                                 .arg(name.toLower());
+                        dialog.grab().save(path);
+                        std::fprintf(stderr, "screenshot: %s\n", qPrintable(path));
+                    }
+                    return;
+                }
                 if (!tabs) {
                     dialog.grab().save(shotDir + QStringLiteral("/%1.png").arg(prefix));
                     return;
