@@ -10,6 +10,7 @@
 #include "Config.h"
 
 class QNetworkAccessManager;
+class QTimer;
 
 namespace leolink {
 
@@ -63,6 +64,8 @@ signals:
 private:
     void subscribe();
     void pull();
+    /// Extends the subscription before the camera lets it lapse.
+    void renew();
     /// One <NotificationMessage> from a poll: raises motion if it says so and
     /// if it is about this camera.
     void handleMessage(const QString &message);
@@ -75,6 +78,7 @@ private:
     QString securityHeader() const;
 
     QNetworkAccessManager *m_net;
+    QTimer *m_renewTimer;
     /// The device: host, credentials, and the label used in the log.
     CameraConfig m_camera;
     /// Everything watched through it. One entry for a camera, one per channel

@@ -22,6 +22,14 @@ namespace {
 
 constexpr int kPullSeconds = 30;
 
+/// How long a subscription is asked to last. Left to itself an E1 Zoom gives
+/// ten seconds, and holds a poll for up to twenty: a quiet poll outlived its
+/// own subscription, and the next one was refused.
+constexpr int kLifetimeSeconds = 120;
+
+const QString kRenewAction =
+    QStringLiteral("http://docs.oasis-open.org/wsn/bw-2/SubscriptionManager/RenewRequest");
+
 const QString kPullAction =
     QStringLiteral("http://www.onvif.org/ver10/events/wsdl/"
                    "PullPointSubscription/PullMessages");
@@ -39,8 +47,9 @@ QString tagText(const QString &xml, const QString &localName)
 } // namespace
 
 MotionWatcher::MotionWatcher(QObject *parent)
-    : QObject(parent), m_net(new QNetworkAccessManager(this))
+    : QObject(parent), m_net(new QNetworkAccessManager(this)), m_renewTimer(new QTimer(this))
 {
+    connect(m_renewTimer, &QTimer::timeout, this, &MotionWatcher::renew);
 }
 
 QString MotionWatcher::securityHeader() const
@@ -123,6 +132,31 @@ void MotionWatcher::stop()
 {
     m_running = false;
     m_subscription.clear();
+    m_renewTimer->stop();
+}
+
+void MotionWatcher::renew()
+{
+    if (!m_running || m_subscription.isEmpty())
+        return;
+    QNetworkRequest req{QUrl(m_subscription)};
+    req.setHeader(QNetworkRequest::ContentTypeHeader,
+                  QStringLiteral("application/soap+xml; charset=utf-8"));
+    // With WS-Addressing, like a poll: without it the camera answers 400.
+    QNetworkReply *reply = m_net->post(
+        req, envelope(QStringLiteral("<wsnt:Renew xmlns:wsnt=\"http://docs.oasis-open.org/wsn/b-2\">"
+                                     "<wsnt:TerminationTime>PT%1S</wsnt:TerminationTime>"
+                                     "</wsnt:Renew>")
+                          .arg(kLifetimeSeconds),
+                      kRenewAction, m_subscription));
+    connect(reply, &QNetworkReply::finished, this, [this, reply] {
+        reply->deleteLater();
+        // A renewal that fails is followed by a poll that fails, and that
+        // subscribes again; nothing more to do here than say so.
+        if (reply->error() != QNetworkReply::NoError)
+            LEO_DEBUG(Onvif, m_camera.label(),
+                      QStringLiteral("Renewal refused: %1").arg(reply->errorString()));
+    });
 }
 
 void MotionWatcher::subscribe()
@@ -139,7 +173,11 @@ void MotionWatcher::subscribe()
 
     // No WS-Addressing here — Reolink rejects the subscribe request with it.
     QNetworkReply *reply = m_net->post(
-        req, envelope(QStringLiteral("<tev:CreatePullPointSubscription/>"), {}, {}));
+        req, envelope(QStringLiteral("<tev:CreatePullPointSubscription>"
+                                     "<tev:InitialTerminationTime>PT%1S</tev:InitialTerminationTime>"
+                                     "</tev:CreatePullPointSubscription>")
+                          .arg(kLifetimeSeconds),
+                      {}, {}));
 
     connect(reply, &QNetworkReply::finished, this, [this, reply] {
         reply->deleteLater();
@@ -172,8 +210,17 @@ void MotionWatcher::subscribe()
             return;
         }
         m_subscription = address;
+
+        // Kept alive at half of what the camera granted, which is not always
+        // what was asked: a camera that ignores the request still gets its
+        // renewal in time.
+        const QDateTime now = QDateTime::fromString(tagText(xml, QStringLiteral("CurrentTime")), Qt::ISODate);
+        const QDateTime end = QDateTime::fromString(tagText(xml, QStringLiteral("TerminationTime")), Qt::ISODate);
+        const qint64 granted = now.isValid() && end.isValid() ? now.secsTo(end) : 10;
+        m_renewTimer->start(int(qBound(qint64(1), granted / 2, qint64(kLifetimeSeconds / 2))) * 1000);
+
         LEO_INFO(Onvif, m_camera.label(),
-                 QStringLiteral("Subscribed, polling %1").arg(address));
+                 QStringLiteral("Subscribed for %1 s, polling %2").arg(granted).arg(address));
         pull();
     });
 }
