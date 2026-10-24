@@ -113,6 +113,7 @@ void MotionWatcher::watch(const QList<CameraConfig> &cameras)
     m_camera = cameras.first();
     m_cameras = cameras;
     m_activeById.clear();
+    m_happening.clear();
     m_running = true;
     m_failures = 0;
     subscribe();
@@ -313,14 +314,28 @@ void MotionWatcher::handleMessage(const QString &message)
         }
     }
 
+    // Each topic has its state of its own. A camera reports plain motion and
+    // each kind of recognised object separately — CellMotionDetector/Motion,
+    // MyRuleDetector/PeopleDetect, VehicleDetect … — and a person leaving the
+    // picture says PeopleDetect false while the motion goes on. Taken as one
+    // switch, that ended the alert in the middle of it.
+    const QString topic = tagText(message, QStringLiteral("Topic"));
+
     while (it.hasNext()) {
         const auto m = it.next();
-        const bool active = m.captured(2).compare(QLatin1String("true"),
-                                                  Qt::CaseInsensitive) == 0;
+        const bool on = m.captured(2).compare(QLatin1String("true"),
+                                              Qt::CaseInsensitive) == 0;
+        const QString what = topic + QLatin1Char('/') + m.captured(1);
 
         for (const CameraConfig &camera : std::as_const(m_cameras)) {
             if (camera.channel != channel)
                 continue;
+            QSet<QString> &happening = m_happening[camera.id];
+            if (on)
+                happening.insert(what);
+            else
+                happening.remove(what);
+            const bool active = !happening.isEmpty();
             if (m_activeById.value(camera.id, false) == active)
                 continue;
             m_activeById.insert(camera.id, active);

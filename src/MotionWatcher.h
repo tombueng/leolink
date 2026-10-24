@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QList>
 #include <QObject>
+#include <QSet>
 #include <QString>
 
 #include "Config.h"
@@ -77,6 +78,10 @@ private:
     QList<CameraConfig> m_cameras;
     /// Last reported state per camera id, so a change is reported once.
     QHash<QString, bool> m_activeById;
+    /// What each camera currently reports as happening, one entry per topic
+    /// and item: "tns1:RuleEngine/CellMotionDetector/Motion/IsMotion". A
+    /// camera is seeing motion while any of them is.
+    QHash<QString, QSet<QString>> m_happening;
     QString m_subscription;
     bool m_active{false};
     bool m_running{false};
