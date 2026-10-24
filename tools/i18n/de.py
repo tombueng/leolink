@@ -1520,6 +1520,57 @@ STRINGS: dict[str, str] = {
         "einmal eingeben; beim Speichern wandert es in den Schlüsselbund",
     "no keyring is answering — it will stay in the file":
         "kein Schlüsselbund antwortet — es bleibt in der Datei",
+    # ── reaching cameras over Baichuan, the About page, the automatic transport ──
+    'Cannot reach %1 over Baichuan: %2':
+        '%1 ist über Baichuan nicht erreichbar: %2',
+    'Lost the connection to %1.':
+        'Die Verbindung zu %1 ist abgebrochen.',
+    'This camera':
+        'Diese Kamera',
+    'Wi-Fi, %1':
+        'WLAN, %1',
+    'Model':
+        'Modell',
+    'Item number':
+        'Artikelnummer',
+    'Hardware':
+        'Hardware',
+    'Build':
+        'Build',
+    'Board':
+        'Platine',
+    'Serial number':
+        'Seriennummer',
+    'MAC address':
+        'MAC-Adresse',
+    'IP address':
+        'IP-Adresse',
+    'What it is':
+        'Was sie ist',
+    'Found':
+        'Gefunden',
+    "Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink's own app.":
+        'Über Baichuan, Port 9000 — diese Kamera hat keinen Webserver. Die meisten Einstellungen sind verfügbar; einige, etwa Benutzerkonten und die Angaben zum E-Mail-Server, sind nur über Reolinks eigene App erreichbar.',
+    "Over the camera's web interface (HTTP API).":
+        'Über die Weboberfläche der Kamera (HTTP-API).',
+    'How leolink reaches it':
+        'Wie leolink sie erreicht',
+    'Copy':
+        'Kopieren',
+    'Puts all of this on the clipboard, for a bug report or a support request.':
+        'Legt all das in die Zwischenablage, für eine Fehlermeldung oder eine Supportanfrage.',
+    'About':
+        'Info',
+    'Asking the cameras what they offer…':
+        'Die Kameras werden gefragt, was sie bieten…',
+    "Not available without the camera's web server.":
+        'Ohne den Webserver der Kamera nicht verfügbar.',
+    'Snapshots from %1 need its web server, which it does not have.':
+        'Standbilder von %1 brauchen ihren Webserver, und den hat sie nicht.',
+    'Automatic (HTTP-FLV, then RTSP, then Baichuan)':
+        'Automatisch (HTTP-FLV, dann RTSP, dann Baichuan)',
+    "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
+        'Automatisch fragt die Kamera, was sie bietet, und nimmt das Erste von HTTP-FLV, RTSP und Baichuan, das für diesen Computer Günstigste zuerst. Zeigt eines nie ein Bild, geht es zum nächsten über.\n\nRTSP passt zu den meisten Kameras.\n\nHTTP-FLV braucht nur Port 80, was hilft, wo RTSP gesperrt ist.\n\nBaichuan spricht Reolinks eigene App. Es ist die Antwort für Kameras, die RTSP abgeschaltet lassen — Akkumodelle tun das — und es belegt keine der wenigen Websitzungen der Kamera. Nur Video: der Ton kommt weiterhin über RTSP.',
 }
 
 

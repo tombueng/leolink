@@ -1152,6 +1152,57 @@ STRINGS: dict[str, str] = {
         "输入一次；保存时会移入密钥环",
     "no keyring is answering — it will stay in the file":
         "没有密钥环响应 — 密码将留在文件中",
+    # ── reaching cameras over Baichuan, the About page, the automatic transport ──
+    'Cannot reach %1 over Baichuan: %2':
+        '无法通过 Baichuan 连接 %1：%2',
+    'Lost the connection to %1.':
+        '与 %1 的连接已断开。',
+    'This camera':
+        '此摄像机',
+    'Wi-Fi, %1':
+        'Wi-Fi，%1',
+    'Model':
+        '型号',
+    'Item number':
+        '货号',
+    'Hardware':
+        '硬件',
+    'Build':
+        '构建',
+    'Board':
+        '主板',
+    'Serial number':
+        '序列号',
+    'MAC address':
+        'MAC 地址',
+    'IP address':
+        'IP 地址',
+    'What it is':
+        '设备信息',
+    'Found':
+        '检测结果',
+    "Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink's own app.":
+        '通过 Baichuan，端口 9000 — 此摄像机没有 Web 服务器。大多数设置都可用；部分设置，例如用户账户和电子邮件服务器详细信息，只能通过 Reolink 自己的应用访问。',
+    "Over the camera's web interface (HTTP API).":
+        '通过摄像机的网页界面（HTTP API）。',
+    'How leolink reaches it':
+        'leolink 如何连接它',
+    'Copy':
+        '复制',
+    'Puts all of this on the clipboard, for a bug report or a support request.':
+        '将所有这些内容复制到剪贴板，用于错误报告或技术支持请求。',
+    'About':
+        '关于',
+    'Asking the cameras what they offer…':
+        '正在询问摄像机支持哪些功能…',
+    "Not available without the camera's web server.":
+        '没有摄像机的 Web 服务器时不可用。',
+    'Snapshots from %1 need its web server, which it does not have.':
+        '%1 的快照需要它的 Web 服务器，但它没有。',
+    'Automatic (HTTP-FLV, then RTSP, then Baichuan)':
+        '自动（HTTP-FLV，然后 RTSP，然后 Baichuan）',
+    "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
+        '自动模式会询问摄像机支持什么，并按对本机开销从小到大的顺序，选用 HTTP-FLV、RTSP 和 Baichuan 中第一个可用的。如果某一种始终没有画面，就换下一种。\n\nRTSP 适合大多数摄像机。\n\nHTTP-FLV 只需要 80 端口，在 RTSP 被封的地方很有用。\n\nBaichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄像机 — 电池款就是如此 — 它就是答案，而且不占用摄像机那少得可怜的 Web 会话。仅限视频：声音仍走 RTSP。',
 }
 
 

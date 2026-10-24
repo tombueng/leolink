@@ -1374,6 +1374,57 @@ STRINGS: dict[str, str] = {
         "एक बार लिखें; सहेजते ही यह कीरिंग में चला जाएगा",
     "no keyring is answering — it will stay in the file":
         "कोई कीरिंग उत्तर नहीं दे रही — यह फ़ाइल में ही रहेगा",
+    # ── reaching cameras over Baichuan, the About page, the automatic transport ──
+    'Cannot reach %1 over Baichuan: %2':
+        'Baichuan से %1 तक नहीं पहुँचा जा सका: %2',
+    'Lost the connection to %1.':
+        '%1 से कनेक्शन टूट गया।',
+    'This camera':
+        'यह कैमरा',
+    'Wi-Fi, %1':
+        'Wi-Fi, %1',
+    'Model':
+        'मॉडल',
+    'Item number':
+        'आइटम नंबर',
+    'Hardware':
+        'हार्डवेयर',
+    'Build':
+        'बिल्ड',
+    'Board':
+        'बोर्ड',
+    'Serial number':
+        'सीरियल नंबर',
+    'MAC address':
+        'MAC पता',
+    'IP address':
+        'IP पता',
+    'What it is':
+        'यह क्या है',
+    'Found':
+        'क्या मिला',
+    "Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink's own app.":
+        'Baichuan से, पोर्ट 9000 — इस कैमरे में वेब सर्वर नहीं है। अधिकांश सेटिंग्स उपलब्ध हैं; कुछ, जैसे उपयोगकर्ता खाते और ई-मेल सर्वर का विवरण, केवल Reolink के अपने ऐप से ही मिलती हैं।',
+    "Over the camera's web interface (HTTP API).":
+        'कैमरे के वेब इंटरफ़ेस (HTTP API) से।',
+    'How leolink reaches it':
+        'leolink इस तक कैसे पहुँचता है',
+    'Copy':
+        'कॉपी करें',
+    'Puts all of this on the clipboard, for a bug report or a support request.':
+        'यह सब क्लिपबोर्ड पर रख देता है, बग रिपोर्ट या सहायता अनुरोध के लिए।',
+    'About':
+        'जानकारी',
+    'Asking the cameras what they offer…':
+        'कैमरों से पूछा जा रहा है कि वे क्या देते हैं…',
+    "Not available without the camera's web server.":
+        'कैमरे के वेब सर्वर के बिना उपलब्ध नहीं।',
+    'Snapshots from %1 need its web server, which it does not have.':
+        '%1 के स्नैपशॉट के लिए उसका वेब सर्वर चाहिए, जो उसमें नहीं है।',
+    'Automatic (HTTP-FLV, then RTSP, then Baichuan)':
+        'स्वचालित (HTTP-FLV, फिर RTSP, फिर Baichuan)',
+    "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
+        'स्वचालित मोड कैमरे से पूछता है कि वह क्या देता है और HTTP-FLV, RTSP और Baichuan में से पहला उपलब्ध चुनता है — इस कंप्यूटर पर सबसे कम बोझ वाला पहले। अगर किसी से कभी तस्वीर न आए तो अगला आज़माता है।\n\nRTSP अधिकांश कैमरों के लिए ठीक है।\n\nHTTP-FLV को केवल पोर्ट 80 चाहिए, जो वहाँ काम आता है जहाँ RTSP रोका गया हो।\n\nBaichuan वही है जो Reolink का अपना ऐप बोलता है। जो कैमरे RTSP बंद रखते हैं — बैटरी वाले मॉडल ऐसा करते हैं — उनके लिए यही उत्तर है, और यह कैमरे के गिने-चुने वेब सत्रों में से एक भी नहीं लेता। केवल वीडियो: ध्वनि अब भी RTSP से आती है।',
 }
 
 

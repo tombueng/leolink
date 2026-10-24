@@ -1205,6 +1205,57 @@ STRINGS: dict[str, str] = {
         "一度入力すれば、保存時にキーリングへ移ります",
     "no keyring is answering — it will stay in the file":
         "応答するキーリングがありません — ファイルに残ります",
+    # ── reaching cameras over Baichuan, the About page, the automatic transport ──
+    'Cannot reach %1 over Baichuan: %2':
+        'Baichuan で %1 に接続できません: %2',
+    'Lost the connection to %1.':
+        '%1 との接続が切れました。',
+    'This camera':
+        'このカメラ',
+    'Wi-Fi, %1':
+        'Wi-Fi、%1',
+    'Model':
+        'モデル',
+    'Item number':
+        '品番',
+    'Hardware':
+        'ハードウェア',
+    'Build':
+        'ビルド',
+    'Board':
+        'ボード',
+    'Serial number':
+        'シリアル番号',
+    'MAC address':
+        'MAC アドレス',
+    'IP address':
+        'IP アドレス',
+    'What it is':
+        '本体情報',
+    'Found':
+        '検出結果',
+    "Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink's own app.":
+        'Baichuan、ポート 9000 経由 — このカメラには Web サーバーがありません。ほとんどの設定を利用できますが、ユーザーアカウントやメールサーバーの詳細など一部は Reolink 純正アプリからしか設定できません。',
+    "Over the camera's web interface (HTTP API).":
+        'カメラの Web インターフェース（HTTP API）経由。',
+    'How leolink reaches it':
+        'leolink の接続方法',
+    'Copy':
+        'コピー',
+    'Puts all of this on the clipboard, for a bug report or a support request.':
+        'これらすべてをクリップボードにコピーします。不具合報告やサポートへの問い合わせに。',
+    'About':
+        '情報',
+    'Asking the cameras what they offer…':
+        'カメラに対応機能を問い合わせています…',
+    "Not available without the camera's web server.":
+        'カメラの Web サーバーがないと利用できません。',
+    'Snapshots from %1 need its web server, which it does not have.':
+        '%1 のスナップショットには Web サーバーが必要ですが、このカメラにはありません。',
+    'Automatic (HTTP-FLV, then RTSP, then Baichuan)':
+        '自動（HTTP-FLV、次に RTSP、次に Baichuan）',
+    "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
+        '自動では、カメラに対応している方式を問い合わせ、HTTP-FLV、RTSP、Baichuan のうち最初に使えるものを選びます。このコンピューターへの負荷が小さいものが優先です。映像が一度も出ない場合は次の方式に移ります。\n\nほとんどのカメラには RTSP が適しています。\n\nHTTP-FLV はポート 80 だけで済むので、RTSP が塞がれている環境で役立ちます。\n\nBaichuan は Reolink 純正アプリが話すものです。RTSP を切ったままのカメラ — 電池式の機種がそうです — にはこれが答えで、カメラのわずかな Web セッションを消費しません。映像のみで、音声は引き続き RTSP から届きます。',
 }
 
 

@@ -1382,6 +1382,57 @@ STRINGS: dict[str, str] = {
         "bir kez yazın; kaydederken anahtarlığa taşınır",
     "no keyring is answering — it will stay in the file":
         "yanıt veren bir anahtarlık yok — dosyada kalacak",
+    # ── reaching cameras over Baichuan, the About page, the automatic transport ──
+    'Cannot reach %1 over Baichuan: %2':
+        '%1 Baichuan üzerinden erişilemiyor: %2',
+    'Lost the connection to %1.':
+        '%1 ile bağlantı koptu.',
+    'This camera':
+        'Bu kamera',
+    'Wi-Fi, %1':
+        'Wi-Fi, %1',
+    'Model':
+        'Model',
+    'Item number':
+        'Ürün numarası',
+    'Hardware':
+        'Donanım',
+    'Build':
+        'Derleme',
+    'Board':
+        'Kart',
+    'Serial number':
+        'Seri numarası',
+    'MAC address':
+        'MAC adresi',
+    'IP address':
+        'IP adresi',
+    'What it is':
+        'Ne olduğu',
+    'Found':
+        'Bulunanlar',
+    "Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink's own app.":
+        "Baichuan üzerinden, port 9000 — bu kameranın web sunucusu yok. Ayarların çoğu kullanılabilir; kullanıcı hesapları ve e-posta sunucusu bilgileri gibi bazılarına yalnızca Reolink'in kendi uygulamasından erişilebilir.",
+    "Over the camera's web interface (HTTP API).":
+        'Kameranın web arayüzü üzerinden (HTTP API).',
+    'How leolink reaches it':
+        'leolink ona nasıl ulaşıyor',
+    'Copy':
+        'Kopyala',
+    'Puts all of this on the clipboard, for a bug report or a support request.':
+        'Bunların hepsini panoya koyar; bir hata bildirimi ya da destek talebi için.',
+    'About':
+        'Hakkında',
+    'Asking the cameras what they offer…':
+        'Kameralara ne sundukları soruluyor…',
+    "Not available without the camera's web server.":
+        'Kameranın web sunucusu olmadan kullanılamaz.',
+    'Snapshots from %1 need its web server, which it does not have.':
+        '%1 kamerasından anlık görüntü için web sunucusu gerekir; bu kamerada yok.',
+    'Automatic (HTTP-FLV, then RTSP, then Baichuan)':
+        'Otomatik (HTTP-FLV, sonra RTSP, sonra Baichuan)',
+    "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
+        "Otomatik, kameraya ne sunduğunu sorar ve HTTP-FLV, RTSP ve Baichuan arasından ilkini seçer; bu bilgisayar için en az yük getiren önce gelir. Biri hiç görüntü vermezse sonrakine geçer.\n\nRTSP çoğu kameraya uyar.\n\nHTTP-FLV yalnızca 80 numaralı bağlantı noktasını ister; RTSP'nin engellendiği yerlerde işe yarar.\n\nBaichuan, Reolink'in kendi uygulamasının konuştuğu protokoldür. RTSP'yi kapalı tutan kameralar için — pilli modeller böyledir — doğru yanıttır ve kameranın az sayıdaki web oturumundan birini harcamaz. Yalnızca video: ses yine RTSP üzerinden gelir.",
 }
 
 
