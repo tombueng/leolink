@@ -1,0 +1,57 @@
+{
+ "cmd": "GetNetPort",
+ "code": 0,
+ "initial": {
+  "NetPort": {
+   "httpPort": 80,
+   "httpsPort": 443,
+   "mediaPort": 9000,
+   "onvifPort": 8000,
+   "rtmpPort": 1935,
+   "rtspPort": 554
+  }
+ },
+ "range": {
+  "NetPort": {
+   "httpPort": {
+    "max": 65535,
+    "min": 1
+   },
+   "httpsPort": {
+    "max": 65535,
+    "min": 1
+   },
+   "mediaPort": {
+    "max": 65535,
+    "min": 1
+   },
+   "onvifPort": {
+    "max": 65535,
+    "min": 1
+   },
+   "rtmpPort": {
+    "max": 65535,
+    "min": 1
+   },
+   "rtspPort": {
+    "max": 65535,
+    "min": 1
+   }
+  }
+ },
+ "value": {
+  "NetPort": {
+   "httpEnable": 1,
+   "httpPort": 80,
+   "httpsEnable": 1,
+   "httpsPort": 443,
+   "mediaPort": 9000,
+   "onvifEnable": 1,
+   "onvifPort": 8000,
+   "rtmpEnable": 1,
+   "rtmpPort": 1935,
+   "rtspEnable": 1,
+   "rtspPort": 554
+  }
+ }
+}

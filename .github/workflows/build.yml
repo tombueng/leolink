@@ -30,6 +30,11 @@ jobs:
       - name: Build
         run: cmake --build build
 
+      # No camera needed: the Baichuan tests talk to a fake one on loopback,
+      # answering from captures of real cameras in tests/fixtures.
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
       # Malformed metadata is rejected by software centres at submission time.
       # Catching it here is far cheaper than finding out from Flathub.
       - name: Validate desktop entry and AppStream data

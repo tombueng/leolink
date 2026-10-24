@@ -55,6 +55,9 @@ public:
     ~ReolinkClient() override;
 
     void setCamera(const CameraConfig &camera);
+    /// Where requests go. Only a test changes this, to send them to a web
+    /// server of its own; the client keeps owning the one it made.
+    void setNetwork(QNetworkAccessManager *net) { m_net = net; }
     const CameraConfig &camera() const { return m_camera; }
 
     /// Which input of the device every request is about. Zero for a camera;

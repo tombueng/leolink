@@ -1,0 +1,66 @@
+{
+ "cmd": "GetLocalLink",
+ "code": 0,
+ "initial": {
+  "LocalLink": {
+   "activeLink": "Wifi",
+   "dns": {
+    "auto": 1,
+    "dns1": "192.0.2.1",
+    "dns2": "192.0.2.1"
+   },
+   "mac": "00:00:5e:00:53:06",
+   "static": {
+    "gateway": "192.0.2.1",
+    "ip": "192.0.2.11",
+    "mask": "255.255.255.0"
+   },
+   "type": "DHCP"
+  }
+ },
+ "range": {
+  "LocalLink": {
+   "dns": {
+    "auto": "boolean",
+    "dns1": {
+     "maxLen": 15
+    },
+    "dns2": {
+     "maxLen": 15
+    }
+   },
+   "static": {
+    "gateway": {
+     "maxLen": 15
+    },
+    "ip": {
+     "maxLen": 15
+    },
+    "mask": {
+     "maxLen": 15
+    }
+   },
+   "type": [
+    "DHCP",
+    "Static"
+   ]
+  }
+ },
+ "value": {
+  "LocalLink": {
+   "activeLink": "Wifi",
+   "dns": {
+    "auto": 1,
+    "dns1": "192.0.2.1",
+    "dns2": "192.0.2.1"
+   },
+   "mac": "00:00:5e:00:53:05",
+   "static": {
+    "gateway": "192.0.2.1",
+    "ip": "192.0.2.14",
+    "mask": "255.255.255.0"
+   },
+   "type": "DHCP"
+  }
+ }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<ServerPort version="1.1">
+<serverPort>9000</serverPort>
+<enable>0</enable>
+</ServerPort>
+<HttpPort version="1.1">
+<httpPort>80</httpPort>
+<enable>0</enable>
+</HttpPort>
+<HttpsPort version="1.1">
+<httpsPort>443</httpsPort>
+<enable>1</enable>
+</HttpsPort>
+<RtspPort version="1.1">
+<rtspPort>554</rtspPort>
+<enable>1</enable>
+</RtspPort>
+<RtmpPort version="1.1">
+<rtmpPort>1935</rtmpPort>
+<enable>1</enable>
+</RtmpPort>
+<OnvifPort version="1.1">
+<onvifPort>8000</onvifPort>
+<enable>1</enable>
+</OnvifPort>
+</body>

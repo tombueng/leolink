@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<VersionInfo version="1.1">
+<name>Camera 2</name>
+<type>E1</type>
+<serialNumber>000000000000002</serialNumber>
+<buildDay>build 22122300</buildDay>
+<hardwareVersion>IPC_561SD53MP</hardwareVersion>
+<cfgVersion>v3.1.0.0</cfgVersion>
+<firmwareVersion>v3.1.0.1643_22122300</firmwareVersion>
+<detail>IPC_561SD53MPS26E1W51100000001</detail>
+<IEClient>IEClient</IEClient>
+<pakSuffix>pak</pakSuffix>
+<helpVersion>blackPointsLevel=0</helpVersion>
+</VersionInfo>
+</body>

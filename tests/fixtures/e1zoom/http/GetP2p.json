@@ -1,0 +1,20 @@
+{
+ "cmd": "GetP2p",
+ "code": 0,
+ "initial": {
+  "P2p": {
+   "enable": 1
+  }
+ },
+ "range": {
+  "P2p": {
+   "enable": "boolean"
+  }
+ },
+ "value": {
+  "P2p": {
+   "enable": 1,
+   "uid": "TESTUID000000001"
+  }
+ }
+}

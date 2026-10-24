@@ -1,0 +1,32 @@
+{
+ "cmd": "GetWifi",
+ "code": 0,
+ "initial": {
+  "Wifi": {
+   "freq": 0,
+   "freqPolicy": 1,
+   "password": "",
+   "protocol": 0,
+   "ssid": ""
+  }
+ },
+ "range": {
+  "Wifi": {
+   "password": {
+    "maxLen": 127
+   },
+   "ssid": {
+    "maxLen": 127
+   }
+  }
+ },
+ "value": {
+  "Wifi": {
+   "freq": 2,
+   "freqPolicy": 1,
+   "password": "",
+   "protocol": 0,
+   "ssid": "example-net-25"
+  }
+ }
+}

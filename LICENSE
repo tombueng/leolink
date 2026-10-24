@@ -92,4 +92,5 @@ reolink_aio (github.com/starkillerOG/reolink_aio), MIT
 AES (src/Aes128.cpp)
     Written from FIPS-197, the AES standard published by NIST. Its S-box and
     round constants are part of the standard, and as a work of the United
-    States government it is in the public domain.
+    States government it is in the public domain. The test vectors in
+    tests/ come from FIPS-197 and NIST SP 800-38A, likewise public domain.

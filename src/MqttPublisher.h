@@ -39,13 +39,13 @@ public:
     /// Connects, publishes, disconnects. Reports through published()/failed().
     void publish(const Settings &settings, const QByteArray &payload);
 
+    /// MQTT's variable-length integer and its length-prefixed string.
+    static QByteArray encodeLength(int length);
+    static QByteArray encodeString(const QString &text);
+
 signals:
     void published(const QString &topic);
     void failed(const QString &reason);
-
-private:
-    static QByteArray encodeLength(int length);
-    static QByteArray encodeString(const QString &text);
 };
 
 } // namespace leolink

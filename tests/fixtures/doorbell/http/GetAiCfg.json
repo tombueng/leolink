@@ -1,0 +1,58 @@
+{
+ "cmd": "GetAiCfg",
+ "code": 0,
+ "initial": {
+  "AiDetectType": {
+   "dog_cat": 1,
+   "face": 0,
+   "package": 0,
+   "people": 1,
+   "vehicle": 1
+  },
+  "aiTrack": 0,
+  "channel": 0,
+  "trackType": {
+   "dog_cat": 0,
+   "face": 0,
+   "package": 0,
+   "people": 1,
+   "vehicle": 0
+  }
+ },
+ "range": {
+  "AiDetectType": {
+   "dog_cat": "boolean",
+   "face": "boolean",
+   "package": "boolean",
+   "people": "boolean",
+   "vehicle": "boolean"
+  },
+  "aiTrack": "boolean",
+  "channel": 0,
+  "trackType": {
+   "dog_cat": "boolean",
+   "face": "boolean",
+   "package": "boolean",
+   "people": "boolean",
+   "vehicle": "boolean"
+  }
+ },
+ "value": {
+  "AiDetectType": {
+   "dog_cat": 1,
+   "face": 0,
+   "package": 0,
+   "people": 1,
+   "vehicle": 1
+  },
+  "aiTrack": 0,
+  "channel": 0,
+  "trackType": {
+   "dog_cat": 0,
+   "face": 0,
+   "package": 0,
+   "people": 1,
+   "vehicle": 0
+  }
+ }
+}

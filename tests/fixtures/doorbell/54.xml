@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<RecordCfg version="1.1">
+<channelId>0</channelId>
+<cycle>1</cycle>
+<recordAbility>1</recordAbility>
+<smartRecord>0</smartRecord>
+<talkRecord>1</talkRecord>
+<recordDelayTime>15</recordDelayTime>
+<preRecordTime>10</preRecordTime>
+<packageTime>5</packageTime>
+<cyclelist>
+<item>0</item>
+<item>1</item>
+<item>-1</item>
+<item>-2</item>
+<item>-3</item>
+<item>-7</item>
+<item>-14</item>
+<item>-30</item>
+</cyclelist>
+</RecordCfg>
+</body>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<AiCfg version="1.1">
+<channelId>0</channelId>
+<smartTrack>0</smartTrack>
+<detectType>people,vehicle,dog_cat</detectType>
+<smartTrackType>people</smartTrackType>
+<smartTrackPt>1</smartTrackPt>
+</AiCfg>
+</body>

@@ -138,6 +138,57 @@ Build a `.deb`:
 cd build && cpack
 ```
 
+### Tests
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+
+No camera is needed. `tests/FakeCamera` plays the camera's side of Baichuan on
+the loopback interface: the login handshake, AES and XOR as the firmware does
+them, and answers from captures of four real cameras in `tests/fixtures`. The
+captures have everything identifying replaced. Nothing is sent beyond the
+machine's loopback interface. The tests cover:
+
+- **the login:** asking for AES first, sending the credentials under XOR, and
+  following a camera that grants only XOR
+- **the cipher:** checked against the FIPS-197 and SP 800-38A vectors
+- **messages:** the extension and body are encrypted separately, and alarms
+  arriving in between are stepped over
+- **matching the HTTP API:** for the two cameras that have both, every
+  settings answer agrees with what that camera's own HTTP API said, field by
+  field
+- **writing back:** for every write, sending a section back unchanged leaves
+  the camera's document exactly as it was, and changing one field changes that
+  field and nothing else
+- **choosing how to reach a camera:** the probe's verdict on each model, the
+  order of automatic transports, and when settings go over Baichuan
+- **video tables:** the transport-stream tables Baichuan video is wrapped in,
+  checked by a parser of their own
+- **adding a camera:** the camera list driven as a person would. That covers
+  add, remove, test connection and save, and the saved file read back on the
+  next start, including files written by older versions.
+- **a camera's settings dialog:** opened on an E1 Pro over Baichuan, every
+  page filled, Apply with nothing changed leaving the camera untouched, and
+  one edit reaching the camera alone
+- **the HTTP API:** one login however many requests are waiting, a lapsed
+  session renewed, a busy camera asked again, HTTPS where that is all there
+  is, and no HTTP at all for a camera with no web server. A fake web server
+  plays the camera.
+- **discovery:** real ONVIF replies, including an E1 Zoom's, which never
+  mentions Reolink
+- **motion from the camera:** the ONVIF subscription and long poll against an
+  E1 Zoom's real replies. That includes the WS-Security digest, each kind of
+  event kept apart, and a recorder's events sent to the right channel.
+- **events:** placeholders, the command, the webhook, MQTT against a broker of
+  its own, and the event log
+- **the log:** passwords, tokens and public addresses kept out of the log
+  and out of the diagnostics report
+- **the program itself:** `--version` and `--help`
+
+Building them needs Qt Test, which comes with `qt6-base-dev`. To leave them out,
+configure with `-DLEOLINK_BUILD_TESTS=OFF`.
+
 ## Configuration
 
 Settings live in `~/.config/leolink/config.json`, mode 600. Where each camera's

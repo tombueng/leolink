@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<Dhcp version="1.1">
+<enable>1</enable>
+</Dhcp>
+<AutoDns version="1.1">
+<enable>1</enable>
+</AutoDns>
+<Ip version="1.1">
+<ip>192.0.2.10</ip>
+<mask>255.255.255.0</mask>
+<mac>00:00:5e:00:53:01</mac>
+<gateway>192.0.2.1</gateway>
+</Ip>
+<Dns version="1.1">
+<dns1>192.0.2.1</dns1>
+<dns2></dns2>
+</Dns>
+</body>

@@ -1,0 +1,16 @@
+{
+ "cmd": "GetWifiSignal",
+ "code": 0,
+ "initial": {
+  "wifiSignal": 2
+ },
+ "range": {
+  "wifiSignal": {
+   "max": 255,
+   "min": 0
+  }
+ },
+ "value": {
+  "wifiSignal": 2
+ }
+}

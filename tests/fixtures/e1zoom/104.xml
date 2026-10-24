@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<SystemGeneral version="1.1">
+<timeZone>0</timeZone>
+<osdFormat>MDY</osdFormat>
+<year>2026</year>
+<month>10</month>
+<day>22</day>
+<hour>16</hour>
+<minute>34</minute>
+<second>45</second>
+<deviceId>0</deviceId>
+<timeFormat>0</timeFormat>
+<language>English</language>
+<deviceName>Camera 1</deviceName>
+<loginLock>1</loginLock>
+<lockTime>300</lockTime>
+<allowedTimes>10</allowedTimes>
+<isDst>1</isDst>
+</SystemGeneral>
+<Norm version="1.1">
+<norm>NTSC</norm>
+</Norm>
+</body>

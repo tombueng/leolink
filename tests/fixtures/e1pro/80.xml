@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<VersionInfo version="1.1">
+<name>Camera 3</name>
+<type>E1 Pro</type>
+<serialNumber>000000000000003</serialNumber>
+<buildDay>build 2401092478</buildDay>
+<hardwareVersion>IPC_566SD54MP</hardwareVersion>
+<cfgVersion>v3.1.0.0</cfgVersion>
+<firmwareVersion>v3.1.0.3149_2401092478</firmwareVersion>
+<detail>IPC_566SD54MPS25E1W71100000001</detail>
+<IEClient>IEClient</IEClient>
+<pakSuffix>pak</pakSuffix>
+<itemNo>E330</itemNo>
+<helpVersion>blackPointsLevel=0</helpVersion>
+</VersionInfo>
+</body>

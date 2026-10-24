@@ -1,0 +1,18 @@
+{
+ "cmd": "GetPowerLed",
+ "code": 0,
+ "range": {
+  "PowerLed": {
+   "state": [
+    "On",
+    "Off"
+   ]
+  }
+ },
+ "value": {
+  "PowerLed": {
+   "channel": 0,
+   "state": "On"
+  }
+ }
+}

@@ -1,0 +1,49 @@
+{
+ "cmd": "GetImage",
+ "code": 0,
+ "initial": {
+  "Image": {
+   "bright": 128,
+   "channel": 0,
+   "contrast": 128,
+   "hue": 128,
+   "saturation": 128,
+   "sharpen": 128
+  }
+ },
+ "range": {
+  "Image": {
+   "bright": {
+    "max": 255,
+    "min": 0
+   },
+   "channel": 0,
+   "contrast": {
+    "max": 255,
+    "min": 0
+   },
+   "hue": {
+    "max": 255,
+    "min": 0
+   },
+   "saturation": {
+    "max": 255,
+    "min": 0
+   },
+   "sharpen": {
+    "max": 255,
+    "min": 0
+   }
+  }
+ },
+ "value": {
+  "Image": {
+   "bright": 128,
+   "channel": 0,
+   "contrast": 128,
+   "hue": 128,
+   "saturation": 128,
+   "sharpen": 128
+  }
+ }
+}

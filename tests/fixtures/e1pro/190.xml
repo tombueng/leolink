@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<PtzPreset version="1.1">
+<channelId>0</channelId>
+<maxPresetNum>64</maxPresetNum>
+<maxPresetPicNum>64</maxPresetPicNum>
+<presetList />
+</PtzPreset>
+</body>

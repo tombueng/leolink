@@ -1,0 +1,26 @@
+{
+ "cmd": "GetPowerLed",
+ "code": 0,
+ "range": {
+  "PowerLed": {
+   "eDoorbellLightState": [
+    "On",
+    "Off",
+    "KeepOff",
+    "KeepOn",
+    "NotSupport"
+   ],
+   "state": [
+    "On",
+    "Off"
+   ]
+  }
+ },
+ "value": {
+  "PowerLed": {
+   "channel": 0,
+   "eDoorbellLightState": "On",
+   "state": "On"
+  }
+ }
+}

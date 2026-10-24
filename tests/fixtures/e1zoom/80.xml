@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<VersionInfo version="1.1">
+<name>Camera 1</name>
+<type>E1 Zoom</type>
+<serialNumber>000000000000001</serialNumber>
+<buildDay>build 2412122178</buildDay>
+<hardwareVersion>IPC_566SD664M5MP</hardwareVersion>
+<cfgVersion>v3.1.0.0</cfgVersion>
+<firmwareVersion>v3.1.0.4417_2412122178</firmwareVersion>
+<detail>IPC_566SD664M5MPS10A1E1W7110000</detail>
+<IEClient>IEClient</IEClient>
+<pakSuffix>pak</pakSuffix>
+<itemNo>E340</itemNo>
+<helpVersion>blackPointsLevel=0</helpVersion>
+</VersionInfo>
+</body>

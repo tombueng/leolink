@@ -1,0 +1,75 @@
+{
+ "cmd": "GetAiCfg",
+ "code": 0,
+ "initial": {
+  "AiDetectType": {
+   "dog_cat": 1,
+   "face": 0,
+   "people": 1,
+   "vehicle": 1
+  },
+  "aiDisappearBackTime": 10,
+  "aiStopBackTime": 20,
+  "aiTrack": 1,
+  "bSmartTrack": 1,
+  "channel": 0,
+  "trackTask": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "trackType": {
+   "dog_cat": 1,
+   "face": 0,
+   "people": 1,
+   "vehicle": 0
+  }
+ },
+ "range": {
+  "AiDetectType": {
+   "dog_cat": "boolean",
+   "face": "boolean",
+   "people": "boolean",
+   "vehicle": "boolean"
+  },
+  "aiDisappearBackTime": [
+   10,
+   20,
+   30,
+   60
+  ],
+  "aiStopBackTime": [
+   10,
+   20,
+   30,
+   60
+  ],
+  "aiTrack": [
+   1
+  ],
+  "bSmartTrack": "boolean",
+  "channel": 0,
+  "trackType": {
+   "trackType": {
+    "maxLen": 167,
+    "minLen": 0
+   }
+  }
+ },
+ "value": {
+  "AiDetectType": {
+   "dog_cat": 1,
+   "face": 0,
+   "people": 1,
+   "vehicle": 1
+  },
+  "aiDisappearBackTime": 10,
+  "aiStopBackTime": 20,
+  "aiTrack": 1,
+  "bSmartTrack": 1,
+  "channel": 0,
+  "trackTask": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "trackType": {
+   "dog_cat": 1,
+   "face": 0,
+   "people": 1,
+   "vehicle": 0
+  }
+ }
+}

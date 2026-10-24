@@ -1,0 +1,177 @@
+{
+ "cmd": "GetIsp",
+ "code": 0,
+ "initial": {
+  "Isp": {
+   "antiFlicker": "Off",
+   "backLight": "Off",
+   "bd_day": {
+    "bright": 128,
+    "dark": 128,
+    "mode": "Auto"
+   },
+   "bd_night": {
+    "bright": 128,
+    "dark": 128,
+    "mode": "Auto"
+   },
+   "blc": 128,
+   "blueGain": 128,
+   "channel": 0,
+   "constantFrameRate": 2,
+   "dayNight": "Auto",
+   "dayNightThreshold": 50,
+   "drc": 128,
+   "encType": "CBR",
+   "exposure": "Auto",
+   "gain": {
+    "max": 62,
+    "min": 1
+   },
+   "hdr": 0,
+   "mirroring": 0,
+   "nr3d": 1,
+   "redGain": 128,
+   "rotation": 0,
+   "shutter": {
+    "max": 125,
+    "min": 0
+   },
+   "whiteBalance": "Auto"
+  }
+ },
+ "range": {
+  "Isp": {
+   "antiFlicker": [
+    "Other",
+    "50HZ",
+    "60HZ",
+    "Off"
+   ],
+   "backLight": [
+    "Off",
+    "BackLightControl",
+    "DynamicRangeControl"
+   ],
+   "bd_day": {
+    "bright": {
+     "max": 255,
+     "min": 0
+    },
+    "dark": {
+     "max": 255,
+     "min": 0
+    },
+    "mode": [
+     "Auto",
+     "Manual"
+    ]
+   },
+   "bd_night": {
+    "bright": {
+     "max": 255,
+     "min": 0
+    },
+    "dark": {
+     "max": 255,
+     "min": 0
+    },
+    "mode": [
+     "Auto",
+     "Manual"
+    ]
+   },
+   "blc": {
+    "max": 255,
+    "min": 0
+   },
+   "blueGain": {
+    "max": 255,
+    "min": 0
+   },
+   "channel": 0,
+   "constantFrameRate": [
+    0,
+    1,
+    2
+   ],
+   "dayNight": [
+    "Auto",
+    "Color",
+    "Black&White"
+   ],
+   "dayNightThreshold": {
+    "max": 100,
+    "min": 0
+   },
+   "drc": {
+    "max": 255,
+    "min": 0
+   },
+   "exposure": [
+    "Auto",
+    "LowNoise",
+    "Anti-Smearing",
+    "Manual"
+   ],
+   "gain": {
+    "max": 100,
+    "min": 1
+   },
+   "mirroring": "boolean",
+   "nr3d": "boolean",
+   "redGain": {
+    "max": 255,
+    "min": 0
+   },
+   "rotation": "boolean",
+   "shutter": {
+    "max": 125,
+    "min": 0
+   },
+   "whiteBalance": [
+    "Auto",
+    "Manual"
+   ]
+  }
+ },
+ "value": {
+  "Isp": {
+   "antiFlicker": "60HZ",
+   "backLight": "Off",
+   "bd_day": {
+    "bright": 128,
+    "dark": 128,
+    "mode": "Auto"
+   },
+   "bd_night": {
+    "bright": 128,
+    "dark": 128,
+    "mode": "Auto"
+   },
+   "blc": 128,
+   "blueGain": 128,
+   "channel": 0,
+   "constantFrameRate": 2,
+   "dayNight": "Auto",
+   "dayNightThreshold": 50,
+   "drc": 128,
+   "encType": "CBR",
+   "exposure": "Auto",
+   "gain": {
+    "max": 62,
+    "min": 1
+   },
+   "hdr": 0,
+   "mirroring": 0,
+   "nr3d": 1,
+   "redGain": 128,
+   "rotation": 0,
+   "shutter": {
+    "max": 125,
+    "min": 0
+   },
+   "whiteBalance": "Auto"
+  }
+ }
+}

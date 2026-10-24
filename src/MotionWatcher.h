@@ -49,6 +49,10 @@ public:
     /// True if any of the watched cameras is seeing motion.
     bool isActive() const { return m_active; }
 
+    /// Where requests go. Only a test changes this, to send them to a camera
+    /// of its own; the watcher keeps owning the one it made.
+    void setNetwork(QNetworkAccessManager *net) { m_net = net; }
+
 signals:
     /// Emitted on every state change, and once right after subscribing —
     /// the camera reports its current state as a property event, which gives

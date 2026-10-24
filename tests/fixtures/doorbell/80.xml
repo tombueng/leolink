@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<VersionInfo version="1.1">
+<name>Camera 4</name>
+<type>Reolink Video Doorbell WiFi</type>
+<serialNumber>000000000000004</serialNumber>
+<buildDay>build 2605211897</buildDay>
+<hardwareVersion>DB_566128M5MP_W</hardwareVersion>
+<cfgVersion>v3.0.0.0</cfgVersion>
+<firmwareVersion>v3.0.0.6460_2605211897</firmwareVersion>
+<detail>S10E1W7TC0U010A</detail>
+<IEClient>IEClient</IEClient>
+<pakSuffix>pak</pakSuffix>
+<itemNo>D340W</itemNo>
+<helpVersion>blackPointsLevel=0</helpVersion>
+</VersionInfo>
+</body>

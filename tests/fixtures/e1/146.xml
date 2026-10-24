@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+<StreamInfoList version="1.1">
+<StreamInfo>
+<channelBits>1</channelBits>
+<encodeTable>
+<type>mainStream</type>
+<resolution>
+<width>2304</width>
+<height>1296</height>
+</resolution>
+<defaultFramerate>15</defaultFramerate>
+<defaultBitrate>2560</defaultBitrate>
+<framerateTable>20,18,16,15,12,10,8,6,4,2</framerateTable>
+<bitrateTable>1024,1536,2048,2560,3072,4096</bitrateTable>
+<defaultGop>2</defaultGop>
+</encodeTable>
+<encodeTable>
+<type>subStream</type>
+<resolution>
+<width>704</width>
+<height>480</height>
+</resolution>
+<defaultFramerate>10</defaultFramerate>
+<defaultBitrate>384</defaultBitrate>
+<framerateTable>15,10,7,4</framerateTable>
+<bitrateTable>128,160,192,256,384,512</bitrateTable>
+<defaultGop>4</defaultGop>
+</encodeTable>
+</StreamInfo>
+</StreamInfoList>
+</body>

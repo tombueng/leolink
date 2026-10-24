@@ -28,8 +28,8 @@ pkg_check_modules(MPV REQUIRED IMPORTED_TARGET mpv)
 qt_standard_project_setup()
 
 # ── Application ─────────────────────────────────────────────────────────────
-qt_add_executable(leolink
-    src/main.cpp
+# Everything but main(): the application, and the tests in tests/, build from it.
+set(LEOLINK_SOURCES
     src/MainWindow.cpp        src/MainWindow.h
     src/VideoTile.cpp         src/VideoTile.h
     src/Config.cpp            src/Config.h
@@ -66,6 +66,11 @@ qt_add_executable(leolink
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
     src/SchedulePicker.cpp    src/SchedulePicker.h
     src/TalkSession.cpp       src/TalkSession.h
+)
+
+qt_add_executable(leolink
+    src/main.cpp
+    ${LEOLINK_SOURCES}
 )
 
 target_compile_definitions(leolink PRIVATE
@@ -123,6 +128,20 @@ target_compile_options(leolink PRIVATE
     -Wall -Wextra -Wpedantic
     $<$<CONFIG:Release>:-O2>
 )
+
+# ── Tests ───────────────────────────────────────────────────────────────────
+# On by default where Qt Test is installed. Packaging builds can turn them off
+# with -DLEOLINK_BUILD_TESTS=OFF; nothing from tests/ is ever installed.
+option(LEOLINK_BUILD_TESTS "Build the test suite" ON)
+if(LEOLINK_BUILD_TESTS)
+    find_package(Qt6 QUIET COMPONENTS Test)
+    if(Qt6Test_FOUND)
+        enable_testing()
+        add_subdirectory(tests)
+    else()
+        message(STATUS "Qt Test not found — tests not built")
+    endif()
+endif()
 
 # ── Installation ────────────────────────────────────────────────────────────
 install(TARGETS leolink RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
