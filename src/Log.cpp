@@ -319,6 +319,13 @@ QString Log::redact(QString text) const
         QStringLiteral("(?i)\\btoken=[^&\\s\"'})\\],;]+"));
     text.replace(token, QStringLiteral("token=«token»"));
 
+    // "password":"…" in JSON, quoted, which may hold spaces and commas — a
+    // Wi-Fi key or a new user's password in a request the debug log shows.
+    // The unquoted rule below stops at the first space, and left the rest.
+    static const QRegularExpression quoted(QStringLiteral(
+        "(?i)(\"(?:password|passwd|pwd|secret)\"\\s*:\\s*\")((?:[^\"\\\\]|\\\\.)*)\""));
+    text.replace(quoted, QStringLiteral("\\1«hidden»\""));
+
     // password=…, "password": "…", pwd=… — the shapes this API and its cousins
     // actually use.
     static const QRegularExpression password(QStringLiteral(
