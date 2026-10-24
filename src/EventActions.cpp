@@ -30,16 +30,31 @@ EventDispatcher::EventDispatcher(QObject *parent)
 
 QString EventDispatcher::expand(const QString &tmpl, const EventContext &c)
 {
-    QString out = tmpl;
-    out.replace(QStringLiteral("%n"), c.cameraName);
-    out.replace(QStringLiteral("%i"), c.cameraId);
-    out.replace(QStringLiteral("%h"), c.host);
-    out.replace(QStringLiteral("%t"), c.timestamp);
-    out.replace(QStringLiteral("%e"), c.eventType);
-    out.replace(QStringLiteral("%s"), c.active ? QStringLiteral("on")
-                                               : QStringLiteral("off"));
-    out.replace(QStringLiteral("%f"), c.recordingPath);
-    out.replace(QStringLiteral("%p"), c.imagePath);
+    // In one pass. Replacing each placeholder in turn expanded what the
+    // earlier ones had put in: a camera called "Hall 100%" followed by a
+    // timestamp came out as "Hall 100" and then the time.
+    QString out;
+    out.reserve(tmpl.size());
+    for (int i = 0; i < tmpl.size(); ++i) {
+        if (tmpl.at(i) != QLatin1Char('%') || i + 1 == tmpl.size()) {
+            out += tmpl.at(i);
+            continue;
+        }
+        switch (tmpl.at(i + 1).unicode()) {
+        case 'n': out += c.cameraName; break;
+        case 'i': out += c.cameraId; break;
+        case 'h': out += c.host; break;
+        case 't': out += c.timestamp; break;
+        case 'e': out += c.eventType; break;
+        case 's': out += c.active ? QStringLiteral("on") : QStringLiteral("off"); break;
+        case 'f': out += c.recordingPath; break;
+        case 'p': out += c.imagePath; break;
+        default:
+            out += tmpl.at(i);
+            continue;   // not a placeholder: the next character stays as it is
+        }
+        ++i;
+    }
     return out;
 }
 
