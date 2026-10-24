@@ -1,6 +1,10 @@
 // Find cameras on the local network.
 #pragma once
 
+#include <optional>
+
+#include <QHostAddress>
+
 #include <QHostAddress>
 #include <QObject>
 #include <QString>
@@ -38,6 +42,11 @@ public:
     void start(int milliseconds = 4000);
     void stop();
     bool isRunning() const { return m_running; }
+
+    /// What one reply says, or nothing if it is not a ProbeMatch. Apart from
+    /// the socket so that real replies can be checked without a network.
+    static std::optional<DiscoveredCamera> parseReply(const QByteArray &datagram,
+                                                      const QHostAddress &sender);
 
 signals:
     void found(const DiscoveredCamera &camera);

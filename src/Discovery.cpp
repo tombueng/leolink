@@ -123,36 +123,50 @@ void Discovery::readReplies()
         quint16 senderPort = 0;
         m_socket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
-        const QString xml = QString::fromUtf8(datagram);
-        if (!xml.contains(QLatin1String("ProbeMatch")))
+        const std::optional<DiscoveredCamera> camera = parseReply(datagram, sender);
+        if (!camera)
             continue;
-
-        DiscoveredCamera camera;
-        // Strip the ::ffff: prefix an IPv4-mapped IPv6 address arrives with.
-        camera.address = sender.toString().section(QLatin1Char(':'), -1);
-
-        const QRegularExpression addrRe(
-            QStringLiteral("<[^>]*XAddrs[^>]*>(.*?)</[^>]*XAddrs>"),
-            QRegularExpression::DotMatchesEverythingOption);
-        const auto addrMatch = addrRe.match(xml);
-        if (addrMatch.hasMatch())
-            camera.serviceUrl = addrMatch.captured(1).trimmed()
-                                    .section(QLatin1Char(' '), 0, 0);
-
-        camera.name = scopeValue(xml, QStringLiteral("name"));
-        camera.manufacturer = scopeValue(xml, QStringLiteral("hardware"));
-        camera.looksReolink =
-            xml.contains(QLatin1String("reolink"), Qt::CaseInsensitive) ||
-            camera.name.startsWith(QLatin1String("RLC"), Qt::CaseInsensitive) ||
-            camera.name.startsWith(QLatin1String("RLN"), Qt::CaseInsensitive) ||
-            camera.name.startsWith(QLatin1String("Reolink"), Qt::CaseInsensitive);
 
         // One device answers on several interfaces; report it once.
-        if (m_seen.contains(camera.address))
+        if (m_seen.contains(camera->address))
             continue;
-        m_seen.append(camera.address);
-        emit found(camera);
+        m_seen.append(camera->address);
+        emit found(*camera);
     }
+}
+
+std::optional<DiscoveredCamera> Discovery::parseReply(const QByteArray &datagram,
+                                                      const QHostAddress &sender)
+{
+    const QString xml = QString::fromUtf8(datagram);
+    if (!xml.contains(QLatin1String("ProbeMatch")))
+        return std::nullopt;
+
+    DiscoveredCamera camera;
+    // Strip the ::ffff: prefix an IPv4-mapped IPv6 address arrives with.
+    camera.address = sender.toString().section(QLatin1Char(':'), -1);
+
+    const QRegularExpression addrRe(
+        QStringLiteral("<[^>]*XAddrs[^>]*>(.*?)</[^>]*XAddrs>"),
+        QRegularExpression::DotMatchesEverythingOption);
+    const auto addrMatch = addrRe.match(xml);
+    if (addrMatch.hasMatch())
+        camera.serviceUrl = addrMatch.captured(1).trimmed()
+                                .section(QLatin1Char(' '), 0, 0);
+
+    camera.name = scopeValue(xml, QStringLiteral("name"));
+    camera.manufacturer = scopeValue(xml, QStringLiteral("hardware"));
+    // Not every Reolink says so. An E1 Zoom names itself "IPC-BO", gives its
+    // model as the hardware, "E1Zoom", and mentions Reolink nowhere at all.
+    static const QRegularExpression reolinkModel(QStringLiteral(
+        "^(RLC|RLN|RLA|Reolink|E1|Argus|Duo|TrackMix)"),
+        QRegularExpression::CaseInsensitiveOption);
+    camera.looksReolink =
+        xml.contains(QLatin1String("reolink"), Qt::CaseInsensitive) ||
+        reolinkModel.match(camera.name).hasMatch() ||
+        reolinkModel.match(camera.manufacturer).hasMatch() ||
+        camera.name == QLatin1String("IPC-BO");
+    return camera;
 }
 
 } // namespace leolink
