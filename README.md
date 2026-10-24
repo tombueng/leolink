@@ -2,9 +2,10 @@
 
 A native Linux client for Reolink cameras. Qt 6, C++20, libmpv.
 
-Talks to cameras over their own protocols — the HTTP API, RTSP and ONVIF on the
-local network — so nothing has to be installed on the camera and no vendor
-software is involved.
+Talks to cameras over their own protocols — the HTTP API, RTSP, ONVIF and
+Reolink's Baichuan on the local network — so nothing has to be installed on the
+camera and no vendor software is involved. See
+[what each feature needs](#what-each-feature-needs).
 
 > Not affiliated with, endorsed by or supported by Reolink.
 
@@ -265,13 +266,78 @@ streaming paths, ONVIF's two firmware quirks, and the Baichuan protocol on port
 9000 including its four-message login handshake.
 
 Baichuan is not needed for ordinary viewing of a wired camera. It matters for
-battery models that keep RTSP switched off, for reaching a camera by UID from
-outside the network, and for two-way audio.
+battery models that keep RTSP switched off, for cameras with no web server at
+all (an E1 Pro has none, and an E1 can have it switched off), for reaching a
+camera by UID from outside the network, and for two-way audio.
+
+### What each feature needs
+
+At startup leolink asks every camera which of these it offers. It tries each
+port, and over Baichuan reads the camera's own list of which services are
+switched on. A service counts only when both agree. After that a feature uses
+what is there and leaves alone what is not, so a camera without a web server
+is never asked to log in to one. The camera dialog's **About** page shows what
+was found.
+
+| | HTTP API<br>80 / 443 | HTTP-FLV<br>80 / 443 + RTMP | RTSP<br>554 | ONVIF<br>8000 | Baichuan<br>9000 |
+|---|:-:|:-:|:-:|:-:|:-:|
+| Live video | | 1st choice | 2nd | | 3rd |
+| Camera settings | ✓ | | | | when there is no web server ¹ |
+| About page: model, hardware, firmware, serial | ✓ | | | | ✓ |
+| Still for drawing the detection area | ✓ | | | | — |
+| Motion alerts from the camera | | | | ✓ | |
+| Motion and sound detected here | | ✓ | ✓ | | — ² |
+| Recording to disk, pre-roll, round the clock | | ✓ | ✓ | | — ² |
+| Recordings on the SD card: search, play, download | ✓ | | | | — |
+| Wi-Fi strength on the tile | ✓ | | | | — |
+| Finding cameras on the network | | | | ✓ discovery | |
+| Reaching a camera by UID (P2P) | | | | | ✓ |
+| Sending sound to the camera's speaker (`--talk`) | | | ✓ ONVIF backchannel | | |
+
+✓ is the protocol a feature uses, and — means it is not available over that
+protocol yet. An empty cell means the feature never uses that protocol.
+
+With the transport set to **Automatic**, live video takes the first of
+HTTP-FLV, RTSP and Baichuan that the camera offers. They are ranked by what
+they cost this machine. HTTP-FLV is a single HTTP connection. RTSP adds a
+session and RTP reassembly. Baichuan is done entirely by leolink: login,
+decryption, unpacking the camera's container and repackaging it as MPEG-TS for
+the player. If a transport fails, the next one is tried. Choosing a transport
+by hand overrides all of this. Cameras that never answered the probe are
+treated as offering everything, which is how leolink behaved before it asked.
+
+¹ Over Baichuan the settings dialog has video, picture, on-screen text, privacy
+mask (on and off, but not drawing areas), detection area, sensitivity and AI
+detection types, the recording and alert schedules, the e-mail, FTP, push and
+siren switches, network ports, Wi-Fi, time zone and clock, infrared and status
+lights, storage, and restart. It does not have user accounts, e-mail and FTP
+server details, daylight saving and NTP, firmware update, formatting the card,
+or snapshots. Those panels say so instead of failing. The message numbers and
+the mapping of each field are in [docs/protocol.md](docs/protocol.md#settings).
+
+² Baichuan video is re-served on a loopback port that exists only while a tile
+is playing it, so there is no address for ffmpeg to open. A camera that offers
+nothing but Baichuan, such as an E1 with its web server and RTSP switched off,
+can be watched and configured but not recorded or analysed here.
 
 ## Status
 
 Developed against an **RLC-410W**. Other Reolink models speak the same
 protocols, and leolink asks each camera what it supports rather than assuming.
+
+Also run against these, with every protocol each one offers:
+
+| Camera | Firmware | Offers | Video (automatic) | Settings over |
+|---|---|---|---|---|
+| Video Doorbell WiFi | v3.0.0.6460 | HTTP, HTTPS, RTMP, RTSP, ONVIF, Baichuan | HTTP-FLV | HTTP API |
+| E1 Zoom | v3.1.0.4417 | HTTPS, RTMP, RTSP, ONVIF, Baichuan | HTTP-FLV over HTTPS | HTTP API |
+| E1 Pro | v3.1.0.3149 | RTSP, ONVIF, Baichuan | RTSP | Baichuan |
+| E1, web server and RTSP off | v3.1.0.1643 | Baichuan | Baichuan | Baichuan |
+
+The E1 Zoom answers both ways, so the Baichuan settings were checked against
+its HTTP API field by field. Writes over Baichuan were then tested on the E1
+and an E1 Pro by changing each setting, reading it back and restoring it. The
+camera's own settings document was identical afterwards.
 
 Verified against real hardware: the HTTP API, RTSP and HTTP-FLV streaming,
 snapshots, ONVIF discovery and motion push, and Baichuan — login *and* video.
@@ -329,7 +395,19 @@ The Baichuan protocol was originally reverse engineered by
 maintained at
 [QuantumEntangledAndy/neolink](https://github.com/QuantumEntangledAndy/neolink).
 Their Wireshark dissector made the port-9000 work here a matter of hours rather
-than weeks.
+than weeks. neolink is AGPL-3.0, and none of its code is in leolink. It was
+read for protocol facts only.
+
+The AES login and the Baichuan settings messages follow
+[starkillerOG/reolink_aio](https://github.com/starkillerOG/reolink_aio), the
+library behind Home Assistant's Reolink integration: its message numbers, the
+XML it reads and writes, and its AES-128-CFB scheme. reolink_aio is MIT,
+Copyright (c) 2023 starkillerOG. Its licence asks for its notice to be included
+with substantial portions of it, so the notice is reproduced in
+[LICENSE](LICENSE), and the files that use it say so where they do.
+
+The AES cipher in `src/Aes128.cpp` is written from NIST's FIPS-197, which is in
+the public domain.
 
 ## Licence
 
