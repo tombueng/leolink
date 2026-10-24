@@ -286,6 +286,112 @@ private slots:
         QCOMPARE(canonical(camera.document(44)), osd);
     }
 
+    // ── a camera's own settings, over its web server ─────────────────────────
+
+    /// An E1 Zoom over HTTPS. Asked the older GetPush, it takes its web server
+    /// down, and every request after that answers 502; asked GetEmailV20 or
+    /// GetPushV20 without a channel, it answers -4. Both together left the
+    /// dialog half empty.
+    void cameraSettingsOverHttp()
+    {
+        bool down = false;
+        QStringList asked;
+        FakeWebServer server([&](const FakeWebServer::Request &request) {
+            FakeWebServer::Response r;
+            if (down) {
+                r.status = 502;
+                return r;
+            }
+            const QJsonObject entry = QJsonDocument::fromJson(request.body).array().first().toObject();
+            const QString cmd = entry.value(QStringLiteral("cmd")).toString();
+            asked << cmd;
+            const bool channel = entry.value(QStringLiteral("param")).toObject().contains(QStringLiteral("channel"));
+            if (cmd == QLatin1String("GetPush")) {
+                down = true;
+                r.status = 502;
+                return r;
+            }
+            if ((cmd == QLatin1String("GetEmailV20") || cmd == QLatin1String("GetPushV20")) && !channel) {
+                r.body = QJsonDocument(QJsonArray{QJsonObject{
+                             {QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 1},
+                             {QStringLiteral("error"), QJsonObject{{QStringLiteral("rspCode"), -4}}}}})
+                             .toJson();
+                return r;
+            }
+            if (cmd == QLatin1String("GetPushV20")) {
+                r.body = QJsonDocument(QJsonArray{QJsonObject{
+                             {QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 0},
+                             {QStringLiteral("value"), QJsonObject{{QStringLiteral("Push"),
+                                                                    QJsonObject{{QStringLiteral("enable"), 1}}}}}}})
+                             .toJson();
+                return r;
+            }
+            return httpCamera(request);
+        });
+        ReolinkClient::setNetworkFactory(
+            [&server](QObject *owner) { return new RedirectingNetwork(server.port(), owner); });
+
+        CameraConfig c;
+        c.id = QStringLiteral("e1zoom");
+        c.host = QStringLiteral("192.0.2.10");
+        c.password = kPassword;
+        c.caps.known = true;
+        c.caps.https = true;
+        c.caps.rtsp = true;
+        c.caps.onvif = true;
+        c.caps.baichuan = true;
+        {
+            CameraSettingsDialog dialog(c);
+            dialog.show();
+            QTRY_VERIFY_WITH_TIMEOUT(editorWith(dialog, QStringLiteral("antiFlicker")), 15000);
+            QTRY_VERIFY_WITH_TIMEOUT(editorWith(dialog, QStringLiteral("postRec")), 15000);
+            QTRY_VERIFY_WITH_TIMEOUT(editorWith(dialog, QStringLiteral("smtpServer")), 15000);
+            QTest::qWait(1000);
+            QVERIFY2(!asked.contains(QStringLiteral("GetPush")), qPrintable(asked.join(QLatin1Char(' '))));
+            QVERIFY(!down);
+            QVERIFY(asked.contains(QStringLiteral("GetPushV20")));
+        }
+        ReolinkClient::setNetworkFactory(nullptr);
+    }
+
+    /// Firmware that has only the older commands still gets asked them.
+    void olderFirmwareGetsTheOlderCommands()
+    {
+        QStringList asked;
+        FakeWebServer server([&](const FakeWebServer::Request &request) {
+            const QString cmd = QJsonDocument::fromJson(request.body).array().first().toObject()
+                                    .value(QStringLiteral("cmd")).toString();
+            asked << cmd;
+            if (cmd.endsWith(QLatin1String("V20"))) {
+                FakeWebServer::Response r;
+                r.body = QJsonDocument(QJsonArray{QJsonObject{
+                             {QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 1},
+                             {QStringLiteral("error"), QJsonObject{{QStringLiteral("rspCode"), -9}}}}})
+                             .toJson();
+                return r;
+            }
+            return httpCamera(request);
+        });
+        ReolinkClient::setNetworkFactory(
+            [&server](QObject *owner) { return new RedirectingNetwork(server.port(), owner); });
+        CameraConfig c;
+        c.id = QStringLiteral("old");
+        c.host = QStringLiteral("192.0.2.11");
+        c.password = kPassword;
+        {
+            CameraSettingsDialog dialog(c);
+            dialog.show();
+            QTRY_VERIFY_WITH_TIMEOUT(asked.contains(QStringLiteral("GetEmail")) &&
+                                         asked.contains(QStringLiteral("GetPush")) &&
+                                         asked.contains(QStringLiteral("GetFtp")) &&
+                                         asked.contains(QStringLiteral("GetRec")),
+                                     15000);
+            // … and only after their newer forms said no.
+            QVERIFY(asked.indexOf(QStringLiteral("GetPushV20")) < asked.indexOf(QStringLiteral("GetPush")));
+        }
+        ReolinkClient::setNetworkFactory(nullptr);
+    }
+
 private:
     QTemporaryDir m_dir;
 

@@ -1,6 +1,8 @@
 // Reolink CGI API (port 80/443) — login, device info, snapshots.
 #pragma once
 
+#include <functional>
+
 #include <QDateTime>
 #include <QMap>
 #include <QJsonArray>
@@ -58,6 +60,10 @@ public:
     /// Where requests go. Only a test changes this, to send them to a web
     /// server of its own; the client keeps owning the one it made.
     void setNetwork(QNetworkAccessManager *net) { m_net = net; }
+    /// Makes the network manager of every client created from now on, the
+    /// ones a dialog makes for itself included. For tests; null restores the
+    /// ordinary one.
+    static void setNetworkFactory(std::function<QNetworkAccessManager *(QObject *)> factory);
     const CameraConfig &camera() const { return m_camera; }
 
     /// Which input of the device every request is about. Zero for a camera;
@@ -193,6 +199,9 @@ signals:
     void sectionReady(const QString &command, const QJsonObject &value,
                       const QJsonObject &ranges);
     void sectionApplied(const QString &command);
+    /// A read from fetchSection() was turned down: which one, and the camera's
+    /// code. -9 means this firmware has no such command. Emitted before failed().
+    void sectionFailed(const QString &command, int rspCode);
     void rebootAccepted();
     void wifiSignalReady(int strength);
     /// "Wifi", "LAN", "3G"/"4G" — whatever the camera calls its active link.

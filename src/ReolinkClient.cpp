@@ -93,8 +93,28 @@ constexpr int kLogoutWaitMs = 700;
 constexpr int kBackOffMs = 3000;
 } // namespace
 
+namespace {
+
+std::function<QNetworkAccessManager *(QObject *)> &networkFactory()
+{
+    static std::function<QNetworkAccessManager *(QObject *)> factory;
+    return factory;
+}
+
+QNetworkAccessManager *makeNetwork(QObject *owner)
+{
+    return networkFactory() ? networkFactory()(owner) : new QNetworkAccessManager(owner);
+}
+
+} // namespace
+
+void ReolinkClient::setNetworkFactory(std::function<QNetworkAccessManager *(QObject *)> factory)
+{
+    networkFactory() = std::move(factory);
+}
+
 ReolinkClient::ReolinkClient(QObject *parent)
-    : QObject(parent), m_net(new QNetworkAccessManager(this))
+    : QObject(parent), m_net(makeNetwork(this))
 {
 }
 
@@ -547,6 +567,10 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                 return;
             }
 
+            // Not the camera's answer, so no code of the camera's. A -9 left
+            // over from an earlier request would pass this off as "no such
+            // command".
+            m_lastErrorCode = 0;
             const QString message =
                 tr("Cannot reach %1: %2").arg(m_camera.host, reply->errorString());
             LEO_WARN(Api, m_camera.label(),
@@ -836,10 +860,16 @@ void ReolinkClient::fetchSection(const QString &command, const QJsonObject &para
                                       entry.value(QStringLiteral("value")).toObject(),
                                       ranges);
                 },
-                [this](const QString &e) { emit failed(e); },
+                [this, command](const QString &e) {
+                    emit sectionFailed(command, m_lastErrorCode);
+                    emit failed(e);
+                },
                 1);
     },
-    [this](const QString &e) { emit failed(e); });
+    [this, command](const QString &e) {
+        emit sectionFailed(command, m_lastErrorCode);
+        emit failed(e);
+    });
 }
 
 void ReolinkClient::applySection(const QString &command, const QJsonObject &param)

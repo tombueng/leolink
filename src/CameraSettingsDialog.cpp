@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QListWidget>
+#include <QSet>
 #include <QSlider>
 #include <QSpinBox>
 #include <QStackedWidget>
@@ -183,6 +184,13 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
             });
     connect(m_client, &ReolinkClient::sectionReady,
             this, &CameraSettingsDialog::onSectionReady);
+    connect(m_client, &ReolinkClient::sectionFailed, this,
+            [this](const QString &command, int rspCode) {
+                const QString older = olderFormOf(command);
+                if (!older.isEmpty() && ReolinkClient::meansUnsupported(rspCode) &&
+                    m_sectionParams.contains(older))
+                    m_client->fetchSection(older, m_sectionParams.value(older));
+            });
     connect(m_client, &ReolinkClient::sectionApplied,
             this, &CameraSettingsDialog::onSectionApplied);
     connect(m_client, &ReolinkClient::failed,
@@ -293,6 +301,18 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
     queryCamera();
 }
 
+QString CameraSettingsDialog::olderFormOf(const QString &command)
+{
+    static const QHash<QString, QString> older{
+        {QStringLiteral("GetRecV20"), QStringLiteral("GetRec")},
+        {QStringLiteral("GetEmailV20"), QStringLiteral("GetEmail")},
+        {QStringLiteral("GetFtpV20"), QStringLiteral("GetFtp")},
+        {QStringLiteral("GetPushV20"), QStringLiteral("GetPush")},
+        {QStringLiteral("GetAudioAlarmV20"), QStringLiteral("GetAudioAlarm")},
+    };
+    return older.value(command);
+}
+
 void CameraSettingsDialog::queryCamera()
 {
     m_client->fetchDeviceInfo();
@@ -312,8 +332,19 @@ void CameraSettingsDialog::queryCamera()
     // Everything the generated sections need. Commands this firmware does not
     // know answer -9 and the section simply stays empty, which is the point of
     // asking rather than assuming.
+    //
+    // Where a section has an older and a newer command, only the newer is
+    // asked, and the older only once the newer is known to be missing. Both
+    // used to go at once, and an E1 Zoom or a Video Doorbell, asked the older
+    // GetPush, takes its web server down: every request after it answers 502,
+    // and the dialog stayed half empty.
+    QSet<QString> onlyIfMissing;
     for (auto it = m_sectionParams.cbegin(); it != m_sectionParams.cend(); ++it)
-        m_client->fetchSection(it.key(), it.value());
+        if (!olderFormOf(it.key()).isEmpty())
+            onlyIfMissing.insert(olderFormOf(it.key()));
+    for (auto it = m_sectionParams.cbegin(); it != m_sectionParams.cend(); ++it)
+        if (!onlyIfMissing.contains(it.key()))
+            m_client->fetchSection(it.key(), it.value());
 
     // The alarm section needs its type named, and its reply is handled by hand
     // rather than by a generated form.
@@ -1539,7 +1570,9 @@ void CameraSettingsDialog::onProbeCapabilities()
         QStringLiteral("GetRec"),        QStringLiteral("GetRecV20"),
         QStringLiteral("GetEmail"),      QStringLiteral("GetEmailV20"),
         QStringLiteral("GetFtp"),        QStringLiteral("GetFtpV20"),
-        QStringLiteral("GetPush"),       QStringLiteral("GetPushV20"),
+        // Not GetPush: an E1 Zoom or a Video Doorbell asked it takes its web
+        // server down, and the probe's answers after it are all 502.
+        QStringLiteral("GetPushV20"),
         QStringLiteral("GetNetPort"),    QStringLiteral("GetLocalLink"),
         QStringLiteral("GetWifi"),       QStringLiteral("GetDdns"),
         QStringLiteral("GetP2p"),        QStringLiteral("GetUpnp"),
@@ -2317,7 +2350,7 @@ void CameraSettingsDialog::buildAlertTab()
                                      {QStringLiteral("interval"), tr("Not more often than"), {}, {}},
                                      {QStringLiteral("attachment"), tr("Attach"), {}, {}},
                                      {QStringLiteral("enable"), tr("Switched on"), {}, {}},
-                                 }, false));
+                                 }));
 
     layout->addWidget(addSection(page, QStringLiteral("GetFtpV20"), tr("FTP upload"),
                                  {
@@ -2327,13 +2360,13 @@ void CameraSettingsDialog::buildAlertTab()
                                      {QStringLiteral("password"), tr("Password"), {}, {}},
                                      {QStringLiteral("remoteDir"), tr("Folder"), {}, {}},
                                      {QStringLiteral("enable"), tr("Switched on"), {}, {}},
-                                 }, false));
+                                 }));
 
     layout->addWidget(addSection(page, QStringLiteral("GetPushV20"),
                                  tr("Push notifications"),
                                  {
                                      {QStringLiteral("enable"), tr("Switched on"), {}, {}},
-                                 }, false));
+                                 }));
 
     layout->addWidget(addSection(page, QStringLiteral("GetEmail"), tr("E-mail"),
                                  {

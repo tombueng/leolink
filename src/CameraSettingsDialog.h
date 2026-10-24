@@ -171,6 +171,9 @@ private:
     bool editSchedule(QJsonObject &schedule, const QString &title,
                       const QString &explanation);
     static QString describeAlarmType(const QString &key);
+    /// "GetPushV20" → "GetPush": the older command for the same section, or
+    /// nothing.
+    static QString olderFormOf(const QString &command);
     /// Resolution the camera's own pixel coordinates refer to.
     QSize mainStreamSize() const;
 
