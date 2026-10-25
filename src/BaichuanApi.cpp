@@ -3,6 +3,8 @@
 #include <cstdio>
 
 #include <QDomDocument>
+#include <QFile>
+#include <QFileInfo>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -11,6 +13,7 @@
 #include <QThread>
 
 #include "Baichuan.h"
+#include "Firmware.h"
 #include "Log.h"
 
 namespace leolink {
@@ -1823,23 +1826,29 @@ struct BaichuanApi::Worker : QObject {
             client->close();
     }
 
+    /// A logged-in client, or why there is none.
+    QString open()
+    {
+        if (client)
+            return {};
+        client = std::make_unique<BaichuanClient>(host, user, secret, port);
+        if (!client->login()) {
+            const QString why = client->lastError();
+            client.reset();
+            return QObject::tr("Cannot reach %1 over Baichuan: %2").arg(host, why);
+        }
+        LEO_INFO(Baichuan, host, QStringLiteral("Settings session open"));
+        return {};
+    }
+
     QJsonObject run(int channel, const QString &command, const QJsonObject &param,
                     int action)
     {
         // Once more on a fresh connection if the old one has gone: the camera
         // drops a session it thinks idle, and that is not worth an error.
         for (int attempt = 0; attempt < 2; ++attempt) {
-            if (!client) {
-                client = std::make_unique<BaichuanClient>(host, user, secret, port);
-                if (!client->login()) {
-                    const QString why = client->lastError();
-                    client.reset();
-                    return errorEntry(command, kConnectionLost,
-                                      QObject::tr("Cannot reach %1 over Baichuan: %2")
-                                          .arg(host, why));
-                }
-                LEO_INFO(Baichuan, host, QStringLiteral("Settings session open"));
-            }
+            if (const QString why = open(); !why.isEmpty())
+                return errorEntry(command, kConnectionLost, why);
             const QJsonObject entry =
                 BaichuanApi::translate(*client, channel, command, param, action);
             const int code = entry.value(QStringLiteral("error")).toObject()
@@ -1922,6 +1931,47 @@ void BaichuanApi::call(const QString &command, const QJsonObject &param, int act
         Qt::QueuedConnection);
 }
 
+void BaichuanApi::uploadFirmware(const QString &fileName, const QByteArray &pak,
+                                 QObject *context, Progress progress, Done done)
+{
+    QPointer<QObject> guard(context);
+    Worker *worker = m_worker;
+    QMetaObject::invokeMethod(
+        m_worker,
+        [worker, fileName, pak, guard, progress, done] {
+            const auto toContext = [guard](auto f) {
+                if (guard)
+                    QMetaObject::invokeMethod(guard.data(), f, Qt::QueuedConnection);
+            };
+            // Not retried on a fresh connection, unlike a settings read: half a
+            // file is not something to start sending again behind the camera's
+            // back.
+            QString error = worker->open();
+            if (error.isEmpty()) {
+                LEO_INFO(Baichuan, worker->host,
+                         QStringLiteral("Sending firmware %1, %2 bytes")
+                             .arg(fileName).arg(pak.size()));
+                const bool ok = worker->client->uploadFirmware(
+                    fileName, pak, [&toContext, progress](qint64 sent, qint64 total) {
+                        if (progress)
+                            toContext([progress, sent, total] { progress(sent, total); });
+                    });
+                if (!ok)
+                    error = QObject::tr("The camera did not take the firmware: %1")
+                                .arg(worker->client->lastError());
+                worker->client->close();
+                worker->client.reset();
+                if (ok)
+                    LEO_INFO(Baichuan, worker->host,
+                             QStringLiteral("Firmware sent; the camera installs it and restarts"));
+                else
+                    LEO_WARN(Baichuan, worker->host, error);
+            }
+            toContext([done, error] { done(error); });
+        },
+        Qt::QueuedConnection);
+}
+
 int runBaichuanApiProbe(const QString &host, const QString &user,
                         const QString &password, const QString &command,
                         const QString &param)
@@ -1939,6 +1989,94 @@ int runBaichuanApiProbe(const QString &host, const QString &user,
     client.close();
     std::printf("%s\n", QJsonDocument(entry).toJson(QJsonDocument::Indented).constData());
     return entry.value(QStringLiteral("code")).toInt() == 0 ? 0 : 2;
+}
+
+namespace {
+
+/// What the camera says it is: hardVer and firmVer, from GetDevInfo.
+QJsonObject devInfo(BaichuanClient &client)
+{
+    return BaichuanApi::translate(client, 0, QStringLiteral("GetDevInfo"), {}, 0)
+        .value(QStringLiteral("value")).toObject()
+        .value(QStringLiteral("DevInfo")).toObject();
+}
+
+} // namespace
+
+int runBaichuanFirmware(const QString &host, const QString &user,
+                        const QString &password, const QString &pakPath,
+                        bool install)
+{
+    QFile file(pakPath);
+    if (pakPath.isEmpty() || !file.open(QIODevice::ReadOnly)) {
+        std::fprintf(stderr, "cannot read the package %s\n", qPrintable(pakPath));
+        return 1;
+    }
+    const QByteArray pak = file.readAll();
+    const QString fileName = QFileInfo(pakPath).fileName();
+
+    BaichuanClient client(host, user, password);
+    if (!client.login()) {
+        std::fprintf(stderr, "login failed: %s\n", qPrintable(client.lastError()));
+        return 1;
+    }
+    const QJsonObject before = devInfo(client);
+    const QString hardVer = before.value(QStringLiteral("hardVer")).toString();
+    const QString firmVer = before.value(QStringLiteral("firmVer")).toString();
+    std::printf("camera   %s, board %s, firmware %s\npackage  %s, %lld bytes\n",
+                qPrintable(before.value(QStringLiteral("model")).toString()),
+                qPrintable(hardVer), qPrintable(firmVer), qPrintable(fileName),
+                qlonglong(pak.size()));
+    if (const QString why = firmware::refusal(fileName, pak, hardVer, firmVer); !why.isEmpty()) {
+        client.close();
+        std::fprintf(stderr, "refused: %s\n", qPrintable(why));
+        return 2;
+    }
+    if (!install) {
+        client.close();
+        std::printf("checks passed; nothing sent (add --yes to install)\n");
+        return 0;
+    }
+
+    int lastTenth = -1;
+    const bool sent = client.uploadFirmware(fileName, pak, [&lastTenth](qint64 done, qint64 total) {
+        const int tenth = int(done * 10 / total);
+        if (tenth != lastTenth) {
+            lastTenth = tenth;
+            std::printf("sent     %3d%%\n", tenth * 10);
+            std::fflush(stdout);
+        }
+    });
+    client.close();
+    if (!sent) {
+        std::fprintf(stderr, "upload failed: %s\n", qPrintable(client.lastError()));
+        return 3;
+    }
+
+    // The camera writes the image and restarts. Until it answers with the new
+    // build, it is either still flashing or still on the old one; asked every
+    // fifteen seconds, for as long as a slow Wi-Fi camera has been seen to take.
+    const int wanted = firmware::parsePakName(fileName).build;
+    std::printf("sent; waiting for the camera to restart on build %d\n", wanted);
+    std::fflush(stdout);
+    QThread::sleep(30);
+    for (int waited = 30; waited <= 600; waited += 15) {
+        BaichuanClient again(host, user, password);
+        if (again.login()) {
+            const QString now = devInfo(again).value(QStringLiteral("firmVer")).toString();
+            again.close();
+            std::printf("%4d s   %s\n", waited, qPrintable(now.isEmpty() ? QStringLiteral("answering") : now));
+            std::fflush(stdout);
+            if (firmware::buildOf(now) == wanted)
+                return 0;
+        } else {
+            std::printf("%4d s   not answering\n", waited);
+            std::fflush(stdout);
+        }
+        QThread::sleep(15);
+    }
+    std::fprintf(stderr, "the camera did not come back on build %d within ten minutes\n", wanted);
+    return 4;
 }
 
 } // namespace leolink

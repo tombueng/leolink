@@ -290,6 +290,8 @@ was found.
 | Recording to disk, pre-roll, round the clock | | ✓ | ✓ | | — ² |
 | Recordings on the SD card: search, play, download | ✓ | | | | — |
 | Wi-Fi strength on the tile | ✓ | | | | — |
+| Firmware update, downloaded by the camera | ✓ | | | | — |
+| Firmware update from a .pak file ³ | | | | | ✓ |
 | Finding cameras on the network | | | | ✓ discovery | |
 | Reaching a camera by UID (P2P) | | | | | ✓ |
 | Sending sound to the camera's speaker | | | ✓ ONVIF backchannel | | — |
@@ -311,14 +313,24 @@ mask (on and off, but not drawing areas), detection area, sensitivity and AI
 detection types, the recording and alert schedules, the e-mail, FTP, push and
 siren switches, network ports, Wi-Fi, time zone and clock, infrared and status
 lights, storage, and restart. It does not have user accounts, e-mail and FTP
-server details, daylight saving and NTP, firmware update, formatting the card,
-or snapshots. Those panels say so instead of failing. The message numbers and
+server details, daylight saving and NTP, the camera checking Reolink for an
+update, formatting the card, or snapshots. Those panels say so instead of failing. The message numbers and
 the mapping of each field are in [docs/protocol.md](docs/protocol.md#settings).
 
 ² Baichuan video is re-served on a loopback port that exists only while a tile
 is playing it, so there is no address for ffmpeg to open. A camera that offers
 nothing but Baichuan, such as an E1 with its web server and RTSP switched off,
 can be watched and configured but not recorded or analysed here.
+
+³ For a camera that cannot reach Reolink itself, or has no web server. Unzip
+the download from Reolink's download centre, then **Maintenance → Install from
+file…** sends the `.pak` over port 9000. leolink sends a package only to the
+board in its name (`IPC_566SD54MP.5112_….pak` goes only to a camera that
+reports board `IPC_566SD54MP`), only when its build is newer than the one
+installed, and only when it starts the way a Reolink package does. From the
+terminal, `leolink --baichuan-firmware <host> <file.pak>` runs the same checks,
+and with `--yes` installs and waits for the camera to come back on the new
+build.
 
 ## Status
 

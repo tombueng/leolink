@@ -1170,6 +1170,35 @@ void ReolinkClient::upgradeFirmware()
     [this](const QString &e) { emit failed(e); });
 }
 
+void ReolinkClient::installFirmwareFile(const QString &fileName, const QByteArray &pak)
+{
+    if (m_camera.caps.known && !m_camera.caps.baichuan) {
+        emit readoutFailed(QStringLiteral("firmware"),
+                           tr("Installing from a file needs the camera's port 9000, "
+                              "which it does not offer."));
+        return;
+    }
+    if (!m_baichuan)
+        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
+    m_baichuan->uploadFirmware(
+        fileName, pak, this,
+        [this](qint64 sent, qint64 total) { emit firmwareProgress(sent, total); },
+        [this](const QString &error) {
+            if (!error.isEmpty()) {
+                m_lastErrorCode = 0;
+                emit readoutFailed(QStringLiteral("firmware"), error);
+                return;
+            }
+            // The camera restarts into the new firmware; an HTTP session, if
+            // there was one, dies with it.
+            m_token.clear();
+            emit firmwareInfo(
+                tr("Sent. The camera is installing it and will restart on its own, "
+                   "unreachable for several minutes. Do not cut its power."),
+                false);
+        });
+}
+
 void ReolinkClient::formatStorage()
 {
     login([this] {

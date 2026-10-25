@@ -29,7 +29,8 @@ target_compile_definitions(leolink_testable PUBLIC
 target_compile_options(leolink_testable PUBLIC -Wall -Wextra -Wpedantic)
 
 foreach(name aes baichuanclient baichuanapi transport tsmuxer alarmmerge
-             config log events discovery reolinkclient motionwatcher dialogs)
+             config log events discovery reolinkclient motionwatcher dialogs
+             firmware)
     qt_add_executable(tst_${name} tst_${name}.cpp)
     target_link_libraries(tst_${name} PRIVATE leolink_testable)
     add_test(NAME ${name} COMMAND tst_${name})

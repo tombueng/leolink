@@ -1256,6 +1256,43 @@ STRINGS: dict[str, str] = {
         '自動（HTTP-FLV、次に RTSP、次に Baichuan）',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         '自動では、カメラに対応している方式を問い合わせ、HTTP-FLV、RTSP、Baichuan のうち最初に使えるものを選びます。このコンピューターへの負荷が小さいものが優先です。映像が一度も出ない場合は次の方式に移ります。\n\nほとんどのカメラには RTSP が適しています。\n\nHTTP-FLV はポート 80 だけで済むので、RTSP が塞がれている環境で役立ちます。\n\nBaichuan は Reolink 純正アプリが話すものです。RTSP を切ったままのカメラ — 電池式の機種がそうです — にはこれが答えで、カメラのわずかな Web セッションを消費しません。映像のみで、音声は引き続き RTSP から届きます。',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'カメラがファームウェアを受け付けませんでした: %1',
+    'Sending the firmware… %1 %':
+        'ファームウェアを送信中… %1 %',
+    'Firmware for %1':
+        '%1 のファームウェア',
+    'Reolink firmware (*.pak)':
+        'Reolink ファームウェア (*.pak)',
+    '%1 cannot be read.':
+        '%1 を読み込めません。',
+    '<b>Install build %1 on %2?</b>':
+        '<b>%2 にビルド %1 をインストールしますか?</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nこのパッケージはカメラが報告しているボード %2 用で、%3 を置き換えます。leolink はこのコンピューターから送信します。1〜2 分かかるので、完了と表示されるまでこのウィンドウを開いたままにしてください。その後カメラがインストールして再起動し、数分間は接続できません。\n\n更新中は電源を切らないでください。書き込み中に中断されたカメラは、たいてい修理に出す必要があります。',
+    'Sending the firmware…':
+        'ファームウェアを送信中…',
+    'Install from file…':
+        'ファイルからインストール…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        'Reolink のダウンロードセンターの .pak を、このコンピューターからポート 9000 経由で送信します。先にダウンロードした zip を展開してください。',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'ファイルからのインストールにはカメラのポート 9000 が必要ですが、このカメラは提供していません。',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        '送信しました。カメラがインストール中で、自動的に再起動します。数分間は接続できません。電源を切らないでください。',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'Reolink のファームウェアパッケージの名前 (ボード.ビルド_日付…pak) ではありません。Reolink のダウンロードセンターの zip に入っている .pak を使ってください。',
+    'This file does not look like a Reolink firmware package.':
+        'このファイルは Reolink のファームウェアパッケージではないようです。',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'カメラがボードを報告していないため、パッケージを照合できません。',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'このパッケージは %1 用で、カメラは %2 です。別のボードのファームウェアをインストールすると、カメラが起動しなくなることがあります。',
+    'Build %1 is already installed.':
+        'ビルド %1 はすでにインストールされています。',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        'ビルド %1 はインストール済みの %2 より古いです。leolink は新しいファームウェアのみインストールします。',
 }
 
 

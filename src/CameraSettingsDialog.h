@@ -81,6 +81,7 @@ private slots:
     void onDeleteUser();
     void onChangePassword();
     void onFormatStorage();
+    void onInstallFirmwareFile();
     /// The camera's alarm section: detection grid, week of hours, sensitivity
     /// bands. Too structured for a generated form, so it is handled here.
     void onAlarmReady(const QJsonObject &alarm);
@@ -259,6 +260,10 @@ private:
     /// Says why the user list is empty, rather than leaving an empty table.
     QLabel *m_userStatus{nullptr};
     QPushButton *m_upgradeButton{nullptr};
+    QPushButton *m_installFileButton{nullptr};
+    /// What the camera says it is, for checking a package against.
+    QString m_hardVer;
+    QString m_firmVer;
 
     /// What the camera last told us, kept so that writing back only changes
     /// the fields the user touched — Set* wants the whole structure, and

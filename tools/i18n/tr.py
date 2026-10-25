@@ -1433,6 +1433,43 @@ STRINGS: dict[str, str] = {
         'Otomatik (HTTP-FLV, sonra RTSP, sonra Baichuan)',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         "Otomatik, kameraya ne sunduğunu sorar ve HTTP-FLV, RTSP ve Baichuan arasından ilkini seçer; bu bilgisayar için en az yük getiren önce gelir. Biri hiç görüntü vermezse sonrakine geçer.\n\nRTSP çoğu kameraya uyar.\n\nHTTP-FLV yalnızca 80 numaralı bağlantı noktasını ister; RTSP'nin engellendiği yerlerde işe yarar.\n\nBaichuan, Reolink'in kendi uygulamasının konuştuğu protokoldür. RTSP'yi kapalı tutan kameralar için — pilli modeller böyledir — doğru yanıttır ve kameranın az sayıdaki web oturumundan birini harcamaz. Yalnızca video: ses yine RTSP üzerinden gelir.",
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'Kamera yazılımı kabul etmedi: %1',
+    'Sending the firmware… %1 %':
+        'Yazılım gönderiliyor… %1 %',
+    'Firmware for %1':
+        '%1 için yazılım',
+    'Reolink firmware (*.pak)':
+        'Reolink yazılımı (*.pak)',
+    '%1 cannot be read.':
+        '%1 okunamıyor.',
+    '<b>Install build %1 on %2?</b>':
+        '<b>%1 sürümü %2 üzerine kurulsun mu?</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nPaket, kameranın bildirdiği %2 kartı içindir ve %3 sürümünün yerini alır. leolink onu bu bilgisayardan gönderir, bu bir iki dakika sürer; bildirene kadar bu pencereyi açık tutun. Ardından kamera onu kurar ve yeniden başlar, birkaç dakika erişilemez.\n\nGüncelleme sırasında gücünü kesmeyin — yazma ortasında kesilen bir kameranın genellikle servise gönderilmesi gerekir.',
+    'Sending the firmware…':
+        'Yazılım gönderiliyor…',
+    'Install from file…':
+        'Dosyadan kur…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        "Reolink indirme merkezinden bir .pak, bu bilgisayardan 9000 numaralı bağlantı noktası üzerinden gönderilir. Önce indirileni zip'ten çıkarın.",
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'Dosyadan kurulum kameranın 9000 numaralı bağlantı noktasını gerektirir, kamera bunu sunmuyor.',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        'Gönderildi. Kamera yazılımı kuruyor ve kendiliğinden yeniden başlayacak, birkaç dakika erişilemez. Gücünü kesmeyin.',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'Ad bir Reolink yazılım paketine benzemiyor (kart.sürüm_tarih…pak). Reolink indirme merkezinin verdiği zip içindeki .pak dosyasını kullanın.',
+    'This file does not look like a Reolink firmware package.':
+        'Bu dosya bir Reolink yazılım paketine benzemiyor.',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'Kamera kartını bildirmedi, bu yüzden hiçbir paket onunla karşılaştırılamaz.',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'Bu paket %1 için, kamera ise %2. Başka bir kartın yazılımını kurmak artık açılmayan bir kamera bırakabilir.',
+    'Build %1 is already installed.':
+        '%1 sürümü zaten kurulu.',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        '%1 sürümü kurulu %2 sürümünden eski. leolink yalnızca daha yeni yazılım kurar.',
 }
 
 

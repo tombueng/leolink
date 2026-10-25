@@ -62,6 +62,16 @@ public:
     void call(const QString &command, const QJsonObject &param, int action,
               QObject *context, Reply reply);
 
+    /// Sends a firmware package on this camera's session; see
+    /// BaichuanClient::uploadFirmware. `progress` and `done` run on
+    /// `context`'s thread; `done` gets an empty string once the camera has the
+    /// whole file, or why it does not. The session is closed either way, since
+    /// a camera that took the file is about to restart.
+    using Progress = std::function<void(qint64 sent, qint64 total)>;
+    using Done = std::function<void(const QString &error)>;
+    void uploadFirmware(const QString &fileName, const QByteArray &pak,
+                        QObject *context, Progress progress, Done done);
+
     /// The translation itself, blocking, on a logged-in client. Public for the
     /// `--baichuan-api` diagnostic, which compares it with the HTTP API's own
     /// answer on a camera that has both.
@@ -82,5 +92,13 @@ private:
 int runBaichuanApiProbe(const QString &host, const QString &user,
                         const QString &password, const QString &command,
                         const QString &param);
+
+/// `--baichuan-firmware <host> <file.pak> [--yes]`: checks the package against
+/// the camera and, given `install`, sends it and waits for the camera to come
+/// back reporting the new build. 0 when it has, or when the checks passed and
+/// nothing was asked to be installed.
+int runBaichuanFirmware(const QString &host, const QString &user,
+                        const QString &password, const QString &pakPath,
+                        bool install);
 
 } // namespace leolink

@@ -82,6 +82,22 @@ public:
     QString request(quint32 msgType, const QString &body = QString(),
                     const QString &extension = QString(), int *status = nullptr);
 
+    /// Sends a firmware package and leaves the camera to install it.
+    ///
+    /// Message 67 twice over: once with the file's name and size, then the
+    /// file itself in pieces under the same handle, each piece raw behind an
+    /// `<Extension>` saying so. Only that extension is encrypted. The camera
+    /// answers each piece, and after the last starts flashing and restarts on
+    /// its own, so the connection is of no further use. `progress` hears the
+    /// bytes sent so far after every piece. Returns false with lastError()
+    /// filled if the camera refuses any of it.
+    ///
+    /// The message, its XML and the piece size follow reolink_aio's
+    /// upload_firmware (MIT, Copyright (c) 2023 starkillerOG; the notice is
+    /// in LICENSE).
+    bool uploadFirmware(const QString &fileName, const QByteArray &pak,
+                        const std::function<void(qint64 sent, qint64 total)> &progress = {});
+
     /// Set to receive a line per message while probing: body length and
     /// payload offset. Only used by --baichuan-video.
     std::function<void(const BcHeader &)> onMessage;

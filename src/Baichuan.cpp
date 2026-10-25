@@ -37,8 +37,16 @@ constexpr char kAesIv[] = "0123456789abcdef";
 constexpr quint32 kMsgLogin = 1;
 constexpr quint32 kMsgLogout = 2;
 constexpr quint32 kMsgVideo = 3;
+constexpr quint32 kMsgUpgradeFile = 67;
 
 constexpr int kTimeoutMs = 10000;
+
+/// The camera closes a connection that sends it a message of 40,000 bytes or
+/// more, so a firmware piece is cut to leave a whole message under this.
+constexpr int kMaxMessageBytes = 38000;
+/// A piece is written to flash as it arrives, which takes longer than a
+/// settings read; and after the last the camera checks the whole image.
+constexpr int kUpgradeReplyTimeoutMs = 60000;
 
 // ── BcMedia block magics ────────────────────────────────────────────────────
 // Four ASCII characters at the start of every block inside a video message,
@@ -733,6 +741,68 @@ QString BaichuanClient::request(quint32 msgType, const QString &body,
             reply = reply.mid(int(header.payloadOffset));
         return bodyText(header, reply);
     }
+}
+
+bool BaichuanClient::uploadFirmware(const QString &fileName, const QByteArray &pak,
+                                    const std::function<void(qint64, qint64)> &progress)
+{
+    if (!m_socket || m_socket->state() != QAbstractSocket::ConnectedState) {
+        m_error = QStringLiteral("not connected");
+        return false;
+    }
+
+    // One handle for the whole file: that is how the camera knows the pieces
+    // belong to the announcement.
+    const quint16 handle = ++m_handle;
+    const auto answered = [this, handle](const char *what) {
+        for (;;) {
+            BcHeader header;
+            QByteArray reply;
+            if (!readMessage(header, reply, kUpgradeReplyTimeoutMs))
+                return false;
+            if (header.msgType != kMsgUpgradeFile || header.handle != handle)
+                continue;
+            if (header.status() != 200) {
+                m_error = QStringLiteral("the camera refused the %1 with status %2")
+                              .arg(QLatin1String(what)).arg(header.status());
+                return false;
+            }
+            return true;
+        }
+    };
+
+    const QByteArray info = encryptXml(
+        QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<body>\n"
+                       "<ConfigFileInfo version=\"1.1\">\n"
+                       "<fileName>%1</fileName>\n<fileSize>%2</fileSize>\n"
+                       "<updateParameter>0</updateParameter>\n"
+                       "<channelBits>0</channelBits>\n"
+                       "</ConfigFileInfo>\n</body>\n")
+            .arg(fileName.toHtmlEscaped())
+            .arg(pak.size()));
+    m_socket->write(modernHeader(kMsgUpgradeFile, info.size(), 0, 0, handle) + info);
+    m_socket->flush();
+    if (!answered("file announcement"))
+        return false;
+
+    const QByteArray ext = encryptXml(
+        QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                       "<Extension version=\"1.1\">\n<binaryData>1</binaryData>\n"
+                       "</Extension>\n"));
+    const qsizetype pieceBytes = kMaxMessageBytes - 24 - ext.size();
+    for (qsizetype sent = 0; sent < pak.size();) {
+        const QByteArray piece = pak.mid(sent, pieceBytes);
+        m_socket->write(modernHeader(kMsgUpgradeFile, quint32(ext.size() + piece.size()), 0,
+                                     quint32(ext.size()), handle) +
+                        ext + piece);
+        m_socket->flush();
+        if (!answered("firmware"))
+            return false;
+        sent += piece.size();
+        if (progress)
+            progress(sent, pak.size());
+    }
+    return true;
 }
 
 void BaichuanClient::close()

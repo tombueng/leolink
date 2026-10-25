@@ -27,6 +27,7 @@ constexpr quint16 kGrantXor = 0xDD01;
 constexpr quint32 kLogin = 1;
 constexpr quint32 kLogout = 2;
 constexpr quint32 kAlarm = 33;
+constexpr quint32 kUpgradeFile = 67;
 constexpr char kIv[] = "0123456789abcdef";
 constexpr char kNonce[] = "0a1b2c3d4e5f6789";
 
@@ -149,6 +150,24 @@ QList<FakeCamera::Request> FakeCamera::requests() const
     return m_requests;
 }
 
+QString FakeCamera::uploadAnnouncement() const
+{
+    const QMutexLocker lock(&m_lock);
+    return m_uploadAnnouncement;
+}
+
+QByteArray FakeCamera::uploaded() const
+{
+    const QMutexLocker lock(&m_lock);
+    return m_uploaded;
+}
+
+QList<quint16> FakeCamera::uploadHandles() const
+{
+    const QMutexLocker lock(&m_lock);
+    return m_uploadHandles;
+}
+
 void FakeCamera::clearRequests()
 {
     const QMutexLocker lock(&m_lock);
@@ -255,6 +274,29 @@ void FakeCamera::serve(QTcpSocket &socket)
             return;
 
         const quint32 offset = qMin(h.payloadOffset, quint32(body.size()));
+        m_largestMessage = qMax(m_largestMessage.load(), 24 + int(body.size()));
+
+        // A firmware upload: an announcement, then raw pieces behind an
+        // extension saying so, all under one handle.
+        if (h.msg == kUpgradeFile && loggedIn) {
+            const QString extension = open(body.left(int(offset)));
+            int status = 200;
+            {
+                const QMutexLocker lock(&m_lock);
+                m_uploadHandles.append(h.handle);
+                const bool piece = extension.contains(QLatin1String("<binaryData>1</binaryData>"));
+                if (!piece && refuseAnnouncement)
+                    status = 400;
+                else if (!piece)
+                    m_uploadAnnouncement = open(body);
+                else if (m_uploadHandles.size() - 2 == refusePiece)
+                    status = 400;
+                else
+                    m_uploaded += body.mid(int(offset));
+            }
+            send(h.msg, h.handle, status);
+            continue;
+        }
         Request request{h.msg, open(body.left(int(offset))), open(body.mid(int(offset)))};
         {
             const QMutexLocker lock(&m_lock);

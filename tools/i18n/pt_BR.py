@@ -1447,6 +1447,43 @@ STRINGS: dict[str, str] = {
         'Automático (HTTP-FLV, depois RTSP, depois Baichuan)',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         'Automático pergunta à câmera o que ela oferece e usa o primeiro entre HTTP-FLV, RTSP e Baichuan, começando pelo mais leve para este computador. Se um nunca mostrar imagem, passa para o próximo.\n\nRTSP serve para a maioria das câmeras.\n\nHTTP-FLV precisa apenas da porta 80, o que ajuda onde RTSP está bloqueado.\n\nBaichuan é o que o aplicativo da Reolink fala. É a resposta para as câmeras que deixam o RTSP desligado — os modelos a bateria fazem isso — e não ocupa nenhuma das poucas sessões web da câmera. Só vídeo: o som continua vindo por RTSP.',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'A câmera não aceitou o firmware: %1',
+    'Sending the firmware… %1 %':
+        'Enviando o firmware… %1 %',
+    'Firmware for %1':
+        'Firmware para %1',
+    'Reolink firmware (*.pak)':
+        'Firmware Reolink (*.pak)',
+    '%1 cannot be read.':
+        'Não é possível ler %1.',
+    '<b>Install build %1 on %2?</b>':
+        '<b>Instalar a versão %1 em %2?</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nO pacote é para a placa %2, a que a câmera informa, e substitui %3. O leolink o envia deste computador, o que leva um ou dois minutos; mantenha esta janela aberta até ela avisar. Depois a câmera o instala e reinicia, ficando inacessível por alguns minutos.\n\nNão corte a energia durante a atualização — uma câmera interrompida no meio da gravação geralmente precisa ir para a assistência.',
+    'Sending the firmware…':
+        'Enviando o firmware…',
+    'Install from file…':
+        'Instalar de arquivo…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        'Um .pak da central de downloads da Reolink, enviado deste computador pela porta 9000. Descompacte o download antes.',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'Instalar de um arquivo exige a porta 9000 da câmera, que ela não oferece.',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        'Enviado. A câmera está instalando e vai reiniciar sozinha, inacessível por alguns minutos. Não corte a energia.',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'O nome não corresponde a um pacote de firmware Reolink (placa.versão_data…pak). Use o .pak de dentro do zip da central de downloads da Reolink.',
+    'This file does not look like a Reolink firmware package.':
+        'Este arquivo não parece um pacote de firmware Reolink.',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'A câmera não informou sua placa, então nenhum pacote pode ser conferido.',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'Este pacote é para %1, e a câmera é %2. Instalar firmware de outra placa pode deixar uma câmera que não liga mais.',
+    'Build %1 is already installed.':
+        'A versão %1 já está instalada.',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        'A versão %1 é mais antiga que a %2 instalada. O leolink só instala firmware mais novo.',
 }
 
 

@@ -193,6 +193,18 @@ int main(int argc, char *argv[])
                        "parameters, as arguments. Uses the password stored for "
                        "that camera unless --password is given."),
         QStringLiteral("host"));
+    const QCommandLineOption bcFirmware(
+        QStringList{QStringLiteral("baichuan-firmware")},
+        QStringLiteral("Check a firmware package (.pak, given as an argument) "
+                       "against a camera and, with --yes, send it over Baichuan "
+                       "and wait for the camera to come back on the new build. "
+                       "Uses the password stored for that camera unless "
+                       "--password is given."),
+        QStringLiteral("host"));
+    const QCommandLineOption bcYes(
+        QStringList{QStringLiteral("yes")},
+        QStringLiteral("With --baichuan-firmware: really install it. Without, "
+                       "only the checks run."));
     const QCommandLineOption bcOut(
         QStringList{QStringLiteral("out")},
         QStringLiteral("Where to write the probed stream."),
@@ -212,6 +224,8 @@ int main(int argc, char *argv[])
     parser.addOption(bcUid);
     parser.addOption(bcVideo);
     parser.addOption(bcApi);
+    parser.addOption(bcFirmware);
+    parser.addOption(bcYes);
     parser.addOption(bcOut);
     parser.addOption(bcSeconds);
     parser.addOption(bcUser);
@@ -246,8 +260,8 @@ int main(int argc, char *argv[])
             parser.value(bcVideo), parser.value(bcUser), parser.value(bcPass),
             parser.value(bcOut), parser.value(bcSeconds).toInt());
     }
-    if (parser.isSet(bcApi)) {
-        const QString host = parser.value(bcApi);
+    if (parser.isSet(bcApi) || parser.isSet(bcFirmware)) {
+        const QString host = parser.value(parser.isSet(bcApi) ? bcApi : bcFirmware);
         QString user = parser.value(bcUser);
         QString password = parser.value(bcPass);
         // From the configuration where it can be, so that comparing a camera's
@@ -259,6 +273,9 @@ int main(int argc, char *argv[])
             password = camera.secret();
         }
         const QStringList args = parser.positionalArguments();
+        if (parser.isSet(bcFirmware))
+            return leolink::runBaichuanFirmware(host, user, password, args.value(0),
+                                                parser.isSet(bcYes));
         return leolink::runBaichuanApiProbe(host, user, password, args.value(0),
                                             args.value(1));
     }

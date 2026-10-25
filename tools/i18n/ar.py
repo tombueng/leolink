@@ -1377,6 +1377,43 @@ STRINGS: dict[str, str] = {
         'تلقائي (HTTP-FLV، ثم RTSP، ثم Baichuan)',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         'في الوضع التلقائي تُسأل الكاميرا عمّا تقدّمه ويُختار أول المتاح من HTTP-FLV وRTSP وBaichuan، بدءًا بالأقل كلفة على هذا الحاسوب. وإن لم يُظهر أحدها صورة قط انتقل إلى التالي.\n\nيناسب RTSP معظم الكاميرات.\n\nولا يحتاج HTTP-FLV سوى المنفذ 80، وهو ما يفيد حيث يكون RTSP محجوباً.\n\nأما Baichuan فهو ما يتحدثه تطبيق Reolink نفسه. وهو الجواب للكاميرات التي تُبقي RTSP مطفأً — والطرازات العاملة بالبطارية تفعل ذلك — ولا يستهلك أياً من جلسات الويب القليلة لدى الكاميرا. فيديو فقط: أما الصوت فما زال يأتي عبر RTSP.',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'لم تقبل الكاميرا البرنامج الثابت: %1',
+    'Sending the firmware… %1 %':
+        'جارٍ إرسال البرنامج الثابت… %1 %',
+    'Firmware for %1':
+        'البرنامج الثابت لـ %1',
+    'Reolink firmware (*.pak)':
+        'برنامج Reolink الثابت (*.pak)',
+    '%1 cannot be read.':
+        'تعذّرت قراءة %1.',
+    '<b>Install build %1 on %2?</b>':
+        '<b>هل تريد تثبيت الإصدار %1 على %2؟</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nهذه الحزمة للّوحة %2، وهي ما تُبلغ عنه الكاميرا، وتحلّ محل %3. يرسلها leolink من هذا الحاسوب، ويستغرق ذلك دقيقة أو دقيقتين؛ أبقِ هذه النافذة مفتوحة حتى تُعلمك بذلك. ثم تثبّتها الكاميرا وتعيد التشغيل، فلا يمكن الوصول إليها لبضع دقائق.\n\nلا تقطع الكهرباء عنها أثناء التحديث — فالكاميرا التي تنقطع في منتصف الكتابة تحتاج عادةً إلى إرسالها للصيانة.',
+    'Sending the firmware…':
+        'جارٍ إرسال البرنامج الثابت…',
+    'Install from file…':
+        'تثبيت من ملف…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        'ملف .pak من مركز تنزيلات Reolink، يُرسل من هذا الحاسوب عبر المنفذ 9000. فُكّ ضغط التنزيل أولًا.',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'يتطلب التثبيت من ملف المنفذ 9000 في الكاميرا، وهي لا توفّره.',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        'أُرسل. تثبّته الكاميرا الآن وستعيد التشغيل من تلقاء نفسها، ولا يمكن الوصول إليها لبضع دقائق. لا تقطع الكهرباء.',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'هذا الاسم لا يشبه حزمة برنامج Reolink الثابت (اللوحة.الإصدار_التاريخ…pak). استخدم ملف \u200e.pak الموجود داخل ملف zip من مركز تنزيلات Reolink.',
+    'This file does not look like a Reolink firmware package.':
+        'لا يبدو هذا الملف حزمة برنامج Reolink الثابت.',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'لم تُبلغ الكاميرا عن لوحتها، لذا لا يمكن مطابقة أي حزمة معها.',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'هذه الحزمة للّوحة %1، والكاميرا %2. قد يؤدي تثبيت برنامج ثابت للوحة أخرى إلى كاميرا لا تعود تعمل.',
+    'Build %1 is already installed.':
+        'الإصدار %1 مثبّت بالفعل.',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        'الإصدار %1 أقدم من الإصدار المثبّت %2. لا يثبّت leolink إلا برامج ثابتة أحدث.',
 }
 
 

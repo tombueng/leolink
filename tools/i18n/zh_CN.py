@@ -1203,6 +1203,43 @@ STRINGS: dict[str, str] = {
         '自动（HTTP-FLV，然后 RTSP，然后 Baichuan）',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         '自动模式会询问摄像机支持什么，并按对本机开销从小到大的顺序，选用 HTTP-FLV、RTSP 和 Baichuan 中第一个可用的。如果某一种始终没有画面，就换下一种。\n\nRTSP 适合大多数摄像机。\n\nHTTP-FLV 只需要 80 端口，在 RTSP 被封的地方很有用。\n\nBaichuan 是 Reolink 自家应用所讲的协议。对于把 RTSP 关掉的摄像机 — 电池款就是如此 — 它就是答案，而且不占用摄像机那少得可怜的 Web 会话。仅限视频：声音仍走 RTSP。',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        '摄像头未接受固件：%1',
+    'Sending the firmware… %1 %':
+        '正在发送固件… %1 %',
+    'Firmware for %1':
+        '%1 的固件',
+    'Reolink firmware (*.pak)':
+        'Reolink 固件 (*.pak)',
+    '%1 cannot be read.':
+        '无法读取 %1。',
+    '<b>Install build %1 on %2?</b>':
+        '<b>在 %2 上安装版本 %1？</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\n此固件包适用于主板 %2，正是摄像头报告的型号，将替换 %3。leolink 从这台电脑发送它，需要一两分钟；请保持此窗口打开，直到提示完成。随后摄像头会安装并自行重启，数分钟内无法访问。\n\n更新期间请勿断电——写入中途被中断的摄像头通常需要返修。',
+    'Sending the firmware…':
+        '正在发送固件…',
+    'Install from file…':
+        '从文件安装…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        '来自 Reolink 下载中心的 .pak，由这台电脑通过 9000 端口发送。请先解压下载的文件。',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        '从文件安装需要摄像头的 9000 端口，但它未开放。',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        '已发送。摄像头正在安装并会自行重启，数分钟内无法访问。请勿断电。',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        '文件名不像 Reolink 固件包（主板.版本_日期…pak）。请使用 Reolink 下载中心 zip 包中的 .pak 文件。',
+    'This file does not look like a Reolink firmware package.':
+        '此文件看起来不是 Reolink 固件包。',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        '摄像头未报告其主板，因此无法核对任何固件包。',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        '此固件包适用于 %1，而摄像头是 %2。安装其他主板的固件可能导致摄像头无法启动。',
+    'Build %1 is already installed.':
+        '版本 %1 已安装。',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        '版本 %1 比已安装的 %2 更旧。leolink 只安装更新的固件。',
 }
 
 

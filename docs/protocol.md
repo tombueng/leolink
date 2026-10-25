@@ -666,8 +666,52 @@ What does not map one to one:
   fitted to two cameras answering both ways.
 
 Not found over Baichuan yet: user accounts, the e-mail and FTP server
-settings, daylight-saving rules, NTP, firmware updates, formatting the card,
-recording search. Those answer -9, as a CGI command the firmware does not know
+settings, daylight-saving rules, NTP, formatting the card, recording search.
+
+### Firmware
+
+Message numbers from reolink_aio, as above.
+
+```
+197   CheckFirmware   the camera asks Reolink           (<hasNewFirmware>)
+191   UpgradeOnline   the camera downloads and installs (<OnlineUpdate><needUpdate>1)
+227   UpgradeStatus   state, downloadSize, packetSize
+67    a .pak sent from the client
+```
+
+197 needs the camera to reach Reolink's servers. On a network that keeps
+cameras in, the E1 and E1 Pro hold the request until the client times out.
+227 answers 400 when no upgrade is running.
+
+**Sending a file** is message 67, all under one handle:
+
+1. A body with the file's name and size:
+
+   ```xml
+   <ConfigFileInfo version="1.1">
+   <fileName>IPC_561SD53MP.4450_2509011489.E1.3MP.WIFI5.PT.REOLINK.pak</fileName>
+   <fileSize>13982629</fileSize>
+   <updateParameter>0</updateParameter>
+   <channelBits>0</channelBits>
+   </ConfigFileInfo>
+   ```
+
+2. The file in pieces, each behind
+   `<Extension version="1.1"><binaryData>1</binaryData></Extension>`. The
+   extension is encrypted like any other; the piece after it is **not**. The
+   payload offset is the extension's length, as for media.
+
+The camera answers each message with status 200. A message of 40,000 bytes or
+more makes it close the connection, so a piece is cut to keep each message,
+header included, under 38,000. After the last piece the camera checks the
+image, writes it, and restarts on its own.
+
+A package's name is the only thing that says which camera it is for:
+`<board>.<build>_<date>.<model>….pak`, where the board is what GetDevInfo
+reports as `hardVer`. The file itself starts `13 59 72 32` and a partition
+table (`loader`, `fdt`, `uboot`, `kernel`, `rootfs`), and the rest is
+compressed. leolink sends a package only to the board its name gives, and only
+to a camera on an older build. Those answer -9, as a CGI command the firmware does not know
 would, and the dialog leaves them out.
 
 ### P2P — implemented, never run

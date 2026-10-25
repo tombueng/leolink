@@ -1425,6 +1425,43 @@ STRINGS: dict[str, str] = {
         'स्वचालित (HTTP-FLV, फिर RTSP, फिर Baichuan)',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         'स्वचालित मोड कैमरे से पूछता है कि वह क्या देता है और HTTP-FLV, RTSP और Baichuan में से पहला उपलब्ध चुनता है — इस कंप्यूटर पर सबसे कम बोझ वाला पहले। अगर किसी से कभी तस्वीर न आए तो अगला आज़माता है।\n\nRTSP अधिकांश कैमरों के लिए ठीक है।\n\nHTTP-FLV को केवल पोर्ट 80 चाहिए, जो वहाँ काम आता है जहाँ RTSP रोका गया हो।\n\nBaichuan वही है जो Reolink का अपना ऐप बोलता है। जो कैमरे RTSP बंद रखते हैं — बैटरी वाले मॉडल ऐसा करते हैं — उनके लिए यही उत्तर है, और यह कैमरे के गिने-चुने वेब सत्रों में से एक भी नहीं लेता। केवल वीडियो: ध्वनि अब भी RTSP से आती है।',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'कैमरे ने फ़र्मवेयर स्वीकार नहीं किया: %1',
+    'Sending the firmware… %1 %':
+        'फ़र्मवेयर भेजा जा रहा है… %1 %',
+    'Firmware for %1':
+        '%1 के लिए फ़र्मवेयर',
+    'Reolink firmware (*.pak)':
+        'Reolink फ़र्मवेयर (*.pak)',
+    '%1 cannot be read.':
+        '%1 पढ़ा नहीं जा सकता।',
+    '<b>Install build %1 on %2?</b>':
+        '<b>%2 पर बिल्ड %1 इंस्टॉल करें?</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nयह पैकेज बोर्ड %2 के लिए है, जो कैमरा बताता है, और %3 की जगह लेगा। leolink इसे इस कंप्यूटर से भेजता है, जिसमें एक-दो मिनट लगते हैं; जब तक यह बता न दे, यह विंडो खुली रखें। फिर कैमरा इसे इंस्टॉल करके रीस्टार्ट होता है और कुछ मिनट तक उपलब्ध नहीं रहता।\n\nअपडेट के दौरान बिजली न काटें — लिखने के बीच में रुका कैमरा अक्सर मरम्मत के लिए भेजना पड़ता है।',
+    'Sending the firmware…':
+        'फ़र्मवेयर भेजा जा रहा है…',
+    'Install from file…':
+        'फ़ाइल से इंस्टॉल करें…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        'Reolink डाउनलोड सेंटर का .pak, इस कंप्यूटर से पोर्ट 9000 पर भेजा जाता है। पहले डाउनलोड को अनज़िप करें।',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'फ़ाइल से इंस्टॉल करने के लिए कैमरे का पोर्ट 9000 चाहिए, जो यह नहीं देता।',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        'भेज दिया। कैमरा इसे इंस्टॉल कर रहा है और अपने आप रीस्टार्ट होगा, कुछ मिनट तक उपलब्ध नहीं रहेगा। बिजली न काटें।',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'यह नाम Reolink फ़र्मवेयर पैकेज जैसा नहीं है (बोर्ड.बिल्ड_तारीख…pak)। Reolink डाउनलोड सेंटर के zip के अंदर वाला .pak इस्तेमाल करें।',
+    'This file does not look like a Reolink firmware package.':
+        'यह फ़ाइल Reolink फ़र्मवेयर पैकेज जैसी नहीं दिखती।',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'कैमरे ने अपना बोर्ड नहीं बताया, इसलिए किसी पैकेज की जाँच नहीं हो सकती।',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'यह पैकेज %1 के लिए है, और कैमरा %2 है। दूसरे बोर्ड का फ़र्मवेयर इंस्टॉल करने से कैमरा चालू होना बंद हो सकता है।',
+    'Build %1 is already installed.':
+        'बिल्ड %1 पहले से इंस्टॉल है।',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        'बिल्ड %1 इंस्टॉल किए गए %2 से पुराना है। leolink केवल नया फ़र्मवेयर इंस्टॉल करता है।',
 }
 
 

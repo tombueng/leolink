@@ -51,6 +51,10 @@ public:
     /// Close the connection when this message arrives, once, without answering:
     /// a session the camera dropped.
     std::atomic<int> dropOn{-1};
+    /// Refuse the firmware piece with this index, counting from 0, with 400.
+    int refusePiece{-1};
+    /// Refuse the upload's announcement, the file's name and size, with 400.
+    bool refuseAnnouncement{false};
 
     /// What it answers each get with, by message number.
     void setDocument(quint32 msg, const QString &xml);
@@ -67,6 +71,13 @@ public:
     /// Whether the second login arrived under XOR, as the firmware insists.
     bool loginWasXor() const { return m_loginWasXor; }
     int connections() const { return m_connections; }
+    /// A firmware upload as it arrived: the announcement's body, the pieces'
+    /// raw bytes joined up, and the handle each message of it carried.
+    QString uploadAnnouncement() const;
+    QByteArray uploaded() const;
+    QList<quint16> uploadHandles() const;
+    /// The largest single message the client sent, header included.
+    int largestMessage() const { return m_largestMessage; }
 
 protected:
     void run() override;
@@ -85,4 +96,8 @@ private:
     mutable QMutex m_lock;
     QHash<quint32, QString> m_documents;
     QList<Request> m_requests;
+    QString m_uploadAnnouncement;
+    QByteArray m_uploaded;
+    QList<quint16> m_uploadHandles;
+    std::atomic<int> m_largestMessage{0};
 };

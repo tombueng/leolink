@@ -20,7 +20,9 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QTableWidget>
+#include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardPaths>
 #include <QPushButton>
 #include <QListWidget>
 #include <QSet>
@@ -31,6 +33,7 @@
 
 #include "ActionEditor.h"
 #include "CameraProbe.h"
+#include "Firmware.h"
 #include "Log.h"
 #include "ReolinkClient.h"
 #include "SchedulePicker.h"
@@ -181,6 +184,9 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 setAbout(QStringLiteral("build"), field("buildDay"));
                 setAbout(QStringLiteral("serial"), field("serial"));
                 setAbout(QStringLiteral("detail"), field("detail"));
+                m_hardVer = info.value(QStringLiteral("hardVer")).toString().trimmed();
+                m_firmVer = info.value(QStringLiteral("firmVer")).toString().trimmed();
+                m_installFileButton->setEnabled(!m_hardVer.isEmpty());
             });
     connect(m_client, &ReolinkClient::sectionReady,
             this, &CameraSettingsDialog::onSectionReady);
@@ -248,6 +254,12 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 m_upgradeButton->setEnabled(available);
                 m_checkFirmwareButton->setEnabled(true);
             });
+    connect(m_client, &ReolinkClient::firmwareProgress, this,
+            [this](qint64 sent, qint64 total) {
+                m_firmware->setStyleSheet(QString());
+                m_firmware->setText(tr("Sending the firmware… %1 %")
+                                        .arg(total > 0 ? int(sent * 100 / total) : 0));
+            });
     connect(m_client, &ReolinkClient::usersReady, this,
             [this](const QJsonArray &users) {
                 m_userTable->setRowCount(users.size());
@@ -276,6 +288,7 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                     m_firmware->setText(reason);
                     m_firmware->setStyleSheet(style);
                     m_checkFirmwareButton->setEnabled(true);
+                    m_installFileButton->setEnabled(!m_hardVer.isEmpty());
                 } else if (what == QLatin1String("performance")) {
                     m_performance->setText(reason);
                     m_performance->setStyleSheet(style);
@@ -1012,6 +1025,59 @@ void CameraSettingsDialog::onFormatStorage()
     m_client->formatStorage();
 }
 
+void CameraSettingsDialog::onInstallFirmwareFile()
+{
+    const QString path = QFileDialog::getOpenFileName(
+        this, tr("Firmware for %1").arg(m_camera.label()),
+        QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+        tr("Reolink firmware (*.pak)"));
+    if (path.isEmpty())
+        return;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, tr("Install firmware"),
+                             tr("%1 cannot be read.").arg(path));
+        return;
+    }
+    const QByteArray pak = file.readAll();
+    const QString fileName = QFileInfo(path).fileName();
+    if (const QString why = firmware::refusal(fileName, pak, m_hardVer, m_firmVer);
+        !why.isEmpty()) {
+        QMessageBox::warning(this, tr("Install firmware"), why);
+        return;
+    }
+
+    const firmware::PakName package = firmware::parsePakName(fileName);
+    QMessageBox confirm(this);
+    confirm.setWindowTitle(tr("Install firmware"));
+    confirm.setIcon(QMessageBox::Warning);
+    confirm.setText(tr("<b>Install build %1 on %2?</b>")
+                        .arg(package.build).arg(m_camera.label()));
+    confirm.setInformativeText(
+        tr("%1\n\nThe package is for board %2, which is what the camera "
+           "reports, and replaces %3. leolink sends it from this computer, "
+           "which takes a minute or two; keep this window open until it says "
+           "so. The camera then installs it and restarts, unreachable for "
+           "several minutes.\n\n"
+           "Do not cut its power during the update — a camera interrupted "
+           "mid-flash usually needs sending back.")
+            .arg(fileName, package.board, m_firmVer));
+    QAbstractButton *go =
+        confirm.addButton(tr("Install"), QMessageBox::DestructiveRole);
+    confirm.addButton(QMessageBox::Cancel);
+    confirm.setDefaultButton(QMessageBox::Cancel);
+    confirm.exec();
+    if (confirm.clickedButton() != go)
+        return;
+
+    m_installFileButton->setEnabled(false);
+    m_upgradeButton->setEnabled(false);
+    m_checkFirmwareButton->setEnabled(false);
+    m_firmware->setStyleSheet(QString());
+    m_firmware->setText(tr("Sending the firmware…"));
+    m_client->installFirmwareFile(fileName, pak);
+}
+
 void CameraSettingsDialog::buildNetworkTab()
 {
     auto *page = new QWidget(this);
@@ -1483,9 +1549,20 @@ void CameraSettingsDialog::buildMaintenanceTab()
         }
     });
 
+    // For a camera that cannot reach Reolink itself, which is most of them on
+    // a network that keeps cameras in, and every one without a web server.
+    m_installFileButton = new QPushButton(tr("Install from file…"), page);
+    m_installFileButton->setEnabled(false);
+    m_installFileButton->setToolTip(
+        tr("A .pak from Reolink's download centre, sent from this computer over "
+           "port 9000. Unzip the download first."));
+    connect(m_installFileButton, &QPushButton::clicked,
+            this, &CameraSettingsDialog::onInstallFirmwareFile);
+
     auto *firmwareRow = new QHBoxLayout;
     firmwareRow->addWidget(m_checkFirmwareButton);
     firmwareRow->addWidget(m_upgradeButton);
+    firmwareRow->addWidget(m_installFileButton);
     firmwareRow->addStretch(1);
 
     auto *firmwareBox = new QGroupBox(tr("Firmware"), page);

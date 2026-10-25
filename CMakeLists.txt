@@ -47,6 +47,7 @@ set(LEOLINK_SOURCES
     src/MpvWidget.cpp         src/MpvWidget.h
     src/SectionEditor.cpp     src/SectionEditor.h
     src/EventActions.cpp      src/EventActions.h
+    src/Firmware.cpp          src/Firmware.h
     src/MqttPublisher.cpp     src/MqttPublisher.h
     src/SoundPlayer.cpp       src/SoundPlayer.h
     src/Recorder.cpp          src/Recorder.h

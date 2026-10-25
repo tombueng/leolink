@@ -143,6 +143,11 @@ public:
 
     void checkFirmware();
     void upgradeFirmware();
+    /// Sends a firmware package the user picked, over Baichuan, which every
+    /// camera with port 9000 takes whether or not it has a web server. Checked
+    /// by the caller first: see firmware::refusal(). Progress arrives as
+    /// firmwareProgress(), the end as firmwareInfo() or readoutFailed().
+    void installFirmwareFile(const QString &fileName, const QByteArray &pak);
 
     /// Erases the SD card. Irreversible.
     void formatStorage();
@@ -221,6 +226,7 @@ signals:
     /// hung.
     void readoutFailed(const QString &what, const QString &reason);
     void firmwareInfo(const QString &text, bool updateAvailable);
+    void firmwareProgress(qint64 sent, qint64 total);
     /// command → what the camera said: empty for "supported", otherwise the
     /// reason it gave.
     void commandsProbed(const QMap<QString, QString> &results);

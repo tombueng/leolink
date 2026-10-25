@@ -1444,6 +1444,43 @@ STRINGS: dict[str, str] = {
         'Автоматически (HTTP-FLV, затем RTSP, затем Baichuan)',
     "Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.\n\nRTSP suits most cameras.\n\nHTTP-FLV needs only port 80, which helps where RTSP is blocked.\n\nBaichuan is what Reolink's own app speaks. It is the answer for cameras that keep RTSP switched off — battery models do — and it does not use the camera's small pool of web sessions. Video only: sound still comes over RTSP.":
         'В автоматическом режиме камера спрашивается, что она поддерживает, и выбирается первое из HTTP-FLV, RTSP и Baichuan — начиная с наименее затратного для этого компьютера. Если один так и не покажет изображение, берётся следующий.\n\nRTSP подходит большинству камер.\n\nHTTP-FLV нужен только порт 80, что выручает там, где RTSP закрыт.\n\nBaichuan — то, на чём говорит приложение Reolink. Это ответ для камер, у которых RTSP выключен — так делают модели на батарее — и он не занимает ни одной из немногочисленных веб-сессий камеры. Только видео: звук по-прежнему идёт по RTSP.',
+    # ── firmware from a file ──
+    'The camera did not take the firmware: %1':
+        'Камера не приняла прошивку: %1',
+    'Sending the firmware… %1 %':
+        'Отправка прошивки… %1 %',
+    'Firmware for %1':
+        'Прошивка для %1',
+    'Reolink firmware (*.pak)':
+        'Прошивка Reolink (*.pak)',
+    '%1 cannot be read.':
+        'Не удаётся прочитать %1.',
+    '<b>Install build %1 on %2?</b>':
+        '<b>Установить сборку %1 на %2?</b>',
+    '%1\n\nThe package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.\n\nDo not cut its power during the update — a camera interrupted mid-flash usually needs sending back.':
+        '%1\n\nПакет предназначен для платы %2 — именно её сообщает камера — и заменяет %3. leolink отправляет его с этого компьютера, это занимает минуту-две; не закрывайте окно, пока оно об этом не сообщит. Затем камера устанавливает прошивку и перезагружается, несколько минут она недоступна.\n\nНе отключайте питание во время обновления — камеру, прерванную посреди записи, обычно приходится отправлять в сервис.',
+    'Sending the firmware…':
+        'Отправка прошивки…',
+    'Install from file…':
+        'Установить из файла…',
+    "A .pak from Reolink's download centre, sent from this computer over port 9000. Unzip the download first.":
+        'Файл .pak из центра загрузок Reolink, отправляемый с этого компьютера через порт 9000. Сначала распакуйте загруженный архив.',
+    "Installing from a file needs the camera's port 9000, which it does not offer.":
+        'Для установки из файла нужен порт 9000 камеры, а она его не предоставляет.',
+    'Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.':
+        'Отправлено. Камера устанавливает прошивку и сама перезагрузится, несколько минут она будет недоступна. Не отключайте питание.',
+    "This is not named like a Reolink firmware package (board.build_date…pak). Use the .pak from inside the zip Reolink's download centre gives.":
+        'Имя не похоже на пакет прошивки Reolink (плата.сборка_дата…pak). Используйте .pak из zip-архива центра загрузок Reolink.',
+    'This file does not look like a Reolink firmware package.':
+        'Этот файл не похож на пакет прошивки Reolink.',
+    'The camera has not said which board it has, so no package can be checked against it.':
+        'Камера не сообщила свою плату, поэтому проверить пакет невозможно.',
+    'This package is for %1, and the camera is %2. Installing firmware for another board can leave a camera that no longer starts.':
+        'Этот пакет для %1, а камера — %2. Прошивка для другой платы может оставить камеру, которая больше не запускается.',
+    'Build %1 is already installed.':
+        'Сборка %1 уже установлена.',
+    'Build %1 is older than the installed %2. leolink only installs newer firmware.':
+        'Сборка %1 старше установленной %2. leolink устанавливает только более новую прошивку.',
 }
 
 
