@@ -7,6 +7,9 @@ description: What the cameras speak, and how it was worked out
 
 Everything here was verified against an **RLC-410W**, firmware
 `v3.0.0.2356_23062002`, hardware `IPC_51316M`, unless marked otherwise.
+Later additions name their camera: an **E1** (`v3.1.0.1643`), an **E1 Pro**
+(`v3.1.0.3149`), an **E1 Zoom** (`v3.1.0.4417`) and a **Video Doorbell**
+(`v3.0.0.6460`).
 
 ## Ports
 
@@ -146,6 +149,27 @@ Unsupported with `-26` (hardware): `GetPtzPreset`, `GetPtzPatrol`,
 `GetPtzSerial`, `GetPtzTattern`, `GetAutoFocus`, `GetZoomFocus`,
 `GetAudioAlarm`, `GetPowerLed`.
 
+### Newer firmware: the `*V20` generation
+
+On the E1 Zoom and the Video Doorbell it is the other way round: they know the
+`*V20` forms — `GetRecV20`, `GetEmailV20`, `GetFtpV20`, `GetPushV20`,
+`GetAudioAlarmV20` — and those are the ones to ask. Three things differ from
+the RLC-410W:
+
+- **Asking the older command can take the web server down.** Both answer the
+  legacy `GetPush` not with `-9` but by crashing the web server: every request
+  after it gets HTTP **502** for about forty seconds, until it has restarted,
+  and HTTP-FLV video stalls with it. So ask the `*V20` form first, and the
+  older form only after the camera has answered `-9` to the newer one. Never
+  probe with both.
+- **The `*V20` alert reads need the channel.** `GetEmailV20` and `GetPushV20`
+  sent without `{"channel": 0}` answer `-4 param error`; `GetFtpV20` takes it
+  either way. Send it on all of them.
+- **Port 80 only redirects.** The E1 Zoom answers `http://` with a `302` to
+  `https://` (self-signed), for the CGI API and HTTP-FLV alike. The doorbell
+  still serves plain HTTP. The E1 and E1 Pro have no web server at all, and are
+  configured over [Baichuan](#settings) instead.
+
 ### An encryption layer on newer firmware
 
 The web interface pushes requests through `infoHandler.transform()` and replies
@@ -245,6 +269,21 @@ tns1:VideoSource/MotionAlarm                 SimpleItem State
 The first pull always returns the current state as a property event, which gives
 a client a defined starting point.
 
+A camera with AI detection (the E1 Zoom) adds a topic per kind of thing it
+recognises, each with a `State` item:
+
+```
+tns1:RuleEngine/MyRuleDetector/PeopleDetect    SimpleItem State
+tns1:RuleEngine/MyRuleDetector/VehicleDetect   SimpleItem State
+tns1:RuleEngine/MyRuleDetector/DogCatDetect    SimpleItem State
+tns1:RuleEngine/MyRuleDetector/FaceDetect      SimpleItem State
+```
+
+**Keep a state per topic and item.** They change independently: a person
+leaving a picture that is still moving sends `PeopleDetect` false while
+`CellMotionDetector` still says true. Treating them as one switch ends the
+motion early. The camera is seeing motion while any of them is true.
+
 **Two firmware quirks, both load-bearing:**
 
 - Send `CreatePullPointSubscription` **without** WS-Addressing headers. With
@@ -254,6 +293,21 @@ a client a defined starting point.
 And read the subscription address from `<SubscriptionReference>`. Taking the
 last `<Address>` in the document picks up the anonymous WS-Addressing ReplyTo,
 and then you are politely polling `www.w3.org` instead of the camera.
+
+### Subscription lifetime
+
+Measured on the E1 Zoom. A plain `CreatePullPointSubscription` is granted only
+**ten seconds**, `PullMessages` does not extend it, and the camera holds a quiet
+poll open for up to twenty. So a quiet poll outlives its own subscription, and
+the polls after it are refused with HTTP 400 until the client subscribes again
+— a dozen seconds of every half minute in which motion goes unheard.
+
+- Ask for longer: `<InitialTerminationTime>PT120S</InitialTerminationTime>` in
+  the subscribe request is honoured.
+- Read what was actually granted from `CurrentTime` and `TerminationTime` in
+  the reply, and send `wsnt:Renew` at half of that, in case a camera ignores
+  the request.
+- `Renew` needs WS-Addressing, like `PullMessages`; without it, HTTP 400.
 
 ---
 
