@@ -1943,9 +1943,16 @@ void BaichuanApi::uploadFirmware(const QString &fileName, const QByteArray &pak,
                 if (guard)
                     QMetaObject::invokeMethod(guard.data(), f, Qt::QueuedConnection);
             };
-            // Not retried on a fresh connection, unlike a settings read: half a
-            // file is not something to start sending again behind the camera's
-            // back.
+            // Always on a fresh session. The one the dialog's reads opened has
+            // usually been dropped by the time anyone picks a file — an E1 Pro
+            // hangs up within a minute of quiet — and a dead socket is not
+            // found out until the first write. Nor retried once under way, as
+            // a settings read is: half a file is not something to start
+            // sending again behind the camera's back.
+            if (worker->client) {
+                worker->client->close();
+                worker->client.reset();
+            }
             QString error = worker->open();
             if (error.isEmpty()) {
                 LEO_INFO(Baichuan, worker->host,

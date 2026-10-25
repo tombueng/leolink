@@ -1,9 +1,12 @@
 // Firmware packages: what may go to which camera, and how it gets there.
 
+#include <QEventLoop>
 #include <QRandomGenerator>
 #include <QTest>
+#include <QTimer>
 
 #include "Baichuan.h"
+#include "BaichuanApi.h"
 #include "FakeCamera.h"
 #include "Firmware.h"
 
@@ -187,6 +190,43 @@ private slots:
         QVERIFY(client.lastError().contains(QLatin1String("announcement")));
         QCOMPARE(m_camera->uploadHandles().size(), 1);
         QVERIFY(m_camera->uploaded().isEmpty());
+    }
+
+    /// The settings dialog opens the camera's session for its reads, and the
+    /// camera drops it once idle — an E1 Pro within a minute. The upload went
+    /// out on that dead session and failed at once with "not connected".
+    /// It gets a session of its own.
+    void uploadAfterTheCameraDroppedTheSession()
+    {
+        m_camera->begin();
+        leolink::CameraConfig camera;
+        camera.host = QStringLiteral("127.0.0.1");
+        camera.user = kUser;
+        camera.baichuanPort = m_camera->port();
+        const auto api = leolink::BaichuanApi::forCamera(camera, kPassword);
+
+        QObject context;
+        QEventLoop loop;
+        api->call(QStringLiteral("GetDevInfo"), {}, 0, &context,
+                  [&](const QJsonObject &) { loop.quit(); });
+        QTimer::singleShot(20000, &loop, &QEventLoop::quit);
+        loop.exec();
+        QCOMPARE(m_camera->connections(), 1);
+
+        // The fake hangs up on a connection quiet for five seconds.
+        QTest::qWait(6500);
+
+        const QByteArray pak = fakePak();
+        QString error = QStringLiteral("never answered");
+        api->uploadFirmware(kE1Pak, pak, &context, {}, [&](const QString &e) {
+            error = e;
+            loop.quit();
+        });
+        QTimer::singleShot(60000, &loop, &QEventLoop::quit);
+        loop.exec();
+        QVERIFY2(error.isEmpty(), qPrintable(error));
+        QVERIFY(m_camera->uploaded() == pak);
+        QCOMPARE(m_camera->connections(), 2);
     }
 };
 
