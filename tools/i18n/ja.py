@@ -1293,6 +1293,17 @@ STRINGS: dict[str, str] = {
         'ビルド %1 はすでにインストールされています。',
     'Build %1 is older than the installed %2. leolink only installs newer firmware.':
         'ビルド %1 はインストール済みの %2 より古いです。leolink は新しいファームウェアのみインストールします。',
+    # ── firmware: after the install ──
+    'Installing. The camera is still on the old firmware… %1':
+        'インストール中。カメラはまだ旧ファームウェアです… %1',
+    'Installing. The camera is restarting… %1':
+        'インストール中。カメラが再起動しています… %1',
+    'You can close this window: the camera finishes on its own. Do not cut its power.':
+        'このウィンドウは閉じても構いません。カメラが自分で完了します。電源を切らないでください。',
+    'Installed. The camera is running %1.':
+        'インストールしました。カメラは %1 で動作しています。',
+    'The camera restarted on %1, the build it had before, so the update was not installed.':
+        'カメラは以前と同じビルド %1 で再起動したため、更新はインストールされませんでした。',
 }
 
 
@@ -1334,4 +1345,9 @@ PLURALS: dict[str, list[str]] = {
         "%1 は %n 個のチャンネルに応答します。どれを追加しますか？"],
     "Added %n camera(s) from this recorder.": [
         "このレコーダーから %n 台のカメラを追加しました。"],
+    # ── firmware: after the install ──
+    'The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.': [
+        'カメラが %n 分間応答していません。まだインストール中かもしれません。電源を入れたまま、後でもう一度確認してください。'],
+    'The camera still reports %1 after %n minute(s).': [
+        '%n 分経ってもカメラは %1 と報告しています。'],
 }

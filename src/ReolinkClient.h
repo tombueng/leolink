@@ -149,6 +149,15 @@ public:
     /// firmwareProgress(), the end as firmwareInfo() or readoutFailed().
     void installFirmwareFile(const QString &fileName, const QByteArray &pak);
 
+    /// After an install: asks the camera which build it runs, a while after
+    /// each answer, until it reports `wantedBuild` (0 for any build other than
+    /// `previousBuild`), comes back on `previousBuild` having gone away, or
+    /// ten minutes pass. firmwareWaiting() after every question, then
+    /// firmwareInstalled() or readoutFailed("firmware", …).
+    void awaitFirmware(int wantedBuild, int previousBuild);
+    /// How often to ask and for how long in all. For tests.
+    void setFirmwareWatchTiming(int intervalMs, int limitMs);
+
     /// Erases the SD card. Irreversible.
     void formatStorage();
 
@@ -227,6 +236,12 @@ signals:
     void readoutFailed(const QString &what, const QString &reason);
     void firmwareInfo(const QString &text, bool updateAvailable);
     void firmwareProgress(qint64 sent, qint64 total);
+    /// The camera has the update and is installing it. Followed by nothing on
+    /// its own: awaitFirmware() is what watches it come back.
+    void firmwareSent();
+    /// `seconds` since the watch began; whether the camera answered this time.
+    void firmwareWaiting(int seconds, bool answering);
+    void firmwareInstalled(const QString &firmVer);
     /// command → what the camera said: empty for "supported", otherwise the
     /// reason it gave.
     void commandsProbed(const QMap<QString, QString> &results);
@@ -284,6 +299,18 @@ private:
     CameraConfig m_camera;
     QString m_token;
     int m_lastErrorCode{0};
+
+    void pollFirmware();
+    void firmwareAnswered(const QString &firmVer);
+    struct FirmwareWatch {
+        bool active{false};
+        int wanted{0};
+        int previous{0};
+        bool wentAway{false};
+        qint64 startedAt{0};
+    } m_firmwareWatch;
+    int m_firmwareInterval{15000};
+    int m_firmwareLimit{600000};
     /// Not one of the camera's own codes: our own marker for an HTTP-level
     /// refusal, so callers can tell it from a firmware that lacks a command.
     static constexpr int kCameraOverloaded = -1000;

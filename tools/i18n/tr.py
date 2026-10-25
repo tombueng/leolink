@@ -1470,6 +1470,17 @@ STRINGS: dict[str, str] = {
         '%1 sürümü zaten kurulu.',
     'Build %1 is older than the installed %2. leolink only installs newer firmware.':
         '%1 sürümü kurulu %2 sürümünden eski. leolink yalnızca daha yeni yazılım kurar.',
+    # ── firmware: after the install ──
+    'Installing. The camera is still on the old firmware… %1':
+        'Kuruluyor. Kamerada hâlâ eski yazılım var… %1',
+    'Installing. The camera is restarting… %1':
+        'Kuruluyor. Kamera yeniden başlıyor… %1',
+    'You can close this window: the camera finishes on its own. Do not cut its power.':
+        'Bu pencereyi kapatabilirsiniz: kamera işi kendisi bitirir. Gücünü kesmeyin.',
+    'Installed. The camera is running %1.':
+        'Kuruldu. Kamera %1 ile çalışıyor.',
+    'The camera restarted on %1, the build it had before, so the update was not installed.':
+        'Kamera önceki sürümü olan %1 ile yeniden başladı, yani güncelleme kurulmadı.',
 }
 
 
@@ -1513,4 +1524,9 @@ PLURALS: dict[str, list[str]] = {
         "%1, %n kanal için yanıt veriyor. Hangileri eklensin?"],
     "Added %n camera(s) from this recorder.": [
         "Bu kaydediciden %n kamera eklendi."],
+    # ── firmware: after the install ──
+    'The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.': [
+        'Kamera %n dakikadır yanıt vermiyor. Hâlâ kuruyor olabilir; gücünü açık bırakın ve sonra yeniden bakın.'],
+    'The camera still reports %1 after %n minute(s).': [
+        'Kamera %n dakika sonra hâlâ %1 bildiriyor.'],
 }

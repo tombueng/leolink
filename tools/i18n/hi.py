@@ -1462,6 +1462,17 @@ STRINGS: dict[str, str] = {
         'बिल्ड %1 पहले से इंस्टॉल है।',
     'Build %1 is older than the installed %2. leolink only installs newer firmware.':
         'बिल्ड %1 इंस्टॉल किए गए %2 से पुराना है। leolink केवल नया फ़र्मवेयर इंस्टॉल करता है।',
+    # ── firmware: after the install ──
+    'Installing. The camera is still on the old firmware… %1':
+        'इंस्टॉल हो रहा है। कैमरा अभी पुराने फ़र्मवेयर पर है… %1',
+    'Installing. The camera is restarting… %1':
+        'इंस्टॉल हो रहा है। कैमरा रीस्टार्ट हो रहा है… %1',
+    'You can close this window: the camera finishes on its own. Do not cut its power.':
+        'आप यह विंडो बंद कर सकते हैं: कैमरा अपने आप पूरा कर लेगा। बिजली न काटें।',
+    'Installed. The camera is running %1.':
+        'इंस्टॉल हो गया। कैमरा %1 पर चल रहा है।',
+    'The camera restarted on %1, the build it had before, so the update was not installed.':
+        'कैमरा %1 पर रीस्टार्ट हुआ, जो पहले वाला बिल्ड है, इसलिए अपडेट इंस्टॉल नहीं हुआ।',
 }
 
 
@@ -1523,4 +1534,11 @@ PLURALS: dict[str, list[str]] = {
     "Added %n camera(s) from this recorder.": [
         "इस रिकॉर्डर से %n कैमरा जोड़ा गया।",
         "इस रिकॉर्डर से %n कैमरे जोड़े गए।"],
+    # ── firmware: after the install ──
+    'The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.': [
+        'कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।',
+        'कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।'],
+    'The camera still reports %1 after %n minute(s).': [
+        '%n मिनट बाद भी कैमरा %1 बता रहा है।',
+        '%n मिनट बाद भी कैमरा %1 बता रहा है।'],
 }

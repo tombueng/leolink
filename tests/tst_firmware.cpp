@@ -1,7 +1,10 @@
 // Firmware packages: what may go to which camera, and how it gets there.
 
 #include <QEventLoop>
+#include <QFile>
 #include <QRandomGenerator>
+#include <QRegularExpression>
+#include <QSignalSpy>
 #include <QTest>
 #include <QTimer>
 
@@ -9,6 +12,7 @@
 #include "BaichuanApi.h"
 #include "FakeCamera.h"
 #include "Firmware.h"
+#include "ReolinkClient.h"
 
 using leolink::BaichuanClient;
 namespace firmware = leolink::firmware;
@@ -227,6 +231,107 @@ private slots:
         QVERIFY2(error.isEmpty(), qPrintable(error));
         QVERIFY(m_camera->uploaded() == pak);
         QCOMPARE(m_camera->connections(), 2);
+    }
+
+    // ── watching the camera come back ───────────────────────────────────────
+
+    /// An E1 that answers over Baichuan only, as the dialog talks to it.
+    std::unique_ptr<leolink::ReolinkClient> watchingClient()
+    {
+        QFile f(QStringLiteral(LEOLINK_FIXTURES "/e1/80.xml"));
+        if (f.open(QIODevice::ReadOnly))
+            m_camera->setDocument(80, QString::fromUtf8(f.readAll()));
+        m_camera->begin();
+        leolink::CameraConfig camera;
+        camera.id = QStringLiteral("watch");
+        camera.host = QStringLiteral("127.0.0.1");
+        camera.user = kUser;
+        camera.password = kPassword;
+        camera.baichuanPort = m_camera->port();
+        camera.caps.known = true;
+        camera.caps.baichuan = true;
+        auto client = std::make_unique<leolink::ReolinkClient>();
+        client->setCamera(camera);
+        client->setFirmwareWatchTiming(150, 8000);
+        return client;
+    }
+
+    void runningBuild(const QString &firmVer)
+    {
+        QString doc = m_camera->document(80);
+        doc.replace(QRegularExpression(QStringLiteral("<firmwareVersion>[^<]*</firmwareVersion>")),
+                    QStringLiteral("<firmwareVersion>%1</firmwareVersion>").arg(firmVer));
+        m_camera->setDocument(80, doc);
+    }
+
+    /// Gone a while, back on the new build: that is the end of it.
+    void watchSeesTheNewBuild()
+    {
+        auto client = watchingClient();
+        QSignalSpy waiting(client.get(), &leolink::ReolinkClient::firmwareWaiting);
+        QSignalSpy installed(client.get(), &leolink::ReolinkClient::firmwareInstalled);
+        QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
+
+        m_camera->silent = true;
+        client->awaitFirmware(4450, 1643);
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 2, 5000);
+        QCOMPARE(waiting.last().at(1).toBool(), false);   // not answering
+
+        runningBuild(QStringLiteral("v3.1.0.4450_2509011489"));
+        m_camera->silent = false;
+        QTRY_COMPARE_WITH_TIMEOUT(installed.size(), 1, 5000);
+        QCOMPARE(installed.first().first().toString(), QStringLiteral("v3.1.0.4450_2509011489"));
+        QCOMPARE(failed.size(), 0);
+    }
+
+    /// Still answering on the old build at first is the camera writing the
+    /// image, and no reason to give up.
+    void oldBuildBeforeTheRestartIsWaitedOut()
+    {
+        auto client = watchingClient();
+        QSignalSpy waiting(client.get(), &leolink::ReolinkClient::firmwareWaiting);
+        QSignalSpy installed(client.get(), &leolink::ReolinkClient::firmwareInstalled);
+        QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
+        client->awaitFirmware(4450, 1643);
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 2, 5000);
+        QCOMPARE(waiting.last().at(1).toBool(), true);
+        QCOMPARE(failed.size(), 0);
+        m_camera->silent = true;
+        QTRY_VERIFY_WITH_TIMEOUT(!waiting.last().at(1).toBool(), 5000);
+        runningBuild(QStringLiteral("v3.1.0.4450_2509011489"));
+        m_camera->silent = false;
+        QTRY_COMPARE_WITH_TIMEOUT(installed.size(), 1, 5000);
+    }
+
+    /// Back on the build it had: the update did not take, and the dialog says
+    /// so rather than waiting out the ten minutes.
+    void backOnTheOldBuildIsAFailure()
+    {
+        auto client = watchingClient();
+        QSignalSpy waiting(client.get(), &leolink::ReolinkClient::firmwareWaiting);
+        QSignalSpy installed(client.get(), &leolink::ReolinkClient::firmwareInstalled);
+        QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
+        m_camera->silent = true;
+        client->awaitFirmware(4450, 1643);
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 1, 5000);
+        m_camera->silent = false;
+        QTRY_COMPARE_WITH_TIMEOUT(failed.size(), 1, 5000);
+        QCOMPARE(failed.first().at(0).toString(), QStringLiteral("firmware"));
+        QVERIFY2(failed.first().at(1).toString().contains(QLatin1String("1643")),
+                 qPrintable(failed.first().at(1).toString()));
+        QCOMPARE(installed.size(), 0);
+    }
+
+    /// One that never comes back is not waited on for ever.
+    void silenceEndsTheWatch()
+    {
+        auto client = watchingClient();
+        client->setFirmwareWatchTiming(150, 1200);
+        QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
+        m_camera->silent = true;
+        client->awaitFirmware(4450, 1643);
+        QTRY_COMPARE_WITH_TIMEOUT(failed.size(), 1, 8000);
+        QVERIFY(failed.first().at(1).toString().contains(QLatin1String("not answered")));
     }
 };
 

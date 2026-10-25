@@ -1240,6 +1240,17 @@ STRINGS: dict[str, str] = {
         '版本 %1 已安装。',
     'Build %1 is older than the installed %2. leolink only installs newer firmware.':
         '版本 %1 比已安装的 %2 更旧。leolink 只安装更新的固件。',
+    # ── firmware: after the install ──
+    'Installing. The camera is still on the old firmware… %1':
+        '正在安装。摄像头仍在使用旧固件… %1',
+    'Installing. The camera is restarting… %1':
+        '正在安装。摄像头正在重启… %1',
+    'You can close this window: the camera finishes on its own. Do not cut its power.':
+        '可以关闭此窗口：摄像头会自行完成。请勿断电。',
+    'Installed. The camera is running %1.':
+        '已安装。摄像头正在运行 %1。',
+    'The camera restarted on %1, the build it had before, so the update was not installed.':
+        '摄像头以之前的版本 %1 重启，因此更新未安装。',
 }
 
 
@@ -1281,4 +1292,9 @@ PLURALS: dict[str, list[str]] = {
         "%1 代 %n 个通道应答。要添加其中哪些？"],
     "Added %n camera(s) from this recorder.": [
         "已从此录像机添加 %n 台摄像机。"],
+    # ── firmware: after the install ──
+    'The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.': [
+        '摄像头已 %n 分钟没有响应。它可能仍在安装；请保持通电，稍后再查看。'],
+    'The camera still reports %1 after %n minute(s).': [
+        '%n 分钟后摄像头仍报告 %1。'],
 }

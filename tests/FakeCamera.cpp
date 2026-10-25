@@ -185,7 +185,8 @@ void FakeCamera::run()
             continue;
         QTcpSocket *socket = server.nextPendingConnection();
         ++m_connections;
-        serve(*socket);
+        if (!silent)
+            serve(*socket);
         socket->abort();
         delete socket;
     }
@@ -220,7 +221,7 @@ void FakeCamera::serve(QTcpSocket &socket)
     while (!m_stop && socket.state() == QAbstractSocket::ConnectedState) {
         Header h;
         QByteArray body;
-        if (!readMessage(socket, h, body))
+        if (!readMessage(socket, h, body) || silent)
             return;
 
         // 1–2: a login asking for an encryption, answered with a nonce.

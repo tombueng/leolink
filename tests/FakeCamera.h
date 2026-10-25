@@ -55,6 +55,8 @@ public:
     int refusePiece{-1};
     /// Refuse the upload's announcement, the file's name and size, with 400.
     bool refuseAnnouncement{false};
+    /// Hang up on everything, at once, as a camera restarting does.
+    std::atomic<bool> silent{false};
 
     /// What it answers each get with, by message number.
     void setDocument(quint32 msg, const QString &xml);

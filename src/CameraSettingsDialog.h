@@ -264,6 +264,9 @@ private:
     /// What the camera says it is, for checking a package against.
     QString m_hardVer;
     QString m_firmVer;
+    /// The build an install is expected to bring, 0 for "whatever Reolink
+    /// offered", which the online update does not say in a comparable form.
+    int m_awaitedBuild{0};
 
     /// What the camera last told us, kept so that writing back only changes
     /// the fields the user touched — Set* wants the whole structure, and

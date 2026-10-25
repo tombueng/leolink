@@ -17,6 +17,7 @@
 #include <QUrlQuery>
 
 #include "BaichuanApi.h"
+#include "Firmware.h"
 #include "Log.h"
 
 namespace leolink {
@@ -1164,6 +1165,7 @@ void ReolinkClient::upgradeFirmware()
                      tr("Upgrading. The camera will restart on its own and be "
                         "unreachable for several minutes. Do not cut its power."),
                      false);
+                 emit firmwareSent();
              },
              [this](const QString &e) { emit failed(e); });
     },
@@ -1196,7 +1198,83 @@ void ReolinkClient::installFirmwareFile(const QString &fileName, const QByteArra
                 tr("Sent. The camera is installing it and will restart on its own, "
                    "unreachable for several minutes. Do not cut its power."),
                 false);
+            emit firmwareSent();
         });
+}
+
+void ReolinkClient::setFirmwareWatchTiming(int intervalMs, int limitMs)
+{
+    m_firmwareInterval = intervalMs;
+    m_firmwareLimit = limitMs;
+}
+
+void ReolinkClient::awaitFirmware(int wantedBuild, int previousBuild)
+{
+    m_firmwareWatch = {true, wantedBuild, previousBuild, false,
+                       QDateTime::currentMSecsSinceEpoch()};
+    // Not at once: a camera still writing the image answers on the old build,
+    // and that says nothing yet.
+    QTimer::singleShot(m_firmwareInterval, this, &ReolinkClient::pollFirmware);
+}
+
+void ReolinkClient::pollFirmware()
+{
+    if (!m_firmwareWatch.active)
+        return;
+    // A session from before the restart is gone with it.
+    m_token.clear();
+    auto gone = [this](const QString &) { firmwareAnswered(QString()); };
+    login([this, gone] {
+        post(QStringLiteral("GetDevInfo"), {},
+             [this](const QJsonObject &value) {
+                 firmwareAnswered(value.value(QStringLiteral("DevInfo")).toObject()
+                                      .value(QStringLiteral("firmVer")).toString());
+             },
+             gone);
+    },
+    gone);
+}
+
+void ReolinkClient::firmwareAnswered(const QString &firmVer)
+{
+    FirmwareWatch &w = m_firmwareWatch;
+    if (!w.active)
+        return;
+    const int seconds =
+        int((QDateTime::currentMSecsSinceEpoch() - w.startedAt) / 1000);
+    const int build = firmware::buildOf(firmVer);
+    const auto finish = [this, &w](const QString &reason) {
+        w.active = false;
+        m_lastErrorCode = 0;
+        emit readoutFailed(QStringLiteral("firmware"), reason);
+    };
+
+    if (firmVer.isEmpty()) {
+        w.wentAway = true;
+    } else if (w.wanted ? build == w.wanted : build > 0 && build != w.previous) {
+        w.active = false;
+        LEO_INFO(Api, m_camera.label(),
+                 QStringLiteral("Back on firmware %1 after %2 s").arg(firmVer).arg(seconds));
+        emit firmwareInstalled(firmVer);
+        return;
+    } else if (w.wentAway && build == w.previous) {
+        LEO_WARN(Api, m_camera.label(),
+                 QStringLiteral("Restarted on the old firmware %1").arg(firmVer));
+        finish(tr("The camera restarted on %1, the build it had before, so the "
+                  "update was not installed.").arg(firmVer));
+        return;
+    }
+    if (seconds * 1000 >= m_firmwareLimit) {
+        finish(firmVer.isEmpty()
+                   ? tr("The camera has not answered for %n minute(s). It may still "
+                        "be installing; leave its power on and look again later.",
+                        nullptr, m_firmwareLimit / 60000)
+                   : tr("The camera still reports %1 after %n minute(s).",
+                        nullptr, m_firmwareLimit / 60000).arg(firmVer));
+        return;
+    }
+    emit firmwareWaiting(seconds, !firmVer.isEmpty());
+    QTimer::singleShot(m_firmwareInterval, this, &ReolinkClient::pollFirmware);
 }
 
 void ReolinkClient::formatStorage()

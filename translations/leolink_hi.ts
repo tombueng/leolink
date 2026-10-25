@@ -26,7 +26,7 @@
         <translation>%1 से कनेक्शन टूट गया।</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanApi.cpp" line="1960"/>
+        <location filename="../src/BaichuanApi.cpp" line="1967"/>
         <source>The camera did not take the firmware: %1</source>
         <translation>कैमरे ने फ़र्मवेयर स्वीकार नहीं किया: %1</translation>
     </message>
@@ -248,70 +248,70 @@
         <translation>कैमरा अपनी सीमा पर है। रिज़ॉल्यूशन या फ़्रेम दर घटाने से वह सँभल जाएगा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="272"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="942"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="300"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="970"/>
         <source>Administrator</source>
         <translation>प्रशासक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="273"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="942"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="301"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="970"/>
         <source>Viewer</source>
         <translation>दर्शक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="304"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="332"/>
         <source>Done.</source>
         <translation>हो गया।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="309"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="337"/>
         <source>The card has been formatted.</source>
         <translation>कार्ड फ़ॉर्मैट हो गया।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="753"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="781"/>
         <source>Higher means better picture and more network traffic. The camera only offers the rates it can actually sustain.</source>
         <translation>ऊँचा मतलब बेहतर चित्र और अधिक नेटवर्क भार। कैमरा केवल वही दरें देता है जिन्हें वह सचमुच सँभाल सकता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="757"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="785"/>
         <source>Resolution</source>
         <translation>रिज़ॉल्यूशन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="758"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="786"/>
         <source>Frame rate</source>
         <translation>फ़्रेम दर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="759"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="787"/>
         <source>Bit rate (kbit/s)</source>
         <translation>बिटरेट (kbit/s)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="760"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="788"/>
         <source>H.264 profile</source>
         <translation>H.264 प्रोफ़ाइल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="768"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="796"/>
         <source>These change the camera itself, so every client sees the result. The choices come from the camera and differ per model.</source>
         <translation>ये कैमरे को ही बदलते हैं, इसलिए परिणाम हर क्लाइंट को दिखता है। विकल्प कैमरे से आते हैं और मॉडल-दर-मॉडल बदलते हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="781"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="809"/>
         <source>Send sound</source>
         <translation>ध्वनि भेजें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="784"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="812"/>
         <source>The camera&apos;s microphone. With this off it still puts an audio track in the stream — an entirely silent one, which is much harder to recognise than no track at all.</source>
         <translation>कैमरे का माइक्रोफ़ोन। इसके बंद रहने पर भी वह स्ट्रीम में एक ऑडियो ट्रैक डालता है — पूरी तरह मौन, जिसे पहचानना ट्रैक के बिल्कुल न होने से कहीं कठिन है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="513"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="790"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="541"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="818"/>
         <source>Sound</source>
         <translation>ध्वनि</translation>
     </message>
@@ -336,502 +336,522 @@
         <translation>फिर कोशिश करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="260"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="268"/>
+        <source>Installing. The camera is still on the old firmware… %1</source>
+        <translation>इंस्टॉल हो रहा है। कैमरा अभी पुराने फ़र्मवेयर पर है… %1</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="270"/>
+        <source>Installing. The camera is restarting… %1</source>
+        <translation>इंस्टॉल हो रहा है। कैमरा रीस्टार्ट हो रहा है… %1</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="273"/>
+        <source>You can close this window: the camera finishes on its own. Do not cut its power.</source>
+        <translation>आप यह विंडो बंद कर सकते हैं: कैमरा अपने आप पूरा कर लेगा। बिजली न काटें।</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="279"/>
+        <source>Installed. The camera is running %1.</source>
+        <translation>इंस्टॉल हो गया। कैमरा %1 पर चल रहा है।</translation>
+    </message>
+    <message>
+        <location filename="../src/CameraSettingsDialog.cpp" line="288"/>
         <source>Sending the firmware… %1 %</source>
         <translation>फ़र्मवेयर भेजा जा रहा है… %1 %</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="413"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="441"/>
         <source>The camera reports it (ONVIF)</source>
         <translation>कैमरा स्वयं (ONVIF)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="415"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="443"/>
         <source>leolink watches the picture</source>
         <translation>leolink चित्र देखकर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="417"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="445"/>
         <source>Either of the two</source>
         <translation>दोनों में से कोई भी</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="418"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="446"/>
         <source>Do not watch</source>
         <translation>निगरानी न करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="427"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="455"/>
         <source>&lt;b&gt;The camera reports it:&lt;/b&gt; the camera&apos;s own detector decides, and sends an ONVIF event. What it watches and how readily it triggers is set under “Detection” further down, in the camera itself.&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink watches the picture:&lt;/b&gt; this computer opens a second sub-stream connection and analyses the picture. Works with any camera, including ones that report nothing — and the camera&apos;s own detector then plays no part.</source>
         <translation>&lt;b&gt;कैमरा स्वयं बताता है:&lt;/b&gt; कैमरे का अपना संसूचक तय करता है और एक ONVIF घटना भेजता है। वह क्या देखता है और कितनी आसानी से चलता है, यह नीचे «पहचान» में — कैमरे के भीतर ही — तय होता है।&lt;br&gt;&lt;br&gt;&lt;b&gt;leolink चित्र देखता है:&lt;/b&gt; यह कंप्यूटर उप-स्ट्रीम से एक दूसरा संयोजन खोलकर चित्र का विश्लेषण करता है। हर कैमरे के साथ चलता है, उनके साथ भी जो कुछ नहीं बताते — और तब कैमरे के अपने संसूचक की कोई भूमिका नहीं रहती।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="438"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="466"/>
         <source>Choose what is watched…</source>
         <translation>चुनें कि किस पर नज़र रखी जाए…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="446"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="474"/>
         <source>How much a spot in the picture must change to count. Higher notices more, including shadows and rain.</source>
         <translation>चित्र के किसी बिंदु को गिनती में आने के लिए कितना बदलना चाहिए। ऊँचा होने पर अधिक पकड़ में आता है, छाया और बारिश भी।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="451"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="479"/>
         <source> ‰</source>
         <translation> ‰</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="454"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="482"/>
         <source>How much of the watched area must change before it counts as motion. 20‰ is two percent of the picture — roughly a person at middle distance.</source>
         <translation>देखे जा रहे क्षेत्र का कितना हिस्सा बदले कि वह गति गिनी जाए। 20 ‰ यानी चित्र का दो प्रतिशत — मोटे तौर पर मध्यम दूरी पर खड़ा एक व्यक्ति।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="459"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="487"/>
         <source>Motion comes from</source>
         <translation>गति की सूचना देता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="462"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="490"/>
         <source>How leolink learns of motion</source>
         <translation>leolink को गति का पता कैसे चलता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="468"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="496"/>
         <source>Minimum area</source>
         <translation>न्यूनतम क्षेत्रफल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="470"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="498"/>
         <source>When leolink watches the picture</source>
         <translation>जब leolink चित्र देखता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="481"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="509"/>
         <source>Raise an event on sound</source>
         <translation>ध्वनि पर घटना दर्ज करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="484"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="512"/>
         <source>Needs a camera with a microphone. Opens another connection to the sub stream.</source>
         <translation>माइक्रोफ़ोन वाला कैमरा चाहिए। उप-स्ट्रीम तक एक और संयोजन खोलता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="489"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="517"/>
         <source> dB</source>
         <translation> dB</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="492"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="520"/>
         <source>-60 dB is close to silence, -20 dB a raised voice nearby.</source>
         <translation>-60 dB लगभग सन्नाटा है, -20 dB पास में ऊँची आवाज़।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="496"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="540"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="551"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="524"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="568"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="579"/>
         <source> s</source>
         <translation> से</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="499"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="527"/>
         <source>Keeps the event up after the noise stops, so one bark is not reported four times.</source>
         <translation>शोर थमने के बाद भी घटना को बनाए रखता है, ताकि एक ही भौंक चार बार दर्ज न हो।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="510"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="538"/>
         <source>Sound above</source>
         <translation>इससे तेज़ ध्वनि</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="511"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="539"/>
         <source>Hold for</source>
         <translation>इतनी देर बनाए रखें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="524"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="552"/>
         <source>Detection by leolink</source>
         <translation>leolink द्वारा पहचान</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="532"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="560"/>
         <source>Record while motion lasts</source>
         <translation>जब तक गति रहे तब तक रिकॉर्ड करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="535"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="563"/>
         <source>Records on this computer from the live stream, so it works even when the camera has no SD card fitted.</source>
         <translation>सीधे प्रसारण से इसी कंप्यूटर पर रिकॉर्ड करता है, इसलिए यह तब भी चलता है जब कैमरे में SD कार्ड न हो।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="673"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="701"/>
         <source>Follow the defaults under Settings</source>
         <translation>सेटिंग में दी गई प्रविष्टियों का पालन करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="674"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="702"/>
         <source>Use this camera&apos;s own</source>
         <translation>इस कैमरे की अपनी प्रविष्टियाँ लें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="687"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="697"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="715"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="725"/>
         <source>Reactions</source>
         <translation>प्रतिक्रियाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="689"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="717"/>
         <source>What happens on an event</source>
         <translation>किसी घटना पर क्या होता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="704"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="732"/>
         <source>Muted</source>
         <translation>मौन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="719"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="747"/>
         <source>Volume</source>
         <translation>ध्वनि-मात्रा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="721"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="749"/>
         <source>Sound in leolink</source>
         <translation>leolink में ध्वनि</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="725"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="753"/>
         <source>The same two controls sit on the camera&apos;s own tile, where they are quicker to reach. Cameras start muted: opening a wall of them should not fill the room with sound from every one at once.</source>
         <translation>यही दो नियंत्रण कैमरे की अपनी टाइल पर भी हैं, जहाँ वे जल्दी हाथ आते हैं। कैमरे मौन से शुरू होते हैं: कैमरों की एक पूरी दीवार खोलने पर कमरा हर एक की आवाज़ से नहीं भर जाना चाहिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="735"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="763"/>
         <source>Playback</source>
         <translation>प्लेबैक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="795"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="823"/>
         <source>Main stream</source>
         <translation>मुख्य स्ट्रीम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="796"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="824"/>
         <source>Sub stream</source>
         <translation>उप-स्ट्रीम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="801"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="829"/>
         <source>Video</source>
         <translation>वीडियो</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="815"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2482"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="843"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2512"/>
         <source>Brightness</source>
         <translation>चमक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="816"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="844"/>
         <source>Contrast</source>
         <translation>कंट्रास्ट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="817"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="845"/>
         <source>Saturation</source>
         <translation>संतृप्ति</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="818"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="846"/>
         <source>Sharpness</source>
         <translation>तीक्ष्णता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="819"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="847"/>
         <source>Hue</source>
         <translation>रंगत</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="821"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="876"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="849"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="904"/>
         <source>Picture</source>
         <translation>चित्र</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="831"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="859"/>
         <source>Exposure and orientation</source>
         <translation>एक्सपोज़र और दिशा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="833"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="861"/>
         <source>Day / night</source>
         <translation>दिन / रात</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="834"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="862"/>
         <source>“Auto” switches to infrared as the light goes. Forcing colour at night gives a picture too dark to use; forcing black and white by day loses colour for nothing.</source>
         <translation>«स्वतः» रोशनी घटने के साथ इन्फ़्रारेड पर चला जाता है। रात में रंग की ज़िद करने पर चित्र इतना गहरा हो जाता है कि काम का नहीं रहता; दिन में श्वेत-श्याम की ज़िद रंग यूँ ही गँवा देती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="839"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="869"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="867"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="897"/>
         <source>Automatic</source>
         <translation>स्वतः</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="840"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="868"/>
         <source>Always colour</source>
         <translation>हमेशा रंगीन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="841"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="869"/>
         <source>Always black and white</source>
         <translation>हमेशा श्वेत-श्याम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="842"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="870"/>
         <source>Anti-flicker</source>
         <translation>टिमटिमाहट रोकें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="843"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="871"/>
         <source>Match your mains frequency — 50 Hz in Europe — or indoor lighting will beat against the shutter and the picture will pulse.</source>
         <translation>अपनी बिजली की आवृत्ति से मिलाएँ — यूरोप में 50 Hz — वरना भीतर की रोशनी शटर से टकराएगी और चित्र धड़केगा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="847"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="875"/>
         <source>Exposure</source>
         <translation>एक्सपोज़र</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="848"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="876"/>
         <source>Mirror</source>
         <translation>दर्पण</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="849"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="877"/>
         <source>Flip</source>
         <translation>उलटें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="850"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="878"/>
         <source>For a camera mounted upside down.</source>
         <translation>उल्टा लगाए गए कैमरे के लिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="851"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="879"/>
         <source>Backlight compensation</source>
         <translation>बैकलाइट क्षतिपूर्ति</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="852"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="880"/>
         <source>Helps when the subject stands against a bright window or sky.</source>
         <translation>तब काम आता है जब विषय किसी चमकीली खिड़की या आसमान के सामने खड़ा हो।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="854"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="882"/>
         <source>Noise reduction</source>
         <translation>शोर घटाना</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="855"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="883"/>
         <source>Cleans up a dark picture, at the cost of smearing anything that moves.</source>
         <translation>गहरे चित्र को साफ़ करता है, पर हिलती हुई हर चीज़ धुँधली पड़ जाती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="857"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="885"/>
         <source>Rotation</source>
         <translation>घुमाव</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="858"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="886"/>
         <source>Dynamic contrast</source>
         <translation>गतिशील कंट्रास्ट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="862"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="890"/>
         <source>Infrared illumination</source>
         <translation>इन्फ़्रारेड रोशनी</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="864"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="892"/>
         <source>Infrared lamps</source>
         <translation>इन्फ़्रारेड लैंप</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="865"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="893"/>
         <source>“Auto” turns them on when it gets dark. Switch them off if the camera looks through glass — the reflection blinds it.</source>
         <translation>«स्वतः» अंधेरा होने पर उन्हें जला देता है। यदि कैमरा शीशे के पार देखता है तो उन्हें बंद कर दें — परावर्तन उसे अंधा कर देता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="870"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="898"/>
         <source>Always on</source>
         <translation>हमेशा चालू</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="871"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="899"/>
         <source>Always off</source>
         <translation>हमेशा बंद</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="885"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2145"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2424"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2436"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2452"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2489"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="913"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2175"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2454"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2466"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2482"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2519"/>
         <source>User</source>
         <translation>उपयोक्ता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="885"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="944"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="913"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="972"/>
         <source>Rights</source>
         <translation>अधिकार</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="892"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="920"/>
         <source>Add…</source>
         <translation>जोड़ें…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="893"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="921"/>
         <source>Change password…</source>
         <translation>पासवर्ड बदलें…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="894"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="922"/>
         <source>Delete</source>
         <translation>मिटाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="908"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="936"/>
         <source>These are accounts on the camera, not in leolink. A viewer account can watch but not change anything — worth using for anything that only needs to see the picture, so a stored password cannot be turned against the camera&apos;s settings.</source>
         <translation>ये कैमरे के खाते हैं, leolink के नहीं। दर्शक खाता देख सकता है पर कुछ बदल नहीं सकता — जहाँ केवल चित्र देखना हो वहाँ इसका उपयोग करने लायक है, ताकि सहेजा हुआ पासवर्ड कैमरे की सेटिंग के विरुद्ध न मोड़ा जा सके।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="925"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="953"/>
         <source>Users</source>
         <translation>उपयोक्ता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="932"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="937"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="944"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="960"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="965"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="972"/>
         <source>New user</source>
         <translation>नया उपयोक्ता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="932"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="960"/>
         <source>User name</source>
         <translation>उपयोक्ता-नाम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="937"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="965"/>
         <source>Password for %1</source>
         <translation>%1 का पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="949"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="977"/>
         <source>Creating %1…</source>
         <translation>%1 बनाया जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="964"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="992"/>
         <source>Change password</source>
         <translation>पासवर्ड बदलें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="964"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="992"/>
         <source>New password for %1</source>
         <translation>%1 का नया पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="973"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1001"/>
         <source>This is the account leolink uses</source>
         <translation>यही वह खाता है जिसे leolink इस्तेमाल करता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="974"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1002"/>
         <source>Change it here and leolink will be locked out until the new password is entered under Cameras as well.</source>
         <translation>इसे यहाँ बदलेंगे तो leolink तब तक बाहर रहेगा जब तक नया पासवर्ड कैमरे के नीचे भी दर्ज न कर दिया जाए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="978"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1006"/>
         <source>Changing the password for %1…</source>
         <translation>%1 का पासवर्ड बदला जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="991"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1019"/>
         <source>Cannot delete this account</source>
         <translation>यह खाता मिटाया नहीं जा सकता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="992"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1020"/>
         <source>leolink is signed in as “%1”. Deleting it would cut the connection to this camera immediately.</source>
         <translation>leolink «%1» के रूप में जुड़ा है। इसे मिटाने से इस कैमरे का संयोजन तुरंत टूट जाएगा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="997"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1025"/>
         <source>Delete user</source>
         <translation>उपयोक्ता मिटाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="998"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1026"/>
         <source>Delete “%1” from the camera?</source>
         <translation>«%1» को कैमरे से मिटाएँ?</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1002"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1030"/>
         <source>Deleting %1…</source>
         <translation>%1 मिटाया जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1009"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1574"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1037"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1604"/>
         <source>Format the SD card</source>
         <translation>SD कार्ड फ़ॉर्मैट करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1011"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1039"/>
         <source>&lt;b&gt;Erase everything on the card in %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 के कार्ड पर मौजूद सब कुछ मिटा दें?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1014"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1042"/>
         <source>Every recording on the card is deleted. This cannot be undone, and nothing that has not already been downloaded can be recovered.</source>
         <translation>कार्ड की हर रिकॉर्डिंग मिट जाएगी। इसे पलटा नहीं जा सकता, और जो पहले से उतारा नहीं गया उसे वापस नहीं पाया जा सकता।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1017"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1045"/>
         <source>Erase</source>
         <translation>मिटाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1024"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1052"/>
         <source>Formatting…</source>
         <translation>फ़ॉर्मैट हो रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1031"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1059"/>
         <source>Firmware for %1</source>
         <translation>%1 के लिए फ़र्मवेयर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1033"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1061"/>
         <source>Reolink firmware (*.pak)</source>
         <translation>Reolink फ़र्मवेयर (*.pak)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1039"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1067"/>
         <source>%1 cannot be read.</source>
         <translation>%1 पढ़ा नहीं जा सकता।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1054"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1082"/>
         <source>&lt;b&gt;Install build %1 on %2?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%2 पर बिल्ड %1 इंस्टॉल करें?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1057"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1085"/>
         <source>%1
 
 The package is for board %2, which is what the camera reports, and replaces %3. leolink sends it from this computer, which takes a minute or two; keep this window open until it says so. The camera then installs it and restarts, unreachable for several minutes.
@@ -844,151 +864,151 @@ Do not cut its power during the update — a camera interrupted mid-flash usuall
 अपडेट के दौरान बिजली न काटें — लिखने के बीच में रुका कैमरा अक्सर मरम्मत के लिए भेजना पड़ता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1077"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1106"/>
         <source>Sending the firmware…</source>
         <translation>फ़र्मवेयर भेजा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1087"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1116"/>
         <source>Wi-Fi signal</source>
         <translation>वाई-फ़ाई संकेत</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1091"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1508"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1120"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1537"/>
         <source>Reading…</source>
         <translation>पढ़ा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1095"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1124"/>
         <source>Connection</source>
         <translation>संयोजन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1108"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1137"/>
         <source>Scan</source>
         <translation>खंगालें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1112"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1141"/>
         <source>Join network</source>
         <translation>नेटवर्क से जुड़ें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1126"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1160"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1408"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2155"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1155"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1189"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1437"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2185"/>
         <source>Network</source>
         <translation>नेटवर्क</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1128"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2146"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2425"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2437"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2453"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2490"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1157"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2176"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2455"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2467"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2483"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2520"/>
         <source>Password</source>
         <translation>पासवर्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1131"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1160"/>
         <source>Wi-Fi</source>
         <translation>वाई-फ़ाई</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1137"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1166"/>
         <source>The camera scans, not this computer — what it can reach is what counts. The password is tried before it is saved, so a typo is refused rather than leaving the camera on no network at all.</source>
         <translation>खंगालता कैमरा है, यह कंप्यूटर नहीं — मायने वही रखता है जहाँ तक वह पहुँच सके। पासवर्ड सहेजने से पहले आज़माया जाता है, इसलिए टाइप की गलती ठुकरा दी जाती है, कैमरा किसी नेटवर्क के बिना नहीं रह जाता।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1145"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1174"/>
         <source>Addresses and ports are read here but changed in the camera&apos;s own web interface. Getting one wrong takes the camera off the network entirely, and the only way back is the reset pin — a warning dialog is no substitute for the manufacturer&apos;s own screen there.</source>
         <translation>पते और पोर्ट यहाँ पढ़े जाते हैं, पर बदले कैमरे के अपने वेब इंटरफ़ेस में जाते हैं। इनमें से एक भी गलत होने पर कैमरा नेटवर्क से पूरी तरह बाहर हो जाता है, और लौटने का एकमात्र रास्ता रीसेट पिन है — वहाँ कोई चेतावनी-संवाद निर्माता के अपने पर्दे की जगह नहीं ले सकता।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1190"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1219"/>
         <source>strong</source>
         <translation>मज़बूत</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1191"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1220"/>
         <source>good</source>
         <translation>अच्छा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1192"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1221"/>
         <source>fair</source>
         <translation>ठीक-ठाक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1193"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1222"/>
         <source>weak</source>
         <translation>कमज़ोर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1194"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1223"/>
         <source>unknown</source>
         <translation>अज्ञात</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1248"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1277"/>
         <source>%1 — %2 (%3/4)</source>
         <translation>%1 — %2 (%3/4)</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1253"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1282"/>
         <source>, %n access point(s)</source>
         <translation><numerusform>, %n पहुँच-बिंदु</numerusform><numerusform>, %n पहुँच-बिंदु</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1258"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1287"/>
         <source>Signal as the camera hears it: %1 of 4</source>
         <translation>कैमरे को जैसा सुनाई देता है वैसा संकेत: 4 में से %1</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1260"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1289"/>
         <source>Encryption: %1</source>
         <translation>एन्क्रिप्शन: %1</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1262"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1291"/>
         <source>Heard from %n access point(s) — one network, several nodes. The strongest is what is shown.</source>
         <translation><numerusform>%n पहुँच-बिंदु से सुनाई दिया — एक नेटवर्क, कई नोड। सबसे मज़बूत वाला दिखाया गया है।</numerusform><numerusform>%n पहुँच-बिंदुओं से सुनाई दिया — एक नेटवर्क, कई नोड। सबसे मज़बूत वाला दिखाया गया है।</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1276"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1305"/>
         <source>Some names were heard from several access points — that is a mesh. The camera joins the name, not a particular node; the mesh decides which one it talks to and hands it over as needed. To find the best spot, move the camera and watch “Wi-Fi signal” above: that is the link it actually has.</source>
         <translation>कुछ नाम कई पहुँच-बिंदुओं से सुनाई दिए — यह एक मेश नेटवर्क है। कैमरा नाम से जुड़ता है, किसी विशेष नोड से नहीं; किससे बात होगी यह मेश तय करता है और ज़रूरत पड़ने पर बदल देता है। सबसे अच्छी जगह खोजने के लिए कैमरा हिलाएँ और ऊपर «वाई-फ़ाई संकेत» देखें: असली कड़ी वही है।</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1286"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1315"/>
         <source>%n network(s) found, strongest first.</source>
         <translation><numerusform>%n नेटवर्क मिला, सबसे मज़बूत पहले।</numerusform><numerusform>%n नेटवर्क मिले, सबसे मज़बूत पहले।</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1294"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1323"/>
         <source>scanning…</source>
         <translation>खंगाला जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1297"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1326"/>
         <source>The camera is scanning for networks…</source>
         <translation>कैमरा नेटवर्क खोज रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1308"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1337"/>
         <source>Change the camera&apos;s network</source>
         <translation>कैमरे का नेटवर्क बदलें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1310"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1339"/>
         <source>&lt;b&gt;Move %1 to “%2”?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 को «%2» पर ले जाएँ?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1312"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1341"/>
         <source>The camera tests the password first and refuses if it is wrong, so this is safer than it sounds.
 
 It will still disappear for a minute while it reconnects, and if the new network hands out a different address you will have to update it here afterwards.</source>
@@ -997,169 +1017,169 @@ It will still disappear for a minute while it reconnects, and if the new network
 फिर भी वह दोबारा जुड़ते समय एक मिनट के लिए गायब रहेगा, और यदि नया नेटवर्क उसे कोई दूसरा पता दे दे तो बाद में उसे यहाँ बदलना होगा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1318"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1347"/>
         <source>Join</source>
         <translation>जुड़ें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1326"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1355"/>
         <source>Testing the password on the camera…</source>
         <translation>कैमरे पर पासवर्ड आज़माया जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1343"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1372"/>
         <source>Wi-Fi, %1</source>
         <translation>Wi-Fi, %1</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1351"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1380"/>
         <source>Link</source>
         <translation>कड़ी</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1352"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1423"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1381"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1452"/>
         <source>Address</source>
         <translation>पता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1353"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1382"/>
         <source>Netmask</source>
         <translation>नेटमास्क</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1354"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1383"/>
         <source>Gateway</source>
         <translation>गेटवे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1355"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1384"/>
         <source>MAC</source>
         <translation>MAC</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1356"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1385"/>
         <source>DNS</source>
         <translation>DNS</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1357"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1386"/>
         <source>Network name</source>
         <translation>नेटवर्क का नाम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1378"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1407"/>
         <source>Ports</source>
         <translation>पोर्ट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1380"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1409"/>
         <source>The camera reported nothing.</source>
         <translation>कैमरे ने कुछ नहीं बताया।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1397"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1426"/>
         <source>Name</source>
         <translation>नाम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1398"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1427"/>
         <source>Model</source>
         <translation>मॉडल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1399"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1428"/>
         <source>Item number</source>
         <translation>आइटम नंबर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1400"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1429"/>
         <source>Hardware</source>
         <translation>हार्डवेयर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1402"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1431"/>
         <source>Build</source>
         <translation>बिल्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1403"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1432"/>
         <source>Board</source>
         <translation>बोर्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1404"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1433"/>
         <source>Serial number</source>
         <translation>सीरियल नंबर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1405"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1434"/>
         <source>UID</source>
         <translation>UID</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1406"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1435"/>
         <source>MAC address</source>
         <translation>MAC पता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1407"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1436"/>
         <source>IP address</source>
         <translation>IP पता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1410"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1439"/>
         <source>What it is</source>
         <translation>यह क्या है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1424"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1453"/>
         <source>Found</source>
         <translation>क्या मिला</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1426"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1455"/>
         <source>Settings</source>
         <translation>सेटिंग</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1427"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1456"/>
         <source>Over Baichuan, port 9000 — this camera has no web server. Most settings are available; some, such as user accounts and e-mail server details, are only reachable through Reolink&apos;s own app.</source>
         <translation>Baichuan से, पोर्ट 9000 — इस कैमरे में वेब सर्वर नहीं है। अधिकांश सेटिंग्स उपलब्ध हैं; कुछ, जैसे उपयोगकर्ता खाते और ई-मेल सर्वर का विवरण, केवल Reolink के अपने ऐप से ही मिलती हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1431"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1460"/>
         <source>Over the camera&apos;s web interface (HTTP API).</source>
         <translation>कैमरे के वेब इंटरफ़ेस (HTTP API) से।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1433"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1462"/>
         <source>How leolink reaches it</source>
         <translation>leolink इस तक कैसे पहुँचता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1436"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1465"/>
         <source>Copy</source>
         <translation>कॉपी करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1437"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1466"/>
         <source>Puts all of this on the clipboard, for a bug report or a support request.</source>
         <translation>यह सब क्लिपबोर्ड पर रख देता है, बग रिपोर्ट या सहायता अनुरोध के लिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1461"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1490"/>
         <source>About</source>
         <translation>जानकारी</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1474"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1707"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1503"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1737"/>
         <source>Restart the camera</source>
         <translation>कैमरा दोबारा चालू करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1480"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1509"/>
         <source>The camera goes off the network for a minute or so and comes back on its own. Recordings on its SD card are not affected, and settings are kept.
 
 Worth trying when a camera has stopped answering, is refusing new connections, or has drifted out of step after a firmware update.</source>
@@ -1168,62 +1188,62 @@ Worth trying when a camera has stopped answering, is refusing new connections, o
 जब कोई कैमरा उत्तर देना बंद कर दे, नए संयोजन ठुकराए, या फ़र्मवेयर अद्यतन के बाद बहकने लगे, तब आज़माने लायक है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1488"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1714"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1517"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1744"/>
         <source>Restart</source>
         <translation>पुनःआरंभ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1499"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1528"/>
         <source>Factory reset is not offered here. It clears the network settings too, and a camera that has forgotten its Wi-Fi has to be taken down and reached by cable — use the camera&apos;s own web interface if you really want that.</source>
         <translation>फ़ैक्ट्री रीसेट यहाँ नहीं दिया गया है। वह नेटवर्क सेटिंग भी मिटा देता है, और जो कैमरा अपना वाई-फ़ाई भूल चुका हो उसे उतारकर केबल से जोड़ना पड़ता है — यदि आप सचमुच यही चाहते हैं तो कैमरे का अपना वेब इंटरफ़ेस इस्तेमाल करें।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1510"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1539"/>
         <source>Condition</source>
         <translation>दशा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1515"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1594"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1544"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1624"/>
         <source>Not checked.</source>
         <translation>जाँचा नहीं गया।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1518"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1547"/>
         <source>Check for updates</source>
         <translation>अद्यतन देखें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1520"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1549"/>
         <source>The camera asks Reolink, not this computer — so it needs a way out to the internet of its own.</source>
         <translation>Reolink से कैमरा पूछता है, यह कंप्यूटर नहीं — इसलिए उसे इंटरनेट तक अपना रास्ता चाहिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1524"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1553"/>
         <source>Asking Reolink…</source>
         <translation>Reolink से पूछा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1529"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1558"/>
         <source>Install update</source>
         <translation>अद्यतन स्थापित करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1038"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1046"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1052"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1533"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1066"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1074"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1080"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1562"/>
         <source>Install firmware</source>
         <translation>फ़र्मवेयर स्थापित करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1535"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1564"/>
         <source>&lt;b&gt;Update the firmware on %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 का फ़र्मवेयर अद्यतन करें?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1537"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1566"/>
         <source>The camera downloads the update itself and restarts. It will be unreachable for several minutes.
 
 Do not cut its power during the update — a camera interrupted mid-flash usually needs sending back.</source>
@@ -1232,64 +1252,64 @@ Do not cut its power during the update — a camera interrupted mid-flash usuall
 अद्यतन के दौरान उसकी बिजली न काटें — फ़्लैश के बीच में रुका कैमरा आमतौर पर वापस भेजना पड़ता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1066"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1542"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1094"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1571"/>
         <source>Install</source>
         <translation>स्थापित करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1401"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1568"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1430"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1598"/>
         <source>Firmware</source>
         <translation>फ़र्मवेयर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1578"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1608"/>
         <source>Storage</source>
         <translation>भंडारण</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1581"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1611"/>
         <source>Formatting erases every recording on the card. There is no undo and no confirmation from the camera afterwards.</source>
         <translation>फ़ॉर्मैट करने से कार्ड की हर रिकॉर्डिंग मिट जाती है। इसे पलटा नहीं जा सकता, और बाद में कैमरे से कोई पुष्टि भी नहीं आती।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1598"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1628"/>
         <source>Ask the camera</source>
         <translation>कैमरे से पूछें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1602"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1632"/>
         <source>Copy the list</source>
         <translation>सूची कॉपी करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1605"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1635"/>
         <source>Copied.</source>
         <translation>कॉपी हो गया।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1613"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1643"/>
         <source>What this camera supports</source>
         <translation>यह कैमरा क्या-क्या कर सकता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1616"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1646"/>
         <source>Reolink firmware differs enormously between models, and the only reliable way to know what a camera can do is to ask it. If something is missing from leolink that your camera clearly has, this list in a bug report is what makes it possible to add.</source>
         <translation>Reolink का फ़र्मवेयर मॉडल-दर-मॉडल बहुत भिन्न है, और यह जानने का एकमात्र भरोसेमंद तरीका कि कोई कैमरा क्या कर सकता है, उसी से पूछना है। यदि leolink में कुछ ऐसा नहीं है जो आपके कैमरे में स्पष्ट रूप से मौजूद है, तो बग रिपोर्ट में दी गई यही सूची उसे जोड़ना संभव बनाती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1633"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1663"/>
         <source>Maintenance</source>
         <translation>रखरखाव</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="1666"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1696"/>
         <source>Asking about %n command(s)…</source>
         <translation><numerusform>%n आदेश के बारे में पूछा जा रहा है…</numerusform><numerusform>%n आदेशों के बारे में पूछा जा रहा है…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1683"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1713"/>
         <source>Supported (%1):
 %2
 
@@ -1302,154 +1322,154 @@ Not supported (%3):
 %4</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1709"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1739"/>
         <source>&lt;b&gt;Restart %1?&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 को दोबारा चालू करें?&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1711"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1741"/>
         <source>The picture will be gone for about a minute. Anything being recorded right now will stop.</source>
         <translation>चित्र करीब एक मिनट के लिए चला जाएगा। इस समय जो कुछ रिकॉर्ड हो रहा है वह रुक जाएगा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1723"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1753"/>
         <source>Asking %1 to restart…</source>
         <translation>%1 से दोबारा चालू होने को कहा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1801"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1831"/>
         <source>On-screen text</source>
         <translation>पर्दे पर लिखा पाठ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1803"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1833"/>
         <source>Background</source>
         <translation>पृष्ठभूमि</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1804"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1834"/>
         <source>Draws a box behind the text so it stays readable over a bright scene.</source>
         <translation>पाठ के पीछे एक डिब्बा बनाता है ताकि वह चमकीले दृश्य पर भी पढ़ा जा सके।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1806"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1836"/>
         <source>Watermark</source>
         <translation>जलचिह्न</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1807"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1837"/>
         <source>Embeds a mark in the recording itself.</source>
         <translation>रिकॉर्डिंग में ही एक निशान गाड़ देता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1811"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1841"/>
         <source>Privacy areas…</source>
         <translation>निजी क्षेत्र…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1814"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1844"/>
         <source>Parts of the view the camera blanks before anything leaves it.</source>
         <translation>दृश्य के वे हिस्से जिन्हें कैमरा कुछ भी बाहर जाने से पहले काला कर देता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1825"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1855"/>
         <source>Privacy</source>
         <translation>निजता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1829"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1859"/>
         <source>Blanked in the camera itself, so the covered part is missing from every viewer and every recording — a neighbour&apos;s window, or a desk that should not be on film.</source>
         <translation>कैमरे के भीतर ही काला किया जाता है, इसलिए ढका हुआ हिस्सा हर दर्शक और हर रिकॉर्डिंग में गायब रहता है — पड़ोसी की खिड़की, या कोई मेज़ जो वीडियो में नहीं आनी चाहिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1836"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1866"/>
         <source>The camera burns this into the picture, so it appears in every recording and every client — not only here.</source>
         <translation>कैमरा इसे चित्र में ही जला देता है, इसलिए यह हर रिकॉर्डिंग और हर क्लाइंट में दिखता है — केवल यहाँ नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1844"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1874"/>
         <source>Overlay</source>
         <translation>ऊपरी परत</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1853"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1883"/>
         <source>Motion detection in the camera</source>
         <translation>कैमरे में गति-पहचान</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="467"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1855"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1895"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="495"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1885"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1925"/>
         <source>Sensitivity</source>
         <translation>संवेदनशीलता</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="541"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="569"/>
         <source>nothing</source>
         <translation>कुछ नहीं</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="544"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="572"/>
         <source>The seconds leading up to the trigger — usually the part that shows how someone got there. The past cannot be recorded after the fact, so anything above zero keeps the stream running into a buffer: one more connection to the camera, and a little disk.</source>
         <translation>ट्रिगर से ठीक पहले के सेकंड — आमतौर पर वही हिस्सा जो दिखाता है कि कोई वहाँ पहुँचा कैसे। बीती हुई बात बाद में रिकॉर्ड नहीं की जा सकती, इसलिए शून्य से ऊपर कोई भी मान स्ट्रीम को लगातार एक बफ़र में लिखता रहता है: कैमरे से एक और संयोजन, और थोड़ी डिस्क।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="554"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="582"/>
         <source>So an event does not stop mid-scene. Motion that resumes within this time continues the same file instead of starting a second.</source>
         <translation>ताकि कोई घटना दृश्य के बीच में ही न रुक जाए। इस समय के भीतर दोबारा शुरू हुई गति दूसरी फ़ाइल शुरू करने के बजाय उसी फ़ाइल को आगे बढ़ाती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="566"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="594"/>
         <source>Include before</source>
         <translation>पहले का भी लें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="569"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="597"/>
         <source>When something happens</source>
         <translation>जब कुछ घटे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="573"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="601"/>
         <source>Record without stopping</source>
         <translation>बिना रुके रिकॉर्ड करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="578"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="606"/>
         <source> h</source>
         <translation> घं</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="581"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="609"/>
         <source>How far back the archive reaches. Once it is this old, a file is deleted to make room for the newest one.</source>
         <translation>संग्रह कितना पीछे तक जाता है। इतनी पुरानी हो जाने पर फ़ाइल मिटा दी जाती है, ताकि सबसे नई के लिए जगह बने।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="586"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="614"/>
         <source> min</source>
         <translation> मि</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="589"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="617"/>
         <source>The archive is a run of files, not one — a file cannot be trimmed at the front, so keeping a day in one of them would mean rewriting it every minute. Shorter files find a moment more precisely; longer ones are fewer to scroll past.</source>
         <translation>संग्रह एक फ़ाइल नहीं, फ़ाइलों की एक कतार है — फ़ाइल को आगे से नहीं काटा जा सकता, और पूरा दिन एक ही फ़ाइल में रखने का अर्थ होता उसे हर मिनट दोबारा लिखना। छोटी फ़ाइलें किसी क्षण को ज़्यादा ठीक से ढूँढ़ती हैं; बड़ी फ़ाइलें गिनती में कम होती हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="610"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="638"/>
         <source>Keep the last</source>
         <translation>इतना रखें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="611"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="639"/>
         <source>One file per</source>
         <translation>हर फ़ाइल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="614"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="642"/>
         <source>Round the clock</source>
         <translation>चौबीसों घंटे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="618"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="646"/>
         <source>With both switched on, one buffer serves both: the recording of an event is cut out of the archive, so nothing extra is opened to the camera.
 
 Where the files go is the same for every camera and is set under Settings ▸ Recordings.</source>
@@ -1458,246 +1478,246 @@ Where the files go is the same for every camera and is set under Settings ▸ Re
 फ़ाइलें कहाँ जाती हैं, यह हर कैमरे के लिए एक ही है और सेटिंग ▸ रिकॉर्डिंग के नीचे तय होता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="654"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="682"/>
         <source>%1 hours of video. How much disk that is depends on the bit rate, which this camera has not reported yet.</source>
         <translation>%1 घंटे का वीडियो। वह कितनी डिस्क है, यह बिटरेट पर निर्भर करता है, जो इस कैमरे ने अभी बताया नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="662"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="690"/>
         <source>About %1 GB at the %2 kbit/s this stream is set to. Make sure the recordings folder has that much to spare.</source>
         <translation>इस स्ट्रीम पर तय %2 kbit/s पर लगभग %1 GB। ध्यान रखें कि रिकॉर्डिंग फ़ोल्डर में उतनी जगह खाली हो।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1554"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1584"/>
         <source>Install from file…</source>
         <translation>फ़ाइल से इंस्टॉल करें…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1557"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1587"/>
         <source>A .pak from Reolink&apos;s download centre, sent from this computer over port 9000. Unzip the download first.</source>
         <translation>Reolink डाउनलोड सेंटर का .pak, इस कंप्यूटर से पोर्ट 9000 पर भेजा जाता है। पहले डाउनलोड को अनज़िप करें।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1856"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1886"/>
         <source>Higher notices more, including shadows and headlights.</source>
         <translation>ऊँचा होने पर अधिक पकड़ में आता है, छाया और हेडलाइट भी।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1858"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2167"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2375"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2429"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2439"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2445"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1888"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2197"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2405"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2459"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2469"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2475"/>
         <source>Switched on</source>
         <translation>चालू</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1864"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1894"/>
         <source>Choose the area…</source>
         <translation>क्षेत्र चुनें…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1866"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1896"/>
         <source>Which parts of the picture the camera watches. Everything outside the area is ignored — a road at the edge of view, a tree in the wind, a neighbour&apos;s door.</source>
         <translation>कैमरा चित्र के किन हिस्सों पर नज़र रखता है। क्षेत्र के बाहर की हर चीज़ अनदेखी रहती है — दृश्य के किनारे की सड़क, हवा में हिलता पेड़, पड़ोसी का दरवाज़ा।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1872"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1902"/>
         <source>Where it looks</source>
         <translation>वह कहाँ देखता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1876"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1906"/>
         <source>Choose the hours…</source>
         <translation>घंटे चुनें…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1881"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1911"/>
         <source>A week of hours: in the ones you tick, the camera reports motion; in the rest it stays quiet. Nothing to do with how sensitive it is — that is set below.</source>
         <translation>घंटों का एक सप्ताह: जिन पर आप निशान लगाएँगे उनमें कैमरा गति की सूचना देगा, बाकी में चुप रहेगा। इसका उसकी संवेदनशीलता से कोई लेना-देना नहीं — वह नीचे तय होती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1888"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1918"/>
         <source>When it reports at all</source>
         <translation>वह सूचना देता ही कब है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1895"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1925"/>
         <source>From</source>
         <translation>से</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1895"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1925"/>
         <source>To</source>
         <translation>तक</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1907"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1937"/>
         <source>Within a day the camera can be more or less easily triggered. This is how you stop headlights at night setting everything off without making it deaf by day. The camera fixes how many periods there are; their times and sensitivities are yours.</source>
         <translation>एक ही दिन में कैमरा कम या ज़्यादा आसानी से चल सकता है। इसी से रात में हेडलाइट सब कुछ नहीं छेड़तीं और दिन में वह अंधा भी नहीं होता। कितने खंड होंगे यह कैमरा तय करता है; उनके समय और संवेदनशीलता आपकी हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1915"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1945"/>
         <source>How readily it triggers</source>
         <translation>यह कितनी आसानी से चलता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1923"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1953"/>
         <source>What it recognises</source>
         <translation>यह क्या पहचानता है</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1925"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2058"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1955"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2088"/>
         <source>People</source>
         <translation>व्यक्ति</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1926"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2059"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1956"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2089"/>
         <source>Vehicles</source>
         <translation>वाहन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1927"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2060"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1957"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2090"/>
         <source>Animals</source>
         <translation>जानवर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1928"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2061"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1958"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2091"/>
         <source>Faces</source>
         <translation>चेहरे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1931"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1961"/>
         <source>Camera-side detection</source>
         <translation>कैमरे की ओर से पहचान</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1940"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1970"/>
         <source>This is the camera&apos;s own detection, the one it reports over ONVIF. leolink&apos;s own analysis of the picture is set separately, under Cameras → Events.</source>
         <translation>यह कैमरे की अपनी पहचान है, वही जिसकी सूचना वह ONVIF से देता है। leolink द्वारा चित्र का विश्लेषण अलग से, कैमरे → घटनाएँ के नीचे तय होता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="1949"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="1979"/>
         <source>Detection</source>
         <translation>पहचान</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2026"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2056"/>
         <source>%1 — the camera&apos;s detection area</source>
         <translation>%1 — कैमरे का पहचान क्षेत्र</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2027"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2057"/>
         <source>Drag over the picture to choose what the camera watches. Darkened areas are ignored. This is the camera&apos;s own grid, %1 by %2, so it is finer than leolink&apos;s own.</source>
         <translation>कैमरा किस पर नज़र रखे यह चुनने के लिए चित्र पर खींचें। गहरे किए गए क्षेत्र अनदेखे रहते हैं। यह कैमरे की अपनी जाली है, %1 × %2, इसलिए leolink की जाली से महीन है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2044"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2074"/>
         <source>%1 — when to watch</source>
         <translation>%1 — कब निगरानी करे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2045"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2075"/>
         <source>Hours in which the camera raises motion events. Outside them it still sees, but says nothing.</source>
         <translation>वे घंटे जिनमें कैमरा गति की सूचना देता है। इनके बाहर वह देखता तो है, पर कुछ कहता नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2056"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2086"/>
         <source>Any movement</source>
         <translation>कोई भी हलचल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2057"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2087"/>
         <source>Continuous</source>
         <translation>लगातार</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2089"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2119"/>
         <source>This camera keeps a separate week for each kind of event. Which one?</source>
         <translation>यह कैमरा हर तरह की घटना के लिए अलग सप्ताह रखता है। कौन-सा?</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2137"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2167"/>
         <source>SIM card</source>
         <translation>सिम कार्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2139"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2169"/>
         <source>PIN</source>
         <translation>पिन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2140"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2170"/>
         <source>Only needed if the card asks for one. Three wrong tries lock the card and it then needs a PUK, which only your operator has.</source>
         <translation>केवल तभी चाहिए जब कार्ड माँगे। तीन गलत प्रयासों पर कार्ड बंद हो जाता है और फिर PUK चाहिए, जो केवल आपके ऑपरेटर के पास होता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2144"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2174"/>
         <source>Access point (APN)</source>
         <translation>पहुँच-बिंदु (APN)</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2147"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2177"/>
         <source>Authentication</source>
         <translation>प्रमाणीकरण</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2148"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2178"/>
         <source>Use mobile data</source>
         <translation>मोबाइल डेटा इस्तेमाल करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2152"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2182"/>
         <source>Modem</source>
         <translation>मॉडेम</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2154"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2184"/>
         <source>Card</source>
         <translation>कार्ड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2156"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2186"/>
         <source>Type</source>
         <translation>प्रकार</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2157"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2187"/>
         <source>Signal</source>
         <translation>संकेत</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2158"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2188"/>
         <source>IMEI</source>
         <translation>IMEI</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2159"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2189"/>
         <source>Card number</source>
         <translation>कार्ड संख्या</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2163"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2193"/>
         <source>Mobile connection</source>
         <translation>मोबाइल संयोजन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2165"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2195"/>
         <source>Data used</source>
         <translation>खर्च हुआ डेटा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2166"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2196"/>
         <source>Monthly limit</source>
         <translation>मासिक सीमा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2174"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2204"/>
         <source>&lt;b&gt;Not tested on real hardware.&lt;/b&gt; Nobody involved in leolink owns a camera with a modem, so this was written from the protocol alone. It cannot damage anything — a command the camera does not know is simply refused — but it may equally show nothing at all.
 
 If your camera has a SIM, “What this camera supports” under Maintenance lists the commands its firmware actually has. That list, in a bug report, is what would let this be finished properly.</source>
@@ -1706,311 +1726,311 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
 यदि आपके कैमरे में सिम है, तो रखरखाव के नीचे «यह कैमरा क्या-क्या कर सकता है» उन आदेशों की सूची देता है जो उसके फ़र्मवेयर में सचमुच हैं। बग रिपोर्ट में दी गई वही सूची इसे ढंग से पूरा करने देगी।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2187"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2217"/>
         <source>Mobile data</source>
         <translation>मोबाइल डेटा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2204"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2234"/>
         <source>nothing blanked</source>
         <translation>कुछ भी काला नहीं</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="2206"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2236"/>
         <source>%n area(s) blanked</source>
         <translation><numerusform>%n क्षेत्र काला किया गया</numerusform><numerusform>%n क्षेत्र काले किए गए</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/CameraSettingsDialog.cpp" line="2208"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2238"/>
         <source>%n area(s), switched off</source>
         <translation><numerusform>%n क्षेत्र, बंद</numerusform><numerusform>%n क्षेत्र, बंद</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2290"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2320"/>
         <source>%1 — when to record</source>
         <translation>%1 — कब रिकॉर्ड करे</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2291"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2321"/>
         <source>Hours in which the camera records to its own card. This needs a card fitted; recording to this computer is set under Cameras → Events and works without one.</source>
         <translation>वे घंटे जिनमें कैमरा अपने ही कार्ड पर रिकॉर्ड करता है। इसके लिए कार्ड लगा होना चाहिए; इस कंप्यूटर पर रिकॉर्डिंग कैमरे → घटनाएँ के नीचे तय होती है और बिना कार्ड के चलती है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2369"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2379"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2399"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2409"/>
         <source>Recording to the camera&apos;s card</source>
         <translation>कैमरे के कार्ड पर रिकॉर्डिंग</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2371"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2381"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2401"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2411"/>
         <source>Overwrite when full</source>
         <translation>भर जाने पर ऊपर लिखें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2372"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2384"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2402"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2414"/>
         <source>Record before the event</source>
         <translation>घटना से पहले भी रिकॉर्ड करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="567"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2373"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2387"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="595"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2403"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2417"/>
         <source>Keep recording after</source>
         <translation>उसके बाद भी रिकॉर्ड करते रहें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2374"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2388"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2404"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2418"/>
         <source>File length</source>
         <translation>फ़ाइल की लंबाई</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2382"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2412"/>
         <source>Off means recording simply stops once the card fills up.</source>
         <translation>बंद का अर्थ है कि कार्ड भरते ही रिकॉर्डिंग बस रुक जाएगी।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2385"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2415"/>
         <source>Keeps the seconds leading up to a trigger, which is usually the interesting part.</source>
         <translation>किसी घटना से ठीक पहले के सेकंड सहेजता है, जो अक्सर सबसे दिलचस्प हिस्सा होते हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2391"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2421"/>
         <source>When to record…</source>
         <translation>कब रिकॉर्ड करे…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2394"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2424"/>
         <source>Hours of the week the camera records to its card by itself.</source>
         <translation>सप्ताह के वे घंटे जिनमें कैमरा अपने आप अपने कार्ड पर रिकॉर्ड करता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2404"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2434"/>
         <source>These govern what the camera writes to its own SD card. Recording to this computer is set under Cameras → Events and needs no card.</source>
         <translation>ये तय करते हैं कि कैमरा अपने SD कार्ड पर क्या लिखता है। इस कंप्यूटर पर रिकॉर्डिंग कैमरे → घटनाएँ के नीचे तय होती है और उसे कार्ड नहीं चाहिए।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="631"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2412"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="659"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2442"/>
         <source>Recording</source>
         <translation>रिकॉर्डिंग</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2420"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2448"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2450"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2478"/>
         <source>E-mail</source>
         <translation>ई-मेल</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2422"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2434"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2450"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2487"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2544"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2452"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2464"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2480"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2517"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2574"/>
         <source>Server</source>
         <translation>सर्वर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2423"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2435"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2451"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2488"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2545"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2453"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2465"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2481"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2518"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2575"/>
         <source>Port</source>
         <translation>पोर्ट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2426"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2455"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2456"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2485"/>
         <source>Encrypted</source>
         <translation>एन्क्रिप्टेड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2427"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2456"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2457"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2486"/>
         <source>Not more often than</source>
         <translation>इससे अधिक बार नहीं</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2428"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2457"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2458"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2487"/>
         <source>Attach</source>
         <translation>साथ भेजें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2432"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2485"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2462"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2515"/>
         <source>FTP upload</source>
         <translation>FTP अपलोड</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2438"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2468"/>
         <source>Folder</source>
         <translation>फ़ोल्डर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2443"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2473"/>
         <source>Push notifications</source>
         <translation>पुश सूचनाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2454"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2484"/>
         <source>Send to</source>
         <translation>यहाँ भेजें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2466"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2473"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2496"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2503"/>
         <source>Siren</source>
         <translation>सायरन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2468"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2475"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2498"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2505"/>
         <source>Sound on an alarm</source>
         <translation>अलार्म पर बजाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2469"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2499"/>
         <source>Times</source>
         <translation>समय</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2470"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2481"/>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2492"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2500"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2511"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2522"/>
         <source>Mode</source>
         <translation>ढंग</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2478"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2508"/>
         <source>Spotlight</source>
         <translation>स्पॉटलाइट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2480"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2510"/>
         <source>On</source>
         <translation>चालू</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2491"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2521"/>
         <source>Directory</source>
         <translation>निर्देशिका</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2496"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2526"/>
         <source>Push notification</source>
         <translation>पुश सूचना</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2498"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2528"/>
         <source>Schedule</source>
         <translation>समय-सारणी</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2504"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2534"/>
         <source>Send a test e-mail</source>
         <translation>एक जाँच ई-मेल भेजें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2507"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2537"/>
         <source>Asking the camera to send a test e-mail…</source>
         <translation>कैमरे से जाँच ई-मेल भेजने को कहा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2510"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2540"/>
         <source>Test the FTP upload</source>
         <translation>FTP अपलोड जाँचें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2513"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2543"/>
         <source>Asking the camera to try the FTP server…</source>
         <translation>कैमरे से FTP सर्वर आज़माने को कहा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2524"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2554"/>
         <source>Sent by the camera itself, so they keep working when this computer is switched off. leolink&apos;s own reactions — commands, webhooks, MQTT — are under Cameras → Events.</source>
         <translation>इन्हें कैमरा स्वयं भेजता है, इसलिए ये तब भी चलती रहती हैं जब यह कंप्यूटर बंद हो। leolink की अपनी प्रतिक्रियाएँ — आदेश, वेबहुक, MQTT — कैमरे → घटनाएँ के नीचे हैं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2533"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2563"/>
         <source>Alerts</source>
         <translation>सूचनाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2541"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2571"/>
         <source>Time server</source>
         <translation>समय सर्वर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2543"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2573"/>
         <source>Synchronise the clock</source>
         <translation>घड़ी मिलाएँ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2546"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2576"/>
         <source>Every</source>
         <translation>हर</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2550"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2580"/>
         <source>Scheduled restart</source>
         <translation>निर्धारित पुनःआरंभ</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2552"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2582"/>
         <source>Restart regularly</source>
         <translation>नियमित रूप से दोबारा चालू करें</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2553"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2583"/>
         <source>Some cameras become unreliable after weeks of uptime; a weekly restart is a cheap cure.</source>
         <translation>कुछ कैमरे हफ़्तों चलते रहने के बाद भरोसे लायक नहीं रहते; सप्ताह में एक बार दोबारा चालू करना सस्ता इलाज है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2556"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2586"/>
         <source>Day</source>
         <translation>दिन</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2557"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2587"/>
         <source>Hour</source>
         <translation>घंटा</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2558"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2588"/>
         <source>Minute</source>
         <translation>मिनट</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2562"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2592"/>
         <source>A camera with the wrong clock stamps its recordings wrongly, which is worth more than it sounds when you need to find one.</source>
         <translation>गलत घड़ी वाला कैमरा अपनी रिकॉर्डिंग पर गलत समय अंकित करता है, और जब कोई एक रिकॉर्डिंग ढूँढ़नी हो तब यह सुनने से कहीं अधिक भारी पड़ता है।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2570"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2600"/>
         <source>Time</source>
         <translation>समय</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2706"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2736"/>
         <source>Ready.</source>
         <translation>तैयार।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2811"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2841"/>
         <source>Writing to the camera…</source>
         <translation>कैमरे पर लिखा जा रहा है…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2878"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2908"/>
         <source>Nothing to write.</source>
         <translation>लिखने को कुछ नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2895"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2925"/>
         <source>Saved. Changing the encoder restarts the stream, so the picture may drop out for a moment.</source>
         <translation>सहेजा गया। एन्कोडर बदलने पर स्ट्रीम फिर से शुरू होती है, इसलिए चित्र पल भर के लिए गायब हो सकता है।</translation>
     </message>
@@ -3333,192 +3353,207 @@ If the picture is broken, try the others in turn. “Software only” always wor
 <context>
     <name>leolink::ReolinkClient</name>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="277"/>
+        <location filename="../src/ReolinkClient.cpp" line="278"/>
         <source>File format not recognised.</source>
         <translation>फ़ाइल का प्रारूप पहचाना नहीं गया।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="278"/>
+        <location filename="../src/ReolinkClient.cpp" line="279"/>
         <source>Invalid input.</source>
         <translation>अमान्य प्रविष्टि।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="279"/>
+        <location filename="../src/ReolinkClient.cpp" line="280"/>
         <source>The camera has no free sessions. It allows only a handful at once, shared with the phone app and its web page. Close those, or wait a minute for the old ones to lapse.</source>
         <translation>कैमरे के पास कोई खाली सत्र नहीं है। वह एक बार में मुट्ठी भर ही चलने देता है, और वे फ़ोन ऐप तथा उसके वेब पन्ने के साथ साझा होते हैं। उन्हें बंद करें, या एक मिनट रुकें कि पुराने अपने आप समाप्त हो जाएँ।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="283"/>
+        <location filename="../src/ReolinkClient.cpp" line="284"/>
         <source>Session expired.</source>
         <translation>सत्र समाप्त हो गया।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="284"/>
+        <location filename="../src/ReolinkClient.cpp" line="285"/>
         <source>Wrong user name or password.</source>
         <translation>उपयोक्ता-नाम या पासवर्ड गलत है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="285"/>
+        <location filename="../src/ReolinkClient.cpp" line="286"/>
         <source>Timed out.</source>
         <translation>समय समाप्त।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="286"/>
+        <location filename="../src/ReolinkClient.cpp" line="287"/>
         <source>This firmware does not support that command.</source>
         <translation>यह फ़र्मवेयर उस आदेश को नहीं जानता।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="287"/>
+        <location filename="../src/ReolinkClient.cpp" line="288"/>
         <source>Could not read the configuration.</source>
         <translation>सेटिंग पढ़ी नहीं जा सकी।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="288"/>
+        <location filename="../src/ReolinkClient.cpp" line="289"/>
         <source>Could not verify the configuration.</source>
         <translation>सेटिंग जाँची नहीं जा सकी।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="289"/>
+        <location filename="../src/ReolinkClient.cpp" line="290"/>
         <source>Part of the camera did not answer. Depending on what was asked, that means no SD card is fitted, or the camera has no way out to the internet.</source>
         <translation>कैमरे के एक हिस्से ने उत्तर नहीं दिया। पूछे गए सवाल के अनुसार इसका अर्थ है कि कोई SD कार्ड लगा नहीं है, या कैमरे के पास इंटरनेट तक रास्ता नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="292"/>
+        <location filename="../src/ReolinkClient.cpp" line="293"/>
         <source>Not permitted — this model lacks the hardware.</source>
         <translation>अनुमति नहीं — इस मॉडल में वह हार्डवेयर नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="293"/>
+        <location filename="../src/ReolinkClient.cpp" line="294"/>
         <source>Account invalid, log in again.</source>
         <translation>खाता अमान्य, दोबारा लॉगिन करें।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="294"/>
+        <location filename="../src/ReolinkClient.cpp" line="295"/>
         <source>User name already taken.</source>
         <translation>यह उपयोक्ता-नाम पहले से लिया जा चुका है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="295"/>
+        <location filename="../src/ReolinkClient.cpp" line="296"/>
         <source>Maximum number of users reached.</source>
         <translation>उपयोक्ताओं की अधिकतम संख्या पूरी हो गई।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="296"/>
+        <location filename="../src/ReolinkClient.cpp" line="297"/>
         <source>Camera busy, try again shortly.</source>
         <translation>कैमरा व्यस्त है, थोड़ी देर बाद फिर आज़माएँ।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="297"/>
+        <location filename="../src/ReolinkClient.cpp" line="298"/>
         <source>IP address conflict.</source>
         <translation>IP पते का टकराव।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="298"/>
+        <location filename="../src/ReolinkClient.cpp" line="299"/>
         <source>Configuration test failed.</source>
         <translation>सेटिंग की जाँच विफल रही।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="299"/>
+        <location filename="../src/ReolinkClient.cpp" line="300"/>
         <source>FTP login failed.</source>
         <translation>FTP लॉगिन विफल।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="300"/>
+        <location filename="../src/ReolinkClient.cpp" line="301"/>
         <source>FTP could not create the directory.</source>
         <translation>FTP निर्देशिका नहीं बना सका।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="301"/>
+        <location filename="../src/ReolinkClient.cpp" line="302"/>
         <source>FTP upload failed.</source>
         <translation>FTP अपलोड विफल।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="302"/>
+        <location filename="../src/ReolinkClient.cpp" line="303"/>
         <source>FTP could not reach the server.</source>
         <translation>FTP सर्वर तक नहीं पहुँच सका।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="303"/>
+        <location filename="../src/ReolinkClient.cpp" line="304"/>
         <source>Camera reported error %1.</source>
         <translation>कैमरे ने त्रुटि %1 बताई।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="564"/>
+        <location filename="../src/ReolinkClient.cpp" line="565"/>
         <source>The camera is not answering requests just now. It does this when it has had too many at once; it recovers on its own after a moment.</source>
         <translation>कैमरा इस समय अनुरोधों का उत्तर नहीं दे रहा। जब उसे एक साथ बहुत अनुरोध मिल जाएँ तो वह ऐसा करता है; थोड़ी देर में वह अपने आप सँभल जाता है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="575"/>
+        <location filename="../src/ReolinkClient.cpp" line="576"/>
         <source>Cannot reach %1: %2</source>
         <translation>%1 तक नहीं पहुँच पा रहे: %2</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="589"/>
+        <location filename="../src/ReolinkClient.cpp" line="590"/>
         <source>Unexpected reply from %1.</source>
         <translation>%1 से अप्रत्याशित उत्तर।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="682"/>
+        <location filename="../src/ReolinkClient.cpp" line="683"/>
         <source>Not available without the camera&apos;s web server.</source>
         <translation>कैमरे के वेब सर्वर के बिना उपलब्ध नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="752"/>
+        <location filename="../src/ReolinkClient.cpp" line="753"/>
         <source>Login returned no token.</source>
         <translation>लॉगिन से कोई टोकन नहीं मिला।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="792"/>
+        <location filename="../src/ReolinkClient.cpp" line="793"/>
         <source>%1 — firmware %2, %3 channel(s)</source>
         <translation>%1 — फ़र्मवेयर %2, %3 चैनल</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1086"/>
+        <location filename="../src/ReolinkClient.cpp" line="1087"/>
         <source>The camera could not join that network: %1</source>
         <translation>कैमरा उस नेटवर्क से नहीं जुड़ सका: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1096"/>
+        <location filename="../src/ReolinkClient.cpp" line="1097"/>
         <source>E-mail</source>
         <translation>ई-मेल</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1106"/>
+        <location filename="../src/ReolinkClient.cpp" line="1107"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1146"/>
+        <location filename="../src/ReolinkClient.cpp" line="1147"/>
         <source>Update available: %1</source>
         <translation>अद्यतन उपलब्ध: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1147"/>
+        <location filename="../src/ReolinkClient.cpp" line="1148"/>
         <source>The firmware is up to date.</source>
         <translation>फ़र्मवेयर नया ही है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1164"/>
+        <location filename="../src/ReolinkClient.cpp" line="1165"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>अद्यतन हो रहा है। कैमरा अपने आप दोबारा चालू होगा और कई मिनट तक पहुँच से बाहर रहेगा। उसकी बिजली न काटें।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1177"/>
+        <location filename="../src/ReolinkClient.cpp" line="1179"/>
         <source>Installing from a file needs the camera&apos;s port 9000, which it does not offer.</source>
         <translation>फ़ाइल से इंस्टॉल करने के लिए कैमरे का पोर्ट 9000 चाहिए, जो यह नहीं देता।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1196"/>
+        <location filename="../src/ReolinkClient.cpp" line="1198"/>
         <source>Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.</source>
         <translation>भेज दिया। कैमरा इसे इंस्टॉल कर रहा है और अपने आप रीस्टार्ट होगा, कुछ मिनट तक उपलब्ध नहीं रहेगा। बिजली न काटें।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1306"/>
+        <location filename="../src/ReolinkClient.cpp" line="1263"/>
+        <source>The camera restarted on %1, the build it had before, so the update was not installed.</source>
+        <translation>कैमरा %1 पर रीस्टार्ट हुआ, जो पहले वाला बिल्ड है, इसलिए अपडेट इंस्टॉल नहीं हुआ।</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/ReolinkClient.cpp" line="1269"/>
+        <source>The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.</source>
+        <translation><numerusform>कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।</numerusform><numerusform>कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/ReolinkClient.cpp" line="1272"/>
+        <source>The camera still reports %1 after %n minute(s).</source>
+        <translation><numerusform>%n मिनट बाद भी कैमरा %1 बता रहा है।</numerusform><numerusform>%n मिनट बाद भी कैमरा %1 बता रहा है।</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/ReolinkClient.cpp" line="1384"/>
         <source>Snapshots from %1 need its web server, which it does not have.</source>
         <translation>%1 के स्नैपशॉट के लिए उसका वेब सर्वर चाहिए, जो उसमें नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1332"/>
+        <location filename="../src/ReolinkClient.cpp" line="1410"/>
         <source>Snapshot failed.</source>
         <translation>स्नैपशॉट विफल।</translation>
     </message>

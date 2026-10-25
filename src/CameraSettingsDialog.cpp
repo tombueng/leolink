@@ -254,6 +254,34 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 m_upgradeButton->setEnabled(available);
                 m_checkFirmwareButton->setEnabled(true);
             });
+    connect(m_client, &ReolinkClient::firmwareSent, this, [this] {
+        m_checkFirmwareButton->setEnabled(false);
+        m_client->awaitFirmware(m_awaitedBuild, firmware::buildOf(m_firmVer));
+    });
+    connect(m_client, &ReolinkClient::firmwareWaiting, this,
+            [this](int seconds, bool answering) {
+                m_firmware->setStyleSheet(QString());
+                const QString clock = QStringLiteral("%1:%2")
+                                          .arg(seconds / 60)
+                                          .arg(seconds % 60, 2, 10, QLatin1Char('0'));
+                m_firmware->setText(
+                    (answering ? tr("Installing. The camera is still on the old "
+                                    "firmware… %1")
+                               : tr("Installing. The camera is restarting… %1"))
+                        .arg(clock) +
+                    QStringLiteral("\n") +
+                    tr("You can close this window: the camera finishes on its own. "
+                       "Do not cut its power."));
+            });
+    connect(m_client, &ReolinkClient::firmwareInstalled, this,
+            [this](const QString &firmVer) {
+                m_firmware->setStyleSheet(QStringLiteral("color:#27ae60;"));
+                m_firmware->setText(tr("Installed. The camera is running %1.").arg(firmVer));
+                m_checkFirmwareButton->setEnabled(true);
+                // The About page and the version a next package is checked
+                // against, both from the camera rather than assumed.
+                m_client->fetchDeviceInfo();
+            });
     connect(m_client, &ReolinkClient::firmwareProgress, this,
             [this](qint64 sent, qint64 total) {
                 m_firmware->setStyleSheet(QString());
@@ -1073,6 +1101,7 @@ void CameraSettingsDialog::onInstallFirmwareFile()
     m_installFileButton->setEnabled(false);
     m_upgradeButton->setEnabled(false);
     m_checkFirmwareButton->setEnabled(false);
+    m_awaitedBuild = package.build;
     m_firmware->setStyleSheet(QString());
     m_firmware->setText(tr("Sending the firmware…"));
     m_client->installFirmwareFile(fileName, pak);
@@ -1545,6 +1574,7 @@ void CameraSettingsDialog::buildMaintenanceTab()
         confirm.exec();
         if (confirm.clickedButton() == go) {
             m_upgradeButton->setEnabled(false);
+            m_awaitedBuild = 0;
             m_client->upgradeFirmware();
         }
     });

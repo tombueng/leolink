@@ -327,7 +327,9 @@ the download from Reolink's download centre, then **Maintenance → Install from
 file…** sends the `.pak` over port 9000. leolink sends a package only to the
 board in its name (`IPC_566SD54MP.5112_….pak` goes only to a camera that
 reports board `IPC_566SD54MP`), only when its build is newer than the one
-installed, and only when it starts the way a Reolink package does. From the
+installed, and only when it starts the way a Reolink package does. Once the
+file is sent, the panel follows the camera through its restart and says when it
+is back on the new build, or that it came back on the old one. From the
 terminal, `leolink --baichuan-firmware <host> <file.pak>` runs the same checks,
 and with `--yes` installs and waits for the camera to come back on the new
 build.

@@ -1481,6 +1481,17 @@ STRINGS: dict[str, str] = {
         'Сборка %1 уже установлена.',
     'Build %1 is older than the installed %2. leolink only installs newer firmware.':
         'Сборка %1 старше установленной %2. leolink устанавливает только более новую прошивку.',
+    # ── firmware: after the install ──
+    'Installing. The camera is still on the old firmware… %1':
+        'Установка. На камере пока старая прошивка… %1',
+    'Installing. The camera is restarting… %1':
+        'Установка. Камера перезагружается… %1',
+    'You can close this window: the camera finishes on its own. Do not cut its power.':
+        'Окно можно закрыть: камера закончит сама. Не отключайте питание.',
+    'Installed. The camera is running %1.':
+        'Установлено. На камере теперь %1.',
+    'The camera restarted on %1, the build it had before, so the update was not installed.':
+        'Камера перезагрузилась на %1 — сборке, что была раньше, значит обновление не установилось.',
 }
 
 
@@ -1560,4 +1571,13 @@ PLURALS: dict[str, list[str]] = {
         "Добавлена %n камера с этого регистратора.",
         "Добавлено %n камеры с этого регистратора.",
         "Добавлено %n камер с этого регистратора."],
+    # ── firmware: after the install ──
+    'The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.': [
+        'Камера не отвечает %n минуту. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.',
+        'Камера не отвечает %n минуты. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.',
+        'Камера не отвечает %n минут. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.'],
+    'The camera still reports %1 after %n minute(s).': [
+        'Через %n минуту камера всё ещё сообщает %1.',
+        'Через %n минуты камера всё ещё сообщает %1.',
+        'Через %n минут камера всё ещё сообщает %1.'],
 }
