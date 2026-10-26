@@ -164,6 +164,9 @@ machine's loopback interface. The tests cover:
 - **the cipher:** checked against the FIPS-197 and SP 800-38A vectors
 - **messages:** the extension and body are encrypted separately, and alarms
   arriving in between are stepped over
+- **reading the cameras' XML:** one helper for every protocol, which finds an
+  element whatever its namespace prefix and attributes, and never one whose
+  name merely starts the same way
 - **matching the HTTP API:** for the two cameras that have both, every
   settings answer agrees with what that camera's own HTTP API said, field by
   field
@@ -192,17 +195,18 @@ machine's loopback interface. The tests cover:
   one edit reaching the camera alone
 - **the HTTP API:** one login however many requests are waiting, a lapsed
   session renewed, a busy camera asked again, HTTPS where that is all there
-  is, and no HTTP at all for a camera with no web server. A fake web server
-  plays the camera.
+  is, and no HTTP at all for a camera with no web server. A command that no
+  protocol on the camera carries is turned down without asking anyone. A
+  fake web server plays the camera.
 - **discovery:** real ONVIF replies, including an E1 Zoom's, which never
   mentions Reolink
 - **motion from the camera:** the ONVIF subscription and long poll against an
   E1 Zoom's real replies. That includes the WS-Security digest, each kind of
   event kept apart, and a recorder's events sent to the right channel. Over
   Baichuan, for a camera without ONVIF: the alarms read, and carried on the
-  settings session, an alarm that arrives mid-request included. A session the
-  camera drops in the middle of motion ends the motion and comes back by
-  itself.
+  settings session, an alarm that arrives mid-request included. Over either,
+  a connection lost in the middle of motion ends the motion, and the
+  subscription comes back by itself.
 - **events:** placeholders, the command, the webhook, MQTT against a broker of
   its own, and the event log
 - **the log:** passwords, tokens and public addresses kept out of the log
@@ -361,6 +365,18 @@ is back on the new build, or that it came back on the old one. From the
 terminal, `leolink --baichuan-firmware <host> <file.pak>` runs the same checks,
 and with `--yes` installs and waits for the camera to come back on the new
 build.
+
+Inside, each protocol is spoken in one place, and the features above it do
+not know which one they are using. The HTTP API's commands — settings, PTZ,
+the SD card, the camera's own firmware check — go through a *link*:
+`HttpApiLink` sends them to the web server, `BaichuanLink` to the camera's
+Baichuan session, where `src/BaichuanCommands.cpp` answers them in the HTTP
+API's own shape. A camera's motion events come from a *source*, `OnvifEvents`
+or `BaichuanEvents`. Video goes to the player as a URL, or through the
+Baichuan relay. The queue, the retries and the messages in `ReolinkClient`,
+and the motion state in `MotionWatcher`, are the same whichever protocol is
+underneath, so giving a feature another protocol is one implementation and one
+line in the table.
 
 ## Status
 
