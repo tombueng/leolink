@@ -1,16 +1,20 @@
 #include "BaichuanApi.h"
 
+#include <atomic>
 #include <cstdio>
 
 #include <QDomDocument>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QMutex>
+#include <QRegularExpression>
 #include <QTextStream>
 #include <QThread>
+#include <QTimer>
 
 #include "Baichuan.h"
 #include "Firmware.h"
@@ -28,6 +32,7 @@ namespace {
 // reolink_aio is MIT, Copyright (c) 2023 starkillerOG. Its message numbers and
 // XML element names are what this file follows; its notice is in LICENSE.
 constexpr quint32 kReboot = 23;
+constexpr quint32 kAlarm = 33;
 constexpr quint32 kSetImage = 25;
 constexpr quint32 kGetImage = 26;
 constexpr quint32 kSetPorts = 36;
@@ -46,6 +51,7 @@ constexpr quint32 kGetFtp = 70;
 constexpr quint32 kSetFtp = 71;
 constexpr quint32 kGetNetwork = 76;
 constexpr quint32 kVersion = 80;
+constexpr quint32 kLinkType = 93;
 constexpr quint32 kGetRecordPlan = 81;
 constexpr quint32 kSetRecordPlan = 82;
 constexpr quint32 kHdd = 102;
@@ -68,6 +74,16 @@ constexpr quint32 kGetDayNight = 296;
 constexpr quint32 kSetDayNight = 297;
 constexpr quint32 kGetAi = 299;
 constexpr quint32 kSetAi = 300;
+
+/// The alarm subscription. Drained four times a second between requests; a
+/// keep-alive every 25 s, where reolink_aio waits a little under a minute;
+/// and silence for three of those, keep-alives unanswered included, taken as
+/// a session gone, since a camera that lost power never closes anything.
+constexpr int kAlarmDrainMs = 250;
+constexpr qint64 kAlarmKeepAliveMs = 25000;
+constexpr qint64 kAlarmSilenceMs = 3 * kAlarmKeepAliveMs;
+constexpr int kAlarmRetryFirstMs = 2000;
+constexpr int kAlarmRetryLastMs = 60000;
 
 /// The HTTP API's code for "this firmware does not know that command".
 constexpr int kUnsupported = -9;
@@ -1820,13 +1836,30 @@ struct BaichuanApi::Worker : QObject {
     quint16 port{9000};
     std::unique_ptr<BaichuanClient> client;
 
+    // ── alarms ──────────────────────────────────────────────────────────────
+    struct Listener {
+        QPointer<QObject> context;
+        AlarmHandler onAlarm;
+        LostHandler onLost;
+    };
+    QHash<int, Listener> listeners;
+    /// Takes what the camera pushes between one request and the next.
+    QTimer *drainTimer{nullptr};
+    QElapsedTimer heard;
+    QElapsedTimer sinceKeepAlive;
+    /// Before the next attempt at a session that went, doubling.
+    int retryMs{kAlarmRetryFirstMs};
+    bool retryPending{false};
+
     ~Worker() override
     {
         if (client)
             client->close();
     }
 
-    /// A logged-in client, or why there is none.
+    /// A logged-in client, or why there is none. Subscribed to the alarms if
+    /// anyone is listening, so a session made again for any reason — a
+    /// dropped one, a firmware upload — carries on where the last left off.
     QString open()
     {
         if (client)
@@ -1838,7 +1871,131 @@ struct BaichuanApi::Worker : QObject {
             return QObject::tr("Cannot reach %1 over Baichuan: %2").arg(host, why);
         }
         LEO_INFO(Baichuan, host, QStringLiteral("Settings session open"));
+        client->onPush = [this](const BcHeader &header, const QString &text) {
+            heard.restart();
+            if (header.msgType == kAlarm)
+                dispatch(text);
+        };
+        if (!listeners.isEmpty())
+            subscribe();
         return {};
+    }
+
+    void subscribe()
+    {
+        client->subscribeAlarms();
+        heard.restart();
+        sinceKeepAlive.restart();
+        LEO_INFO(Baichuan, host, QStringLiteral("Subscribed to the camera's alarms"));
+    }
+
+    void dispatch(const QString &xml)
+    {
+        for (const Alarm &a : parseAlarms(xml)) {
+            for (const Listener &l : std::as_const(listeners)) {
+                if (!l.context)
+                    continue;
+                const AlarmHandler handler = l.onAlarm;
+                QMetaObject::invokeMethod(l.context.data(), [handler, a] {
+                    handler(a.channel, a.active, a.what);
+                }, Qt::QueuedConnection);
+            }
+        }
+    }
+
+    void addListener(int id, const Listener &listener)
+    {
+        listeners.insert(id, listener);
+        if (!drainTimer) {
+            drainTimer = new QTimer(this);
+            drainTimer->setInterval(kAlarmDrainMs);
+            QObject::connect(drainTimer, &QTimer::timeout, this, [this] { drain(); });
+        }
+        if (listeners.size() == 1) {
+            // Subscribed on the session there is, or on the one the first
+            // drain makes.
+            if (client)
+                subscribe();
+            drainTimer->start();
+        }
+    }
+
+    void removeListener(int id)
+    {
+        listeners.remove(id);
+        if (!listeners.isEmpty())
+            return;
+        // There is no message that ends a subscription; the session is let go
+        // instead, and the next settings request opens a quiet one.
+        if (drainTimer)
+            drainTimer->stop();
+        if (client) {
+            client->close();
+            client.reset();
+        }
+    }
+
+    /// Between requests: whatever the camera has pushed, a keep-alive when
+    /// one is due, and a new session if this one has gone.
+    void drain()
+    {
+        for (auto it = listeners.begin(); it != listeners.end();) {
+            it = it->context ? std::next(it) : listeners.erase(it);
+        }
+        if (listeners.isEmpty()) {
+            removeListener(-1);
+            return;
+        }
+        if (!client) {
+            if (retryPending)
+                return;
+            if (const QString why = open(); !why.isEmpty()) {
+                lost(why);
+                return;
+            }
+            retryMs = kAlarmRetryFirstMs;
+        }
+
+        BcHeader header;
+        QString text;
+        while (client->pollText(header, text)) {
+            heard.restart();
+            if (header.msgType == kAlarm)
+                dispatch(text);
+        }
+
+        if (!client->isConnected()) {
+            lost(QStringLiteral("the camera closed the connection"));
+        } else if (heard.elapsed() > kAlarmSilenceMs) {
+            lost(QStringLiteral("nothing heard for %1 s").arg(kAlarmSilenceMs / 1000));
+        } else if (sinceKeepAlive.elapsed() > kAlarmKeepAliveMs) {
+            client->send(kLinkType);
+            sinceKeepAlive.restart();
+        }
+    }
+
+    /// The session went: say so, and try again after a pause that doubles —
+    /// a camera restarting comes back, and one that is gone should not be
+    /// asked every quarter of a second.
+    void lost(const QString &why)
+    {
+        if (client) {
+            client->close();
+            client.reset();
+        }
+        LEO_WARN(Baichuan, host,
+                 QStringLiteral("Alarm subscription lost (%1) — trying again in %2 s")
+                     .arg(why).arg(retryMs / 1000));
+        for (const Listener &l : std::as_const(listeners)) {
+            if (!l.context)
+                continue;
+            const LostHandler handler = l.onLost;
+            QMetaObject::invokeMethod(l.context.data(), [handler, why] { handler(why); },
+                                      Qt::QueuedConnection);
+        }
+        retryPending = true;
+        QTimer::singleShot(retryMs, this, [this] { retryPending = false; });
+        retryMs = qMin(retryMs * 2, kAlarmRetryLastMs);
     }
 
     QJsonObject run(int channel, const QString &command, const QJsonObject &param,
@@ -1929,6 +2086,65 @@ void BaichuanApi::call(const QString &command, const QJsonObject &param, int act
                                           Qt::QueuedConnection);
         },
         Qt::QueuedConnection);
+}
+
+int BaichuanApi::watchAlarms(QObject *context, AlarmHandler onAlarm, LostHandler onLost)
+{
+    static std::atomic_int nextId{1};
+    const int id = nextId++;
+    const Worker::Listener listener{QPointer<QObject>(context), std::move(onAlarm),
+                                    std::move(onLost)};
+    Worker *worker = m_worker;
+    QMetaObject::invokeMethod(m_worker, [worker, id, listener] {
+        worker->addListener(id, listener);
+    }, Qt::QueuedConnection);
+    return id;
+}
+
+void BaichuanApi::unwatchAlarms(int id)
+{
+    Worker *worker = m_worker;
+    QMetaObject::invokeMethod(m_worker, [worker, id] { worker->removeListener(id); },
+                              Qt::QueuedConnection);
+}
+
+QList<BaichuanApi::Alarm> BaichuanApi::parseAlarms(const QString &xml)
+{
+    QList<Alarm> alarms;
+    const QRegularExpression eventRe(
+        QStringLiteral("<AlarmEvent\\b[^>]*>(.*?)</AlarmEvent>"),
+        QRegularExpression::DotMatchesEverythingOption);
+    const auto tagText = [](const QString &in, const QString &name) {
+        const QRegularExpression re(QStringLiteral("<%1>(.*?)</%1>").arg(name),
+                                    QRegularExpression::DotMatchesEverythingOption);
+        const auto m = re.match(in);
+        return m.hasMatch() ? m.captured(1).trimmed() : QString();
+    };
+    auto events = eventRe.globalMatch(xml);
+    while (events.hasNext()) {
+        const QString event = events.next().captured(1);
+        bool ok = false;
+        const int channel = tagText(event, QStringLiteral("channelId")).toInt(&ok);
+        if (!ok)
+            continue;
+        // Both lists are comma-separated.
+        QStringList what;
+        const QStringList status = tagText(event, QStringLiteral("status"))
+                                       .split(QLatin1Char(','), Qt::SkipEmptyParts);
+        for (const QString &s : status) {
+            if (s.trimmed() == QLatin1String("MD"))
+                what << QStringLiteral("MD");
+        }
+        const QStringList kinds = tagText(event, QStringLiteral("AItype"))
+                                      .split(QLatin1Char(','), Qt::SkipEmptyParts);
+        for (const QString &k : kinds) {
+            const QString kind = k.trimmed();
+            if (!kind.isEmpty() && kind != QLatin1String("none"))
+                what << kind;
+        }
+        alarms.append({channel, !what.isEmpty(), what.join(QLatin1Char(','))});
+    }
+    return alarms;
 }
 
 void BaichuanApi::uploadFirmware(const QString &fileName, const QByteArray &pak,

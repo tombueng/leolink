@@ -1,5 +1,7 @@
-// Motion events over ONVIF PullPoint (port 8000).
+// Motion events over ONVIF PullPoint (port 8000), or Baichuan (port 9000).
 #pragma once
+
+#include <memory>
 
 #include <QHash>
 #include <QList>
@@ -8,11 +10,14 @@
 #include <QString>
 
 #include "Config.h"
+#include "Log.h"
 
 class QNetworkAccessManager;
 class QTimer;
 
 namespace leolink {
+
+class BaichuanApi;
 
 /// Long-polls the camera for motion instead of asking every second.
 ///
@@ -30,11 +35,16 @@ namespace leolink {
 /// And the subscription address has to be read from <SubscriptionReference>.
 /// Taking the last <Address> in the document picks up the anonymous
 /// WS-Addressing ReplyTo instead, and then you happily poll www.w3.org.
+///
+/// A camera with no ONVIF but Baichuan — an E1 with its web server and RTSP
+/// off — is heard over Baichuan instead, on the session BaichuanApi keeps for
+/// its settings. What comes out of here is the same either way.
 class MotionWatcher : public QObject {
     Q_OBJECT
 
 public:
     explicit MotionWatcher(QObject *parent = nullptr);
+    ~MotionWatcher() override;
 
     void watch(const CameraConfig &camera) { watch(QList<CameraConfig>{camera}); }
     /// Watches every camera on one device with a single subscription.
@@ -69,6 +79,12 @@ private:
     /// One <NotificationMessage> from a poll: raises motion if it says so and
     /// if it is about this camera.
     void handleMessage(const QString &message);
+    /// One `<AlarmEvent>` from Baichuan, for `channel`.
+    void handleAlarm(int channel, bool active, const QString &what);
+    /// Records one topic of one camera as happening or not, and reports the
+    /// camera's motion if that changed it. Both protocols end up here.
+    void setHappening(const CameraConfig &camera, const QString &what, bool on,
+                      Log::Category category);
     /// The channel an event is about, or -1 when it does not say. Read from
     /// the source token, whose shape is firmware's business — "000",
     /// "VideoSource_2" — so the trailing digits decide it.
@@ -79,6 +95,9 @@ private:
 
     QNetworkAccessManager *m_net;
     QTimer *m_renewTimer;
+    /// Set while the camera is heard over Baichuan rather than ONVIF.
+    std::shared_ptr<BaichuanApi> m_baichuan;
+    int m_alarmWatch{0};
     /// The device: host, credentials, and the label used in the log.
     CameraConfig m_camera;
     /// Everything watched through it. One entry for a camera, one per channel

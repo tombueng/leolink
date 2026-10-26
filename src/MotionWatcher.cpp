@@ -14,6 +14,7 @@
 
 #include <algorithm>
 
+#include "BaichuanApi.h"
 #include "ReolinkClient.h"
 
 namespace leolink {
@@ -50,6 +51,11 @@ MotionWatcher::MotionWatcher(QObject *parent)
     : QObject(parent), m_net(new QNetworkAccessManager(this)), m_renewTimer(new QTimer(this))
 {
     connect(m_renewTimer, &QTimer::timeout, this, &MotionWatcher::renew);
+}
+
+MotionWatcher::~MotionWatcher()
+{
+    stop();
 }
 
 QString MotionWatcher::securityHeader() const
@@ -125,6 +131,26 @@ void MotionWatcher::watch(const QList<CameraConfig> &cameras)
     m_happening.clear();
     m_running = true;
     m_failures = 0;
+
+    if (m_camera.caps.eventsOverBaichuan()) {
+        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
+        m_alarmWatch = m_baichuan->watchAlarms(
+            this,
+            [this](int channel, bool active, const QString &what) {
+                handleAlarm(channel, active, what);
+            },
+            [this](const QString &why) {
+                // Motion that was on when the session went cannot be heard
+                // ending, and left on it would hold a recording open until the
+                // camera came back. The next subscription reports the state
+                // afresh.
+                for (const CameraConfig &camera : std::as_const(m_cameras))
+                    setHappening(camera, QStringLiteral("alarm"), false,
+                                 Log::Category::Baichuan);
+                emit error(m_camera.id, tr("Lost the camera's alarms: %1").arg(why));
+            });
+        return;
+    }
     subscribe();
 }
 
@@ -133,6 +159,10 @@ void MotionWatcher::stop()
     m_running = false;
     m_subscription.clear();
     m_renewTimer->stop();
+    if (m_baichuan) {
+        m_baichuan->unwatchAlarms(m_alarmWatch);
+        m_baichuan.reset();
+    }
 }
 
 void MotionWatcher::renew()
@@ -375,22 +405,44 @@ void MotionWatcher::handleMessage(const QString &message)
         const QString what = topic + QLatin1Char('/') + m.captured(1);
 
         for (const CameraConfig &camera : std::as_const(m_cameras)) {
-            if (camera.channel != channel)
-                continue;
-            QSet<QString> &happening = m_happening[camera.id];
-            if (on)
-                happening.insert(what);
-            else
-                happening.remove(what);
-            const bool active = !happening.isEmpty();
-            if (m_activeById.value(camera.id, false) == active)
-                continue;
-            m_activeById.insert(camera.id, active);
-            LEO_INFO(Onvif, camera.label(),
-                     active ? QStringLiteral("Camera reports motion")
-                            : QStringLiteral("Camera reports motion ended"));
-            emit motionChanged(camera.id, active);
+            if (camera.channel == channel)
+                setHappening(camera, what, on, Log::Category::Onvif);
         }
+    }
+}
+
+void MotionWatcher::handleAlarm(int channel, bool active, const QString &what)
+{
+    if (!m_running)
+        return;
+    // Every event carries the whole state of its channel, so there is one
+    // topic only, unlike ONVIF's one per kind of thing seen.
+    LEO_DEBUG(Baichuan, m_camera.label(),
+              QStringLiteral("Alarm on channel %1: %2")
+                  .arg(channel)
+                  .arg(what.isEmpty() ? QStringLiteral("none") : what));
+    for (const CameraConfig &camera : std::as_const(m_cameras)) {
+        if (camera.channel == channel)
+            setHappening(camera, QStringLiteral("alarm"), active,
+                         Log::Category::Baichuan);
+    }
+}
+
+void MotionWatcher::setHappening(const CameraConfig &camera, const QString &what,
+                                 bool on, Log::Category category)
+{
+    QSet<QString> &happening = m_happening[camera.id];
+    if (on)
+        happening.insert(what);
+    else
+        happening.remove(what);
+    const bool active = !happening.isEmpty();
+    if (m_activeById.value(camera.id, false) != active) {
+        m_activeById.insert(camera.id, active);
+        Log::write(Log::Level::Info, category, camera.label(),
+                   active ? QStringLiteral("Camera reports motion")
+                          : QStringLiteral("Camera reports motion ended"));
+        emit motionChanged(camera.id, active);
     }
 
     // Kept for isActive(): any watched camera seeing something.

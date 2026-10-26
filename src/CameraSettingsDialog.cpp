@@ -438,7 +438,7 @@ void CameraSettingsDialog::buildWatchTab()
     auto *page = new QWidget;
 
     m_motionSource = new QComboBox(page);
-    m_motionSource->addItem(tr("The camera reports it (ONVIF)"),
+    m_motionSource->addItem(tr("The camera reports it (ONVIF or Baichuan)"),
                             QStringLiteral("camera"));
     m_motionSource->addItem(tr("leolink watches the picture"),
                             QStringLiteral("local"));
@@ -1967,7 +1967,8 @@ void CameraSettingsDialog::buildDetectionTab()
     layout->addWidget(m_alarmBox);
 
     auto *note = new QLabel(
-        tr("This is the camera's own detection, the one it reports over ONVIF. "
+        tr("This is the camera's own detection, the one it reports over ONVIF "
+           "or Baichuan. "
            "leolink's own analysis of the picture is set separately, under "
            "Cameras → Events."),
         page);

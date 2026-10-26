@@ -82,6 +82,31 @@ public:
     QString request(quint32 msgType, const QString &body = QString(),
                     const QString &extension = QString(), int *status = nullptr);
 
+    /// Sends one XML message and does not wait for the answer: for a
+    /// connection that is read elsewhere, as the event subscription is.
+    /// Returns the handle it went out under, which its answer will carry.
+    /// `channelByte` goes in the header's byte 12 — the channel a message is
+    /// about, or 251 for the camera's push messages — and is also the offset
+    /// the XOR cipher starts from, as on the camera's side.
+    quint16 send(quint32 msgType, const QString &body = QString(),
+                 const QString &extension = QString(), quint8 channelByte = 0);
+
+    /// Takes the next message off the wire, whatever it is, and gives back its
+    /// header and the XML it carries (empty for media, or a body that is not
+    /// XML). False when nothing arrived within `timeoutMs`, or the connection
+    /// is gone — isConnected() says which.
+    bool readText(BcHeader &header, QString &text, int timeoutMs);
+    /// readText() for a message that has already begun to arrive, without
+    /// waiting for one that has not: false at once if nothing is there.
+    bool pollText(BcHeader &header, QString &text);
+    bool isConnected() const;
+
+    /// Asks the camera to push its alarms down this connection: message 31
+    /// on the push channel. The camera answers, then sends message 33 with
+    /// the state of each channel at once and again on every change. Returns
+    /// false with lastError() filled if the request could not be sent.
+    bool subscribeAlarms();
+
     /// Sends a firmware package and leaves the camera to install it.
     ///
     /// Message 67 twice over: once with the file's name and size, then the
@@ -101,6 +126,10 @@ public:
     /// Set to receive a line per message while probing: body length and
     /// payload offset. Only used by --baichuan-video.
     std::function<void(const BcHeader &)> onMessage;
+    /// Hears what request() steps over while it waits for its answer: the
+    /// camera's pushes, an alarm among them, which would otherwise be lost
+    /// on a session that also carries settings.
+    std::function<void(const BcHeader &, const QString &text)> onPush;
 
     /// Device info XML from step 4.
     const QString &deviceInfo() const { return m_deviceInfo; }
@@ -121,7 +150,8 @@ private:
                      int timeoutMs = 10000);
     QString bodyText(const BcHeader &header, const QByteArray &body) const;
     /// XML on its way out, under whichever cipher the session settled on.
-    QByteArray encryptXml(const QString &xml) const;
+    /// `xorOffset` is the header's byte 12; AES ignores it.
+    QByteArray encryptXml(const QString &xml, quint8 xorOffset = 0) const;
 
     QString m_host, m_user, m_password;
     quint16 m_port;

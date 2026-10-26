@@ -4,13 +4,17 @@
 #include <QCryptographicHash>
 #include <QElapsedTimer>
 #include <QFile>
+#include <QJsonObject>
 #include <QRegularExpression>
 #include <QSignalSpy>
 #include <QTest>
 
+#include "BaichuanApi.h"
+#include "FakeCamera.h"
 #include "FakeWebServer.h"
 #include "MotionWatcher.h"
 
+using leolink::BaichuanApi;
 using leolink::CameraConfig;
 using leolink::MotionWatcher;
 
@@ -300,6 +304,171 @@ private slots:
         std::unique_ptr<QSignalSpy> spy(watch({camera(QStringLiteral("door"), 0), camera(QStringLiteral("yard"), 2)}));
         QTRY_COMPARE_WITH_TIMEOUT(spy->size(), 2, 5000);
         QCOMPARE(states(*spy), (QStringList{QStringLiteral("yard:on"), QStringLiteral("door:on")}));
+    }
+
+    // ── over Baichuan, for a camera with no ONVIF ───────────────────────────
+
+    /// What an E1 on 3.1.0.4450 sends on subscribing, and what it would send
+    /// on motion and on recognising someone.
+    static QString alarm(const QString &status, const QString &ai, int channel = 0)
+    {
+        return QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<body>\n"
+                              "<AlarmEventList version=\"1.1\">\n"
+                              "<AlarmEvent version=\"1.1\">\n"
+                              "<channelId>%3</channelId>\n<status>%1</status>\n"
+                              "<AItype>%2</AItype>\n<recording>0</recording>\n"
+                              "<timeStamp>0</timeStamp>\n</AlarmEvent>\n"
+                              "</AlarmEventList>\n</body>\n")
+            .arg(status, ai).arg(channel);
+    }
+
+    void alarmsAreRead()
+    {
+        const auto read = [](const QString &xml) {
+            QStringList out;
+            for (const BaichuanApi::Alarm &a : BaichuanApi::parseAlarms(xml))
+                out << QStringLiteral("%1:%2:%3").arg(a.channel).arg(a.active ? 1 : 0).arg(a.what);
+            return out;
+        };
+        QCOMPARE(read(alarm(QStringLiteral("none"), QStringLiteral("none"))),
+                 QStringList{QStringLiteral("0:0:")});
+        QCOMPARE(read(alarm(QStringLiteral("MD"), QStringLiteral("none"))),
+                 QStringList{QStringLiteral("0:1:MD")});
+        QCOMPARE(read(alarm(QStringLiteral("MD"), QStringLiteral("people,vehicle"), 2)),
+                 QStringList{QStringLiteral("2:1:MD,people,vehicle")});
+        // Recognised without motion still counts, as ONVIF reports it.
+        QCOMPARE(read(alarm(QStringLiteral("none"), QStringLiteral("dog_cat"))),
+                 QStringList{QStringLiteral("0:1:dog_cat")});
+        // A doorbell press is not motion.
+        QCOMPARE(read(alarm(QStringLiteral("visitor"), QStringLiteral("none"))),
+                 QStringList{QStringLiteral("0:0:")});
+    }
+
+    /// A camera that offers Baichuan and no ONVIF is subscribed to over
+    /// Baichuan, and its alarms come out as motion like ONVIF's do.
+    void baichuanAlarmsAreMotion()
+    {
+        FakeCamera fake(QStringLiteral("admin"), kPassword);
+        fake.alarmsOnSubscribe = {
+            alarm(QStringLiteral("none"), QStringLiteral("none")),
+            alarm(QStringLiteral("MD"), QStringLiteral("none")),
+            alarm(QStringLiteral("MD"), QStringLiteral("people")),
+            alarm(QStringLiteral("none"), QStringLiteral("none")),
+        };
+        fake.begin();
+
+        CameraConfig c = camera();
+        c.host = QStringLiteral("127.0.0.1");
+        c.baichuanPort = fake.port();
+        c.caps.known = true;
+        c.caps.baichuan = true;
+
+        m_watcher = std::make_unique<MotionWatcher>();
+        QSignalSpy spy(m_watcher.get(), &MotionWatcher::motionChanged);
+        m_watcher->watch(c);
+        QTRY_COMPARE(states(spy), (QStringList{QStringLiteral("cam:on"), QStringLiteral("cam:off")}));
+
+        bool subscribed = false;
+        for (const FakeCamera::Request &r : fake.requests())
+            subscribed |= r.msg == 31;
+        QVERIFY(subscribed);
+        m_watcher->stop();
+        m_watcher.reset();
+    }
+
+    /// A camera that drops the session in the middle of motion: the motion
+    /// ends here rather than staying on with nobody to say when it stops, and
+    /// the subscription comes back by itself with the camera's state.
+    void baichuanAlarmsComeBack()
+    {
+        FakeCamera fake(QStringLiteral("admin"), kPassword);
+        fake.alarmsOnSubscribe = {alarm(QStringLiteral("MD"), QStringLiteral("none"))};
+        fake.dropAfterAlarms = true;
+        fake.begin();
+
+        CameraConfig c = camera();
+        c.host = QStringLiteral("127.0.0.1");
+        c.baichuanPort = fake.port();
+        c.caps.known = true;
+        c.caps.baichuan = true;
+
+        m_watcher = std::make_unique<MotionWatcher>();
+        QSignalSpy spy(m_watcher.get(), &MotionWatcher::motionChanged);
+        QSignalSpy errors(m_watcher.get(), &MotionWatcher::error);
+        m_watcher->watch(c);
+        // The first retry is two seconds after the loss.
+        QTRY_COMPARE_WITH_TIMEOUT(states(spy),
+                                  (QStringList{QStringLiteral("cam:on"), QStringLiteral("cam:off"),
+                                               QStringLiteral("cam:on")}),
+                                  10000);
+        QCOMPARE(errors.count(), 1);
+        QCOMPARE(fake.connections(), 2);
+
+        m_watcher->stop();
+        m_watcher.reset();
+    }
+
+    /// The alarms ride on the session the settings use: one connection to the
+    /// camera for both, and an alarm the camera pushes while a request waits
+    /// for its answer is heard, not stepped over.
+    void alarmsShareTheSettingsSession()
+    {
+        FakeCamera fake(QStringLiteral("admin"), kPassword);
+        fake.alarmsOnSubscribe = {alarm(QStringLiteral("none"), QStringLiteral("none"))};
+        fake.setDocument(190, QStringLiteral("<?xml version=\"1.0\" ?>\n<body>\n"
+                                             "<PtzPreset version=\"1.1\">\n<presetList />\n"
+                                             "</PtzPreset>\n</body>\n"));
+        fake.begin();
+
+        CameraConfig c = camera();
+        c.host = QStringLiteral("127.0.0.1");
+        c.baichuanPort = fake.port();
+        c.caps.known = true;
+        c.caps.baichuan = true;
+
+        m_watcher = std::make_unique<MotionWatcher>();
+        QSignalSpy spy(m_watcher.get(), &MotionWatcher::motionChanged);
+        m_watcher->watch(c);
+        const auto subscribed = [&fake] {
+            for (const FakeCamera::Request &r : fake.requests()) {
+                if (r.msg == 31)
+                    return true;
+            }
+            return false;
+        };
+        QTRY_VERIFY(subscribed());
+
+        // Motion starts while a settings read is waiting for its answer.
+        fake.chatterAlarm = alarm(QStringLiteral("MD"), QStringLiteral("none"));
+        fake.chatter = true;
+        auto api = BaichuanApi::forCamera(c, kPassword);
+        QJsonObject entry;
+        QObject context;
+        api->call(QStringLiteral("GetPtzPreset"), {}, 0,
+                  &context, [&entry](const QJsonObject &e) { entry = e; });
+        QTRY_VERIFY(!entry.isEmpty());
+        QCOMPARE(entry.value(QStringLiteral("code")).toInt(), 0);
+        QTRY_COMPARE(states(spy), QStringList{QStringLiteral("cam:on")});
+        QCOMPARE(fake.connections(), 1);
+
+        m_watcher->stop();
+        m_watcher.reset();
+    }
+
+    /// One with ONVIF keeps it, Baichuan or not.
+    void onvifIsPreferred()
+    {
+        CameraConfig c = camera();
+        c.caps.known = true;
+        c.caps.onvif = true;
+        c.caps.baichuan = true;
+        QVERIFY(c.caps.events());
+        QVERIFY(!c.caps.eventsOverBaichuan());
+        c.caps.onvif = false;
+        QVERIFY(c.caps.events());
+        QVERIFY(c.caps.eventsOverBaichuan());
+        c.caps.baichuan = false;
+        QVERIFY(!c.caps.events());
     }
 };
 

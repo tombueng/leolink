@@ -30,7 +30,10 @@ struct Capabilities {
     QStringList failed;
 
     bool api() const { return !known || http || https; }
-    bool events() const { return !known || onvif; }
+    /// The camera's own motion events: over ONVIF, or over Baichuan when it
+    /// has no ONVIF.
+    bool events() const { return !known || onvif || baichuan; }
+    bool eventsOverBaichuan() const { return known && !onvif && baichuan; }
     bool rtspReachable() const { return !known || rtsp; }
     /// Settings go over Baichuan only on a camera known to have no web server.
     /// One not asked yet keeps the HTTP API, as it always did.

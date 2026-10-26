@@ -69,6 +69,9 @@ public:
     /// Alarms (message 33) sent, in order, as soon as a client subscribes
     /// with message 31 — the first is the state the camera reports at once.
     QStringList alarmsOnSubscribe;
+    /// Close the connection, once, right after those alarms: a camera that
+    /// drops its alarm session while motion is on.
+    std::atomic<bool> dropAfterAlarms{false};
     /// Pictures a second, once video has been asked for.
     int videoFps{25};
 

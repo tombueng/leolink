@@ -387,6 +387,10 @@ void FakeCamera::serve(QTcpSocket &socket)
             send(h.msg, h.handle, 200);
             for (const QString &alarm : std::as_const(alarmsOnSubscribe))
                 send(kAlarm, h.handle, 200, alarm);
+            if (dropAfterAlarms.exchange(false)) {
+                socket.disconnectFromHost();
+                return;
+            }
             continue;
         }
         if (h.msg == kVideo) {

@@ -38,6 +38,9 @@ constexpr quint32 kMsgLogin = 1;
 constexpr quint32 kMsgLogout = 2;
 constexpr quint32 kMsgVideo = 3;
 constexpr quint32 kMsgUpgradeFile = 67;
+constexpr quint32 kMsgAlarmSubscribe = 31;
+/// Byte 12 of a header about the camera's push messages rather than a channel.
+constexpr quint8 kPushChannel = 251;
 
 constexpr int kTimeoutMs = 10000;
 
@@ -530,11 +533,11 @@ QString BaichuanClient::bodyText(const BcHeader &header, const QByteArray &body)
     return {};
 }
 
-QByteArray BaichuanClient::encryptXml(const QString &xml) const
+QByteArray BaichuanClient::encryptXml(const QString &xml, quint8 xorOffset) const
 {
     if (m_aes)
         return m_aes->encrypt(xml.toUtf8(), QByteArray::fromRawData(kAesIv, 16));
-    return xorCrypt(xml.toUtf8(), 0);
+    return xorCrypt(xml.toUtf8(), xorOffset);
 }
 
 bool BaichuanClient::login()
@@ -710,26 +713,23 @@ QString BaichuanClient::request(quint32 msgType, const QString &body,
         return {};
     }
 
-    // Extension and body are encrypted separately, each from the start of the
-    // keystream, and the header says where one ends: that is the payload
-    // offset, here the length of the encrypted extension.
-    const QByteArray ext = extension.isEmpty() ? QByteArray() : encryptXml(extension);
-    const QByteArray payload = body.isEmpty() ? QByteArray() : encryptXml(body);
     // A handle of our own, so the answer can be told from anything else the
     // camera chooses to send on the same connection meanwhile.
-    const quint16 handle = ++m_handle;
-    m_socket->write(modernHeader(msgType, ext.size() + payload.size(), 0,
-                                 quint32(ext.size()), handle) +
-                    ext + payload);
-    m_socket->flush();
+    const quint16 handle = send(msgType, body, extension);
 
     for (;;) {
         BcHeader header;
         QByteArray reply;
         if (!readMessage(header, reply))
             return {};
-        if (header.msgType != msgType || header.handle != handle)
+        if (header.msgType != msgType || header.handle != handle) {
+            if (onPush) {
+                if (header.payloadOffset > 0 && header.payloadOffset <= quint32(reply.size()))
+                    reply = reply.mid(int(header.payloadOffset));
+                onPush(header, bodyText(header, reply));
+            }
             continue;
+        }
         if (status)
             *status = header.status();
         if (header.status() != 200) {
@@ -741,6 +741,69 @@ QString BaichuanClient::request(quint32 msgType, const QString &body,
             reply = reply.mid(int(header.payloadOffset));
         return bodyText(header, reply);
     }
+}
+
+quint16 BaichuanClient::send(quint32 msgType, const QString &body,
+                             const QString &extension, quint8 channelByte)
+{
+    if (!m_socket)
+        return 0;
+    // Extension and body are encrypted separately, each from the start of the
+    // keystream, and the header says where one ends: that is the payload
+    // offset, here the length of the encrypted extension.
+    const QByteArray ext =
+        extension.isEmpty() ? QByteArray() : encryptXml(extension, channelByte);
+    const QByteArray payload =
+        body.isEmpty() ? QByteArray() : encryptXml(body, channelByte);
+    const quint16 handle = ++m_handle;
+    m_socket->write(modernHeader(msgType, ext.size() + payload.size(),
+                                 channelByte, quint32(ext.size()), handle) +
+                    ext + payload);
+    m_socket->flush();
+    return handle;
+}
+
+bool BaichuanClient::readText(BcHeader &header, QString &text, int timeoutMs)
+{
+    text.clear();
+    QByteArray body;
+    if (!readMessage(header, body, timeoutMs))
+        return false;
+    if (header.payloadOffset > 0 && header.payloadOffset <= quint32(body.size()))
+        body = body.mid(int(header.payloadOffset));
+    text = bodyText(header, body);
+    return true;
+}
+
+bool BaichuanClient::pollText(BcHeader &header, QString &text)
+{
+    if (!m_socket)
+        return false;
+    // Only a whole header is a message under way. Once one is, the rest of it
+    // is waited for: giving up half-way through a body would leave the next
+    // read in the middle of it.
+    if (m_socket->bytesAvailable() < 20)
+        m_socket->waitForReadyRead(0);
+    if (m_socket->bytesAvailable() < 20)
+        return false;
+    return readText(header, text, kTimeoutMs);
+}
+
+bool BaichuanClient::isConnected() const
+{
+    return m_socket && m_socket->state() == QAbstractSocket::ConnectedState;
+}
+
+bool BaichuanClient::subscribeAlarms()
+{
+    if (!isConnected()) {
+        m_error = QStringLiteral("not connected");
+        return false;
+    }
+    // No body, and no answer waited for here: the answer and the first alarm
+    // arrive together, and whoever reads this connection takes both.
+    send(kMsgAlarmSubscribe, {}, {}, kPushChannel);
+    return true;
 }
 
 bool BaichuanClient::uploadFirmware(const QString &fileName, const QByteArray &pak,
