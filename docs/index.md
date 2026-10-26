@@ -347,6 +347,31 @@ and a bright surround glares at night.
 
 ---
 
+## Updating a camera's firmware
+
+**Camera settings ▸ Maintenance** offers two ways.
+
+**Check for updates**, then **Install update**, has the camera ask Reolink
+itself and download what it finds. It needs the camera's web server and a way
+out to the internet.
+
+**Install from file…** is for a camera that has neither: one kept off the
+internet, or an E1 Pro, which has no web server. Download the firmware from
+Reolink's download centre, unzip it, and pick the `.pak` inside. leolink sends
+it from this computer over port 9000. Before anything is sent it checks that:
+
+- the package is named for the board the camera reports — a file called
+  `IPC_566SD54MP.5112_….pak` goes only to a camera on board `IPC_566SD54MP`,
+  which the **About** page shows as its hardware
+- its build is newer than the one installed: leolink does not downgrade
+- the file starts the way a Reolink package does
+
+Sending takes a minute or two. The camera then installs the package and
+restarts, and is unreachable for several minutes. The panel follows it and says
+when it is back on the new build, or that it came back on the old one, which
+means the camera refused the update. The window can be closed meanwhile; the
+camera finishes on its own. **Do not cut its power** while it installs.
+
 ## Command line
 
 ```
@@ -354,6 +379,7 @@ leolink                                    normal start
 leolink --baichuan-test <host> --user u --password p
 leolink --baichuan-video <host> --user u --password p --out /tmp/x.h264
 leolink --baichuan-api <host> <command> ['<json parameters>']
+leolink --baichuan-firmware <host> <file.pak> [--yes]
 leolink --baichuan-p2p <UID>               UNTESTED, see below
 ```
 
@@ -367,6 +393,10 @@ settings dialog does for a camera without a web server, and prints the reply:
 `leolink --baichuan-api 192.168.1.20 GetEnc`. It uses the password saved for
 that camera unless `--password` is given, so nothing secret needs to go on the
 command line.
+
+`--baichuan-firmware` runs the checks above against the camera and says what it
+would do. With `--yes` it sends the package, then waits for the camera to come
+back and reports which build it is running.
 
 | Variable | What it does |
 |---|---|

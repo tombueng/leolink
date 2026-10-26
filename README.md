@@ -314,8 +314,9 @@ detection types, the recording and alert schedules, the e-mail, FTP, push and
 siren switches, network ports, Wi-Fi, time zone and clock, infrared and status
 lights, storage, and restart. It does not have user accounts, e-mail and FTP
 server details, daylight saving and NTP, the camera checking Reolink for an
-update, formatting the card, or snapshots. Those panels say so instead of failing. The message numbers and
-the mapping of each field are in [docs/protocol.md](docs/protocol.md#settings).
+update, formatting the card, or snapshots. Those panels say so instead of
+failing. The message numbers and the mapping of each field are in
+[docs/protocol.md](docs/protocol.md#settings).
 
 ² Baichuan video is re-served on a loopback port that exists only while a tile
 is playing it, so there is no address for ffmpeg to open. A camera that offers
