@@ -667,6 +667,8 @@ What does not map one to one:
 
 Not found over Baichuan yet: user accounts, the e-mail and FTP server
 settings, daylight-saving rules, NTP, formatting the card, recording search.
+Those answer -9, as a CGI command the firmware does not know would, and the
+dialog leaves them out.
 
 ### Firmware
 
@@ -711,8 +713,12 @@ A package's name is the only thing that says which camera it is for:
 reports as `hardVer`. The file itself starts `13 59 72 32` and a partition
 table (`loader`, `fdt`, `uboot`, `kernel`, `rootfs`), and the rest is
 compressed. leolink sends a package only to the board its name gives, and only
-to a camera on an older build. Those answer -9, as a CGI command the firmware does not know
-would, and the dialog leaves them out.
+to a camera on an older build.
+
+Installed this way so far: an E1 (3.1.0.1643 → 4450), two E1 Pros (3149 →
+5112) and a Video Doorbell WiFi (3.0.0.6460 → 7106). The doorbell has a web
+server too, and took the file over Baichuan all the same. Each was back on the
+new build within a few minutes, which the dialog followed through the restart.
 
 ### P2P — implemented, never run
 

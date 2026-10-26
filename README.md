@@ -344,7 +344,7 @@ Also run against these, with every protocol each one offers:
 
 | Camera | Firmware | Offers | Video (automatic) | Settings over |
 |---|---|---|---|---|
-| Video Doorbell WiFi | v3.0.0.6460 | HTTP, HTTPS, RTMP, RTSP, ONVIF, Baichuan | HTTP-FLV | HTTP API |
+| Video Doorbell WiFi | v3.0.0.6460, then 7106 | HTTP, HTTPS, RTMP, RTSP, ONVIF, Baichuan | HTTP-FLV | HTTP API |
 | E1 Zoom | v3.1.0.4417 | HTTPS, RTMP, RTSP, ONVIF, Baichuan | HTTP-FLV over HTTPS | HTTP API |
 | E1 Pro | v3.1.0.3149 | RTSP, ONVIF, Baichuan | RTSP | Baichuan |
 | E1, web server and RTSP off | v3.1.0.1643 | Baichuan | Baichuan | Baichuan |
