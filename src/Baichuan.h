@@ -220,23 +220,4 @@ private:
     qint64 m_lastStepUs{0};
 };
 
-/// Diagnostic entry points used by --baichuan-test / --baichuan-p2p.
-int runBaichuanProbe(const QString &host, const QString &user,
-                     const QString &password);
-
-/// Connects, logs in, asks for video and reports what the container actually
-/// contains — block magics, sizes, codec — writing the elementary stream to
-/// `outputPath` so it can be checked with a decoder.
-int runBaichuanVideoProbe(const QString &host, const QString &user,
-                          const QString &password, const QString &outputPath,
-                          int seconds);
-
-/// P2P lookup by camera UID via Reolink's rendezvous servers.
-///
-/// **Not verified against hardware** — written from the protocol description
-/// because the author has no P2P-capable camera. It reports every step so a
-/// tester can see exactly where it stops. See the handbook.
-int runP2PProbe(const QString &uid, const QString &user,
-                const QString &password);
-
 } // namespace leolink

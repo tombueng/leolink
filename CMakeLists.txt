@@ -60,6 +60,7 @@ set(LEOLINK_SOURCES
     src/Baichuan.cpp          src/Baichuan.h
     src/BaichuanApi.cpp       src/BaichuanApi.h
     src/BaichuanCommands.cpp  src/BaichuanCommands.h
+    src/BaichuanProbes.cpp    src/BaichuanProbes.h
     src/BaichuanStream.cpp    src/BaichuanStream.h
     src/CameraProbe.cpp       src/CameraProbe.h
     src/Keyring.cpp           src/Keyring.h

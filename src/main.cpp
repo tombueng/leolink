@@ -13,6 +13,7 @@
 
 #include "Baichuan.h"
 #include "BaichuanApi.h"
+#include "BaichuanProbes.h"
 #include "BaichuanStream.h"
 #include "CameraProbe.h"
 #include "CameraSettingsDialog.h"

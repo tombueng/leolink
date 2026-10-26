@@ -98,18 +98,4 @@ private:
     Worker *m_worker{nullptr};
 };
 
-/// `--baichuan-api <host> <command> [json param]`: logs in, translates one
-/// command and prints the entry as JSON.
-int runBaichuanApiProbe(const QString &host, const QString &user,
-                        const QString &password, const QString &command,
-                        const QString &param);
-
-/// `--baichuan-firmware <host> <file.pak> [--yes]`: checks the package against
-/// the camera and, given `install`, sends it and waits for the camera to come
-/// back reporting the new build. 0 when it has, or when the checks passed and
-/// nothing was asked to be installed.
-int runBaichuanFirmware(const QString &host, const QString &user,
-                        const QString &password, const QString &pakPath,
-                        bool install);
-
 } // namespace leolink
