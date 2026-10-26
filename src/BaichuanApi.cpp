@@ -11,7 +11,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QMutex>
-#include <QRegularExpression>
 #include <QSet>
 #include <QTextStream>
 #include <QThread>
@@ -20,6 +19,7 @@
 #include "Baichuan.h"
 #include "Firmware.h"
 #include "Log.h"
+#include "XmlText.h"
 
 namespace leolink {
 
@@ -2199,31 +2199,20 @@ void BaichuanApi::unwatchAlarms(int id)
 QList<BaichuanApi::Alarm> BaichuanApi::parseAlarms(const QString &xml)
 {
     QList<Alarm> alarms;
-    const QRegularExpression eventRe(
-        QStringLiteral("<AlarmEvent\\b[^>]*>(.*?)</AlarmEvent>"),
-        QRegularExpression::DotMatchesEverythingOption);
-    const auto tagText = [](const QString &in, const QString &name) {
-        const QRegularExpression re(QStringLiteral("<%1>(.*?)</%1>").arg(name),
-                                    QRegularExpression::DotMatchesEverythingOption);
-        const auto m = re.match(in);
-        return m.hasMatch() ? m.captured(1).trimmed() : QString();
-    };
-    auto events = eventRe.globalMatch(xml);
-    while (events.hasNext()) {
-        const QString event = events.next().captured(1);
+    for (const QString &event : xml::all(xml, QStringLiteral("AlarmEvent"))) {
         bool ok = false;
-        const int channel = tagText(event, QStringLiteral("channelId")).toInt(&ok);
+        const int channel = xml::text(event, QStringLiteral("channelId")).toInt(&ok);
         if (!ok)
             continue;
         // Both lists are comma-separated.
         QStringList what;
-        const QStringList status = tagText(event, QStringLiteral("status"))
+        const QStringList status = xml::text(event, QStringLiteral("status"))
                                        .split(QLatin1Char(','), Qt::SkipEmptyParts);
         for (const QString &s : status) {
             if (s.trimmed() == QLatin1String("MD"))
                 what << QStringLiteral("MD");
         }
-        const QStringList kinds = tagText(event, QStringLiteral("AItype"))
+        const QStringList kinds = xml::text(event, QStringLiteral("AItype"))
                                       .split(QLatin1Char(','), Qt::SkipEmptyParts);
         for (const QString &k : kinds) {
             const QString kind = k.trimmed();

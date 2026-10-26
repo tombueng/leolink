@@ -5,7 +5,6 @@
 #include <QElapsedTimer>
 #include <QFile>
 #include <QJsonObject>
-#include <QRegularExpression>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -13,6 +12,7 @@
 #include "FakeCamera.h"
 #include "FakeWebServer.h"
 #include "MotionWatcher.h"
+#include "XmlText.h"
 
 using leolink::BaichuanApi;
 using leolink::CameraConfig;
@@ -26,13 +26,6 @@ QByteArray fixture(const QString &name)
 {
     QFile f(QStringLiteral(LEOLINK_FIXTURES "/onvif/") + name);
     return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray();
-}
-
-QString tag(const QByteArray &xml, const QString &name)
-{
-    const QRegularExpression re(QStringLiteral("<(?:\\w+:)?%1[^>]*>(.*?)</(?:\\w+:)?%1>").arg(name),
-                                QRegularExpression::DotMatchesEverythingOption);
-    return re.match(QString::fromUtf8(xml)).captured(1);
 }
 
 /// One event, in the camera's own wording.
@@ -89,13 +82,13 @@ private:
     /// The camera checks the WS-Security digest, as a real one does.
     bool authentic(const QByteArray &body)
     {
-        const QByteArray nonce = QByteArray::fromBase64(tag(body, QStringLiteral("Nonce")).toLatin1());
-        const QString created = tag(body, QStringLiteral("Created"));
+        const QByteArray nonce = QByteArray::fromBase64(leolink::xml::inner(QString::fromUtf8(body), QStringLiteral("Nonce")).toLatin1());
+        const QString created = leolink::xml::inner(QString::fromUtf8(body), QStringLiteral("Created"));
         QCryptographicHash sha(QCryptographicHash::Sha1);
         sha.addData(nonce);
         sha.addData(created.toUtf8());
         sha.addData(kPassword.toUtf8());
-        return !nonce.isEmpty() && tag(body, QStringLiteral("Password")) == QString::fromLatin1(sha.result().toBase64());
+        return !nonce.isEmpty() && leolink::xml::inner(QString::fromUtf8(body), QStringLiteral("Password")) == QString::fromLatin1(sha.result().toBase64());
     }
 
     FakeWebServer::Response answer(const FakeWebServer::Request &r)

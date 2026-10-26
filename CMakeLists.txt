@@ -69,6 +69,7 @@ set(LEOLINK_SOURCES
     src/TalkSession.cpp       src/TalkSession.h
     src/PtzPad.cpp            src/PtzPad.h
     src/Protocols.cpp         src/Protocols.h
+    src/XmlText.cpp           src/XmlText.h
 )
 
 qt_add_executable(leolink

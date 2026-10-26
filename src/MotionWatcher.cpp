@@ -17,6 +17,7 @@
 #include "BaichuanApi.h"
 #include "Protocols.h"
 #include "ReolinkClient.h"
+#include "XmlText.h"
 
 namespace leolink {
 
@@ -35,16 +36,6 @@ const QString kRenewAction =
 const QString kPullAction =
     QStringLiteral("http://www.onvif.org/ver10/events/wsdl/"
                    "PullPointSubscription/PullMessages");
-
-/// Text of the first element with this local name, namespace prefix ignored.
-QString tagText(const QString &xml, const QString &localName)
-{
-    const QRegularExpression re(
-        QStringLiteral("<(?:\\w+:)?%1[^>]*>(.*?)</(?:\\w+:)?%1>").arg(localName),
-        QRegularExpression::DotMatchesEverythingOption);
-    const auto m = re.match(xml);
-    return m.hasMatch() ? m.captured(1).trimmed() : QString();
-}
 
 } // namespace
 
@@ -219,13 +210,9 @@ void MotionWatcher::subscribe()
 
         // Scope to <SubscriptionReference>, otherwise we would pick up the
         // anonymous ReplyTo address and poll w3.org instead of the camera.
-        const QRegularExpression refRe(
-            QStringLiteral("<(?:\\w+:)?SubscriptionReference[^>]*>(.*?)"
-                           "</(?:\\w+:)?SubscriptionReference>"),
-            QRegularExpression::DotMatchesEverythingOption);
-        const auto refMatch = refRe.match(xml);
-        const QString scope = refMatch.hasMatch() ? refMatch.captured(1) : xml;
-        const QString address = tagText(scope, QStringLiteral("Address"));
+        const QString reference = xml::inner(xml, QStringLiteral("SubscriptionReference"));
+        const QString scope = reference.isNull() ? xml : reference;
+        const QString address = xml::text(scope, QStringLiteral("Address"));
 
         if (address.isEmpty() || address.contains(QLatin1String("w3.org"))) {
             // The reply itself is the diagnosis here: cameras refuse for
@@ -245,8 +232,8 @@ void MotionWatcher::subscribe()
         // Kept alive at half of what the camera granted, which is not always
         // what was asked: a camera that ignores the request still gets its
         // renewal in time.
-        const QDateTime now = QDateTime::fromString(tagText(xml, QStringLiteral("CurrentTime")), Qt::ISODate);
-        const QDateTime end = QDateTime::fromString(tagText(xml, QStringLiteral("TerminationTime")), Qt::ISODate);
+        const QDateTime now = QDateTime::fromString(xml::text(xml, QStringLiteral("CurrentTime")), Qt::ISODate);
+        const QDateTime end = QDateTime::fromString(xml::text(xml, QStringLiteral("TerminationTime")), Qt::ISODate);
         const qint64 granted = now.isValid() && end.isValid() ? now.secsTo(end) : 10;
         m_renewTimer->start(int(qBound(qint64(1), granted / 2, qint64(kLifetimeSeconds / 2))) * 1000);
 
@@ -306,19 +293,12 @@ void MotionWatcher::pull()
         // all about the same camera. Splitting them up first is what makes it
         // possible to tell whose they are; a camera's reply usually holds one
         // message and the split changes nothing.
-        const QRegularExpression msgRe(
-            QStringLiteral("<(?:\\w+:)?NotificationMessage[^>]*>(.*?)"
-                           "</(?:\\w+:)?NotificationMessage>"),
-            QRegularExpression::DotMatchesEverythingOption);
-        auto msgs = msgRe.globalMatch(xml);
-        bool any = false;
-        while (msgs.hasNext()) {
-            any = true;
-            handleMessage(msgs.next().captured(1));
-        }
+        const QStringList messages = xml::all(xml, QStringLiteral("NotificationMessage"));
+        for (const QString &message : messages)
+            handleMessage(message);
         // Firmware that does not wrap its events the way the standard says
         // still gets read, exactly as before this could tell channels apart.
-        if (!any)
+        if (messages.isEmpty())
             handleMessage(xml);
 
         pull();   // straight back into the long poll
@@ -327,16 +307,13 @@ void MotionWatcher::pull()
 
 int MotionWatcher::channelOf(const QString &message) const
 {
-    const QRegularExpression sourceRe(
-        QStringLiteral("<(?:\\w+:)?Source(?:\\s[^>]*)?>(.*?)</(?:\\w+:)?Source>"),
-        QRegularExpression::DotMatchesEverythingOption);
-    const auto source = sourceRe.match(message);
-    if (!source.hasMatch())
+    const QString source = xml::inner(message, QStringLiteral("Source"));
+    if (source.isNull())
         return -1;
 
     const QRegularExpression valueRe(
         QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"([^\"]+)\"\\s+Value=\"([^\"]+)\""));
-    auto it = valueRe.globalMatch(source.captured(1));
+    auto it = valueRe.globalMatch(source);
     while (it.hasNext()) {
         const auto m = it.next();
         const QRegularExpression tailRe(QStringLiteral("(\\d+)\\s*$"));
@@ -397,7 +374,7 @@ void MotionWatcher::handleMessage(const QString &message)
     // MyRuleDetector/PeopleDetect, VehicleDetect … — and a person leaving the
     // picture says PeopleDetect false while the motion goes on. Taken as one
     // switch, that ended the alert in the middle of it.
-    const QString topic = tagText(message, QStringLiteral("Topic"));
+    const QString topic = xml::text(message, QStringLiteral("Topic"));
 
     while (it.hasNext()) {
         const auto m = it.next();

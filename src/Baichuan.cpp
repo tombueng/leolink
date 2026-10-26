@@ -6,10 +6,11 @@
 #include <QMap>
 #include <QDataStream>
 #include <QHostAddress>
-#include <QRegularExpression>
 #include <QTcpSocket>
 #include <QTextStream>
 #include <QUdpSocket>
+
+#include "XmlText.h"
 
 namespace leolink {
 
@@ -155,15 +156,6 @@ QByteArray modernHeader(quint32 msgType, quint32 bodyLen, quint8 encOffset = 0,
       << encOffset << quint8(0) << handle << quint16(0) << kClassModern
       << payloadOffset;
     return out;
-}
-
-QString tagText(const QString &xml, const QString &name)
-{
-    const QRegularExpression re(
-        QStringLiteral("<%1>(.*?)</%1>").arg(name),
-        QRegularExpression::DotMatchesEverythingOption);
-    const auto m = re.match(xml);
-    return m.hasMatch() ? m.captured(1).trimmed() : QString();
 }
 
 QTextStream &out()
@@ -565,7 +557,7 @@ bool BaichuanClient::login()
     if (!readMessage(header, reply))
         return false;
 
-    const QString nonce = tagText(bodyText(header, reply), QStringLiteral("nonce"));
+    const QString nonce = xml::text(bodyText(header, reply), QStringLiteral("nonce"));
     if (nonce.isEmpty()) {
         m_error = QStringLiteral("no nonce in the reply (class 0x%1)")
                       .arg(header.msgClass, 4, 16, QLatin1Char('0'));
@@ -691,7 +683,7 @@ bool BaichuanClient::readMediaChunk(QByteArray &media, int timeoutMs)
     // predicted frame or audio block, and nothing of the stream info.
     if (m_aes && !preamble.isEmpty()) {
         const int encrypted =
-            tagText(preamble, QStringLiteral("encryptLen")).toInt();
+            xml::text(preamble, QStringLiteral("encryptLen")).toInt();
         if (encrypted > 0 && encrypted <= body.size()) {
             body.replace(0, encrypted,
                          m_aes->decrypt(body.left(encrypted),
@@ -884,7 +876,7 @@ void BaichuanClient::close()
 
 QString BaichuanClient::field(const QString &name) const
 {
-    return tagText(m_deviceInfo, name);
+    return xml::text(m_deviceInfo, name);
 }
 
 // ── probes ──────────────────────────────────────────────────────────────────

@@ -6,12 +6,12 @@
 #include <QDataStream>
 #include <QDir>
 #include <QFile>
-#include <QRegularExpression>
 #include <QTcpServer>
 #include <QTcpSocket>
 
 #include "Aes128.h"
 #include "Baichuan.h"
+#include "XmlText.h"
 
 using leolink::Aes128Cfb;
 using leolink::BaichuanClient;
@@ -135,14 +135,6 @@ QByteArray videoBlock(bool key, quint32 timeUs)
     b += nal;
     b.append(QByteArray((8 - b.size() % 8) % 8, '\0'));
     return b;
-}
-
-QString tag(const QString &xml, const QString &name)
-{
-    const QRegularExpression re(QStringLiteral("<%1>(.*?)</%1>").arg(name),
-                                QRegularExpression::DotMatchesEverythingOption);
-    const auto m = re.match(xml);
-    return m.hasMatch() ? m.captured(1) : QString();
 }
 
 } // namespace
@@ -317,8 +309,8 @@ void FakeCamera::serve(QTcpSocket &socket)
             const QString nonce = QLatin1String(kNonce);
             const bool good =
                 m_loginWasXor &&
-                tag(xml, QStringLiteral("userName")) == BaichuanClient::md5Trunc(m_user + nonce) &&
-                tag(xml, QStringLiteral("password")) == BaichuanClient::md5Trunc(m_password + nonce);
+                leolink::xml::inner(xml, QStringLiteral("userName")) == BaichuanClient::md5Trunc(m_user + nonce) &&
+                leolink::xml::inner(xml, QStringLiteral("password")) == BaichuanClient::md5Trunc(m_password + nonce);
             if (!m_loginWasXor) {
                 send(kLogin, h.handle, 400);
                 continue;
