@@ -607,7 +607,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%2 で %1",
     "Detection": "検知",
     "Motion comes from": "動きを知らせるのは",
-    "The camera reports it (ONVIF)": "カメラ自身 (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "カメラ自身 (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink が映像を見る",
     "Either of the two": "どちらでも",
     "Do not watch": "見張らない",
@@ -783,10 +783,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "オン",
     "Higher notices more, including shadows and headlights.":
         "高いほど多くを拾い、影やヘッドライトも拾います。",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "これはカメラ自身の検知、つまり ONVIF で知らせてくるものです。leolink による映像の解析は別に、カメラ → イベント "
+        "これはカメラ自身の検知、つまり ONVIF / Baichuan で知らせてくるものです。leolink による映像の解析は別に、カメラ → イベント "
         "で設定します。",
     "Recording": "録画",
     "Recording to the camera's card": "カメラのカードへの録画",
@@ -1304,6 +1304,33 @@ STRINGS: dict[str, str] = {
         'インストールしました。カメラは %1 で動作しています。',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'カメラは以前と同じビルド %1 で再起動したため、更新はインストールされませんでした。',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'カメラが動きませんでした: %1',
+    "Lost the camera's alarms: %1":
+        'カメラのアラームが途切れました: %1',
+    'Up and left':
+        '左上',
+    'Up':
+        '上',
+    'Up and right':
+        '右上',
+    'Left':
+        '左',
+    'Right':
+        '右',
+    'Down and left':
+        '左下',
+    'Down':
+        '下',
+    'Down and right':
+        '右下',
+    'Zoom in':
+        'ズームイン',
+    'Zoom out':
+        'ズームアウト',
+    'Turn the camera':
+        'カメラの向きを変える',
 }
 
 

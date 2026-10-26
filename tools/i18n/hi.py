@@ -693,7 +693,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%2 पर %1",
     "Detection": "पहचान",
     "Motion comes from": "गति की सूचना देता है",
-    "The camera reports it (ONVIF)": "कैमरा स्वयं (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "कैमरा स्वयं (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink चित्र देखकर",
     "Either of the two": "दोनों में से कोई भी",
     "Do not watch": "निगरानी न करें",
@@ -896,10 +896,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "चालू",
     "Higher notices more, including shadows and headlights.":
         "ऊँचा होने पर अधिक पकड़ में आता है, छाया और हेडलाइट भी।",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "यह कैमरे की अपनी पहचान है, वही जिसकी सूचना वह ONVIF से देता है। "
+        "यह कैमरे की अपनी पहचान है, वही जिसकी सूचना वह ONVIF / Baichuan से देता है। "
         "leolink द्वारा चित्र का विश्लेषण अलग से, कैमरे → घटनाएँ के नीचे तय "
         "होता है।",
     "Recording": "रिकॉर्डिंग",
@@ -1473,6 +1473,33 @@ STRINGS: dict[str, str] = {
         'इंस्टॉल हो गया। कैमरा %1 पर चल रहा है।',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'कैमरा %1 पर रीस्टार्ट हुआ, जो पहले वाला बिल्ड है, इसलिए अपडेट इंस्टॉल नहीं हुआ।',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'कैमरा नहीं घूमा: %1',
+    "Lost the camera's alarms: %1":
+        'कैमरे के अलार्म मिलने बंद हो गए: %1',
+    'Up and left':
+        'ऊपर और बाएँ',
+    'Up':
+        'ऊपर',
+    'Up and right':
+        'ऊपर और दाएँ',
+    'Left':
+        'बाएँ',
+    'Right':
+        'दाएँ',
+    'Down and left':
+        'नीचे और बाएँ',
+    'Down':
+        'नीचे',
+    'Down and right':
+        'नीचे और दाएँ',
+    'Zoom in':
+        'ज़ूम इन',
+    'Zoom out':
+        'ज़ूम आउट',
+    'Turn the camera':
+        'कैमरा घुमाएँ',
 }
 
 

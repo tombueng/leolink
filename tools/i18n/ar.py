@@ -667,7 +667,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%1 عند %2",
     "Detection": "الكشف",
     "Motion comes from": "مصدر الإبلاغ عن الحركة",
-    "The camera reports it (ONVIF)": "الكاميرا نفسها (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "الكاميرا نفسها (ONVIF / Baichuan)",
     "leolink watches the picture": "‏leolink بمراقبة الصورة",
     "Either of the two": "أي منهما",
     "Do not watch": "لا تراقب",
@@ -865,10 +865,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "مشغّل",
     "Higher notices more, including shadows and headlights.":
         "الأعلى يلحظ أكثر، بما في ذلك الظلال وأضواء السيارات.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "هذا هو كشف الكاميرا نفسها، وهو ما تبلّغ عنه عبر ONVIF. أما تحليل "
+        "هذا هو كشف الكاميرا نفسها، وهو ما تبلّغ عنه عبر ONVIF / Baichuan. أما تحليل "
         "leolink للصورة فيُضبط على حدة، تحت «الكاميرات ← الأحداث».",
     "Recording": "التسجيل",
     "Recording to the camera's card": "التسجيل على بطاقة الكاميرا",
@@ -1425,6 +1425,33 @@ STRINGS: dict[str, str] = {
         'تم التثبيت. تعمل الكاميرا الآن بالإصدار %1.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'أعادت الكاميرا التشغيل على %1، وهو الإصدار الذي كان لديها، لذا لم يُثبَّت التحديث.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'لم تتحرك الكاميرا: %1',
+    "Lost the camera's alarms: %1":
+        'انقطعت إنذارات الكاميرا: %1',
+    'Up and left':
+        'لأعلى ولليسار',
+    'Up':
+        'لأعلى',
+    'Up and right':
+        'لأعلى ولليمين',
+    'Left':
+        'لليسار',
+    'Right':
+        'لليمين',
+    'Down and left':
+        'لأسفل ولليسار',
+    'Down':
+        'لأسفل',
+    'Down and right':
+        'لأسفل ولليمين',
+    'Zoom in':
+        'تكبير',
+    'Zoom out':
+        'تصغير',
+    'Turn the camera':
+        'تدوير الكاميرا',
 }
 
 

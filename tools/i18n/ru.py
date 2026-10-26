@@ -703,7 +703,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%1 у %2",
     "Detection": "Обнаружение",
     "Motion comes from": "О движении сообщает",
-    "The camera reports it (ONVIF)": "Сама камера (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "Сама камера (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink, наблюдая за картинкой",
     "Either of the two": "Любой из двух",
     "Do not watch": "Не наблюдать",
@@ -912,11 +912,11 @@ STRINGS: dict[str, str] = {
     "Switched on": "Включено",
     "Higher notices more, including shadows and headlights.":
         "Выше — замечает больше, включая тени и фары.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
         "Это собственное обнаружение камеры, то самое, о котором она сообщает "
-        "по ONVIF. Анализ картинки силами leolink настраивается отдельно, в "
+        "по ONVIF / Baichuan. Анализ картинки силами leolink настраивается отдельно, в "
         "«Камеры → События».",
     "Recording": "Запись",
     "Recording to the camera's card": "Запись на карту камеры",
@@ -1492,6 +1492,33 @@ STRINGS: dict[str, str] = {
         'Установлено. На камере теперь %1.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'Камера перезагрузилась на %1 — сборке, что была раньше, значит обновление не установилось.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'Камера не сдвинулась: %1',
+    "Lost the camera's alarms: %1":
+        'Потеряны тревоги камеры: %1',
+    'Up and left':
+        'Вверх и влево',
+    'Up':
+        'Вверх',
+    'Up and right':
+        'Вверх и вправо',
+    'Left':
+        'Влево',
+    'Right':
+        'Вправо',
+    'Down and left':
+        'Вниз и влево',
+    'Down':
+        'Вниз',
+    'Down and right':
+        'Вниз и вправо',
+    'Zoom in':
+        'Приблизить',
+    'Zoom out':
+        'Отдалить',
+    'Turn the camera':
+        'Повернуть камеру',
 }
 
 

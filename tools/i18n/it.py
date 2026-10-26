@@ -725,7 +725,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%1 presso %2",
     "Detection": "Rilevamento",
     "Motion comes from": "Il movimento lo segnala",
-    "The camera reports it (ONVIF)": "La telecamera stessa (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "La telecamera stessa (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink guardando l'immagine",
     "Either of the two": "Uno dei due",
     "Do not watch": "Non sorvegliare",
@@ -939,11 +939,11 @@ STRINGS: dict[str, str] = {
     "Switched on": "Acceso",
     "Higher notices more, including shadows and headlights.":
         "Più alto nota di più, ombre e fari compresi.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
         "Questo è il rilevamento della telecamera stessa, quello che segnala "
-        "via ONVIF. L'analisi dell'immagine fatta da leolink si imposta a "
+        "via ONVIF / Baichuan. L'analisi dell'immagine fatta da leolink si imposta a "
         "parte, in Telecamere → Eventi.",
     "Recording": "Registrazione",
     "Recording to the camera's card":
@@ -1544,6 +1544,33 @@ STRINGS: dict[str, str] = {
         'Installato. La telecamera usa %1.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'La telecamera si è riavviata con %1, la build che aveva prima, quindi l’aggiornamento non è stato installato.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'La telecamera non si è mossa: %1',
+    "Lost the camera's alarms: %1":
+        'Allarmi della telecamera persi: %1',
+    'Up and left':
+        'In alto a sinistra',
+    'Up':
+        'Su',
+    'Up and right':
+        'In alto a destra',
+    'Left':
+        'Sinistra',
+    'Right':
+        'Destra',
+    'Down and left':
+        'In basso a sinistra',
+    'Down':
+        'Giù',
+    'Down and right':
+        'In basso a destra',
+    'Zoom in':
+        'Zoom avanti',
+    'Zoom out':
+        'Zoom indietro',
+    'Turn the camera':
+        'Ruota la telecamera',
 }
 
 

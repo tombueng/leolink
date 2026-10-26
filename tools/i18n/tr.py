@@ -694,7 +694,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%2 konumunda %1",
     "Detection": "Algılama",
     "Motion comes from": "Hareketi bildiren",
-    "The camera reports it (ONVIF)": "Kameranın kendisi (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "Kameranın kendisi (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink görüntüyü izliyor",
     "Either of the two": "İkisinden herhangi biri",
     "Do not watch": "İzleme",
@@ -900,10 +900,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "Açık",
     "Higher notices more, including shadows and headlights.":
         "Yüksek değer daha çoğunu fark eder — gölgeleri ve farları da.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "Bu, kameranın kendi algılamasıdır; ONVIF üzerinden bildirdiği de "
+        "Bu, kameranın kendi algılamasıdır; ONVIF / Baichuan üzerinden bildirdiği de "
         "budur. leolink'in görüntüyü kendi çözümlemesi ayrıca, Kameralar → "
         "Olaylar altından ayarlanır.",
     "Recording": "Kayıt",
@@ -1481,6 +1481,33 @@ STRINGS: dict[str, str] = {
         'Kuruldu. Kamera %1 ile çalışıyor.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'Kamera önceki sürümü olan %1 ile yeniden başladı, yani güncelleme kurulmadı.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'Kamera hareket etmedi: %1',
+    "Lost the camera's alarms: %1":
+        'Kameranın alarmları kesildi: %1',
+    'Up and left':
+        'Yukarı ve sola',
+    'Up':
+        'Yukarı',
+    'Up and right':
+        'Yukarı ve sağa',
+    'Left':
+        'Sola',
+    'Right':
+        'Sağa',
+    'Down and left':
+        'Aşağı ve sola',
+    'Down':
+        'Aşağı',
+    'Down and right':
+        'Aşağı ve sağa',
+    'Zoom in':
+        'Yakınlaştır',
+    'Zoom out':
+        'Uzaklaştır',
+    'Turn the camera':
+        'Kamerayı döndür',
 }
 
 

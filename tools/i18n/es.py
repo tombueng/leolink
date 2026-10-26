@@ -707,7 +707,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%1 en %2",
     "Detection": "Detección",
     "Motion comes from": "El movimiento lo avisa",
-    "The camera reports it (ONVIF)": "La cámara misma (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "La cámara misma (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink observando la imagen",
     "Either of the two": "Cualquiera de los dos",
     "Do not watch": "No vigilar",
@@ -917,10 +917,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "Encendida",
     "Higher notices more, including shadows and headlights.":
         "Más alto nota más, incluidas las sombras y los faros.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "Esta es la detección propia de la cámara, la que avisa por ONVIF. El "
+        "Esta es la detección propia de la cámara, la que avisa por ONVIF / Baichuan. El "
         "análisis de la imagen que hace leolink se ajusta aparte, en Cámaras → "
         "Eventos.",
     "Recording": "Grabación",
@@ -1506,6 +1506,33 @@ STRINGS: dict[str, str] = {
         'Instalado. La cámara funciona con %1.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'La cámara se reinició con %1, la versión que tenía antes, así que la actualización no se instaló.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'La cámara no se ha movido: %1',
+    "Lost the camera's alarms: %1":
+        'Se han perdido las alarmas de la cámara: %1',
+    'Up and left':
+        'Arriba a la izquierda',
+    'Up':
+        'Arriba',
+    'Up and right':
+        'Arriba a la derecha',
+    'Left':
+        'Izquierda',
+    'Right':
+        'Derecha',
+    'Down and left':
+        'Abajo a la izquierda',
+    'Down':
+        'Abajo',
+    'Down and right':
+        'Abajo a la derecha',
+    'Zoom in':
+        'Acercar',
+    'Zoom out':
+        'Alejar',
+    'Turn the camera':
+        'Girar la cámara',
 }
 
 

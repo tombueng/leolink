@@ -583,7 +583,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%2 处的 %1",
     "Detection": "侦测",
     "Motion comes from": "移动由谁上报",
-    "The camera reports it (ONVIF)": "摄像机本身（ONVIF）",
+    'The camera reports it (ONVIF or Baichuan)': "摄像机本身（ONVIF / Baichuan）",
     "leolink watches the picture": "leolink 观察画面",
     "Either of the two": "两者皆可",
     "Do not watch": "不监看",
@@ -750,10 +750,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "已开启",
     "Higher notices more, including shadows and headlights.":
         "越高察觉得越多，连阴影和车灯也算。",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under Cameras → "
     "Events.":
-        "这是摄像机自己的侦测，也就是它通过 ONVIF 上报的那一种。leolink 自行分析画面是另行设置的，在「摄像机 → 事件」下。",
+        "这是摄像机自己的侦测，也就是它通过 ONVIF / Baichuan 上报的那一种。leolink 自行分析画面是另行设置的，在「摄像机 → 事件」下。",
     "Recording": "录像",
     "Recording to the camera's card": "录到摄像机的存储卡",
     "Overwrite when full": "写满后覆盖",
@@ -1251,6 +1251,33 @@ STRINGS: dict[str, str] = {
         '已安装。摄像头正在运行 %1。',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         '摄像头以之前的版本 %1 重启，因此更新未安装。',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        '摄像头未能转动：%1',
+    "Lost the camera's alarms: %1":
+        '摄像头的报警已中断：%1',
+    'Up and left':
+        '左上',
+    'Up':
+        '上',
+    'Up and right':
+        '右上',
+    'Left':
+        '左',
+    'Right':
+        '右',
+    'Down and left':
+        '左下',
+    'Down':
+        '下',
+    'Down and right':
+        '右下',
+    'Zoom in':
+        '放大',
+    'Zoom out':
+        '缩小',
+    'Turn the camera':
+        '转动摄像头',
 }
 
 

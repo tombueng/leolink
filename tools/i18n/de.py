@@ -775,7 +775,7 @@ STRINGS: dict[str, str] = {
     "%1 at %2": "%1 bei %2",
     "Detection": "Erkennung",
     "Motion comes from": "Bewegung meldet",
-    "The camera reports it (ONVIF)": "Die Kamera selbst (ONVIF)",
+    'The camera reports it (ONVIF or Baichuan)': "Die Kamera selbst (ONVIF / Baichuan)",
     "leolink watches the picture": "leolink beobachtet das Bild",
     "Either of the two": "Beides",
     "Do not watch": "Nicht überwachen",
@@ -1002,10 +1002,10 @@ STRINGS: dict[str, str] = {
     "Switched on": "Eingeschaltet",
     "Higher notices more, including shadows and headlights.":
         "Höher erkennt mehr — auch Schatten und Scheinwerfer.",
-    "This is the camera's own detection, the one it reports over ONVIF. "
+    "This is the camera's own detection, the one it reports over ONVIF or Baichuan. "
     "leolink's own analysis of the picture is set separately, under "
     "Cameras → Events.":
-        "Das ist die Erkennung der Kamera selbst, die sie über ONVIF meldet. "
+        "Das ist die Erkennung der Kamera selbst, die sie über ONVIF / Baichuan meldet. "
         "leolinks eigene Bildanalyse wird getrennt eingestellt, unter "
         "Kameras → Ereignisse.",
 
@@ -1619,6 +1619,33 @@ STRINGS: dict[str, str] = {
         'Installiert. Die Kamera läuft mit %1.',
     'The camera restarted on %1, the build it had before, so the update was not installed.':
         'Die Kamera ist mit %1 neu gestartet, dem Build von vorher; die Aktualisierung wurde also nicht installiert.',
+    # ── turning the camera, and alarms over Baichuan ──
+    'The camera would not move: %1':
+        'Die Kamera ließ sich nicht bewegen: %1',
+    "Lost the camera's alarms: %1":
+        'Alarme der Kamera verloren: %1',
+    'Up and left':
+        'Nach oben links',
+    'Up':
+        'Nach oben',
+    'Up and right':
+        'Nach oben rechts',
+    'Left':
+        'Nach links',
+    'Right':
+        'Nach rechts',
+    'Down and left':
+        'Nach unten links',
+    'Down':
+        'Nach unten',
+    'Down and right':
+        'Nach unten rechts',
+    'Zoom in':
+        'Vergrößern',
+    'Zoom out':
+        'Verkleinern',
+    'Turn the camera':
+        'Kamera schwenken',
 }
 
 
