@@ -16,14 +16,17 @@ camera and no vendor software is involved. See
 - **Several cameras at once** in a grid you arrange yourself. A camera can cover
   more than one cell (2×1, 1×2, 2×2 …), or be placed automatically.
 - **Volume and mute per camera**, because eight rooms at once is not a feature.
-- **Motion alerts** either from the camera over ONVIF, or worked out here from
-  the picture — for cameras that report nothing. The local detector takes
+- **Motion alerts** either from the camera, over ONVIF or Baichuan, or worked
+  out here from the picture — for cameras that report nothing. The local detector takes
   drawable zones, so a tree in the wind or a neighbour's door can be left out.
 - **Sound detection** with a threshold in dBFS, for what the picture misses.
 - **Records to your own disk** — on motion or at the press of a button. Works
   on cameras with no SD card, because the recording happens here. A separate
   ffmpeg process copies the stream through without re-encoding, so quality is
   untouched and the processor stays idle.
+- **Turns the camera**: buttons over the picture pan and tilt it for as long
+  as they are held, and zoom it where it has a zoom lens. Offered only on a
+  camera that says it has a motor.
 - **Changes settings on the camera**: resolution, frame rate, bit rate, H.264
   profile and the picture controls. Every choice offered is one the camera
   itself reported, so no model is shown an option it cannot do. Also the
@@ -147,7 +150,8 @@ ctest --test-dir build --output-on-failure
 
 No camera is needed. `tests/FakeCamera` plays the camera's side of Baichuan on
 the loopback interface: the login handshake, AES and XOR as the firmware does
-them, and answers from captures of four real cameras in `tests/fixtures`. The
+them, answers from captures of four real cameras in `tests/fixtures`, alarms
+pushed as an E1 pushes them, and video laid out as an E1 lays it out. The
 captures have everything identifying replaced. Nothing is sent beyond the
 machine's loopback interface. The tests cover:
 
@@ -166,6 +170,15 @@ machine's loopback interface. The tests cover:
   order of automatic transports, and when settings go over Baichuan
 - **video tables:** the transport-stream tables Baichuan video is wrapped in,
   checked by a parser of their own
+- **sharing the video:** two readers arriving together both served from one
+  camera connection, one leaving without disturbing the other, a late one
+  starting on the last key frame, and a stream whose camera has gone replaced
+- **turning the camera:** over Baichuan, each movement and a preset reaching
+  the camera as the messages it expects, a word it does not know refused
+  before it is sent, and whether there is a motor read from what each model
+  says at login. Over the HTTP API, the same as `PtzCtrl`, and which cameras
+  `GetAbility` says can turn and zoom. The buttons themselves: a press sends
+  the direction, the release sends Stop, and zoom only where there is a lens
 - **adding a camera:** the camera list driven as a person would. That covers
   add, remove, test connection and save, and the saved file read back on the
   next start, including files written by older versions.
@@ -180,7 +193,11 @@ machine's loopback interface. The tests cover:
   mentions Reolink
 - **motion from the camera:** the ONVIF subscription and long poll against an
   E1 Zoom's real replies. That includes the WS-Security digest, each kind of
-  event kept apart, and a recorder's events sent to the right channel.
+  event kept apart, and a recorder's events sent to the right channel. Over
+  Baichuan, for a camera without ONVIF: the alarms read, and carried on the
+  settings session, an alarm that arrives mid-request included. A session the
+  camera drops in the middle of motion ends the motion and comes back by
+  itself.
 - **events:** placeholders, the command, the webhook, MQTT against a broker of
   its own, and the event log
 - **the log:** passwords, tokens and public addresses kept out of the log
@@ -285,9 +302,10 @@ was found.
 | Camera settings | ✓ | | | | when there is no web server ¹ |
 | About page: model, hardware, firmware, serial | ✓ | | | | ✓ |
 | Still for drawing the detection area | ✓ | | | | — |
-| Motion alerts from the camera | | | | ✓ | |
-| Motion and sound detected here | | ✓ | ✓ | | — ² |
-| Recording to disk, pre-roll, round the clock | | ✓ | ✓ | | — ² |
+| Motion alerts from the camera | | | | ✓ | when there is no ONVIF |
+| Motion and sound detected here | | ✓ | ✓ | | motion ² |
+| Recording to disk, pre-roll, round the clock | | ✓ | ✓ | | ✓ ² |
+| Turning and zooming the camera | ✓ | | | | when there is no web server |
 | Recordings on the SD card: search, play, download | ✓ | | | | — |
 | Wi-Fi strength on the tile | ✓ | | | | — |
 | Firmware update, downloaded by the camera | ✓ | | | | — |
@@ -318,10 +336,12 @@ update, formatting the card, or snapshots. Those panels say so instead of
 failing. The message numbers and the mapping of each field are in
 [docs/protocol.md](docs/protocol.md#settings).
 
-² Baichuan video is re-served on a loopback port that exists only while a tile
-is playing it, so there is no address for ffmpeg to open. A camera that offers
-nothing but Baichuan, such as an E1 with its web server and RTSP switched off,
-can be watched and configured but not recorded or analysed here.
+² Baichuan video is re-served on a loopback port, which the tile, the recorder
+and motion detection all open: the camera gives one session to all of them. So
+a camera that offers nothing but Baichuan, such as an E1 with its web server
+and RTSP switched off, can be recorded and watched for motion like any other.
+Sound detection is not available that way, since what is re-served is the
+picture alone.
 
 ³ For a camera that cannot reach Reolink itself, or has no web server. Unzip
 the download from Reolink's download centre, then **Maintenance → Install from

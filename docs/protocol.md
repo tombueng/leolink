@@ -578,6 +578,20 @@ that the discarded pictures occupied is taken out of the timeline as well. The
 same arithmetic covers a camera whose clock restarts or jumps, which would
 otherwise reach the player as time running backwards.
 
+**One camera connection, several readers.** The relay is shared: the tile's
+player, an ffmpeg recording and an ffmpeg looking for motion all open the same
+loopback port, and each is served on a connection of its own, with its own
+muxer and its own pacing, so a player that falls behind gives up pictures
+without taking them from the recording beside it. A camera with a handful of
+sessions spends one on all of them. The port is open before the camera has
+answered, and a reader that connects that early waits in the queue until the
+pictures start.
+
+One trap in serving several readers from a thread with no event loop:
+`QTcpServer::waitForNewConnection(0)` takes every connection waiting on the
+socket but reports only once, so two readers that arrive together leave the
+second in the server's own queue. Ask `hasPendingConnections()` as well.
+
 ### What it adds over the CGI API
 
 ```xml
@@ -597,7 +611,9 @@ From the dissector; only type 1 verified here.
 
 ```
 1 login   2 logout   3/4 video preview   5–16 file/replay
-18 PTZ    25–107 configuration           145 ping   234 UDP keep-alive
+18 PTZ    19 PTZ preset   31 alarm subscription   33 alarm
+25–107 configuration      93 link type (a keep-alive)
+145 ping  234 UDP keep-alive
 ```
 
 ### Settings
@@ -669,6 +685,73 @@ Not found over Baichuan yet: user accounts, the e-mail and FTP server
 settings, daylight-saving rules, NTP, formatting the card, recording search.
 Those answer -9, as a CGI command the firmware does not know would, and the
 dialog leaves them out.
+
+### Alarms
+
+What a camera with no ONVIF tells about motion, and what Reolink's own app
+listens to. Checked on an E1 (`v3.1.0.4450`); the messages and layout follow
+reolink_aio.
+
+Subscribing is message **31** with no body and **251** in the header's
+channel byte (byte 12), which marks a message about the camera's push
+channel rather than about a channel of video. The camera answers it, then
+sends message **33** at once with the state of every channel, and again on
+every change:
+
+```xml
+<AlarmEventList version="1.1">
+<AlarmEvent version="1.1">
+<channelId>0</channelId>
+<status>none</status>          <!-- "MD" while there is motion -->
+<AItype>none</AItype>          <!-- or "people", "vehicle", "dog_cat", comma-separated -->
+<recording>0</recording>
+<timeStamp>0</timeStamp>
+</AlarmEvent>
+</AlarmEventList>
+```
+
+leolink counts a channel as seeing motion while its status holds `MD` or
+`AItype` names anything but `none`, which is how the same camera's ONVIF
+topics read. A status of `visitor` is a doorbell press, and is not motion.
+
+Other pushes arrive on the same connection unasked — 78 (picture), 79
+(serial port), 291 (floodlight), 623 (sleep) — and are stepped over. Nothing
+more needs sending but a keep-alive: message **93**, answered with the link
+type, every half minute or so.
+
+**The subscription shares the settings session.** An E1 has few Baichuan
+sessions: with two taken it refused three more opened at once. So leolink
+subscribes on the connection it already keeps for settings and PTZ, reads
+what is pushed between one request and the next, and hands on an alarm that
+arrives while a request is waiting for its answer instead of stepping over it.
+The keep-alive also keeps that session from being dropped as idle, which an
+E1 Pro otherwise does within a minute. A camera reached only over Baichuan
+costs two sessions in all: that one, and the video.
+
+### PTZ
+
+```xml
+<!-- message 18; the movement goes on until "Stop" or the end of travel -->
+<PtzControl version="1.1">
+<channelId>0</channelId>
+<speed>32</speed>              <!-- optional -->
+<command>Left</command>
+</PtzControl>
+
+<!-- message 19 -->
+<PtzPreset version="1.1">
+<channelId>0</channelId>
+<presetList><preset><id>1</id><command>toPos</command></preset></presetList>
+</PtzPreset>
+```
+
+The commands are the CGI API's `PtzCtrl` operations — `Left`, `RightUp`,
+`ZoomInc`, `Stop` — and an E1, an E1 Pro and an E1 Zoom accept `Stop` in that
+spelling and in lower case alike. Whether there is a motor is the login's
+`<ptzMode>`: `pt` on the E1 and E1 Pro, `ptz` on the E1 Zoom, `none` on the
+doorbell. Over HTTP the same is `GetAbility`'s `ptzCtrl` and, for the zoom,
+`supportZoom` or a `ptzType` of 1, 2 or 5 — the E1 Zoom says 5. `GetPtzPreset`
+says nothing either way: the doorbell answers it with four presets.
 
 ### Firmware
 

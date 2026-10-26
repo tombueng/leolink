@@ -60,6 +60,9 @@ switched off to save power, and some firmware disables it by default. It also
 leaves the camera's small pool of web sessions alone, which matters on a device
 that only allows a handful at once. leolink speaks the protocol itself and hands
 the player a plain video stream on a loopback port; sound still comes over RTSP.
+Recording and motion detection open the same port, so one connection to the
+camera serves the tile and everything else that reads it — and a camera that
+offers nothing but Baichuan can be recorded and watched like any other.
 
 A camera with no web server — an E1 Pro has none, and an E1 can have it
 switched off — is configured over Baichuan instead, with no setting to change.
@@ -102,6 +105,20 @@ the camera.
 
 ---
 
+## Turning the camera
+
+A camera with a motor — an E1, E1 Pro or E1 Zoom — gets a ✥ button in its tile's
+strip. Press it and arrows appear over the picture, in its lower right corner,
+with **+** and **−** for the zoom on a camera that has one. The camera turns for
+as long as an arrow is held and stops when it is let go, so it can be aimed
+while watching what it sees.
+
+The button appears only on a camera that says it has a motor: over the HTTP API
+where it has one, otherwise from what it reports over Baichuan when leolink logs
+in. Either way the same commands go to the camera.
+
+---
+
 ## Events
 
 **Cameras… → pick a camera → Settings for this camera…**, then *Detection by
@@ -115,12 +132,16 @@ whichever camera raised it, and is under **Settings… → On motion**.
 ### Who notices the motion
 
 *The camera reports it* uses ONVIF and costs nothing — the camera was watching
-anyway. This is right for any Reolink with motion detection switched on.
+anyway. This is right for any Reolink with motion detection switched on. A
+camera with no ONVIF — an E1 with its web server and RTSP switched off — is heard
+over Baichuan instead, on the connection leolink keeps for its settings, so it
+costs no extra session either.
 
 *leolink watches the picture* analyses the video here instead. Use it for
 cameras that report nothing: older firmware, other makers, or a camera whose
-own detection is off. It opens a second connection to the sub stream and
-compares successive frames at 160x90 — small enough to watch many cameras at
+own detection is off. It opens a second connection to the sub stream — over
+Baichuan, it shares the one the tile has — and compares successive frames at
+160x90 — small enough to watch many cameras at
 once, and quite enough to notice a person.
 
 *Either of the two* accepts whichever speaks first.
@@ -141,7 +162,8 @@ busy traffic around 60‰.
 A camera with a microphone can raise events on noise. The threshold is in dBFS:
 -60 dB is close to silence, -35 dB the default, -20 dB a raised voice nearby.
 *Hold for* keeps the event up after the noise stops so one bark is not reported
-four times.
+four times. Not available for a camera watched over Baichuan, which carries the
+picture alone.
 
 ### Recording
 
