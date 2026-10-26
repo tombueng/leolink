@@ -734,6 +734,8 @@ VideoTile *MainWindow::createTile(const CameraConfig &camera)
             this, &MainWindow::onRecordToggled);
     connect(tile, &VideoTile::transportFailed,
             this, &MainWindow::onTransportFailed);
+    connect(tile, &VideoTile::talkToggled,
+            this, &MainWindow::onTalkToggled);
     connect(tile, &VideoTile::ptzRequested,
             this, &MainWindow::onPtzRequested);
     // The tiles cover the central widget, so they need the escape hatch too.
