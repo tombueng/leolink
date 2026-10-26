@@ -70,6 +70,7 @@ set(LEOLINK_SOURCES
     src/PtzPad.cpp            src/PtzPad.h
     src/Protocols.cpp         src/Protocols.h
     src/XmlText.cpp           src/XmlText.h
+    src/BaichuanMessages.h
 )
 
 qt_add_executable(leolink

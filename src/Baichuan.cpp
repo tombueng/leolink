@@ -10,9 +10,12 @@
 #include <QTextStream>
 #include <QUdpSocket>
 
+#include "BaichuanMessages.h"
 #include "XmlText.h"
 
 namespace leolink {
+
+using namespace baichuan;
 
 namespace {
 
@@ -35,13 +38,6 @@ constexpr quint16 kGrantedAes = 0xDD12;
 // notice is in LICENSE).
 constexpr char kAesIv[] = "0123456789abcdef";
 
-constexpr quint32 kMsgLogin = 1;
-constexpr quint32 kMsgLogout = 2;
-constexpr quint32 kMsgVideo = 3;
-constexpr quint32 kMsgUpgradeFile = 67;
-constexpr quint32 kMsgAlarmSubscribe = 31;
-/// Byte 12 of a header about the camera's push messages rather than a channel.
-constexpr quint8 kPushChannel = 251;
 
 constexpr int kTimeoutMs = 10000;
 
@@ -548,7 +544,7 @@ bool BaichuanClient::login()
     QByteArray body;
     body += md5Trunc(m_user).toLatin1().leftJustified(32, '\0');
     body += md5Trunc(m_password).toLatin1().leftJustified(32, '\0');
-    m_socket->write(legacyHeader(kMsgLogin, body.size(), kEncAes) + body);
+    m_socket->write(legacyHeader(kLogin, body.size(), kEncAes) + body);
     m_socket->flush();
 
     // 2. Nonce.
@@ -580,7 +576,7 @@ bool BaichuanClient::login()
             .arg(md5Trunc(m_user + nonce), md5Trunc(m_password + nonce));
 
     const QByteArray encrypted = xorCrypt(xml.toUtf8(), 0);
-    m_socket->write(modernHeader(kMsgLogin, encrypted.size()) + encrypted);
+    m_socket->write(modernHeader(kLogin, encrypted.size()) + encrypted);
     m_socket->flush();
 
     // AES starts here, with the reply. The key is the first sixteen characters
@@ -629,7 +625,7 @@ bool BaichuanClient::requestVideo(int channel, bool mainStream)
     // Under AES the request must be encrypted too: sent XOR'd it is refused
     // with status 400 and no video follows.
     const QByteArray encrypted = encryptXml(xml);
-    m_socket->write(modernHeader(kMsgVideo, encrypted.size()) + encrypted);
+    m_socket->write(modernHeader(kVideo, encrypted.size()) + encrypted);
     m_socket->flush();
 
     // Not waitForBytesWritten(): flush() usually gets everything out, and the
@@ -661,7 +657,7 @@ bool BaichuanClient::readMediaChunk(QByteArray &media, int timeoutMs)
     if (onMessage)
         onMessage(header);
 
-    if (header.msgType != kMsgVideo)
+    if (header.msgType != kVideo)
         return true;   // status replies and keep-alives share the connection
 
     // The first `payloadOffset` bytes are an XML preamble, not media. The
@@ -794,7 +790,7 @@ bool BaichuanClient::subscribeAlarms()
     }
     // No body, and no answer waited for here: the answer and the first alarm
     // arrive together, and whoever reads this connection takes both.
-    send(kMsgAlarmSubscribe, {}, {}, kPushChannel);
+    send(kAlarmSubscribe, {}, {}, kPushChannel);
     return true;
 }
 
@@ -815,7 +811,7 @@ bool BaichuanClient::uploadFirmware(const QString &fileName, const QByteArray &p
             QByteArray reply;
             if (!readMessage(header, reply, kUpgradeReplyTimeoutMs))
                 return false;
-            if (header.msgType != kMsgUpgradeFile || header.handle != handle)
+            if (header.msgType != kUpgradeFile || header.handle != handle)
                 continue;
             if (header.status() != 200) {
                 m_error = QStringLiteral("the camera refused the %1 with status %2")
@@ -835,7 +831,7 @@ bool BaichuanClient::uploadFirmware(const QString &fileName, const QByteArray &p
                        "</ConfigFileInfo>\n</body>\n")
             .arg(fileName.toHtmlEscaped())
             .arg(pak.size()));
-    m_socket->write(modernHeader(kMsgUpgradeFile, info.size(), 0, 0, handle) + info);
+    m_socket->write(modernHeader(kUpgradeFile, info.size(), 0, 0, handle) + info);
     m_socket->flush();
     if (!answered("file announcement"))
         return false;
@@ -847,7 +843,7 @@ bool BaichuanClient::uploadFirmware(const QString &fileName, const QByteArray &p
     const qsizetype pieceBytes = kMaxMessageBytes - 24 - ext.size();
     for (qsizetype sent = 0; sent < pak.size();) {
         const QByteArray piece = pak.mid(sent, pieceBytes);
-        m_socket->write(modernHeader(kMsgUpgradeFile, quint32(ext.size() + piece.size()), 0,
+        m_socket->write(modernHeader(kUpgradeFile, quint32(ext.size() + piece.size()), 0,
                                      quint32(ext.size()), handle) +
                         ext + piece);
         m_socket->flush();
@@ -865,7 +861,7 @@ void BaichuanClient::close()
     if (!m_socket)
         return;
     if (m_socket->state() == QAbstractSocket::ConnectedState) {
-        m_socket->write(modernHeader(kMsgLogout, 0));
+        m_socket->write(modernHeader(kLogout, 0));
         m_socket->flush();
         m_socket->waitForBytesWritten(1000);
     }

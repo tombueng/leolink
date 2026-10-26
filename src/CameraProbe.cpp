@@ -7,6 +7,7 @@
 #include <QTcpSocket>
 
 #include "Baichuan.h"
+#include "BaichuanMessages.h"
 
 namespace leolink {
 
@@ -15,8 +16,6 @@ namespace {
 /// Long enough for a camera on poor Wi-Fi, which can take a second to answer
 /// anything; short enough that one which is off does not hold up the others.
 constexpr int kPortTimeoutMs = 2000;
-
-constexpr quint32 kMsgGetPorts = 37;
 
 struct Port {
     quint16 number;
@@ -78,7 +77,7 @@ Capabilities CameraProbe::run(const CameraConfig &camera, const QString &secret)
         BaichuanClient client(camera.host, camera.user, secret);
         if (client.login()) {
             login = true;
-            portList = client.request(kMsgGetPorts);
+            portList = client.request(baichuan::kGetPorts);
             client.close();
         }
     }
