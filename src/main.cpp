@@ -13,6 +13,7 @@
 
 #include "Baichuan.h"
 #include "BaichuanApi.h"
+#include "BaichuanStream.h"
 #include "CameraProbe.h"
 #include "CameraSettingsDialog.h"
 #include "Config.h"
@@ -377,6 +378,10 @@ int main(int argc, char *argv[])
         window.show();
         result = QApplication::exec();
     }
+    // Shared Baichuan streams outlive the window that started them, since
+    // whatever is reading them may be gone already; ended here, while their
+    // last lines can still reach the log.
+    leolink::BaichuanStream::shutdownAll();
     // Scoped on purpose: the window is destroyed *here*, while the application
     // object is still alive. Its destructor logs every camera session out, and
     // that needs an event loop to run in — which QEventLoop can still provide

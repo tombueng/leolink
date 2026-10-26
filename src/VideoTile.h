@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QImage>
+#include <QPointer>
 #include <QWidget>
 
 #include "Config.h"
@@ -198,7 +199,8 @@ private:
 
     /// Only used when the transport is Baichuan: the protocol is spoken here
     /// and re-served to the player on a loopback port.
-    BaichuanStream *m_baichuan{nullptr};
+    /// Shared, and owned by the application rather than by this tile.
+    QPointer<BaichuanStream> m_baichuan;
     QString m_baichuanUrl;
     /// Frame rate the camera announced, for the line under the picture. The
     /// stream itself carries a timestamp per frame, so nothing depends on this.

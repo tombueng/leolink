@@ -135,6 +135,9 @@ struct CameraConfig {
     QString secret() const;
     /// rtsp://…  or  http://…/flv?…  depending on effectiveTransport().
     QString streamUrl() const;
+    /// Whether there is a stream to open at all: an address, or Baichuan, which
+    /// has one only once leolink serves it (BaichuanStream::openUrl()).
+    bool hasStream() const;
 
     /// Run-time only; see Capabilities.
     Capabilities caps;

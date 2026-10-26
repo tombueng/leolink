@@ -1,5 +1,6 @@
 #include "Recorder.h"
 
+#include "BaichuanStream.h"
 #include "Log.h"
 
 #include <csignal>
@@ -56,7 +57,9 @@ bool Recorder::start(const CameraConfig &camera, const QString &path)
         return false;
     }
 
-    const QString url = camera.streamUrl();
+    // For Baichuan, the loopback port the camera's stream is served on —
+    // shared with the tile showing it, if there is one.
+    const QString url = BaichuanStream::openUrl(camera);
     if (url.isEmpty()) {
         emit failed(tr("No stream address for %1.").arg(camera.label()));
         return false;

@@ -3,6 +3,8 @@
 
 #include <atomic>
 
+#include <QMutex>
+#include <QSemaphore>
 #include <QString>
 #include <QThread>
 
@@ -28,6 +30,16 @@ namespace leolink {
 /// pictures have been given up because the player fell behind, the gap they
 /// would have left is taken out of it as well. See kBacklogBudgetMs.
 ///
+/// Several readers can have the stream at once, each on a connection of its
+/// own with its own pacing: the tile's player, and ffmpeg recording it,
+/// buffering it or looking for motion in it. One camera connection serves them
+/// all, which matters on a camera with a handful of sessions to give — and it
+/// is what lets a camera that offers nothing but Baichuan be recorded at all,
+/// since ffmpeg opens the loopback port like any other address.
+///
+/// Shared, through shared(): one per camera and stream, made on first use and
+/// ending by itself once nobody has read it for a while.
+///
 /// Runs on its own thread. The protocol client is written synchronously, and
 /// blocking the interface for the length of a network read is not acceptable
 /// on a window showing several cameras.
@@ -38,13 +50,32 @@ public:
     explicit BaichuanStream(QObject *parent = nullptr);
     ~BaichuanStream() override;
 
-    /// Starts the connection. `url()` becomes valid once ready() is emitted.
+    /// The stream for this camera and stream type, started if there is none
+    /// yet or the last one is ending. Owned by the application; the pointer
+    /// is good until finished() is emitted. Interface thread only.
+    static BaichuanStream *shared(const CameraConfig &camera);
+    /// What ffmpeg or a player should open for this camera: its own address,
+    /// or for Baichuan the loopback port of the shared stream. Interface
+    /// thread only. Empty if the camera has no stream at all.
+    static QString openUrl(const CameraConfig &camera);
+    /// Ends every shared stream. On the way out.
+    static void shutdownAll();
+
+    /// Starts the connection. The loopback port is open when this returns, so
+    /// url() is good at once — a reader that connects before the camera has
+    /// answered waits in the queue, and is served when the pictures start.
     void start(const CameraConfig &camera);
     /// Asks the thread to finish and waits briefly for it.
     void shutdown();
 
     /// tcp://127.0.0.1:<port> — what to hand the player.
-    QString url() const { return m_url; }
+    QString url() const;
+    /// Whether ready() has been emitted, for a reader arriving after it.
+    bool isReady() const { return m_ready; }
+    /// The frame rate the camera announced, 0 until it has.
+    int announcedFps() const { return m_fps; }
+    /// Set once the stream has stopped serving, before finished().
+    bool isEnding() const { return m_ending; }
 
 signals:
     /// The loopback port is listening; the player may connect.
@@ -63,8 +94,15 @@ private:
     /// which is a D-Bus conversation, and that belongs on the thread the rest
     /// of the interface runs on rather than in here.
     QString m_secret;
+    /// Written by the thread before start() returns, read anywhere after.
+    mutable QMutex m_urlLock;
     QString m_url;
+    /// Released by the thread once the port is open, or it has failed to.
+    QSemaphore m_listening;
     std::atomic_bool m_stop{false};
+    std::atomic_bool m_ready{false};
+    std::atomic_bool m_ending{false};
+    std::atomic_int m_fps{0};
 };
 
 } // namespace leolink

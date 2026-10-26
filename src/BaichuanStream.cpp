@@ -1,6 +1,10 @@
 #include "BaichuanStream.h"
 
+#include <list>
+
+#include <QCoreApplication>
 #include <QElapsedTimer>
+#include <QHash>
 #include <QTcpServer>
 #include <QTcpSocket>
 
@@ -11,7 +15,8 @@
 namespace leolink {
 
 namespace {
-/// How long to wait for the player to open the loopback port before giving up.
+/// How long to wait for a reader to open the loopback port before giving up,
+/// and how long the stream goes on with nobody reading it before it closes.
 constexpr int kAcceptTimeoutMs = 20000;
 /// One read from the camera. Short enough that a stopped stream is noticed
 /// quickly, long enough not to spin.
@@ -67,6 +72,60 @@ constexpr int kUnknownBlocksLogged = 5;
 constexpr qint64 kUnknownSummaryMs = 60000;
 } // namespace
 
+namespace {
+
+/// The shared streams, by camera and stream type. Touched on the interface
+/// thread only.
+QHash<QString, BaichuanStream *> &registry()
+{
+    static QHash<QString, BaichuanStream *> streams;
+    return streams;
+}
+
+QString registryKey(const CameraConfig &camera)
+{
+    return QStringLiteral("%1|%2|%3|%4|%5")
+        .arg(camera.host).arg(camera.baichuanPort).arg(camera.user)
+        .arg(camera.channel).arg(camera.stream);
+}
+
+} // namespace
+
+BaichuanStream *BaichuanStream::shared(const CameraConfig &camera)
+{
+    const QString key = registryKey(camera);
+    BaichuanStream *stream = registry().value(key);
+    if (stream && !stream->isEnding())
+        return stream;
+
+    // One that is ending stays where it is until its thread has finished, but
+    // is no longer what this camera is reached through.
+    stream = new BaichuanStream(QCoreApplication::instance());
+    registry().insert(key, stream);
+    connect(stream, &QThread::finished, stream, [stream, key] {
+        if (registry().value(key) == stream)
+            registry().remove(key);
+        stream->deleteLater();
+    });
+    stream->start(camera);
+    return stream;
+}
+
+QString BaichuanStream::openUrl(const CameraConfig &camera)
+{
+    if (camera.effectiveTransport() == QLatin1String("baichuan"))
+        return shared(camera)->url();
+    return camera.streamUrl();
+}
+
+void BaichuanStream::shutdownAll()
+{
+    const auto streams = registry().values();
+    registry().clear();
+    for (BaichuanStream *stream : streams)
+        stream->shutdown();
+}
+
 BaichuanStream::BaichuanStream(QObject *parent) : QThread(parent) {}
 
 BaichuanStream::~BaichuanStream()
@@ -81,6 +140,15 @@ void BaichuanStream::start(const CameraConfig &camera)
     m_secret = camera.secret();
     m_stop = false;
     QThread::start();
+    // Opening a loopback port takes no time at all; this only waits for the
+    // thread to get that far.
+    m_listening.tryAcquire(1, 5000);
+}
+
+QString BaichuanStream::url() const
+{
+    QMutexLocker lock(&m_urlLock);
+    return m_url;
 }
 
 void BaichuanStream::shutdown()
@@ -102,18 +170,26 @@ void BaichuanStream::run()
     // ownership rules simple: nothing here is touched from the interface.
     QTcpServer server;
     if (!server.listen(QHostAddress::LocalHost, 0)) {
+        m_ending = true;
+        m_listening.release();
         emit failed(tr("Cannot open a local port: %1").arg(server.errorString()));
         return;
     }
-    m_url = QStringLiteral("tcp://127.0.0.1:%1").arg(server.serverPort());
+    {
+        QMutexLocker lock(&m_urlLock);
+        m_url = QStringLiteral("tcp://127.0.0.1:%1").arg(server.serverPort());
+    }
+    m_listening.release();
     LEO_DEBUG(Baichuan, m_camera.label(),
               QStringLiteral("Listening on %1, not yet offered to the player")
-                  .arg(m_url));
+                  .arg(url()));
 
-    BaichuanClient client(m_camera.host, m_camera.user, m_secret);
+    BaichuanClient client(m_camera.host, m_camera.user, m_secret,
+                          m_camera.baichuanPort);
     if (!client.login()) {
         LEO_WARN(Baichuan, m_camera.label(),
                  QStringLiteral("Login failed: %1").arg(client.lastError()));
+        m_ending = true;
         emit failed(tr("Baichuan login failed: %1").arg(client.lastError()));
         return;
     }
@@ -123,46 +199,55 @@ void BaichuanStream::run()
                              m_camera.stream == QLatin1String("main"))) {
         LEO_WARN(Baichuan, m_camera.label(),
                  QStringLiteral("Video request refused: %1").arg(client.lastError()));
+        m_ending = true;
         emit failed(tr("The camera refused to send video: %1")
                         .arg(client.lastError()));
         return;
     }
 
     BcMediaParser parser;
-    // Wrapped rather than handed over bare, so every picture carries the time
-    // the camera took it. Without that a player has to be told a frame rate and
-    // believe it, and a rate that is wrong by two frames a second is a delay
-    // that grows for as long as the window is open.
-    TsMuxer muxer;
-    QTcpSocket *player = nullptr;
-    bool started = false;      ///< has this player been given a key frame yet
     bool announced = false;    ///< has the player been told where to connect
-    bool dropping = false;     ///< shedding frames until the player catches up
     QByteArray primer;         ///< the last key frame, to open a new connection with
     qint64 primerPts = 0;
-    QString codec;             ///< as the camera named it: H264 or H265
     qint64 sent = 0;
     int frames = 0;
     int dropped = 0;
-    int droppedThisTime = 0;   ///< ... and of those, in the episode under way
+    qint64 recovered = 0;      ///< time taken out of the timelines, in all
     int announcedFps = 0;
+    int readers = 0;           ///< connections served, in all
 
-    // ── the timeline handed to the player ───────────────────────────────────
-    qint64 skewUs = 0;              ///< time taken out of it, in total
-    qint64 lastCameraPts = -1;      ///< camera clock of the last picture sent
-    qint64 intervalUs = kAssumedIntervalUs;
-    bool closeSeam = false;         ///< the next picture follows on from the last
-
-    // ── what the player has not taken yet ───────────────────────────────────
     /// A write, and when it was made: how much had been handed to the socket by
     /// then. Comparing that with what the socket still holds says which write
-    /// the player has got to, and therefore how long it has been waiting.
+    /// the reader has got to, and therefore how long it has been waiting.
     struct Handover {
         qint64 upTo;
         qint64 at;
     };
-    QList<Handover> handovers;
-    qint64 handedOver = 0;
+
+    /// One connection reading the stream. Each has its own pacing, so one
+    /// that falls behind — a player on a busy machine — gives up pictures of
+    /// its own without taking them from a recording beside it. Each is
+    /// wrapped by a muxer of its own, since the timeline it is handed is its
+    /// own too.
+    struct Reader {
+        QTcpSocket *socket{nullptr};
+        TsMuxer muxer;
+        QString codec;             ///< what the muxer has been told
+        bool started{false};       ///< has it been given a key frame yet
+        bool dropping{false};      ///< shedding frames until it catches up
+        int droppedThisTime{0};    ///< ... and of those, in the episode under way
+
+        // ── the timeline handed to it ───────────────────────────────────────
+        qint64 skewUs{0};              ///< time taken out of it, in total
+        qint64 lastCameraPts{-1};      ///< camera clock of the last picture sent
+        qint64 intervalUs{kAssumedIntervalUs};
+        bool closeSeam{false};         ///< the next picture follows on from the last
+
+        // ── what it has not taken yet ───────────────────────────────────────
+        QList<Handover> handovers;
+        qint64 handedOver{0};
+    };
+    std::list<Reader> active;
 
     int unknownBlocks = 0;
     int unknownLogged = 0;
@@ -173,27 +258,32 @@ void BaichuanStream::run()
     /// Never restarted, unlike `since`: everything above is timed against it.
     QElapsedTimer clock;
     clock.start();
+    /// Since the last reader went. Nobody reading for long enough ends the
+    /// stream: it is shared, and no one person stops it.
+    QElapsedTimer unread;
+    unread.start();
 
-    // Every write goes through here, so that what the player has taken can be
+    // Every write goes through here, so that what a reader has taken can be
     // told from what it has not.
-    auto hand = [&](const QByteArray &data) {
-        player->write(data);
-        handedOver += data.size();
-        handovers.append({handedOver, clock.elapsed()});
+    auto hand = [&](Reader &r, const QByteArray &data) {
+        r.socket->write(data);
+        r.handedOver += data.size();
+        r.handovers.append({r.handedOver, clock.elapsed()});
     };
 
-    /// How long the oldest thing the player has not taken has been waiting —
+    /// How long the oldest thing a reader has not taken has been waiting —
     /// which is how far behind it is. The socket's own buffer cannot be seen
     /// from here and counts as taken, which is why it is kept small.
-    auto behindMs = [&]() -> qint64 {
-        const qint64 taken = handedOver - player->bytesToWrite();
-        while (!handovers.isEmpty() && handovers.constFirst().upTo <= taken)
-            handovers.removeFirst();
-        return handovers.isEmpty() ? 0 : clock.elapsed() - handovers.constFirst().at;
+    auto behindMs = [&](Reader &r) -> qint64 {
+        const qint64 taken = r.handedOver - r.socket->bytesToWrite();
+        while (!r.handovers.isEmpty() && r.handovers.constFirst().upTo <= taken)
+            r.handovers.removeFirst();
+        return r.handovers.isEmpty() ? 0 : clock.elapsed() - r.handovers.constFirst().at;
     };
 
     parser.onFormat = [&](int width, int height, int fps) {
         announcedFps = fps;
+        m_fps = fps;
         LEO_INFO(Baichuan, m_camera.label(),
                  QStringLiteral("Camera announces %1x%2 @ %3 fps")
                      .arg(width).arg(height).arg(fps));
@@ -220,49 +310,40 @@ void BaichuanStream::run()
         }
     };
 
-    parser.onVideo = [&](const QByteArray &frame, bool keyFrame, qint64 ptsUs) {
-        // Kept whether or not anyone is listening: a player that connects, or
-        // reconnects, can then be handed a picture straight away instead of
-        // waiting out the rest of the group of pictures.
-        if (keyFrame) {
-            primer = frame;
-            primerPts = ptsUs;
-        }
-
-        if (!player || player->state() != QAbstractSocket::ConnectedState)
-            return;
-
+    /// One picture to one reader.
+    auto deliver = [&](Reader &r, const QByteArray &frame, bool keyFrame,
+                       qint64 ptsUs) {
         // Start on a key frame. Handing a decoder a run of predicted frames
         // with no reference produces exactly the field of green blocks this
         // project spent a long time chasing for other reasons.
-        if (!started) {
+        if (!r.started) {
             if (!keyFrame)
                 return;
-            started = true;
+            r.started = true;
         }
 
-        // How far behind the player is. The camera sends at its own rate
-        // regardless of what the player does with it, so without a bound the
+        // How far behind the reader is. The camera sends at its own rate
+        // regardless of what the reader does with it, so without a bound the
         // difference is stored rather than resolved — a delay that grows for as
         // long as the window is open and never comes back.
-        const qint64 behind = behindMs();
-        if (dropping) {
+        const qint64 behind = behindMs(r);
+        if (r.dropping) {
             // Only a key frame can start a picture again, and only once the
             // backlog has actually drained.
             if (!keyFrame || behind > kBacklogClearedMs) {
                 ++dropped;
-                ++droppedThisTime;
+                ++r.droppedThisTime;
                 return;
             }
-            dropping = false;
-            closeSeam = true;
+            r.dropping = false;
+            r.closeSeam = true;
         } else if (behind > kBacklogBudgetMs ||
-                   player->bytesToWrite() > kMaxQueuedBytes) {
-            dropping = true;
+                   r.socket->bytesToWrite() > kMaxQueuedBytes) {
+            r.dropping = true;
             ++dropped;
-            droppedThisTime = 1;
+            r.droppedThisTime = 1;
             LEO_WARN(Baichuan, m_camera.label(),
-                     QStringLiteral("The player is %1 s behind — giving up "
+                     QStringLiteral("A reader is %1 s behind — giving up "
                                     "pictures until it catches up")
                          .arg(behind / 1000.0, 0, 'f', 1));
             return;
@@ -278,86 +359,129 @@ void BaichuanStream::run()
         // freeing memory. The same arithmetic covers a camera whose clock jumps
         // or starts again, which would otherwise be handed to the player as time
         // running backwards.
-        if (lastCameraPts >= 0) {
-            const qint64 step = ptsUs - lastCameraPts;
-            if (closeSeam || step <= 0 || step > kTimelineBreakUs) {
-                skewUs += step - intervalUs;
-                if (closeSeam)
+        if (r.lastCameraPts >= 0) {
+            const qint64 step = ptsUs - r.lastCameraPts;
+            if (r.closeSeam || step <= 0 || step > kTimelineBreakUs) {
+                r.skewUs += step - r.intervalUs;
+                recovered += step - r.intervalUs;
+                if (r.closeSeam)
                     LEO_INFO(Baichuan, m_camera.label(),
-                             QStringLiteral("Player caught up — %1 picture(s) "
+                             QStringLiteral("Reader caught up — %1 picture(s) "
                                             "given up, %2 s of delay recovered")
-                                 .arg(droppedThisTime)
-                                 .arg((step - intervalUs) / 1000000.0, 0, 'f', 1));
+                                 .arg(r.droppedThisTime)
+                                 .arg((step - r.intervalUs) / 1000000.0, 0, 'f', 1));
             } else {
                 // What this stream calls a frame interval, smoothed: cameras
                 // deliver a little unevenly, and this decides what "one picture
                 // later" means above.
-                intervalUs = (intervalUs * 3 + step) / 4;
+                r.intervalUs = (r.intervalUs * 3 + step) / 4;
             }
         }
-        lastCameraPts = ptsUs;
-        closeSeam = false;
+        r.lastCameraPts = ptsUs;
+        r.closeSeam = false;
 
         // The camera names its codec in the first frame it sends, which is
         // before the first key frame and therefore before any tables go out.
-        if (!parser.videoCodec().isEmpty() && parser.videoCodec() != codec) {
-            codec = parser.videoCodec();
-            muxer.setCodec(codec);
+        if (!parser.videoCodec().isEmpty() && parser.videoCodec() != r.codec) {
+            r.codec = parser.videoCodec();
+            r.muxer.setCodec(r.codec);
         }
 
-        const QByteArray wrapped = muxer.frame(frame, keyFrame, ptsUs - skewUs);
-        hand(wrapped);
+        const QByteArray wrapped = r.muxer.frame(frame, keyFrame, ptsUs - r.skewUs);
+        hand(r, wrapped);
         sent += wrapped.size();
+    };
+
+    parser.onVideo = [&](const QByteArray &frame, bool keyFrame, qint64 ptsUs) {
+        // Kept whether or not anyone is listening: a reader that connects, or
+        // reconnects, can then be handed a picture straight away instead of
+        // waiting out the rest of the group of pictures.
+        if (keyFrame) {
+            primer = frame;
+            primerPts = ptsUs;
+        }
         ++frames;
+        for (Reader &r : active) {
+            if (r.socket->state() == QAbstractSocket::ConnectedState)
+                deliver(r, frame, keyFrame, ptsUs);
+        }
     };
 
     QByteArray chunk;
     while (!m_stop) {
-        // A player that has gone — mpv reloads on any hiccup — is replaced by
-        // whoever connects next, on the same port. Ending the thread instead
-        // meant a new port every time, a fresh login on a camera that was
-        // still holding the last one, and a retry loop that never converged.
-        if (!player || player->state() != QAbstractSocket::ConnectedState) {
-            // waitForNewConnection() rather than hasPendingConnections(): this
-            // thread runs no event loop, so nothing delivers the connection to
-            // the server by itself. A zero timeout makes it a poll of the
-            // listening socket, which is exactly what is wanted here.
-            if (server.waitForNewConnection(0)) {
-                if (player) {
-                    player->abort();
-                    delete player;
-                }
-                player = server.nextPendingConnection();
-                // Latency matters more than packing here: a camera frame is
-                // worth sending the moment it is complete.
-                player->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-                player->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption,
-                                        kSendBufferBytes);
-                started = false;
-                dropping = false;
-                // A new socket holds nothing, and what the last one was owed
-                // went with it.
-                handedOver = 0;
-                handovers.clear();
-                // Whoever has just connected needs the tables before anything
-                // else means anything, and then a picture to start from.
-                hand(muxer.tables());
-                if (!primer.isEmpty()) {
-                    hand(muxer.frame(primer, true, primerPts - skewUs));
-                    started = true;
-                }
-                LEO_DEBUG(Baichuan, m_camera.label(),
-                          QStringLiteral("Player connected%1")
-                              .arg(primer.isEmpty()
-                                       ? QString()
-                                       : QStringLiteral(", opened on a stored "
-                                                        "key frame")));
-            } else if (announced && since.elapsed() > kAcceptTimeoutMs) {
-                LEO_WARN(Baichuan, m_camera.label(),
-                         QStringLiteral("The player never opened %1").arg(m_url));
-                emit failed(tr("The player did not connect."));
+        // Readers come and go — mpv reloads on any hiccup, a recording ends —
+        // and each new one is served on the same port. Ending the thread
+        // instead meant a new port every time, a fresh login on a camera that
+        // was still holding the last one, and a retry loop that never
+        // converged.
+        //
+        // waitForNewConnection() as well as hasPendingConnections(): this
+        // thread runs no event loop, so nothing delivers a connection to the
+        // server by itself, and a zero timeout makes it a poll of the
+        // listening socket. It takes every connection waiting there but says
+        // so only once — two readers that arrived together, as a recording and
+        // motion detection started at once do, left the second one in the
+        // server's queue, never served.
+        while (server.hasPendingConnections() || server.waitForNewConnection(0)) {
+            QTcpSocket *socket = server.nextPendingConnection();
+            if (!socket)
                 break;
+            // Latency matters more than packing here: a camera frame is worth
+            // sending the moment it is complete.
+            socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+            socket->setSocketOption(QAbstractSocket::SendBufferSizeSocketOption,
+                                    kSendBufferBytes);
+            Reader &r = active.emplace_back();
+            r.socket = socket;
+            ++readers;
+            // Whoever has just connected needs the tables before anything else
+            // means anything, and then a picture to start from.
+            if (!parser.videoCodec().isEmpty()) {
+                r.codec = parser.videoCodec();
+                r.muxer.setCodec(r.codec);
             }
+            hand(r, r.muxer.tables());
+            if (!primer.isEmpty()) {
+                hand(r, r.muxer.frame(primer, true, primerPts));
+                r.lastCameraPts = primerPts;
+                r.started = true;
+            }
+            LEO_DEBUG(Baichuan, m_camera.label(),
+                      QStringLiteral("Reader connected (%1 now)%2")
+                          .arg(active.size())
+                          .arg(primer.isEmpty()
+                                   ? QString()
+                                   : QStringLiteral(", opened on a stored "
+                                                    "key frame")));
+        }
+
+        // Readers that have gone.
+        for (auto it = active.begin(); it != active.end();) {
+            if (it->socket->state() != QAbstractSocket::ConnectedState) {
+                it->socket->abort();
+                delete it->socket;
+                it = active.erase(it);
+                LEO_DEBUG(Baichuan, m_camera.label(),
+                          QStringLiteral("Reader gone (%1 left)").arg(active.size()));
+            } else {
+                ++it;
+            }
+        }
+        if (!active.empty())
+            unread.restart();
+
+        if (announced && active.empty() && unread.elapsed() > kAcceptTimeoutMs) {
+            if (readers == 0) {
+                LEO_WARN(Baichuan, m_camera.label(),
+                         QStringLiteral("The player never opened %1").arg(url()));
+                m_ending = true;
+                emit failed(tr("The player did not connect."));
+            } else {
+                LEO_DEBUG(Baichuan, m_camera.label(),
+                          QStringLiteral("Nobody reading for %1 s — closing")
+                              .arg(kAcceptTimeoutMs / 1000));
+            }
+            break;
         }
 
         chunk.clear();
@@ -365,15 +489,17 @@ void BaichuanStream::run()
             LEO_WARN(Baichuan, m_camera.label(),
                      QStringLiteral("Stream ended after %1 frames (%2 KiB): %3")
                          .arg(frames).arg(sent / 1024).arg(client.lastError()));
+            m_ending = true;
             emit failed(tr("The camera stopped sending."));
             break;
         }
         if (!chunk.isEmpty())
             parser.feed(chunk);
 
-        if (player && player->state() == QAbstractSocket::ConnectedState) {
-            // Push it out rather than letting it pool in the socket buffer.
-            player->flush();
+        // Push it out rather than letting it pool in the socket buffers.
+        for (Reader &r : active) {
+            if (r.socket->state() == QAbstractSocket::ConnectedState)
+                r.socket->flush();
         }
 
         // Only now is the port worth offering: the camera is logged in, has
@@ -385,10 +511,11 @@ void BaichuanStream::run()
             (announcedFps > 0 || !primer.isEmpty() ||
              since.elapsed() > kAnnounceGraceMs)) {
             announced = true;
-            since.restart();   // the accept timeout runs from the offer
+            unread.restart();   // the accept timeout runs from the offer
             LEO_INFO(Baichuan, m_camera.label(),
-                     QStringLiteral("Serving the stream on %1").arg(m_url));
-            emit ready(m_url);
+                     QStringLiteral("Serving the stream on %1").arg(url()));
+            m_ready = true;
+            emit ready(url());
         }
 
         if (unknownBlocks > unknownLogged &&
@@ -402,22 +529,20 @@ void BaichuanStream::run()
             unknownWindow.restart();
         }
     }
+    m_ending = true;
 
     LEO_INFO(Baichuan, m_camera.label(),
-             QStringLiteral("Finished: %1 frames, %2 KiB, %3 dropped, %4 "
-                            "unrecognised block(s), %5 bytes of padding "
-                            "skipped, header found %6 / assumed %7, %8 s of "
-                            "delay recovered")
-                 .arg(frames).arg(sent / 1024).arg(dropped)
+             QStringLiteral("Finished: %1 frames, %2 KiB to %3 reader(s), %4 "
+                            "dropped, %5 unrecognised block(s), %6 bytes of "
+                            "padding skipped, header found %7 / assumed %8, "
+                            "%9 s of delay recovered")
+                 .arg(frames).arg(sent / 1024).arg(readers).arg(dropped)
                  .arg(unknownBlocks).arg(parser.skippedBytes())
                  .arg(parser.measuredHeaders()).arg(parser.assumedHeaders())
-                 .arg(skewUs / 1000000.0, 0, 'f', 1));
+                 .arg(recovered / 1000000.0, 0, 'f', 1));
 
-    // Not deleted here: the socket belongs to the server on this stack and goes
-    // with it. Only a socket that has been replaced by a reconnecting player is
-    // deleted, above, where it has already been closed.
-    if (player)
-        player->disconnectFromHost();
+    for (Reader &r : active)
+        r.socket->disconnectFromHost();
 }
 
 } // namespace leolink

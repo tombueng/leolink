@@ -206,6 +206,11 @@ QString CameraConfig::streamUrl() const
     return url.toString(QUrl::FullyEncoded);
 }
 
+bool CameraConfig::hasStream() const
+{
+    return effectiveTransport() == QLatin1String("baichuan") || !streamUrl().isEmpty();
+}
+
 // ── Config ──────────────────────────────────────────────────────────────────
 
 QString Config::path()

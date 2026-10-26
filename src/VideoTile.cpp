@@ -481,7 +481,11 @@ void VideoTile::startBaichuan()
     stopBaichuan();
     m_baichuanUrl.clear();
 
-    m_baichuan = new BaichuanStream(this);
+    // Shared with whatever else is reading this camera — a recording, motion
+    // detection — so the camera gives up one session for all of them.
+    m_baichuan = BaichuanStream::shared(m_config);
+    if (m_baichuan->announcedFps() > 0)
+        m_baichuanFps = m_baichuan->announcedFps();
     connect(m_baichuan, &BaichuanStream::formatKnown, this,
             [this](int, int, int fps) {
                 // Kept for the line under the picture. Nothing depends on it
@@ -492,11 +496,17 @@ void VideoTile::startBaichuan()
                     m_baichuanFps = fps;
             });
 
-    connect(m_baichuan, &BaichuanStream::ready, this, [this](const QString &url) {
+    const auto play = [this](const QString &url) {
+        if (m_baichuanUrl == url)
+            return;
         m_baichuanUrl = url;
         if (m_wantPlayback && m_surface)
             m_surface->play(url);
-    });
+    };
+    connect(m_baichuan, &BaichuanStream::ready, this, play);
+    // Already serving, for someone else: nothing more will be announced.
+    if (m_baichuan->isReady())
+        play(m_baichuan->url());
     connect(m_baichuan, &BaichuanStream::failed, this, [this](const QString &why) {
         setStatusText(why);
         // Retried on the usual watchdog schedule rather than immediately: a
@@ -508,15 +518,15 @@ void VideoTile::startBaichuan()
                     startBaichuan();
             });
     });
-    m_baichuan->start(m_config);
 }
 
 void VideoTile::stopBaichuan()
 {
     if (!m_baichuan)
         return;
-    m_baichuan->shutdown();
-    m_baichuan->deleteLater();
+    // Not stopped: others may be reading it, and it closes by itself once
+    // nobody is.
+    disconnect(m_baichuan, nullptr, this, nullptr);
     m_baichuan = nullptr;
 }
 

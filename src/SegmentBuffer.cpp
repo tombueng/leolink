@@ -10,6 +10,7 @@
 #include <QTimer>
 
 #include "Config.h"
+#include "BaichuanStream.h"
 #include "Log.h"
 #include "ProcessUtil.h"
 
@@ -69,6 +70,8 @@ bool SegmentBuffer::start(const CameraConfig &camera, const Settings &settings)
     // buffer down for an unrelated edit would punch a hole in the archive.
     if (isRunning() && m_camera && m_camera->id == camera.id &&
         m_camera->streamUrl() == camera.streamUrl() &&
+        m_camera->effectiveTransport() == camera.effectiveTransport() &&
+        m_camera->stream == camera.stream &&
         m_settings.directory == settings.directory &&
         m_settings.segmentSeconds == settings.segmentSeconds) {
         m_settings.retentionSeconds = settings.retentionSeconds;
@@ -82,7 +85,7 @@ bool SegmentBuffer::start(const CameraConfig &camera, const Settings &settings)
                        "unavailable."));
         return false;
     }
-    if (camera.streamUrl().isEmpty()) {
+    if (!camera.hasStream()) {
         emit failed(tr("No stream address for %1.").arg(camera.label()));
         return false;
     }
@@ -115,7 +118,9 @@ void SegmentBuffer::startProcess()
     const QString target =
         m_settings.directory + QStringLiteral("/seg-%Y%m%d-%H%M%S.mkv");
 
-    const QString url = m_camera->streamUrl();
+    // Asked for again on every start: a Baichuan stream that ended, because
+    // the camera went away, is replaced by a new one on another port.
+    const QString url = BaichuanStream::openUrl(*m_camera);
     QStringList args{
         QStringLiteral("-nostdin"),
         QStringLiteral("-loglevel"), QStringLiteral("error"),

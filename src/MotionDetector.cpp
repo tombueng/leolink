@@ -1,5 +1,6 @@
 #include "MotionDetector.h"
 
+#include "BaichuanStream.h"
 #include "Log.h"
 
 #include <cstdlib>
@@ -95,7 +96,7 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
     CameraConfig analysis = camera;
     if (analysis.transport != QLatin1String("custom"))
         analysis.stream = QStringLiteral("sub");
-    const QString url = analysis.streamUrl();
+    const QString url = BaichuanStream::openUrl(analysis);
     if (url.isEmpty()) {
         emit failed(tr("No stream address for %1.").arg(camera.label()));
         return;

@@ -1381,10 +1381,7 @@ void MainWindow::reconcileBuffers()
         const bool preRoll = camera.recordOnMotion && camera.recordPreSeconds > 0;
         if (!preRoll && !camera.continuousRecording)
             continue;
-        // Baichuan has no URL of its own — the stream is re-served on a
-        // loopback port that only exists while a tile is playing it, so
-        // ffmpeg has nothing to open.
-        if (camera.streamUrl().isEmpty())
+        if (!camera.hasStream())
             continue;
 
         SegmentBuffer::Settings settings;
@@ -2084,7 +2081,8 @@ void MainWindow::reconcileWatchers(const QHash<QString, CameraConfig> &previous)
                a.audioDetection != b.audioDetection ||
                a.audioThresholdDb != b.audioThresholdDb ||
                a.audioHoldSeconds != b.audioHoldSeconds ||
-               a.streamUrl() != b.streamUrl();
+               a.streamUrl() != b.streamUrl() ||
+               a.effectiveTransport() != b.effectiveTransport();
     };
 
     QSet<QString> live;
