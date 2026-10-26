@@ -10,7 +10,7 @@ What four real cameras answered, used by the tests in place of the cameras:
 | `e1pro`    | E1 Pro                      | 3.1.0.3149  | none             |
 
 `<msg>.xml` is the camera's reply to Baichuan message `<msg>`, decrypted. These
-are the *get* messages that `src/BaichuanApi.cpp` reads. `http/<Command>.json`
+are the *get* messages that `src/BaichuanCommands.cpp` reads. `http/<Command>.json`
 is the same camera's answer to that HTTP API command, captured within minutes.
 Only the two cameras with a web server have one.
 

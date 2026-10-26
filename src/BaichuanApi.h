@@ -17,29 +17,10 @@ namespace leolink {
 
 class BaichuanClient;
 
-/// Speaks the HTTP API's language to a camera that has no HTTP API.
-///
-/// An E1 Pro has no web server at all, and an E1 can have it switched off, but
-/// both carry every setting the settings dialog edits over Baichuan on port
-/// 9000 — as XML documents with their own names and layouts. This takes an
-/// HTTP command and its JSON (`GetEnc`, `SetImage`, …), does whatever the
-/// camera needs over Baichuan to answer it, and hands back exactly the entry
-/// the HTTP API would have: `code`, `value`, and for a read the `range`
-/// document as well. ReolinkClient routes through it when a camera offers
-/// Baichuan and no web server, so nothing above that layer can tell the
-/// difference.
-///
-/// A write is read, change, write back. The camera's XML carries more than any
-/// one HTTP section shows, and starting from what the camera sent is the only
-/// way to leave the rest untouched. Commands with no Baichuan counterpart
-/// answer -9, the HTTP API's own "this firmware does not know that command",
-/// which the dialog already treats as "leave the section out".
-///
-/// Every mapping was written against the same camera answering both ways — an
-/// E1 Zoom, which has HTTP as well — and checked field by field with
-/// `--baichuan-api`, then tried on an E1 and an E1 Pro, which have only this.
-/// The message numbers and some of the XML paths come from reolink_aio
-/// (MIT, Copyright (c) 2023 starkillerOG; the notice is in LICENSE).
+/// A camera's Baichuan session, shared by everything that talks to the camera
+/// over it: the settings, answered in the HTTP API's own terms by
+/// baichuan::translate() (BaichuanCommands.h), the camera's alarms, PTZ, and a
+/// firmware upload.
 ///
 /// One connection per camera, on a thread of its own, since the client
 /// underneath blocks. Shared by every ReolinkClient pointed at the camera and
@@ -108,13 +89,6 @@ public:
         QString what;
     };
     static QList<Alarm> parseAlarms(const QString &xml);
-
-    /// The translation itself, blocking, on a logged-in client. Public for the
-    /// `--baichuan-api` diagnostic, which compares it with the HTTP API's own
-    /// answer on a camera that has both.
-    static QJsonObject translate(BaichuanClient &client, int channel,
-                                 const QString &command, const QJsonObject &param,
-                                 int action);
 
 private:
     BaichuanApi(const CameraConfig &camera, const QString &secret);

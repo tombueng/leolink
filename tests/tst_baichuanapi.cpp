@@ -13,6 +13,7 @@
 
 #include "Baichuan.h"
 #include "BaichuanApi.h"
+#include "BaichuanCommands.h"
 #include "FakeCamera.h"
 
 using leolink::BaichuanApi;
@@ -137,7 +138,7 @@ private:
 
     QJsonObject call(const QString &command, const QJsonObject &param = {})
     {
-        return BaichuanApi::translate(*m_client, 0, command, param, 1);
+        return leolink::baichuan::translate(*m_client, 0, command, param, 1);
     }
 
     QJsonObject value(const QString &command)

@@ -620,7 +620,7 @@ From the dissector; only type 1 verified here.
 
 A camera with no web server — an E1 Pro, or an E1 with HTTP switched off —
 still carries every setting over Baichuan. leolink answers the CGI API's
-commands from these messages (`src/BaichuanApi.cpp`), so the settings dialog
+commands from these messages (`src/BaichuanCommands.cpp`), so the settings dialog
 works on such a camera without knowing the difference. Message numbers from
 [reolink_aio](https://github.com/starkillerOG/reolink_aio) (MIT, notice in
 [LICENSE](../LICENSE)); each mapping checked field by field against an E1 Zoom answering
