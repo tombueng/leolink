@@ -26,6 +26,8 @@ constexpr quint16 kGrantAes = 0xDD12;
 constexpr quint16 kGrantXor = 0xDD01;
 constexpr quint32 kLogin = 1;
 constexpr quint32 kLogout = 2;
+constexpr quint32 kVideo = 3;
+constexpr quint32 kAlarmSubscribe = 31;
 constexpr quint32 kAlarm = 33;
 constexpr quint32 kUpgradeFile = 67;
 constexpr char kIv[] = "0123456789abcdef";
@@ -92,6 +94,47 @@ QByteArray header(quint32 msg, quint32 length, quint16 handle, quint16 field16, 
     if (msgClass != kClassLegacyReply)
         s << quint32(0);
     return out;
+}
+
+void appendU32(QByteArray &out, quint32 v)
+{
+    for (int i = 0; i < 4; ++i)
+        out.append(char((v >> (8 * i)) & 0xff));
+}
+
+/// The block that opens a stream: picture size and frame rate.
+QByteArray infoBlock(int width, int height, int fps)
+{
+    QByteArray b("1001", 4);
+    appendU32(b, 32);           // its own length
+    appendU32(b, quint32(width));
+    appendU32(b, quint32(height));
+    b.append(char(0));
+    b.append(char(fps));
+    b.append(QByteArray(32 - b.size(), '\0'));
+    return b;
+}
+
+/// One picture. A key frame carries its parameter sets, as a camera's do,
+/// behind a 32-byte header; a predicted one is a single slice behind 24.
+/// The contents are filler that contains no start code and no block magic.
+QByteArray videoBlock(bool key, quint32 timeUs)
+{
+    const QByteArray start("\x00\x00\x00\x01", 4);
+    const QByteArray nal =
+        key ? start + '\x67' + QByteArray(20, '\xaa') + start + '\x68' +
+                  QByteArray(4, '\xaa') + start + '\x65' + QByteArray(400, '\xbb')
+            : start + '\x41' + QByteArray(120, '\xcc');
+    QByteArray b(key ? "00dcH264" : "01dcH264", 8);
+    appendU32(b, quint32(nal.size()));
+    appendU32(b, 0);
+    appendU32(b, timeUs);
+    appendU32(b, 0);
+    if (key)
+        b.append(QByteArray(8, '\0'));
+    b += nal;
+    b.append(QByteArray((8 - b.size() % 8) % 8, '\0'));
+    return b;
 }
 
 QString tag(const QString &xml, const QString &name)
@@ -172,6 +215,24 @@ void FakeCamera::clearRequests()
 {
     const QMutexLocker lock(&m_lock);
     m_requests.clear();
+}
+
+void FakeCamera::streamVideo(QTcpSocket &socket)
+{
+    const int fps = qMax(1, videoFps);
+    quint32 timeUs = 0;
+    QByteArray opening = infoBlock(640, 360, fps);
+    for (int n = 0; !m_stop && !silent && socket.state() == QAbstractSocket::ConnectedState; ++n) {
+        const QByteArray media = opening + videoBlock(n % 10 == 0, timeUs);
+        opening.clear();
+        socket.write(header(kVideo, media.size(), 0, 200, 0x0000) + media);
+        socket.flush();
+        timeUs += quint32(1000000 / fps);
+        // Anything from the client — its logout — ends the stream, as does
+        // its going.
+        if (socket.waitForReadyRead(1000 / fps))
+            return;
+    }
 }
 
 void FakeCamera::run()
@@ -267,7 +328,7 @@ void FakeCamera::serve(QTcpSocket &socket)
                 continue;
             }
             loggedIn = true;
-            send(kLogin, h.handle, 200, document(80));
+            send(kLogin, h.handle, 200, loginReply.isEmpty() ? document(80) : loginReply);
             continue;
         }
 
@@ -313,11 +374,25 @@ void FakeCamera::serve(QTcpSocket &socket)
             continue;
         }
         if (chatter)
-            send(kAlarm, 0, 200, QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-                                                "<body>\n<AlarmEventList />\n</body>\n"));
+            send(kAlarm, 0, 200,
+                 !chatterAlarm.isEmpty()
+                     ? chatterAlarm
+                     : QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                      "<body>\n<AlarmEventList />\n</body>\n"));
         if (statusFor.contains(h.msg)) {
             send(h.msg, h.handle, statusFor.value(h.msg));
             continue;
+        }
+        if (h.msg == kAlarmSubscribe) {
+            send(h.msg, h.handle, 200);
+            for (const QString &alarm : std::as_const(alarmsOnSubscribe))
+                send(kAlarm, h.handle, 200, alarm);
+            continue;
+        }
+        if (h.msg == kVideo) {
+            ++m_videoRequests;
+            streamVideo(socket);
+            return;
         }
         if (kSetReplaces.contains(h.msg)) {
             setDocument(kSetReplaces.value(h.msg), request.body);

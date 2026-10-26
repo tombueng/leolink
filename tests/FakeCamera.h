@@ -8,13 +8,17 @@
 #include <QMutex>
 #include <QSet>
 #include <QString>
+#include <QStringList>
 #include <QThread>
 
-/// Enough of a Reolink camera's port 9000 to log in to and to configure.
+/// Enough of a Reolink camera's port 9000 to log in to, configure, watch and
+/// hear alarms from.
 ///
 /// It runs the camera's half of the four-message login, encrypts the way the
 /// firmware does, and answers settings messages from a set of documents —
-/// captures of real cameras, in the tests. A set replaces the document its
+/// captures of real cameras, in the tests. Asked for video, it sends pictures
+/// in the camera's own container until the client goes; they are made up,
+/// but laid out as an E1 lays them out. A set replaces the document its
 /// get answers with, which is what the hardware does, so a write can be read
 /// back. Everything the client sends is recorded, decrypted, for the test to
 /// look at afterwards.
@@ -45,6 +49,8 @@ public:
     /// Send an unrelated message (an alarm, as cameras do) ahead of every
     /// reply, which the client must step over.
     bool chatter{false};
+    /// What that alarm says, if not an empty list.
+    QString chatterAlarm;
     /// Status for these messages instead of an answer, as a camera without the
     /// feature replies 400.
     QHash<quint32, int> statusFor;
@@ -57,6 +63,14 @@ public:
     bool refuseAnnouncement{false};
     /// Hang up on everything, at once, as a camera restarting does.
     std::atomic<bool> silent{false};
+    /// What a login is answered with, when set: the device info, which is
+    /// where `ptzMode` is. Otherwise document 80.
+    QString loginReply;
+    /// Alarms (message 33) sent, in order, as soon as a client subscribes
+    /// with message 31 — the first is the state the camera reports at once.
+    QStringList alarmsOnSubscribe;
+    /// Pictures a second, once video has been asked for.
+    int videoFps{25};
 
     /// What it answers each get with, by message number.
     void setDocument(quint32 msg, const QString &xml);
@@ -80,12 +94,16 @@ public:
     QList<quint16> uploadHandles() const;
     /// The largest single message the client sent, header included.
     int largestMessage() const { return m_largestMessage; }
+    /// How many times video was asked for.
+    int videoRequests() const { return m_videoRequests; }
 
 protected:
     void run() override;
 
 private:
     void serve(class QTcpSocket &socket);
+    /// Sends pictures until the client goes or says anything.
+    void streamVideo(class QTcpSocket &socket);
 
     QString m_user;
     QString m_password;
@@ -102,4 +120,5 @@ private:
     QByteArray m_uploaded;
     QList<quint16> m_uploadHandles;
     std::atomic<int> m_largestMessage{0};
+    std::atomic<int> m_videoRequests{0};
 };
