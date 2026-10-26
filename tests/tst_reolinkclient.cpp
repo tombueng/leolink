@@ -375,6 +375,28 @@ private slots:
         QVERIFY(!failed.first().first().toString().isEmpty());
     }
 
+    /// What no protocol on the camera carries — the SD card, on one without a
+    /// web server — is turned down without asking anyone, and like any other
+    /// answer: after the request has returned, not inside it.
+    void nothingCarriesItIsTold()
+    {
+        CameraConfig camera = config();
+        camera.host = QStringLiteral("127.0.0.1");
+        camera.caps.known = true;
+        camera.caps.rtsp = true;
+        camera.caps.baichuan = true;
+        connectTo(camera);
+        QSignalSpy failed(m_client.get(), &ReolinkClient::failed);
+        m_client->searchRecordings(QDateTime::currentDateTime().addDays(-1),
+                                   QDateTime::currentDateTime());
+        QCOMPARE(failed.size(), 0);
+        QVERIFY(failed.wait(5000));
+        QVERIFY2(failed.first().first().toString().contains(QLatin1String("web server")),
+                 qPrintable(failed.first().first().toString()));
+        QCOMPARE(m_client->lastErrorCode(), -9);
+        QVERIFY(m_server->requests().isEmpty());
+    }
+
     void errorsAreExplained()
     {
         for (int code : {-5, -6, -7, -9, -17, -31})

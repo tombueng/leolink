@@ -63,6 +63,11 @@ bool offers(const Capabilities &caps, Protocol protocol);
 /// The protocol `feature` uses on a camera with these capabilities.
 Protocol route(Feature feature, const Capabilities &caps);
 
+/// The feature an HTTP API command belongs to, which decides the protocol it
+/// goes over: `PtzCtrl` is Feature::Ptz, `Search` Feature::CardRecordings.
+/// Anything not listed is a setting, which is most of them.
+Feature featureOf(const QString &command);
+
 /// The name a transport is stored under, and recorded as failed under:
 /// "flv", "rtsp", "baichuan". Empty for a protocol that carries no video.
 QString transportName(Protocol protocol);

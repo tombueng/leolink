@@ -294,10 +294,11 @@ private:
     void login(const std::function<void()> &then,
                const std::function<void(const QString &)> &onErr);
 
-    /// The link this camera's commands take, from the routing table: its web
-    /// server, or Baichuan where it has none. Decided by what the camera was
-    /// found to offer; a camera nobody has asked yet keeps the web server.
-    CommandLink &link();
+    /// The link a command takes, from the routing table by the feature it
+    /// belongs to: the camera's web server, or Baichuan where it has none.
+    /// Null when nothing on this camera carries it. A camera nobody has asked
+    /// yet keeps the web server.
+    CommandLink *linkFor(const QString &command);
     BaichuanLink &baichuanLink();
     std::unique_ptr<HttpApiLink> m_http;
     /// Made on first use: most cameras never need it.

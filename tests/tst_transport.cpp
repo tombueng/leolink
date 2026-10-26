@@ -134,6 +134,19 @@ private slots:
         QCOMPARE(name(route(feature, caps)), name(chosen));
     }
 
+    /// A command goes where its feature does: a camera without a web server
+    /// turns over Baichuan, and has no protocol for searching its card.
+    void commandsFollowTheirFeature()
+    {
+        const Capabilities e1Pro = offering({"rtsp", "onvif", "baichuan"});
+        QCOMPARE(name(route(leolink::featureOf(QStringLiteral("PtzCtrl")), e1Pro)), name(Protocol::Baichuan));
+        QCOMPARE(name(route(leolink::featureOf(QStringLiteral("GetEnc")), e1Pro)), name(Protocol::Baichuan));
+        QCOMPARE(name(route(leolink::featureOf(QStringLiteral("Search")), e1Pro)), name(Protocol::None));
+        QCOMPARE(name(route(leolink::featureOf(QStringLiteral("UpgradeOnline")), e1Pro)), name(Protocol::None));
+        const Capabilities e1Zoom = offering({"https", "rtmp", "rtsp", "onvif", "baichuan"});
+        QCOMPARE(name(route(leolink::featureOf(QStringLiteral("Search")), e1Zoom)), name(Protocol::HttpApi));
+    }
+
     /// The automatic transport is the video route, by the name it is stored
     /// under.
     void automaticIsTheVideoRoute()

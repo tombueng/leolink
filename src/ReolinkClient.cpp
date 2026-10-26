@@ -115,11 +115,13 @@ bool ReolinkClient::hasSession() const
     return !m_http->token().isEmpty();
 }
 
-CommandLink &ReolinkClient::link()
+CommandLink *ReolinkClient::linkFor(const QString &command)
 {
-    if (route(Feature::Settings, m_camera.caps) == Protocol::Baichuan)
-        return baichuanLink();
-    return *m_http;
+    switch (route(featureOf(command), m_camera.caps)) {
+    case Protocol::HttpApi: return m_http.get();
+    case Protocol::Baichuan: return &baichuanLink();
+    default: return nullptr;
+    }
 }
 
 BaichuanLink &ReolinkClient::baichuanLink()
@@ -393,16 +395,10 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                             const std::function<void(const QString &)> &onErr,
                             int action, int retriesLeft)
 {
-    CommandLink &via = link();
-    const QString over = via.name();
-    if (&via != m_http.get())
-        LEO_DEBUG(Api, m_camera.label(),
-                  QStringLiteral("→ %1 action=%2 over %3").arg(command).arg(action).arg(over));
     const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
-
-    via.send(command, param, action, this,
-             [this, startedAt, command, param, onOk, onErr, action, retriesLeft,
-              over](const LinkReply &reply) {
+    const auto handle = [this, startedAt, command, param, onOk, onErr, action,
+                         retriesLeft](bool overHttp, const QString &over,
+                                      const LinkReply &reply) {
         const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
 
         // The slot is freed however this ends, and the next request started —
@@ -488,7 +484,7 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                          .arg(reply.detail));
             // Over HTTP the camera's code says it all; Baichuan's own
             // failures carry their reason as text.
-            onErr(over == m_http->name() ? describeError(reply.rspCode) : reply.detail);
+            onErr(overHttp ? describeError(reply.rspCode) : reply.detail);
             return;
 
         case LinkReply::Kind::Missing:
@@ -517,14 +513,42 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
             onErr(tr("Cannot reach %1: %2").arg(m_camera.host, reply.detail));
             return;
         }
+    };
+
+    CommandLink *via = linkFor(command);
+    if (!via) {
+        // No protocol on this camera carries it: answered here, as a link
+        // without the command would — and later, as a link would. Answered
+        // at once it ran inside pump(), which then started again inside
+        // itself for every such command queued behind it, and the caller
+        // heard back before its own request had returned.
+        QMetaObject::invokeMethod(this, [handle] {
+            LinkReply none;
+            none.kind = LinkReply::Kind::Missing;
+            none.rspCode = -9;
+            handle(false, QStringLiteral("any protocol"), none);
+        }, Qt::QueuedConnection);
+        return;
+    }
+    // What the answer needs to know of the link is taken now: setCamera() may
+    // replace the link before the answer comes.
+    const bool overHttp = via == m_http.get();
+    const QString over = via->name();
+    if (!overHttp)
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("→ %1 action=%2 over %3").arg(command).arg(action).arg(over));
+    via->send(command, param, action, this, [handle, overHttp, over](const LinkReply &reply) {
+        handle(overHttp, over, reply);
     });
 }
 
 void ReolinkClient::login(const std::function<void()> &then,
                           const std::function<void(const QString &)> &onErr)
 {
-    // A link without sessions, Baichuan, logs in on a connection of its own.
-    if (!link().needsLogin() || !m_http->token().isEmpty()) {
+    // A link without sessions, Baichuan, logs in on a connection of its own;
+    // a camera with no link at all has nothing to log in to.
+    CommandLink *via = linkFor(QStringLiteral("Login"));
+    if (!via || !via->needsLogin() || !m_http->token().isEmpty()) {
         then();
         return;
     }

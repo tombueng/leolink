@@ -1,5 +1,7 @@
 #include "Protocols.h"
 
+#include <QHash>
+
 namespace leolink {
 
 const QList<Route> &routes()
@@ -64,6 +66,19 @@ Protocol route(Feature feature, const Capabilities &caps)
         return r.fallback;
     }
     return Protocol::None;
+}
+
+Feature featureOf(const QString &command)
+{
+    static const QHash<QString, Feature> commands{
+        {QStringLiteral("PtzCtrl"), Feature::Ptz},
+        {QStringLiteral("GetPtzPreset"), Feature::Ptz},
+        {QStringLiteral("GetAbility"), Feature::Ptz},
+        {QStringLiteral("Search"), Feature::CardRecordings},
+        {QStringLiteral("CheckFirmware"), Feature::FirmwareDownload},
+        {QStringLiteral("UpgradeOnline"), Feature::FirmwareDownload},
+    };
+    return commands.value(command, Feature::Settings);
 }
 
 QString transportName(Protocol protocol)
