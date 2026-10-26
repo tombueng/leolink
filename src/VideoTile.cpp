@@ -1,6 +1,7 @@
 #include "VideoTile.h"
 
 #include "BaichuanStream.h"
+#include "PtzPad.h"
 #include "Log.h"
 
 #include <QFrame>
@@ -331,6 +332,30 @@ void VideoTile::buildUi()
     });
     row->addWidget(m_talkButton);
 
+    // Turning the camera. Hidden, like talking, until the camera has said it
+    // has a motor; checked, it lays the buttons over the picture.
+    m_ptzButton = stripButton(bar, QStringLiteral("transform-move"),
+                              QStringLiteral("✥"), tr("Turn the camera"));
+    m_ptzButton->setCheckable(true);
+    m_ptzButton->hide();
+    connect(m_ptzButton, &QToolButton::toggled, this, [this](bool on) {
+        if (!m_ptzPad)
+            return;
+        if (!on)
+            emit ptzRequested(m_config.id, QStringLiteral("Stop"));
+        m_ptzPad->setVisible(on);
+        if (on) {
+            layoutPtzPad();
+            m_ptzPad->raise();
+        }
+    });
+    row->addWidget(m_ptzButton);
+
+    m_ptzPad = new PtzPad(this);
+    m_ptzPad->hide();
+    connect(m_ptzPad, &PtzPad::moveRequested, this,
+            [this](const QString &op) { emit ptzRequested(m_config.id, op); });
+
     auto *cog = stripButton(bar, QStringLiteral("configure"),
                             QStringLiteral("⚙"), tr("Camera settings"));
     connect(cog, &QToolButton::clicked, this,
@@ -624,16 +649,36 @@ void VideoTile::setControlsVisible(bool visible)
     } else {
         m_strip->hide();
     }
+    // The buttons over the picture go and come back with the strip.
+    if (m_ptzPad && m_ptzButton) {
+        m_ptzPad->setVisible(visible && m_ptzButton->isChecked());
+        layoutPtzPad();
+    }
 }
 
 void VideoTile::layoutStrip()
 {
+    layoutPtzPad();
     if (!m_immersive || !m_strip || !m_surface)
         return;
     const QRect video = m_surface->geometry();
     const int height = m_strip->sizeHint().height();
     m_strip->setGeometry(video.left(), video.bottom() + 1 - height,
                          video.width(), height);
+}
+
+void VideoTile::layoutPtzPad()
+{
+    if (!m_ptzPad || !m_surface || !m_ptzPad->isVisible())
+        return;
+    const QRect video = m_surface->geometry();
+    const QSize size = m_ptzPad->sizeHint();
+    int bottom = video.bottom() - 6;
+    if (m_immersive && m_strip && m_strip->isVisible())
+        bottom -= m_strip->sizeHint().height();
+    m_ptzPad->setGeometry(video.right() - 6 - size.width() + 1,
+                          bottom - size.height() + 1, size.width(), size.height());
+    m_ptzPad->raise();
 }
 
 void VideoTile::stop()
@@ -997,6 +1042,17 @@ void VideoTile::setTalkAvailable(bool available)
 {
     if (m_talkButton)
         m_talkButton->setVisible(available);
+}
+
+void VideoTile::setPtzAvailable(bool canMove, bool canZoom)
+{
+    if (!m_ptzButton || !m_ptzPad)
+        return;
+    m_ptzPad->setZoomAvailable(canZoom);
+    m_ptzButton->setVisible(canMove);
+    if (!canMove)
+        m_ptzButton->setChecked(false);
+    layoutPtzPad();
 }
 
 void VideoTile::setTalking(bool talking)

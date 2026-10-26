@@ -734,6 +734,8 @@ VideoTile *MainWindow::createTile(const CameraConfig &camera)
             this, &MainWindow::onRecordToggled);
     connect(tile, &VideoTile::transportFailed,
             this, &MainWindow::onTransportFailed);
+    connect(tile, &VideoTile::ptzRequested,
+            this, &MainWindow::onPtzRequested);
     // The tiles cover the central widget, so they need the escape hatch too.
     tile->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(tile, &QWidget::customContextMenuRequested, this,
@@ -771,6 +773,7 @@ void MainWindow::rebuildGrid()
         tile->start();
 
     askAboutSpeakers();
+    askAboutPtz();
 
     // Every half minute is plenty: signal strength drifts, it does not jump,
     // and each poll is a login plus one request on a small embedded device.
@@ -1890,6 +1893,58 @@ void MainWindow::onTransportFailed(const QString &cameraId, const QString &trans
             tile->applyConfig(camera);
         return;
     }
+}
+
+ReolinkClient *MainWindow::ptzClient(const CameraConfig &camera)
+{
+    ReolinkClient *client = m_ptzClients.value(camera.id);
+    if (!client) {
+        client = new ReolinkClient(this);
+        m_ptzClients.insert(camera.id, client);
+        const QString id = camera.id;
+        connect(client, &ReolinkClient::ptzKnown, this,
+                [this, id](bool canMove, bool canZoom) {
+                    if (auto *tile = m_tiles.value(id))
+                        tile->setPtzAvailable(canMove, canZoom);
+                    // A camera with nothing to turn needs no session kept
+                    // open for it.
+                    if (!canMove) {
+                        if (ReolinkClient *c = m_ptzClients.take(id))
+                            c->deleteLater();
+                    }
+                });
+        connect(client, &ReolinkClient::ptzFailed, this,
+                [this](const QString &why) {
+                    statusBar()->showMessage(tr("The camera would not move: %1")
+                                                 .arg(why), 8000);
+                });
+    }
+    client->setCamera(camera);
+    return client;
+}
+
+void MainWindow::askAboutPtz()
+{
+    // Asked once per grid, of every camera: over HTTP where it has a web
+    // server, and over Baichuan, from what its login says, where it has not.
+    // A recorder's channels are left alone — the motors there belong to the
+    // cameras behind it, and are driven through the recorder by its own app.
+    for (ReolinkClient *client : std::as_const(m_ptzClients))
+        client->deleteLater();
+    m_ptzClients.clear();
+    for (const CameraConfig &camera : m_config.active()) {
+        if (camera.channel != 0 || ReolinkClient::isRecorder(camera.host))
+            continue;
+        if (!camera.caps.api() && !camera.caps.settingsOverBaichuan())
+            continue;
+        ptzClient(camera)->fetchPtzAbility();
+    }
+}
+
+void MainWindow::onPtzRequested(const QString &cameraId, const QString &op)
+{
+    if (const CameraConfig *camera = cameraById(cameraId))
+        ptzClient(*camera)->ptz(op);
 }
 
 void MainWindow::askAboutSpeakers()

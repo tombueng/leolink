@@ -118,6 +118,18 @@ public:
     /// accepted, because the camera stops answering immediately afterwards.
     void reboot();
 
+    /// Whether the camera can be turned, and zoomed, from here: ptzKnown().
+    /// Asked of GetAbility rather than guessed from GetPtzPreset, which a
+    /// doorbell answers with four presets it cannot go to.
+    void fetchPtzAbility();
+    /// Moves the camera: `op` is the HTTP API's word for it — "Left",
+    /// "RightUp", "ZoomInc", and "Stop" to end any of them, since a movement
+    /// otherwise goes on until the motor's end. `speed` 0 leaves the camera's
+    /// own. ptzFailed() if it was turned down.
+    void ptz(const QString &op, int speed = 0);
+    /// Sends the camera to one of its saved positions.
+    void ptzToPreset(int id);
+
     /// Wi-Fi strength, 0…4. Cameras on Ethernet answer with an error, which is
     /// reported as such rather than as a strength of zero.
     void fetchWifiSignal();
@@ -218,6 +230,8 @@ signals:
     void sectionFailed(const QString &command, int rspCode);
     void rebootAccepted();
     void wifiSignalReady(int strength);
+    void ptzKnown(bool canMove, bool canZoom);
+    void ptzFailed(const QString &reason);
     /// "Wifi", "LAN", "3G"/"4G" — whatever the camera calls its active link.
     void linkTypeReady(const QString &activeLink);
     /// Merged from GetLocalLink, GetWifi and GetNetPort.

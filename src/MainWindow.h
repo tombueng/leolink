@@ -60,6 +60,7 @@ private slots:
     void quitApplication();
     void onRecordToggled(const QString &cameraId, bool recording);
     void onTalkToggled(const QString &cameraId, bool talking);
+    void onPtzRequested(const QString &cameraId, const QString &op);
 
 private:
     /// Asks every camera not yet asked what it offers (CameraProbe), all at
@@ -75,6 +76,14 @@ private:
     /// What each address was found to offer. Keyed by host, like the status
     /// clients: one device, one answer, however many entries point at it.
     QHash<QString, Capabilities> m_caps;
+
+    /// Finds out which cameras have a motor, so only those get the buttons.
+    void askAboutPtz();
+    /// The client a camera is turned through, made on first use.
+    ReolinkClient *ptzClient(const CameraConfig &camera);
+    /// One per camera with a motor, or being asked whether it has one. Kept,
+    /// so a press and its release go out on one session, in order.
+    QHash<QString, ReolinkClient *> m_ptzClients;
 
     /// Finds out which cameras have a speaker, so only those get the button.
     void askAboutSpeakers();

@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QMutex>
 #include <QRegularExpression>
+#include <QSet>
 #include <QTextStream>
 #include <QThread>
 #include <QTimer>
@@ -31,6 +32,8 @@ namespace {
 //
 // reolink_aio is MIT, Copyright (c) 2023 starkillerOG. Its message numbers and
 // XML element names are what this file follows; its notice is in LICENSE.
+constexpr quint32 kPtzControl = 18;
+constexpr quint32 kPtzGoToPreset = 19;
 constexpr quint32 kReboot = 23;
 constexpr quint32 kAlarm = 33;
 constexpr quint32 kSetImage = 25;
@@ -1763,6 +1766,89 @@ QJsonObject getPtzPreset(Exchange &x)
     return x.ok({{QStringLiteral("PtzPreset"), presets}});
 }
 
+/// What GetAbility says about turning and zooming, and nothing else: the
+/// rest of the HTTP API's ability list has no one place in Baichuan. Taken
+/// from the device info the login brought back, whose `ptzMode` is "pt" on an
+/// E1 and an E1 Pro, "ptz" on an E1 Zoom and "none" on a doorbell.
+QJsonObject getAbility(Exchange &x)
+{
+    const QString mode = x.client.field(QStringLiteral("ptzMode"));
+    const bool move = mode.startsWith(QLatin1String("pt"));
+    const bool zoom = mode.contains(QLatin1Char('z'));
+    const auto ability = [](bool on) {
+        return QJsonObject{{QStringLiteral("permit"), on ? 7 : 0},
+                           {QStringLiteral("ver"), on ? 1 : 0}};
+    };
+    QJsonArray channels;
+    for (int c = 0; c <= x.channel; ++c) {
+        channels.append(c == x.channel
+                            ? QJsonObject{{QStringLiteral("ptzCtrl"), ability(move)},
+                                          {QStringLiteral("supportZoom"), ability(zoom)}}
+                            : QJsonObject{});
+    }
+    return x.ok({{QStringLiteral("Ability"),
+                  QJsonObject{{QStringLiteral("abilityChn"), channels}}}});
+}
+
+/// Moves the camera, as PtzCtrl does over HTTP: `op` is one of the HTTP API's
+/// own words, and the movement goes on until "Stop". Message 18 takes the same
+/// words — "Left", "ZoomInc" — which an E1, an E1 Pro and an E1 Zoom all
+/// accept, and an optional speed. Going to a preset is message 19. The
+/// messages and their XML follow reolink_aio (MIT, Copyright (c) 2023
+/// starkillerOG; the notice is in LICENSE).
+QJsonObject ptzCtrl(Exchange &x)
+{
+    static const QSet<QString> moves{
+        QStringLiteral("Stop"),     QStringLiteral("Left"),
+        QStringLiteral("Right"),    QStringLiteral("Up"),
+        QStringLiteral("Down"),     QStringLiteral("LeftUp"),
+        QStringLiteral("LeftDown"), QStringLiteral("RightUp"),
+        QStringLiteral("RightDown"), QStringLiteral("ZoomInc"),
+        QStringLiteral("ZoomDec"),  QStringLiteral("FocusInc"),
+        QStringLiteral("FocusDec"), QStringLiteral("Auto"),
+    };
+    const QString op = x.param.value(QStringLiteral("op")).toString();
+
+    quint32 msg = kPtzControl;
+    QString inner;
+    if (op == QLatin1String("ToPos")) {
+        msg = kPtzGoToPreset;
+        inner = QStringLiteral("<PtzPreset version=\"1.1\">\n"
+                               "<channelId>%1</channelId>\n"
+                               "<presetList>\n<preset>\n<id>%2</id>\n"
+                               "<command>toPos</command>\n</preset>\n</presetList>\n"
+                               "</PtzPreset>\n")
+                    .arg(x.channel)
+                    .arg(x.param.value(QStringLiteral("id")).toInt());
+    } else if (moves.contains(op)) {
+        const int speed = x.param.value(QStringLiteral("speed")).toInt();
+        inner = QStringLiteral("<PtzControl version=\"1.1\">\n"
+                               "<channelId>%1</channelId>\n"
+                               "%2"
+                               "<command>%3</command>\n"
+                               "</PtzControl>\n")
+                    .arg(x.channel)
+                    .arg(speed > 0 ? QStringLiteral("<speed>%1</speed>\n").arg(speed)
+                                   : QString())
+                    .arg(op);
+    } else {
+        return x.error(kRefused, QStringLiteral("No such movement: %1").arg(op));
+    }
+
+    int status = -1;
+    x.client.request(msg,
+                     QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                    "<body>\n%1</body>\n").arg(inner),
+                     x.extension(), &status);
+    if (status < 0)
+        x.lost = true;
+    if (status == 200)
+        return x.done();
+    // A camera without the motor turns the message down like any other it
+    // has not got.
+    return x.lost ? x.refused(msg) : x.unsupported();
+}
+
 } // namespace
 
 // ── dispatch ────────────────────────────────────────────────────────────────
@@ -1818,6 +1904,8 @@ QJsonObject BaichuanApi::translate(BaichuanClient &client, int channel,
         {QStringLiteral("SetPowerLed"), [](Exchange &e) { return setLed(e, false); }},
         {QStringLiteral("GetHddInfo"), getHddInfo},
         {QStringLiteral("GetPtzPreset"), getPtzPreset},
+        {QStringLiteral("PtzCtrl"), ptzCtrl},
+        {QStringLiteral("GetAbility"), getAbility},
     };
 
     const Handler handler = handlers.value(command);

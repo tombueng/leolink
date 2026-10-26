@@ -67,6 +67,7 @@ set(LEOLINK_SOURCES
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
     src/SchedulePicker.cpp    src/SchedulePicker.h
     src/TalkSession.cpp       src/TalkSession.h
+    src/PtzPad.cpp            src/PtzPad.h
 )
 
 qt_add_executable(leolink

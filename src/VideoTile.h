@@ -73,6 +73,9 @@ public:
     /// Shows or hides the talk button. Only cameras that offer a speaker get
     /// one, which is decided by asking rather than by model name.
     void setTalkAvailable(bool available);
+    /// Offers the buttons that turn the camera, and zoom it if it can. Hidden
+    /// until the camera has said it has a motor.
+    void setPtzAvailable(bool canMove, bool canZoom);
     void setTalking(bool talking);
 
     /// Full-screen presentation: the control strip leaves the layout and
@@ -101,6 +104,8 @@ signals:
     void recordToggled(const QString &cameraId, bool recording);
     /// The user pressed the talk button.
     void talkToggled(const QString &cameraId, bool talking);
+    /// A PTZ button pressed or let go; see PtzPad::moveRequested.
+    void ptzRequested(const QString &cameraId, const QString &op);
     /// A camera on the automatic transport has not shown one picture over
     /// `transport` in several attempts. Whoever owns the camera's capabilities
     /// marks it failed and hands the tile a configuration that picks the next.
@@ -140,6 +145,9 @@ private:
     /// Puts the floating strip across the foot of the picture. Only used while
     /// immersive; in the grid the layout does this.
     void layoutStrip();
+    /// Puts the PTZ buttons in the picture's lower right corner, clear of the
+    /// strip when that is laid over the picture too.
+    void layoutPtzPad();
     void refreshStreamInfo();
     /// Re-elides the status line to the room the layout has left it.
     void updateStatusLabel();
@@ -196,6 +204,8 @@ private:
     QToolButton *m_muteButton{nullptr};
     QToolButton *m_recordButton{nullptr};
     QToolButton *m_talkButton{nullptr};
+    QToolButton *m_ptzButton{nullptr};
+    class PtzPad *m_ptzPad{nullptr};
 
     /// Only used when the transport is Baichuan: the protocol is spoken here
     /// and re-served to the player on a loopback port.

@@ -123,11 +123,12 @@ private:
     std::unique_ptr<FakeCamera> m_camera;
     std::unique_ptr<BaichuanClient> m_client;
 
-    void connectTo(const QString &model)
+    void connectTo(const QString &model, const QString &loginReply = {})
     {
         m_client.reset();
         m_camera = std::make_unique<FakeCamera>(kUser, kPassword);
         m_camera->loadDocuments(fixture(model));
+        m_camera->loginReply = loginReply;
         m_camera->begin();
         m_client = std::make_unique<BaichuanClient>(QStringLiteral("127.0.0.1"), kUser, kPassword,
                                                     m_camera->port());
@@ -544,6 +545,105 @@ private slots:
         QCOMPARE(info.value(QStringLiteral("firmVer")).toString(), QStringLiteral("v3.1.0.3149_2401092478"));
         QCOMPARE(info.value(QStringLiteral("wifi")).toInt(), 1);
         QCOMPARE(info.value(QStringLiteral("diskNum")).toInt(), 1);
+    }
+
+    // ── turning the camera ──────────────────────────────────────────────────
+
+    /// The login's device info, as far as PTZ goes.
+    static QString deviceInfo(const QString &ptzMode)
+    {
+        return QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<body>\n"
+                              "<DeviceInfo version=\"1.1\">\n<ptzMode>%1</ptzMode>\n"
+                              "</DeviceInfo>\n</body>\n").arg(ptzMode);
+    }
+
+    /// The last request the camera saw.
+    FakeCamera::Request last() const
+    {
+        const QList<FakeCamera::Request> requests = m_camera->requests();
+        return requests.isEmpty() ? FakeCamera::Request{} : requests.last();
+    }
+
+    void ptzMoves()
+    {
+        connectTo(QStringLiteral("e1"));
+        m_camera->setDocument(18, QStringLiteral("<?xml version=\"1.0\" ?>\n<body/>\n"));
+        QJsonObject entry = call(QStringLiteral("PtzCtrl"),
+                                 {{QStringLiteral("channel"), 0},
+                                  {QStringLiteral("op"), QStringLiteral("LeftUp")},
+                                  {QStringLiteral("speed"), 12}});
+        QCOMPARE(entry.value(QStringLiteral("code")).toInt(), 0);
+        QCOMPARE(last().msg, 18u);
+        QVERIFY(last().body.contains(QLatin1String("<command>LeftUp</command>")));
+        QVERIFY(last().body.contains(QLatin1String("<speed>12</speed>")));
+        QVERIFY(last().extension.contains(QLatin1String("<channelId>0</channelId>")));
+
+        // No speed given, none sent: the camera keeps its own.
+        entry = call(QStringLiteral("PtzCtrl"), {{QStringLiteral("op"), QStringLiteral("Stop")}});
+        QCOMPARE(entry.value(QStringLiteral("code")).toInt(), 0);
+        QVERIFY(last().body.contains(QLatin1String("<command>Stop</command>")));
+        QVERIFY(!last().body.contains(QLatin1String("<speed>")));
+    }
+
+    void ptzGoesToPreset()
+    {
+        connectTo(QStringLiteral("e1pro"));
+        m_camera->setDocument(19, QStringLiteral("<?xml version=\"1.0\" ?>\n<body/>\n"));
+        const QJsonObject entry = call(QStringLiteral("PtzCtrl"),
+                                       {{QStringLiteral("op"), QStringLiteral("ToPos")},
+                                        {QStringLiteral("id"), 3}});
+        QCOMPARE(entry.value(QStringLiteral("code")).toInt(), 0);
+        QCOMPARE(last().msg, 19u);
+        QVERIFY(last().body.contains(QLatin1String("<id>3</id>")));
+        QVERIFY(last().body.contains(QLatin1String("<command>toPos</command>")));
+    }
+
+    /// Only the HTTP API's own words go to the motor.
+    void ptzUnknownMoveIsRefused()
+    {
+        connectTo(QStringLiteral("e1"));
+        const int before = int(m_camera->requests().size());
+        const QJsonObject entry = call(QStringLiteral("PtzCtrl"),
+                                       {{QStringLiteral("op"), QStringLiteral("Spin")}});
+        QCOMPARE(entry.value(QStringLiteral("code")).toInt(), 1);
+        QCOMPARE(int(m_camera->requests().size()), before);
+    }
+
+    /// A camera without a motor turns the message down.
+    void ptzOnCameraWithoutOne()
+    {
+        connectTo(QStringLiteral("doorbell"));
+        m_camera->statusFor.insert(18, 400);
+        QCOMPARE(rspCode(call(QStringLiteral("PtzCtrl"),
+                              {{QStringLiteral("op"), QStringLiteral("Left")}})), -9);
+    }
+
+    void ptzAbility_data()
+    {
+        QTest::addColumn<QString>("mode");
+        QTest::addColumn<int>("move");
+        QTest::addColumn<int>("zoom");
+        QTest::newRow("E1, E1 Pro") << QStringLiteral("pt") << 1 << 0;
+        QTest::newRow("E1 Zoom") << QStringLiteral("ptz") << 1 << 1;
+        QTest::newRow("doorbell") << QStringLiteral("none") << 0 << 0;
+    }
+
+    /// GetAbility answered from the login's device info.
+    void ptzAbility()
+    {
+        QFETCH(QString, mode);
+        QFETCH(int, move);
+        QFETCH(int, zoom);
+        connectTo(QStringLiteral("e1"), deviceInfo(mode));
+        const QJsonObject chn = value(QStringLiteral("GetAbility"))
+                                    .value(QStringLiteral("Ability")).toObject()
+                                    .value(QStringLiteral("abilityChn")).toArray()
+                                    .at(0).toObject();
+        const auto ver = [&chn](const char *key) {
+            return chn.value(QLatin1String(key)).toObject().value(QStringLiteral("ver")).toInt();
+        };
+        QCOMPARE(ver("ptzCtrl"), move);
+        QCOMPARE(ver("supportZoom"), zoom);
     }
 
     // ── saying no ───────────────────────────────────────────────────────────

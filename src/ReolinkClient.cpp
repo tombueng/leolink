@@ -1007,6 +1007,62 @@ void ReolinkClient::fetchWifiSignal()
     [this](const QString &e) { emit failed(e); });
 }
 
+void ReolinkClient::fetchPtzAbility()
+{
+    login([this] {
+        QJsonObject user{{QStringLiteral("userName"), m_camera.user}};
+        post(QStringLiteral("GetAbility"), {{QStringLiteral("User"), user}},
+             [this](const QJsonObject &value) {
+                 const QJsonArray channels = value.value(QStringLiteral("Ability"))
+                                                 .toObject()
+                                                 .value(QStringLiteral("abilityChn"))
+                                                 .toArray();
+                 const QJsonObject chn = channels.at(channel()).toObject();
+                 const auto ver = [&chn](const char *key) {
+                     return chn.value(QLatin1String(key)).toObject()
+                         .value(QStringLiteral("ver")).toInt();
+                 };
+                 // ptzType 1, 2 and 5 are the kinds with a zoom lens; an E1
+                 // Zoom says 5, and supportZoom 1 besides.
+                 const int type = ver("ptzType");
+                 emit ptzKnown(ver("ptzCtrl") > 0,
+                               ver("supportZoom") > 0 || type == 1 || type == 2 ||
+                                   type == 5);
+             },
+             [this](const QString &) {
+                 // A firmware without GetAbility has no motor this knows how
+                 // to drive; nothing to show, and nothing worth saying.
+                 emit ptzKnown(false, false);
+             });
+    },
+    [this](const QString &) { emit ptzKnown(false, false); });
+}
+
+void ReolinkClient::ptz(const QString &op, int speed)
+{
+    QJsonObject param{{QStringLiteral("channel"), channel()},
+                      {QStringLiteral("op"), op}};
+    if (speed > 0)
+        param[QStringLiteral("speed")] = speed;
+    login([this, param] {
+        post(QStringLiteral("PtzCtrl"), param, [](const QJsonObject &) {},
+             [this](const QString &e) { emit ptzFailed(e); });
+    },
+    [this](const QString &e) { emit ptzFailed(e); });
+}
+
+void ReolinkClient::ptzToPreset(int id)
+{
+    const QJsonObject param{{QStringLiteral("channel"), channel()},
+                            {QStringLiteral("op"), QStringLiteral("ToPos")},
+                            {QStringLiteral("id"), id}};
+    login([this, param] {
+        post(QStringLiteral("PtzCtrl"), param, [](const QJsonObject &) {},
+             [this](const QString &e) { emit ptzFailed(e); });
+    },
+    [this](const QString &e) { emit ptzFailed(e); });
+}
+
 void ReolinkClient::fetchNetworkInfo()
 {
     login([this] {

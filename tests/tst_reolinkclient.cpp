@@ -29,6 +29,10 @@ struct HttpCamera {
     /// Answered 502 this many times, as newer firmware does under load.
     int overloaded{0};
     QStringList asked;
+    /// Answers for commands the fixtures do not hold, by command.
+    QHash<QString, QJsonObject> values;
+    /// Commands turned down, with the code to give.
+    QHash<QString, int> refuse;
 
     static QJsonObject failure(const QString &cmd, int rspCode)
     {
@@ -76,6 +80,11 @@ struct HttpCamera {
             expireNext = false;
             token.clear();
             reply = failure(cmd, -6);
+        } else if (refuse.contains(cmd)) {
+            reply = failure(cmd, refuse.value(cmd));
+        } else if (values.contains(cmd)) {
+            reply = {{QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 0},
+                     {QStringLiteral("value"), values.value(cmd)}};
         } else {
             QFile f(QStringLiteral(LEOLINK_FIXTURES "/e1zoom/http/") + cmd + QStringLiteral(".json"));
             reply = f.open(QIODevice::ReadOnly) ? QJsonDocument::fromJson(f.readAll()).object()
@@ -272,6 +281,98 @@ private slots:
         QVERIFY2(failed.first().first().toString().contains(QLatin1String("Baichuan")),
                  qPrintable(failed.first().first().toString()));
         QVERIFY(m_server->requests().isEmpty());
+    }
+
+    /// Which cameras get the turning buttons, from what GetAbility says of
+    /// the channel. An E1 Zoom gives its kind as ptzType 5 and supportZoom 0.
+    void ptzAbility_data()
+    {
+        QTest::addColumn<int>("ptzCtrl");
+        QTest::addColumn<int>("ptzType");
+        QTest::addColumn<int>("supportZoom");
+        QTest::addColumn<bool>("canMove");
+        QTest::addColumn<bool>("canZoom");
+        QTest::newRow("E1 Zoom") << 1 << 5 << 0 << true << true;
+        QTest::newRow("says zoom") << 1 << 0 << 1 << true << true;
+        QTest::newRow("pan and tilt") << 1 << 0 << 0 << true << false;
+        QTest::newRow("fixed") << 0 << 0 << 0 << false << false;
+    }
+
+    void ptzAbility()
+    {
+        QFETCH(int, ptzCtrl);
+        QFETCH(int, ptzType);
+        QFETCH(int, supportZoom);
+        QFETCH(bool, canMove);
+        QFETCH(bool, canZoom);
+        const auto ver = [](int v) { return QJsonObject{{QStringLiteral("ver"), v}}; };
+        m_camera.values.insert(
+            QStringLiteral("GetAbility"),
+            {{QStringLiteral("Ability"),
+              QJsonObject{{QStringLiteral("abilityChn"),
+                           QJsonArray{QJsonObject{{QStringLiteral("ptzCtrl"), ver(ptzCtrl)},
+                                                  {QStringLiteral("ptzType"), ver(ptzType)},
+                                                  {QStringLiteral("supportZoom"),
+                                                   ver(supportZoom)}}}}}}});
+        connectTo(config());
+        QSignalSpy known(m_client.get(), &ReolinkClient::ptzKnown);
+        m_client->fetchPtzAbility();
+        QVERIFY(known.wait(5000));
+        QCOMPARE(known.first().at(0).toBool(), canMove);
+        QCOMPARE(known.first().at(1).toBool(), canZoom);
+    }
+
+    /// Firmware without GetAbility gets no buttons, and no complaint.
+    void ptzAbilityUnknown()
+    {
+        connectTo(config());
+        QSignalSpy known(m_client.get(), &ReolinkClient::ptzKnown);
+        QSignalSpy failed(m_client.get(), &ReolinkClient::failed);
+        m_client->fetchPtzAbility();
+        QVERIFY(known.wait(5000));
+        QCOMPARE(known.first().at(0).toBool(), false);
+        QCOMPARE(known.first().at(1).toBool(), false);
+        QCOMPARE(failed.count(), 0);
+    }
+
+    /// A move, its stop and a preset, as PtzCtrl on the camera's channel.
+    void ptzMoves()
+    {
+        m_camera.values.insert(QStringLiteral("PtzCtrl"), {});
+        connectTo(config());
+        m_client->ptz(QStringLiteral("Left"));
+        m_client->ptz(QStringLiteral("Stop"));
+        m_client->ptzToPreset(3);
+
+        const auto sent = [this] {
+            QList<QJsonObject> params;
+            for (const FakeWebServer::Request &r : m_server->requests()) {
+                const QJsonObject entry =
+                    QJsonDocument::fromJson(r.body).array().first().toObject();
+                if (entry.value(QStringLiteral("cmd")).toString() == QLatin1String("PtzCtrl"))
+                    params << entry.value(QStringLiteral("param")).toObject();
+            }
+            return params;
+        };
+        QTRY_COMPARE(sent().size(), 3);
+        const QList<QJsonObject> params = sent();
+        QCOMPARE(params.at(0).value(QStringLiteral("op")).toString(), QStringLiteral("Left"));
+        QCOMPARE(params.at(0).value(QStringLiteral("channel")).toInt(), 0);
+        QVERIFY(!params.at(0).contains(QStringLiteral("speed")));
+        QCOMPARE(params.at(1).value(QStringLiteral("op")).toString(), QStringLiteral("Stop"));
+        QCOMPARE(params.at(2).value(QStringLiteral("op")).toString(), QStringLiteral("ToPos"));
+        QCOMPARE(params.at(2).value(QStringLiteral("id")).toInt(), 3);
+    }
+
+    /// A camera that turns a move down says so, through ptzFailed().
+    void ptzRefused()
+    {
+        m_camera.refuse.insert(QStringLiteral("PtzCtrl"), -9);
+        connectTo(config());
+        QSignalSpy failed(m_client.get(), &ReolinkClient::ptzFailed);
+        m_client->ptz(QStringLiteral("Up"));
+        QVERIFY(failed.wait(5000));
+        QVERIFY(!failed.first().first().toString().isEmpty());
     }
 
     void errorsAreExplained()
