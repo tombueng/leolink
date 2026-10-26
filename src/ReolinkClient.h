@@ -22,7 +22,9 @@ namespace leolink {
 /// What one device can stand, shared by every client talking to it.
 /// Defined in the .cpp — nothing outside needs its shape.
 struct HostGate;
-class BaichuanApi;
+class BaichuanLink;
+class CommandLink;
+class HttpApiLink;
 
 /// Talks to /cgi-bin/api.cgi.
 ///
@@ -59,7 +61,7 @@ public:
     void setCamera(const CameraConfig &camera);
     /// Where requests go. Only a test changes this, to send them to a web
     /// server of its own; the client keeps owning the one it made.
-    void setNetwork(QNetworkAccessManager *net) { m_net = net; }
+    void setNetwork(QNetworkAccessManager *net);
     /// Makes the network manager of every client created from now on, the
     /// ones a dialog makes for itself included. For tests; null restores the
     /// ordinary one.
@@ -187,7 +189,7 @@ public:
     void deleteUser(const QString &name);
     void changePassword(const QString &name, const QString &password);
 
-    bool hasSession() const { return !m_token.isEmpty(); }
+    bool hasSession() const;
 
     /// The camera's own code for the failure just reported. -9 and -26 mean
     /// "this model has not got that", which is not an error worth showing
@@ -267,7 +269,6 @@ signals:
     void failed(const QString &reason);
 
 private:
-    QUrl apiUrl(const QString &command, bool withToken = true) const;
     void post(const QString &command, const QJsonObject &param,
               const std::function<void(const QJsonObject &value)> &onOk,
               const std::function<void(const QString &error)> &onErr,
@@ -290,28 +291,19 @@ private:
     void pumpHost();
     /// The gate for an address, created on first use and shared from then on.
     static std::shared_ptr<HostGate> gateFor(const QString &host);
-    /// Hands the session back. Cameras allow only a handful at once, and one
-    /// that is merely dropped stays occupied until its lease runs out.
-    void releaseSession();
     void login(const std::function<void()> &then,
                const std::function<void(const QString &)> &onErr);
 
-    /// Whether this camera is spoken to over Baichuan instead: it has no web
-    /// server and does have port 9000. An E1 Pro is like that out of the box.
-    /// Decided by what the camera was found to offer when leolink started; a
-    /// camera nobody has asked yet is assumed to have HTTP, as before.
-    bool overBaichuan() const;
-    /// sendNow() for such a camera. Same callbacks, same queue, same error
-    /// codes: BaichuanApi answers in the HTTP API's own terms.
-    void sendOverBaichuan(const QString &command, const QJsonObject &param,
-                          const std::function<void(const QJsonObject &entry)> &onOk,
-                          const std::function<void(const QString &error)> &onErr,
-                          int action);
-    std::shared_ptr<BaichuanApi> m_baichuan;
+    /// The link this camera's commands take, from the routing table: its web
+    /// server, or Baichuan where it has none. Decided by what the camera was
+    /// found to offer; a camera nobody has asked yet keeps the web server.
+    CommandLink &link();
+    BaichuanLink &baichuanLink();
+    std::unique_ptr<HttpApiLink> m_http;
+    /// Made on first use: most cameras never need it.
+    std::unique_ptr<BaichuanLink> m_baichuan;
 
-    QNetworkAccessManager *m_net;
     CameraConfig m_camera;
-    QString m_token;
     int m_lastErrorCode{0};
 
     void pollFirmware();

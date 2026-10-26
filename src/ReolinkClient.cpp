@@ -3,20 +3,18 @@
 #include <memory>
 
 #include <QJsonArray>
-#include <QJsonDocument>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QEventLoop>
 #include <QCoreApplication>
 #include <QHash>
 #include <QPointer>
 #include <QThread>
-#include <QSslConfiguration>
 #include <QTimer>
 #include <QUrlQuery>
 
 #include "BaichuanApi.h"
+#include "BaichuanLink.h"
+#include "HttpApiLink.h"
 #include "Firmware.h"
 #include "Log.h"
 #include "Protocols.h"
@@ -86,45 +84,49 @@ QHash<QString, int> &learnedCeilings()
     return ceilings;
 }
 
-/// How long to wait for a camera to acknowledge a logout. Long enough for a
-/// device on the same network, short enough that one which has vanished does
-/// not hold up closing the window.
-constexpr int kLogoutWaitMs = 700;
-
 /// How long to leave a camera alone after it has refused a request outright.
 constexpr int kBackOffMs = 3000;
 } // namespace
 
-namespace {
-
-std::function<QNetworkAccessManager *(QObject *)> &networkFactory()
-{
-    static std::function<QNetworkAccessManager *(QObject *)> factory;
-    return factory;
-}
-
-QNetworkAccessManager *makeNetwork(QObject *owner)
-{
-    return networkFactory() ? networkFactory()(owner) : new QNetworkAccessManager(owner);
-}
-
-} // namespace
-
 void ReolinkClient::setNetworkFactory(std::function<QNetworkAccessManager *(QObject *)> factory)
 {
-    networkFactory() = std::move(factory);
+    HttpApiLink::setNetworkFactory(std::move(factory));
 }
 
 ReolinkClient::ReolinkClient(QObject *parent)
-    : QObject(parent), m_net(makeNetwork(this))
+    : QObject(parent), m_http(std::make_unique<HttpApiLink>(this))
 {
 }
 
 ReolinkClient::~ReolinkClient()
 {
-    releaseSession();
+    m_http->releaseSession();
     if (m_host)
         m_host->clients.removeAll(this);
+}
+
+void ReolinkClient::setNetwork(QNetworkAccessManager *net)
+{
+    m_http->setNetwork(net);
+}
+
+bool ReolinkClient::hasSession() const
+{
+    return !m_http->token().isEmpty();
+}
+
+CommandLink &ReolinkClient::link()
+{
+    if (route(Feature::Settings, m_camera.caps) == Protocol::Baichuan)
+        return baichuanLink();
+    return *m_http;
+}
+
+BaichuanLink &ReolinkClient::baichuanLink()
+{
+    if (!m_baichuan)
+        m_baichuan = std::make_unique<BaichuanLink>(m_camera, m_camera.secret());
+    return *m_baichuan;
 }
 
 std::shared_ptr<HostGate> ReolinkClient::gateFor(const QString &host)
@@ -187,9 +189,9 @@ void ReolinkClient::setCamera(const CameraConfig &camera)
     // version only did so on a change of host, and the token was then cleared
     // regardless — so pointing a client at the same camera again, which the
     // "Test" button does on every press, silently abandoned a live session.
-    releaseSession();
+    m_http->releaseSession();
     m_camera = camera;
-    m_token.clear();
+    m_http->setCamera(camera);
     m_baichuan.reset();
 
     // A camera on a channel other than zero is behind a recorder and says so
@@ -208,69 +210,6 @@ void ReolinkClient::setCamera(const CameraConfig &camera)
     Log::addSecret(camera.password);
     if (!camera.uid.isEmpty())
         Log::addSecret(camera.uid);
-}
-
-void ReolinkClient::releaseSession()
-{
-    if (m_token.isEmpty())
-        return;
-
-    // Sessions are a scarce resource on these cameras — six or eight for the
-    // whole device, shared with the phone app and the web interface — and they
-    // are only freed by logging out or by waiting for the lease to lapse.
-    // Without this, every settings dialog and every snapshot left one behind
-    // until the camera answered -5 "max session" and appeared to be broken.
-    //
-    // Sent detached: this runs from the destructor, so nothing owned by this
-    // object may outlive the call. Nobody waits for the answer; there is
-    // nothing useful to do with it.
-    QUrl url = apiUrl(QStringLiteral("Logout"));
-    const QString token = m_token;
-    m_token.clear();
-
-    auto *net = new QNetworkAccessManager;
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader,
-                      QStringLiteral("application/json"));
-    if (m_camera.effectiveHttps()) {
-        QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
-        ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
-        request.setSslConfiguration(ssl);
-    }
-
-    QJsonObject entry;
-    entry[QStringLiteral("cmd")] = QStringLiteral("Logout");
-    entry[QStringLiteral("action")] = 0;
-    entry[QStringLiteral("param")] = QJsonObject();
-    QJsonArray body;
-    body.append(entry);
-
-    QNetworkReply *reply =
-        net->post(request, QJsonDocument(body).toJson(QJsonDocument::Compact));
-
-    // Waited for, briefly. Posting and walking away looked right and is not:
-    // this is called from destructors, and the last of those run as the
-    // application is shutting down, when there is no longer an event loop to
-    // carry the request out of the process. The session would then be held for
-    // its full hour — the very thing this exists to prevent.
-    //
-    // User input is excluded so a half-destroyed dialog cannot be clicked, and
-    // the wait is capped: a camera that has gone off the network must not stop
-    // the program from closing.
-    QEventLoop loop;
-    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    QTimer::singleShot(kLogoutWaitMs, &loop, &QEventLoop::quit);
-    loop.exec(QEventLoop::ExcludeUserInputEvents);
-
-    const bool done = reply->isFinished();
-    reply->deleteLater();
-    net->deleteLater();
-
-    Q_UNUSED(token);
-    LEO_DEBUG(Api, m_camera.label(),
-              done ? QStringLiteral("Logout acknowledged, session released")
-                   : QStringLiteral("Logout sent, no answer within %1 ms")
-                         .arg(kLogoutWaitMs));
 }
 
 QString ReolinkClient::describeError(int rspCode)
@@ -304,21 +243,6 @@ QString ReolinkClient::describeError(int rspCode)
     case -203: return tr("FTP could not reach the server.");
     default:   return tr("Camera reported error %1.").arg(rspCode);
     }
-}
-
-QUrl ReolinkClient::apiUrl(const QString &command, bool withToken) const
-{
-    QUrl url;
-    url.setScheme(m_camera.effectiveHttps() ? QStringLiteral("https") : QStringLiteral("http"));
-    url.setHost(m_camera.host);
-    url.setPath(QStringLiteral("/cgi-bin/api.cgi"));
-
-    QUrlQuery q;
-    q.addQueryItem(QStringLiteral("cmd"), command);
-    if (withToken && !m_token.isEmpty())
-        q.addQueryItem(QStringLiteral("token"), m_token);
-    url.setQuery(q);
-    return url;
 }
 
 void ReolinkClient::post(const QString &command, const QJsonObject &param,
@@ -469,48 +393,16 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
                             const std::function<void(const QString &)> &onErr,
                             int action, int retriesLeft)
 {
-    if (overBaichuan()) {
-        sendOverBaichuan(command, param, onOk, onErr, action);
-        return;
-    }
-
-    QJsonObject entry;
-    entry[QStringLiteral("cmd")] = command;
-    entry[QStringLiteral("action")] = action;
-    entry[QStringLiteral("param")] = param;
-
-    QJsonArray body;
-    body.append(entry);
-
-    QNetworkRequest req(apiUrl(command));
-    req.setHeader(QNetworkRequest::ContentTypeHeader,
-                  QStringLiteral("application/json"));
-    if (m_camera.effectiveHttps()) {
-        // Cameras ship a self-signed certificate; refusing it would make HTTPS
-        // unusable on every device out there.
-        QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
-        ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
-        req.setSslConfiguration(ssl);
-    }
-
-    const QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
-    LEO_DEBUG(Api, m_camera.label(),
-              QStringLiteral("→ %1 action=%2 session=%3 %4")
-                  .arg(command).arg(action)
-                  .arg(m_token.isEmpty()
-                           ? QStringLiteral("none")
-                           : QStringLiteral("%1 chars").arg(m_token.size()))
-                  .arg(param.isEmpty() ? QString()
-                                       : QString::fromUtf8(payload)));
-
+    CommandLink &via = link();
+    const QString over = via.name();
+    if (&via != m_http.get())
+        LEO_DEBUG(Api, m_camera.label(),
+                  QStringLiteral("→ %1 action=%2 over %3").arg(command).arg(action).arg(over));
     const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
-    const QString tokenUsed = m_token;
-    QNetworkReply *reply = m_net->post(req, payload);
 
-    connect(reply, &QNetworkReply::finished, this,
-            [this, reply, startedAt, command, param, onOk, onErr, action,
-             retriesLeft, tokenUsed] {
-        reply->deleteLater();
+    via.send(command, param, action, this,
+             [this, startedAt, command, param, onOk, onErr, action, retriesLeft,
+              over](const LinkReply &reply) {
         const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
 
         // The slot is freed however this ends, and the next request started —
@@ -524,188 +416,115 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
             ~Pumper() { self->pumpHost(); }
         } pumper{this};
 
-        if (reply->error() != QNetworkReply::NoError) {
-            const int status =
-                reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        switch (reply.kind) {
+        case LinkReply::Kind::Ok:
+            noteSuccess();
+            LEO_DEBUG(Api, m_camera.label(),
+                      QStringLiteral("← %1 ok over %2 after %3 ms")
+                          .arg(command, over).arg(elapsed));
+            onOk(reply.entry);
+            return;
 
-            // 502 and 503 are answers, not network faults. Newer Reolink
-            // firmware returns them instead of a JSON error whenever it is
-            // unhappy — too many sessions, a parameter it did not expect, a
-            // request while it is busy. A Duo 2 was reduced to answering 502 to
-            // everything, including Login, by a burst of read-only queries.
+        case LinkReply::Kind::Busy:
+            // Newer firmware answers 502 or 503 whenever it is unhappy. A
+            // Duo 2 was reduced to answering 502 to everything, including
+            // Login, by a burst of read-only queries.
             //
-            // Treated as "come back later": the request is not retried, the
-            // message says what to do, and the queue is held off for a moment
+            // Treated as "come back later": the queue is held off for a moment
             // so a dialog full of requests does not keep hammering a camera
             // that has already said it has had enough.
-            if (status == 502 || status == 503) {
-                m_lastErrorCode = kCameraOverloaded;
-                if (m_host)
-                    m_host->backOffUntil =
-                        QDateTime::currentMSecsSinceEpoch() + kBackOffMs;
-                noteRefusal();
-                LEO_WARN(Api, m_camera.label(),
-                         QStringLiteral("← %1 HTTP %2 after %3 ms — the camera "
-                                        "is refusing requests; holding off %4 ms")
-                             .arg(command).arg(status).arg(elapsed).arg(kBackOffMs));
+            m_lastErrorCode = kCameraOverloaded;
+            if (m_host)
+                m_host->backOffUntil = QDateTime::currentMSecsSinceEpoch() + kBackOffMs;
+            noteRefusal();
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 HTTP %2 after %3 ms — the camera "
+                                    "is refusing requests; holding off %4 ms")
+                         .arg(command).arg(reply.status).arg(elapsed).arg(kBackOffMs));
 
-                // Asked again once, after the pause. "Not now" is not "no", and
-                // a single early refusal was otherwise enough to leave the
-                // whole dialog empty: the requests behind it went through
-                // perfectly well, but the one that was turned away never came
-                // back.
-                if (retriesLeft > 0) {
-                    LEO_DEBUG(Api, m_camera.label(),
-                              QStringLiteral("Will ask for %1 again once the "
-                                             "camera has caught its breath "
-                                             "(%2 attempt(s) left)")
-                                  .arg(command).arg(retriesLeft));
-                    postRaw(command, param, onOk, onErr, action, retriesLeft - 1);
-                    return;
-                }
-                onErr(tr("The camera is not answering requests just now. It does "
-                         "this when it has had too many at once; it recovers on "
-                         "its own after a moment."));
+            // Asked again, after the pause. "Not now" is not "no", and a single
+            // early refusal was otherwise enough to leave the whole dialog
+            // empty: the requests behind it went through perfectly well, but
+            // the one that was turned away never came back.
+            if (retriesLeft > 0) {
+                LEO_DEBUG(Api, m_camera.label(),
+                          QStringLiteral("Will ask for %1 again once the camera has "
+                                         "caught its breath (%2 attempt(s) left)")
+                              .arg(command).arg(retriesLeft));
+                postRaw(command, param, onOk, onErr, action, retriesLeft - 1);
                 return;
             }
-
-            // Not the camera's answer, so no code of the camera's. A -9 left
-            // over from an earlier request would pass this off as "no such
-            // command".
-            m_lastErrorCode = 0;
-            const QString message =
-                tr("Cannot reach %1: %2").arg(m_camera.host, reply->errorString());
-            LEO_WARN(Api, m_camera.label(),
-                     QStringLiteral("← %1 network error after %2 ms: %3")
-                         .arg(command).arg(elapsed).arg(reply->errorString()));
-            onErr(message);
+            onErr(tr("The camera is not answering requests just now. It does "
+                     "this when it has had too many at once; it recovers on "
+                     "its own after a moment."));
             return;
-        }
 
-        const QByteArray raw = reply->readAll();
-        const QJsonDocument doc = QJsonDocument::fromJson(raw);
-        if (!doc.isArray() || doc.array().isEmpty()) {
-            LEO_WARN(Api, m_camera.label(),
-                     QStringLiteral("← %1 unexpected reply: %2")
-                         .arg(command, QString::fromUtf8(raw.left(400))));
-            onErr(tr("Unexpected reply from %1.").arg(m_camera.host));
-            return;
-        }
-
-        const QJsonObject first = doc.array().first().toObject();
-        if (first.value(QStringLiteral("code")).toInt(-1) != 0) {
-            const QJsonObject err = first.value(QStringLiteral("error")).toObject();
-            const int rspCode = err.value(QStringLiteral("rspCode")).toInt();
-
-            // A token has a lease, and a client kept around for days — the
-            // status poller, for one — will outlive it. Before this, that
-            // turned into a permanent failure: every later request reused the
-            // dead token and the camera looked unreachable. One silent retry
-            // with a fresh session is what the user would do by hand.
-            if (retriesLeft > 0 && !tokenUsed.isEmpty() &&
-                (rspCode == -6 || rspCode == -27)) {
+        case LinkReply::Kind::Expired:
+            // A client kept around for days — the status poller, for one —
+            // outlives its session's lease. Before this, that turned into a
+            // permanent failure: every later request reused the dead token
+            // and the camera looked unreachable. One silent retry with a fresh
+            // session is what the user would do by hand.
+            if (retriesLeft > 0) {
                 LEO_INFO(Api, m_camera.label(),
                          QStringLiteral("Session refused during %1, logging in "
                                         "again").arg(command));
-                // Only if nobody has already replaced it. The old test looked
-                // at m_token, so the first request to fail cleared it and every
-                // other one then decided it was not allowed to retry — twenty
-                // failures reported for one expired session.
-                if (m_token == tokenUsed)
-                    m_token.clear();
                 login([this, command, param, onOk, onErr, action, retriesLeft] {
-                          postRaw(command, param, onOk, onErr, action,
-                                  retriesLeft - 1);
+                          postRaw(command, param, onOk, onErr, action, retriesLeft - 1);
                       },
                       onErr);
                 return;
             }
-
+            [[fallthrough]];
+        case LinkReply::Kind::Refused:
             // Recorded so the caller can tell "this camera has no such
             // feature" from "something went wrong". Single-threaded and set
             // immediately before the callback runs, which is the only reason a
             // shared field is acceptable here.
-            m_lastErrorCode = rspCode;
+            m_lastErrorCode = reply.rspCode;
             LEO_WARN(Api, m_camera.label(),
-                     QStringLiteral("← %1 failed after %2 ms: rspCode=%3 %4")
-                         .arg(command).arg(elapsed).arg(rspCode)
-                         .arg(err.value(QStringLiteral("detail")).toString()));
-            onErr(describeError(rspCode));
+                     QStringLiteral("← %1 failed over %2 after %3 ms: rspCode=%4 %5")
+                         .arg(command, over).arg(elapsed).arg(reply.rspCode)
+                         .arg(reply.detail));
+            // Over HTTP the camera's code says it all; Baichuan's own
+            // failures carry their reason as text.
+            onErr(over == m_http->name() ? describeError(reply.rspCode) : reply.detail);
+            return;
+
+        case LinkReply::Kind::Missing:
+            m_lastErrorCode = reply.rspCode;
+            LEO_DEBUG(Api, m_camera.label(),
+                      QStringLiteral("← %1 not available over %2").arg(command, over));
+            // Not "this firmware cannot": the firmware may well, through the
+            // web server this camera lacks.
+            onErr(tr("Not available without the camera's web server."));
+            return;
+
+        case LinkReply::Kind::Garbled:
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 unexpected reply: %2").arg(command, reply.detail));
+            onErr(tr("Unexpected reply from %1.").arg(m_camera.host));
+            return;
+
+        case LinkReply::Kind::Unreachable:
+            // Not the camera's answer, so no code of the camera's. A -9 left
+            // over from an earlier request would pass this off as "no such
+            // command".
+            m_lastErrorCode = 0;
+            LEO_WARN(Api, m_camera.label(),
+                     QStringLiteral("← %1 network error after %2 ms: %3")
+                         .arg(command).arg(elapsed).arg(reply.detail));
+            onErr(tr("Cannot reach %1: %2").arg(m_camera.host, reply.detail));
             return;
         }
-
-        noteSuccess();
-        LEO_DEBUG(Api, m_camera.label(),
-                  QStringLiteral("← %1 ok after %2 ms, %3 bytes")
-                      .arg(command).arg(elapsed).arg(raw.size()));
-        onOk(first);
-    });
-}
-
-bool ReolinkClient::overBaichuan() const
-{
-    return route(Feature::Settings, m_camera.caps) == Protocol::Baichuan;
-}
-
-void ReolinkClient::sendOverBaichuan(const QString &command, const QJsonObject &param,
-                                     const std::function<void(const QJsonObject &)> &onOk,
-                                     const std::function<void(const QString &)> &onErr,
-                                     int action)
-{
-    if (!m_baichuan)
-        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
-
-    LEO_DEBUG(Api, m_camera.label(),
-              QStringLiteral("→ %1 action=%2 over Baichuan").arg(command).arg(action));
-    const qint64 startedAt = QDateTime::currentMSecsSinceEpoch();
-    m_baichuan->call(command, param, action, this,
-                     [this, command, startedAt, onOk, onErr](const QJsonObject &entry) {
-        const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startedAt;
-        // The slot is the device's, as on the HTTP path, and the next request
-        // goes once this one's handler has run.
-        if (m_host)
-            --m_host->inFlight;
-        struct Pumper {
-            ReolinkClient *self;
-            ~Pumper() { self->pumpHost(); }
-        } pumper{this};
-
-        if (entry.value(QStringLiteral("code")).toInt(-1) != 0) {
-            const QJsonObject err = entry.value(QStringLiteral("error")).toObject();
-            const int rspCode = err.value(QStringLiteral("rspCode")).toInt();
-            const QString detail = err.value(QStringLiteral("detail")).toString();
-            m_lastErrorCode = rspCode;
-            if (meansUnsupported(rspCode)) {
-                LEO_DEBUG(Api, m_camera.label(),
-                          QStringLiteral("← %1 not available over Baichuan")
-                              .arg(command));
-                // Not "this firmware cannot": the firmware may well, through
-                // the web server this camera lacks.
-                onErr(tr("Not available without the camera's web server."));
-            } else {
-                LEO_WARN(Api, m_camera.label(),
-                         QStringLiteral("← %1 failed over Baichuan after %2 ms: %3")
-                             .arg(command).arg(elapsed).arg(detail));
-                onErr(detail);
-            }
-            return;
-        }
-        LEO_DEBUG(Api, m_camera.label(),
-                  QStringLiteral("← %1 ok over Baichuan after %2 ms")
-                      .arg(command).arg(elapsed));
-        onOk(entry);
     });
 }
 
 void ReolinkClient::login(const std::function<void()> &then,
                           const std::function<void(const QString &)> &onErr)
 {
-    // No HTTP session to open: BaichuanApi logs in on its own connection.
-    if (overBaichuan()) {
-        then();
-        return;
-    }
-    if (!m_token.isEmpty()) {
+    // A link without sessions, Baichuan, logs in on a connection of its own.
+    if (!link().needsLogin() || !m_http->token().isEmpty()) {
         then();
         return;
     }
@@ -739,7 +558,7 @@ void ReolinkClient::login(const std::function<void()> &then,
              m_loggingIn = false;
              const QJsonObject token =
                  value.value(QStringLiteral("Token")).toObject();
-             m_token = token.value(QStringLiteral("name")).toString();
+             const QString name = token.value(QStringLiteral("name")).toString();
 
              // Taken before running any of them: a waiter may well ask for
              // something else that needs a session, and appending to a list
@@ -747,7 +566,7 @@ void ReolinkClient::login(const std::function<void()> &then,
              const QList<PendingLogin> waiting = std::move(m_waiting);
              m_waiting.clear();
 
-             if (m_token.isEmpty()) {
+             if (name.isEmpty()) {
                  LEO_ERROR(Api, m_camera.label(),
                            QStringLiteral("Login succeeded but returned no token"));
                  for (const PendingLogin &entry : waiting)
@@ -756,11 +575,10 @@ void ReolinkClient::login(const std::function<void()> &then,
              }
 
              // The token itself is a working key to the camera for as long as
-             // it lasts, so it never reaches the log intact.
-             Log::addSecret(m_token);
+             // it lasts, so the link keeps it out of the log.
+             m_http->setToken(name);
              LEO_DEBUG(Api, m_camera.label(),
-                       QStringLiteral("token is %1 chars")
-                           .arg(m_token.size()));
+                       QStringLiteral("token is %1 chars").arg(name.size()));
              LEO_DEBUG(Api, m_camera.label(),
                        QStringLiteral("Logged in as %1, lease %2 s, %3 request(s) "
                                       "were waiting")
@@ -962,7 +780,7 @@ void ReolinkClient::searchRecordings(const QDateTime &from, const QDateTime &to,
 
 QUrl ReolinkClient::playbackUrl(const Recording &recording) const
 {
-    QUrl url = apiUrl(QStringLiteral("Playback"));
+    QUrl url = m_http->apiUrl(QStringLiteral("Playback"));
     QUrlQuery q(url.query());
     q.addQueryItem(QStringLiteral("source"), recording.name);
     q.addQueryItem(QStringLiteral("output"), recording.name);
@@ -972,7 +790,7 @@ QUrl ReolinkClient::playbackUrl(const Recording &recording) const
 
 QUrl ReolinkClient::downloadUrl(const Recording &recording) const
 {
-    QUrl url = apiUrl(QStringLiteral("Download"));
+    QUrl url = m_http->apiUrl(QStringLiteral("Download"));
     QUrlQuery q(url.query());
     q.addQueryItem(QStringLiteral("source"), recording.name);
     q.addQueryItem(QStringLiteral("output"), recording.name);
@@ -987,7 +805,7 @@ void ReolinkClient::reboot()
              [this](const QJsonObject &) {
                  // The session dies with the camera; drop the token so the
                  // next request logs in again rather than failing on -6.
-                 m_token.clear();
+                 m_http->forgetToken();
                  emit rebootAccepted();
              },
              [this](const QString &e) { emit failed(e); });
@@ -1217,7 +1035,7 @@ void ReolinkClient::upgradeFirmware()
              [this](const QJsonObject &) {
                  // The camera reboots into the new firmware on its own; the
                  // session dies with it.
-                 m_token.clear();
+                 m_http->forgetToken();
                  emit firmwareInfo(
                      tr("Upgrading. The camera will restart on its own and be "
                         "unreachable for several minutes. Do not cut its power."),
@@ -1237,9 +1055,7 @@ void ReolinkClient::installFirmwareFile(const QString &fileName, const QByteArra
                               "which it does not offer."));
         return;
     }
-    if (!m_baichuan)
-        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
-    m_baichuan->uploadFirmware(
+    baichuanLink().session().uploadFirmware(
         fileName, pak, this,
         [this](qint64 sent, qint64 total) { emit firmwareProgress(sent, total); },
         [this](const QString &error) {
@@ -1250,7 +1066,7 @@ void ReolinkClient::installFirmwareFile(const QString &fileName, const QByteArra
             }
             // The camera restarts into the new firmware; an HTTP session, if
             // there was one, dies with it.
-            m_token.clear();
+            m_http->forgetToken();
             emit firmwareInfo(
                 tr("Sent. The camera is installing it and will restart on its own, "
                    "unreachable for several minutes. Do not cut its power."),
@@ -1279,7 +1095,7 @@ void ReolinkClient::pollFirmware()
     if (!m_firmwareWatch.active)
         return;
     // A session from before the restart is gone with it.
-    m_token.clear();
+    m_http->forgetToken();
     auto gone = [this](const QString &) { firmwareAnswered(QString()); };
     login([this, gone] {
         post(QStringLiteral("GetDevInfo"), {},
@@ -1443,20 +1259,14 @@ void ReolinkClient::fetchSnapshot()
         return;
     }
     login([this] {
-        QUrl url = apiUrl(QStringLiteral("Snap"));
+        QUrl url = m_http->apiUrl(QStringLiteral("Snap"));
         QUrlQuery q(url.query());
         q.addQueryItem(QStringLiteral("channel"),
                        QString::number(m_camera.channel));
         q.addQueryItem(QStringLiteral("rs"), QStringLiteral("leolink"));
         url.setQuery(q);
 
-        QNetworkRequest req(url);
-        if (m_camera.effectiveHttps()) {
-            QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
-            ssl.setPeerVerifyMode(QSslSocket::VerifyNone);
-            req.setSslConfiguration(ssl);
-        }
-        QNetworkReply *reply = m_net->get(req);
+        QNetworkReply *reply = m_http->get(url);
         connect(reply, &QNetworkReply::finished, this, [this, reply] {
             reply->deleteLater();
             const QByteArray data = reply->readAll();
