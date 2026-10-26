@@ -88,7 +88,7 @@ public:
         /// "MD", "people" … as the camera named them; for the log.
         QString what;
     };
-    static QList<Alarm> parseAlarms(const QString &xml);
+    static QList<Alarm> parseAlarms(const QString &document);
 
 private:
     BaichuanApi(const CameraConfig &camera, const QString &secret);

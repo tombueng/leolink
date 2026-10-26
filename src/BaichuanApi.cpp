@@ -313,10 +313,10 @@ void BaichuanApi::unwatchAlarms(int id)
                               Qt::QueuedConnection);
 }
 
-QList<BaichuanApi::Alarm> BaichuanApi::parseAlarms(const QString &xml)
+QList<BaichuanApi::Alarm> BaichuanApi::parseAlarms(const QString &document)
 {
     QList<Alarm> alarms;
-    for (const QString &event : xml::all(xml, QStringLiteral("AlarmEvent"))) {
+    for (const QString &event : xml::all(document, QStringLiteral("AlarmEvent"))) {
         bool ok = false;
         const int channel = xml::text(event, QStringLiteral("channelId")).toInt(&ok);
         if (!ok)

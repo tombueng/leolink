@@ -1,44 +1,27 @@
-// Motion events over ONVIF PullPoint (port 8000), or Baichuan (port 9000).
+// A camera's own motion events, whichever protocol brings them.
 #pragma once
-
-#include <memory>
 
 #include <QHash>
 #include <QList>
 #include <QObject>
+#include <QPointer>
 #include <QSet>
 #include <QString>
 
 #include "Config.h"
-#include "Log.h"
 
 class QNetworkAccessManager;
-class QTimer;
 
 namespace leolink {
 
-class BaichuanApi;
+class EventSource;
 
-/// Long-polls the camera for motion instead of asking every second.
+/// Says when a camera's own detection sees something and when it stops.
 ///
-/// The CGI API exposes GetMdState, but that needs polling. ONVIF PullPoint is
-/// a long poll: the camera answers when something actually happens, which is
-/// one request every few seconds rather than 3600 an hour.
-///
-/// Two quirks of Reolink's ONVIF stack, both found the hard way and both
-/// load-bearing:
-///
-///  * CreatePullPointSubscription must be sent *without* WS-Addressing
-///    headers — with them the camera answers HTTP 400.
-///  * PullMessages must be sent *with* them — without, HTTP 400 again.
-///
-/// And the subscription address has to be read from <SubscriptionReference>.
-/// Taking the last <Address> in the document picks up the anonymous
-/// WS-Addressing ReplyTo instead, and then you happily poll www.w3.org.
-///
-/// A camera with no ONVIF but Baichuan — an E1 with its web server and RTSP
-/// off — is heard over Baichuan instead, on the session BaichuanApi keeps for
-/// its settings. What comes out of here is the same either way.
+/// The events come from an EventSource for the device — ONVIF where it has
+/// it, Baichuan where it has not, as the routing table says. This decides
+/// which camera each event is about and keeps each kind of thing reported
+/// apart, so what comes out is the same whichever protocol it came over.
 class MotionWatcher : public QObject {
     Q_OBJECT
 
@@ -60,8 +43,8 @@ public:
     /// True if any of the watched cameras is seeing motion.
     bool isActive() const { return m_active; }
 
-    /// Where requests go. Only a test changes this, to send them to a camera
-    /// of its own; the watcher keeps owning the one it made.
+    /// Where ONVIF requests go. Only a test changes this, to send them to a
+    /// camera of its own.
     void setNetwork(QNetworkAccessManager *net) { m_net = net; }
 
 signals:
@@ -72,32 +55,18 @@ signals:
     void error(const QString &cameraId, const QString &reason);
 
 private:
-    void subscribe();
-    void pull();
-    /// Extends the subscription before the camera lets it lapse.
-    void renew();
-    /// One <NotificationMessage> from a poll: raises motion if it says so and
-    /// if it is about this camera.
-    void handleMessage(const QString &message);
-    /// One `<AlarmEvent>` from Baichuan, for `channel`.
-    void handleAlarm(int channel, bool active, const QString &what);
+    /// One event from the source: the camera it is about, if any, has `what`
+    /// happening or not.
+    void heard(int channel, const QString &what, bool on);
+    /// The source lost its connection: nothing it reported can be heard to
+    /// end, so everything ends here, and the next subscription says afresh.
+    void lost(const QString &reason);
     /// Records one topic of one camera as happening or not, and reports the
-    /// camera's motion if that changed it. Both protocols end up here.
-    void setHappening(const CameraConfig &camera, const QString &what, bool on,
-                      Log::Category category);
-    /// The channel an event is about, or -1 when it does not say. Read from
-    /// the source token, whose shape is firmware's business — "000",
-    /// "VideoSource_2" — so the trailing digits decide it.
-    int channelOf(const QString &message) const;
-    QByteArray envelope(const QString &body, const QString &action,
-                        const QString &to) const;
-    QString securityHeader() const;
+    /// camera's motion if that changed it.
+    void setHappening(const CameraConfig &camera, const QString &what, bool on);
 
-    QNetworkAccessManager *m_net;
-    QTimer *m_renewTimer;
-    /// Set while the camera is heard over Baichuan rather than ONVIF.
-    std::shared_ptr<BaichuanApi> m_baichuan;
-    int m_alarmWatch{0};
+    QPointer<EventSource> m_source;
+    QNetworkAccessManager *m_net{nullptr};
     /// The device: host, credentials, and the label used in the log.
     CameraConfig m_camera;
     /// Everything watched through it. One entry for a camera, one per channel
@@ -109,10 +78,7 @@ private:
     /// and item: "tns1:RuleEngine/CellMotionDetector/Motion/IsMotion". A
     /// camera is seeing motion while any of them is.
     QHash<QString, QSet<QString>> m_happening;
-    QString m_subscription;
     bool m_active{false};
-    bool m_running{false};
-    int m_failures{0};
 };
 
 } // namespace leolink

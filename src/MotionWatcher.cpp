@@ -1,119 +1,27 @@
 #include "MotionWatcher.h"
 
-#include "Log.h"
-
-#include <QCryptographicHash>
-#include <QDateTime>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QRandomGenerator>
-#include <QRegularExpression>
-#include <QTimer>
-#include <QUuid>
-
 #include <algorithm>
 
-#include "BaichuanApi.h"
+#include "BaichuanEvents.h"
+#include "Log.h"
+#include "OnvifEvents.h"
 #include "Protocols.h"
 #include "ReolinkClient.h"
-#include "XmlText.h"
 
 namespace leolink {
 
-namespace {
-
-constexpr int kPullSeconds = 30;
-
-/// How long a subscription is asked to last. Left to itself an E1 Zoom gives
-/// ten seconds, and holds a poll for up to twenty: a quiet poll outlived its
-/// own subscription, and the next one was refused.
-constexpr int kLifetimeSeconds = 120;
-
-const QString kRenewAction =
-    QStringLiteral("http://docs.oasis-open.org/wsn/bw-2/SubscriptionManager/RenewRequest");
-
-const QString kPullAction =
-    QStringLiteral("http://www.onvif.org/ver10/events/wsdl/"
-                   "PullPointSubscription/PullMessages");
-
-} // namespace
-
-MotionWatcher::MotionWatcher(QObject *parent)
-    : QObject(parent), m_net(new QNetworkAccessManager(this)), m_renewTimer(new QTimer(this))
-{
-    connect(m_renewTimer, &QTimer::timeout, this, &MotionWatcher::renew);
-}
+MotionWatcher::MotionWatcher(QObject *parent) : QObject(parent) {}
 
 MotionWatcher::~MotionWatcher()
 {
     stop();
 }
 
-QString MotionWatcher::securityHeader() const
-{
-    // WS-Security UsernameToken, PasswordDigest:
-    //   digest = Base64(SHA1(nonce || created || password))
-    QByteArray nonce(16, Qt::Uninitialized);
-    QRandomGenerator::global()->fillRange(
-        reinterpret_cast<quint32 *>(nonce.data()), nonce.size() / 4);
-
-    const QString created =
-        QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-
-    QCryptographicHash sha(QCryptographicHash::Sha1);
-    sha.addData(nonce);
-    sha.addData(created.toUtf8());
-    sha.addData(m_camera.secret().toUtf8());
-
-    return QStringLiteral(
-               "<Security s:mustUnderstand=\"1\" xmlns=\"http://docs.oasis-open.org/wss/"
-               "2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">"
-               "<UsernameToken><Username>%1</Username>"
-               "<Password Type=\"http://docs.oasis-open.org/wss/2004/01/"
-               "oasis-200401-wss-username-token-profile-1.0#PasswordDigest\">%2</Password>"
-               "<Nonce EncodingType=\"http://docs.oasis-open.org/wss/2004/01/"
-               "oasis-200401-wss-soap-message-security-1.0#Base64Binary\">%3</Nonce>"
-               "<Created xmlns=\"http://docs.oasis-open.org/wss/2004/01/"
-               "oasis-200401-wss-wssecurity-utility-1.0.xsd\">%4</Created>"
-               "</UsernameToken></Security>")
-        .arg(m_camera.user,
-             QString::fromLatin1(sha.result().toBase64()),
-             QString::fromLatin1(nonce.toBase64()),
-             created);
-}
-
-QByteArray MotionWatcher::envelope(const QString &body, const QString &action,
-                                   const QString &to) const
-{
-    QString addressing;
-    if (!action.isEmpty()) {
-        addressing =
-            QStringLiteral("<wsa:Action s:mustUnderstand=\"1\">%1</wsa:Action>"
-                           "<wsa:MessageID>urn:uuid:%2</wsa:MessageID>"
-                           "<wsa:ReplyTo><wsa:Address>"
-                           "http://www.w3.org/2005/08/addressing/anonymous"
-                           "</wsa:Address></wsa:ReplyTo>"
-                           "<wsa:To s:mustUnderstand=\"1\">%3</wsa:To>")
-                .arg(action,
-                     QUuid::createUuid().toString(QUuid::WithoutBraces),
-                     to);
-    }
-
-    return QStringLiteral(
-               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-               "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" "
-               "xmlns:wsa=\"http://www.w3.org/2005/08/addressing\" "
-               "xmlns:tev=\"http://www.onvif.org/ver10/events/wsdl\">"
-               "<s:Header>%1%2</s:Header><s:Body>%3</s:Body></s:Envelope>")
-        .arg(addressing, securityHeader(), body)
-        .toUtf8();
-}
-
 void MotionWatcher::watch(const QList<CameraConfig> &cameras)
 {
     if (cameras.isEmpty())
         return;
+    stop();
 
     // The first one supplies the address and the login. They are all on the
     // same device, so any of them would do.
@@ -121,222 +29,38 @@ void MotionWatcher::watch(const QList<CameraConfig> &cameras)
     m_cameras = cameras;
     m_activeById.clear();
     m_happening.clear();
-    m_running = true;
-    m_failures = 0;
 
-    if (route(Feature::CameraMotion, m_camera.caps) == Protocol::Baichuan) {
-        m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
-        m_alarmWatch = m_baichuan->watchAlarms(
-            this,
-            [this](int channel, bool active, const QString &what) {
-                handleAlarm(channel, active, what);
-            },
-            [this](const QString &why) {
-                // Motion that was on when the session went cannot be heard
-                // ending, and left on it would hold a recording open until the
-                // camera came back. The next subscription reports the state
-                // afresh.
-                for (const CameraConfig &camera : std::as_const(m_cameras))
-                    setHappening(camera, QStringLiteral("alarm"), false,
-                                 Log::Category::Baichuan);
-                emit error(m_camera.id, tr("Lost the camera's alarms: %1").arg(why));
-            });
+    switch (route(Feature::CameraMotion, m_camera.caps)) {
+    case Protocol::Onvif: {
+        auto *onvif = new OnvifEvents(m_camera, this);
+        if (m_net)
+            onvif->setNetwork(m_net);
+        m_source = onvif;
+        break;
+    }
+    case Protocol::Baichuan:
+        m_source = new BaichuanEvents(m_camera, this);
+        break;
+    default:
         return;
     }
-    subscribe();
+    connect(m_source, &EventSource::happened, this, &MotionWatcher::heard);
+    connect(m_source, &EventSource::lost, this, &MotionWatcher::lost);
+    m_source->start();
 }
 
 void MotionWatcher::stop()
 {
-    m_running = false;
-    m_subscription.clear();
-    m_renewTimer->stop();
-    if (m_baichuan) {
-        m_baichuan->unwatchAlarms(m_alarmWatch);
-        m_baichuan.reset();
-    }
-}
-
-void MotionWatcher::renew()
-{
-    if (!m_running || m_subscription.isEmpty())
+    if (!m_source)
         return;
-    QNetworkRequest req{QUrl(m_subscription)};
-    req.setHeader(QNetworkRequest::ContentTypeHeader,
-                  QStringLiteral("application/soap+xml; charset=utf-8"));
-    // With WS-Addressing, like a poll: without it the camera answers 400.
-    QNetworkReply *reply = m_net->post(
-        req, envelope(QStringLiteral("<wsnt:Renew xmlns:wsnt=\"http://docs.oasis-open.org/wsn/b-2\">"
-                                     "<wsnt:TerminationTime>PT%1S</wsnt:TerminationTime>"
-                                     "</wsnt:Renew>")
-                          .arg(kLifetimeSeconds),
-                      kRenewAction, m_subscription));
-    connect(reply, &QNetworkReply::finished, this, [this, reply] {
-        reply->deleteLater();
-        // A renewal that fails is followed by a poll that fails, and that
-        // subscribes again; nothing more to do here than say so.
-        if (reply->error() != QNetworkReply::NoError)
-            LEO_DEBUG(Onvif, m_camera.label(),
-                      QStringLiteral("Renewal refused: %1").arg(reply->errorString()));
-    });
+    m_source->stop();
+    m_source->disconnect(this);
+    m_source->deleteLater();
+    m_source = nullptr;
 }
 
-void MotionWatcher::subscribe()
+void MotionWatcher::heard(int channel, const QString &what, bool on)
 {
-    if (!m_running || m_camera.host.isEmpty())
-        return;
-
-    const QString url =
-        QStringLiteral("http://%1:8000/onvif/event_service").arg(m_camera.host);
-
-    QNetworkRequest req{QUrl(url)};
-    req.setHeader(QNetworkRequest::ContentTypeHeader,
-                  QStringLiteral("application/soap+xml; charset=utf-8"));
-
-    // No WS-Addressing here — Reolink rejects the subscribe request with it.
-    QNetworkReply *reply = m_net->post(
-        req, envelope(QStringLiteral("<tev:CreatePullPointSubscription>"
-                                     "<tev:InitialTerminationTime>PT%1S</tev:InitialTerminationTime>"
-                                     "</tev:CreatePullPointSubscription>")
-                          .arg(kLifetimeSeconds),
-                      {}, {}));
-
-    connect(reply, &QNetworkReply::finished, this, [this, reply] {
-        reply->deleteLater();
-        if (!m_running)
-            return;
-
-        const QString xml = QString::fromUtf8(reply->readAll());
-
-        // Scope to <SubscriptionReference>, otherwise we would pick up the
-        // anonymous ReplyTo address and poll w3.org instead of the camera.
-        const QString reference = xml::inner(xml, QStringLiteral("SubscriptionReference"));
-        const QString scope = reference.isNull() ? xml : reference;
-        const QString address = xml::text(scope, QStringLiteral("Address"));
-
-        if (address.isEmpty() || address.contains(QLatin1String("w3.org"))) {
-            // The reply itself is the diagnosis here: cameras refuse for
-            // entirely different reasons — events switched off, ONVIF disabled,
-            // a user without the rights — and all of them look the same from
-            // the outside.
-            LEO_WARN(Onvif, m_camera.label(),
-                     QStringLiteral("Subscription refused by %1; reply was: %2")
-                         .arg(m_camera.host, xml.left(500)));
-            emit error(m_camera.id, tr("ONVIF subscription failed."));
-            if (m_running)
-                QTimer::singleShot(30000, this, &MotionWatcher::subscribe);
-            return;
-        }
-        m_subscription = address;
-
-        // Kept alive at half of what the camera granted, which is not always
-        // what was asked: a camera that ignores the request still gets its
-        // renewal in time.
-        const QDateTime now = QDateTime::fromString(xml::text(xml, QStringLiteral("CurrentTime")), Qt::ISODate);
-        const QDateTime end = QDateTime::fromString(xml::text(xml, QStringLiteral("TerminationTime")), Qt::ISODate);
-        const qint64 granted = now.isValid() && end.isValid() ? now.secsTo(end) : 10;
-        m_renewTimer->start(int(qBound(qint64(1), granted / 2, qint64(kLifetimeSeconds / 2))) * 1000);
-
-        LEO_INFO(Onvif, m_camera.label(),
-                 QStringLiteral("Subscribed for %1 s, polling %2").arg(granted).arg(address));
-        pull();
-    });
-}
-
-void MotionWatcher::pull()
-{
-    if (!m_running || m_subscription.isEmpty())
-        return;
-
-    QNetworkRequest req{QUrl(m_subscription)};
-    req.setHeader(QNetworkRequest::ContentTypeHeader,
-                  QStringLiteral("application/soap+xml; charset=utf-8"));
-    req.setTransferTimeout((kPullSeconds + 15) * 1000);
-
-    const QString body =
-        QStringLiteral("<tev:PullMessages><tev:Timeout>PT%1S</tev:Timeout>"
-                       "<tev:MessageLimit>20</tev:MessageLimit></tev:PullMessages>")
-            .arg(kPullSeconds);
-
-    // WS-Addressing required on this one — mirror image of subscribe().
-    QNetworkReply *reply =
-        m_net->post(req, envelope(body, kPullAction, m_subscription));
-
-    connect(reply, &QNetworkReply::finished, this, [this, reply] {
-        reply->deleteLater();
-        if (!m_running)
-            return;
-
-        if (reply->error() != QNetworkReply::NoError) {
-            // Subscriptions expire; resubscribing is the normal path back.
-            if (++m_failures > 3) {
-                LEO_WARN(Onvif, m_camera.label(),
-                         QStringLiteral("Poll failed four times (%1) — "
-                                        "subscribing again")
-                             .arg(reply->errorString()));
-                m_failures = 0;
-                m_subscription.clear();
-                QTimer::singleShot(5000, this, &MotionWatcher::subscribe);
-                return;
-            }
-            LEO_DEBUG(Onvif, m_camera.label(),
-                      QStringLiteral("Poll %1 failed: %2")
-                          .arg(m_failures).arg(reply->errorString()));
-            QTimer::singleShot(2000, this, &MotionWatcher::pull);
-            return;
-        }
-        m_failures = 0;
-
-        const QString xml = QString::fromUtf8(reply->readAll());
-
-        // A poll can carry several events, and behind a recorder they are not
-        // all about the same camera. Splitting them up first is what makes it
-        // possible to tell whose they are; a camera's reply usually holds one
-        // message and the split changes nothing.
-        const QStringList messages = xml::all(xml, QStringLiteral("NotificationMessage"));
-        for (const QString &message : messages)
-            handleMessage(message);
-        // Firmware that does not wrap its events the way the standard says
-        // still gets read, exactly as before this could tell channels apart.
-        if (messages.isEmpty())
-            handleMessage(xml);
-
-        pull();   // straight back into the long poll
-    });
-}
-
-int MotionWatcher::channelOf(const QString &message) const
-{
-    const QString source = xml::inner(message, QStringLiteral("Source"));
-    if (source.isNull())
-        return -1;
-
-    const QRegularExpression valueRe(
-        QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"([^\"]+)\"\\s+Value=\"([^\"]+)\""));
-    auto it = valueRe.globalMatch(source);
-    while (it.hasNext()) {
-        const auto m = it.next();
-        const QRegularExpression tailRe(QStringLiteral("(\\d+)\\s*$"));
-        const auto tail = tailRe.match(m.captured(2));
-        if (tail.hasMatch()) {
-            LEO_DEBUG(Onvif, m_camera.label(),
-                      QStringLiteral("Event source %1=%2 → channel %3")
-                          .arg(m.captured(1), m.captured(2), tail.captured(1)));
-            return tail.captured(1).toInt();
-        }
-    }
-    return -1;
-}
-
-void MotionWatcher::handleMessage(const QString &message)
-{
-    const QRegularExpression itemRe(
-        QStringLiteral("<(?:\\w+:)?SimpleItem\\s+Name=\"(IsMotion|State)\"\\s+"
-                       "Value=\"([^\"]+)\""));
-    auto it = itemRe.globalMatch(message);
-    if (!it.hasNext())
-        return;
-
     // Which camera this is about.
     //
     // A camera with nothing else on its address is never asked: it has only one
@@ -350,64 +74,40 @@ void MotionWatcher::handleMessage(const QString &message)
     // reports the neighbours' motion as that camera's: an alert, a recording
     // and a webhook, all about a doorway nobody is watching. Worse than
     // silence, so a recorder is always routed by channel.
-    if (m_cameras.isEmpty())
+    if (m_cameras.isEmpty() || !m_source)
         return;
-
     const bool recorder = m_cameras.size() > 1 ||
                           m_cameras.first().channel > 0 ||
                           ReolinkClient::isRecorder(m_camera.host);
-
-    int channel = m_cameras.first().channel;
-    if (recorder) {
-        channel = channelOf(message);
-        if (channel < 0) {
-            LEO_DEBUG(Onvif, m_camera.label(),
-                      QStringLiteral("Event names no channel, ignored on a "
-                                     "recorder watching %1 camera(s): %2")
-                          .arg(m_cameras.size()).arg(message.left(300)));
-            return;
-        }
-    }
-
-    // Each topic has its state of its own. A camera reports plain motion and
-    // each kind of recognised object separately — CellMotionDetector/Motion,
-    // MyRuleDetector/PeopleDetect, VehicleDetect … — and a person leaving the
-    // picture says PeopleDetect false while the motion goes on. Taken as one
-    // switch, that ended the alert in the middle of it.
-    const QString topic = xml::text(message, QStringLiteral("Topic"));
-
-    while (it.hasNext()) {
-        const auto m = it.next();
-        const bool on = m.captured(2).compare(QLatin1String("true"),
-                                              Qt::CaseInsensitive) == 0;
-        const QString what = topic + QLatin1Char('/') + m.captured(1);
-
-        for (const CameraConfig &camera : std::as_const(m_cameras)) {
-            if (camera.channel == channel)
-                setHappening(camera, what, on, Log::Category::Onvif);
-        }
-    }
-}
-
-void MotionWatcher::handleAlarm(int channel, bool active, const QString &what)
-{
-    if (!m_running)
+    if (!recorder) {
+        channel = m_cameras.first().channel;
+    } else if (channel < 0) {
+        Log::write(Log::Level::Debug, m_source->category(), m_camera.label(),
+                   QStringLiteral("Event names no channel, ignored on a recorder "
+                                  "watching %1 camera(s): %2")
+                       .arg(m_cameras.size()).arg(what));
         return;
-    // Every event carries the whole state of its channel, so there is one
-    // topic only, unlike ONVIF's one per kind of thing seen.
-    LEO_DEBUG(Baichuan, m_camera.label(),
-              QStringLiteral("Alarm on channel %1: %2")
-                  .arg(channel)
-                  .arg(what.isEmpty() ? QStringLiteral("none") : what));
+    }
+
     for (const CameraConfig &camera : std::as_const(m_cameras)) {
         if (camera.channel == channel)
-            setHappening(camera, QStringLiteral("alarm"), active,
-                         Log::Category::Baichuan);
+            setHappening(camera, what, on);
     }
 }
 
-void MotionWatcher::setHappening(const CameraConfig &camera, const QString &what,
-                                 bool on, Log::Category category)
+void MotionWatcher::lost(const QString &reason)
+{
+    // Motion that was on when the connection went cannot be heard ending, and
+    // left on it would hold a recording open until the camera came back.
+    for (const CameraConfig &camera : std::as_const(m_cameras)) {
+        const QSet<QString> happening = m_happening.value(camera.id);
+        for (const QString &what : happening)
+            setHappening(camera, what, false);
+    }
+    emit error(m_camera.id, reason);
+}
+
+void MotionWatcher::setHappening(const CameraConfig &camera, const QString &what, bool on)
 {
     QSet<QString> &happening = m_happening[camera.id];
     if (on)
@@ -417,7 +117,7 @@ void MotionWatcher::setHappening(const CameraConfig &camera, const QString &what
     const bool active = !happening.isEmpty();
     if (m_activeById.value(camera.id, false) != active) {
         m_activeById.insert(camera.id, active);
-        Log::write(Log::Level::Info, category, camera.label(),
+        Log::write(Log::Level::Info, m_source->category(), camera.label(),
                    active ? QStringLiteral("Camera reports motion")
                           : QStringLiteral("Camera reports motion ended"));
         emit motionChanged(camera.id, active);

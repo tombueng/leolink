@@ -35,6 +35,9 @@ set(LEOLINK_SOURCES
     src/Config.cpp            src/Config.h
     src/ReolinkClient.cpp     src/ReolinkClient.h
     src/MotionWatcher.cpp     src/MotionWatcher.h
+    src/EventSource.h
+    src/OnvifEvents.cpp       src/OnvifEvents.h
+    src/BaichuanEvents.cpp    src/BaichuanEvents.h
     src/SettingsDialog.cpp    src/SettingsDialog.h
     src/PreferencesDialog.cpp src/PreferencesDialog.h
     src/ActionEditor.cpp      src/ActionEditor.h

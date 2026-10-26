@@ -76,6 +76,9 @@ private:
     QElapsedTimer m_alive;
     qint64 m_expiresAt{0};
     int m_renewals{0};
+    /// Once the polls above are served, fail every later one, as a camera
+    /// that has gone off the network does.
+    bool m_failLaterPolls{false};
     std::unique_ptr<FakeWebServer> m_server;
     std::unique_ptr<MotionWatcher> m_watcher;
 
@@ -145,6 +148,8 @@ private:
             }
             if (m_pollsServed < m_polls.size()) {
                 response.body = m_polls.at(m_pollsServed++);
+            } else if (m_failLaterPolls) {
+                response.status = 500;
             } else {
                 response.body = pullReply({});
                 response.delayMs = m_holdMs;
@@ -195,6 +200,7 @@ private slots:
         m_lifetimeMs = 0;
         m_holdMs = 60000;
         m_renewals = 0;
+        m_failLaterPolls = false;
     }
 
     void cleanup()
@@ -229,6 +235,21 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(spy->size(), 2, 5000);
         QCOMPARE(states(*spy), (QStringList{QStringLiteral("cam:on"), QStringLiteral("cam:off")}));
         QVERIFY(!m_watcher->isActive());
+    }
+
+    /// A camera that stops answering in the middle of motion: the motion ends
+    /// here rather than staying on with nobody to say when it stops.
+    void motionEndsWhenTheSubscriptionGoes()
+    {
+        m_polls = {pullReply({notification(kMotion, QStringLiteral("IsMotion"), true)})};
+        m_failLaterPolls = true;
+        std::unique_ptr<QSignalSpy> spy(watch({camera()}));
+        QSignalSpy errors(m_watcher.get(), &MotionWatcher::error);
+        // Four failed polls, two seconds apart, before it gives up on them.
+        QTRY_COMPARE_WITH_TIMEOUT(states(*spy),
+                                  (QStringList{QStringLiteral("cam:on"), QStringLiteral("cam:off")}),
+                                  15000);
+        QCOMPARE(errors.size(), 1);
     }
 
     /// A person walks out of a scene that is still moving. PeopleDetect says
