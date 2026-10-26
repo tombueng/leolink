@@ -28,16 +28,8 @@ struct Capabilities {
     /// Transports that were tried this session and never produced a picture,
     /// so "auto" moves on to the next one rather than retrying it forever.
     QStringList failed;
-
-    bool api() const { return !known || http || https; }
-    /// The camera's own motion events: over ONVIF, or over Baichuan when it
-    /// has no ONVIF.
-    bool events() const { return !known || onvif || baichuan; }
-    bool eventsOverBaichuan() const { return known && !onvif && baichuan; }
-    bool rtspReachable() const { return !known || rtsp; }
-    /// Settings go over Baichuan only on a camera known to have no web server.
-    /// One not asked yet keeps the HTTP API, as it always did.
-    bool settingsOverBaichuan() const { return known && !api() && baichuan; }
+    // Which of these each feature uses is decided in one place: route(), in
+    // Protocols.h.
 };
 
 /// One configured camera.

@@ -35,6 +35,7 @@
 #include "CameraProbe.h"
 #include "Firmware.h"
 #include "Log.h"
+#include "Protocols.h"
 #include "ReolinkClient.h"
 #include "SchedulePicker.h"
 #include "SectionEditor.h"
@@ -1451,7 +1452,7 @@ void CameraSettingsDialog::buildAboutTab()
     };
     addFixed(tr("Address"), m_camera.host);
     addFixed(tr("Found"), CameraProbe::describe(m_camera));
-    const bool overBaichuan = m_camera.caps.settingsOverBaichuan();
+    const bool overBaichuan = route(Feature::Settings, m_camera.caps) == Protocol::Baichuan;
     addFixed(tr("Settings"),
              overBaichuan ? tr("Over Baichuan, port 9000 — this camera has no web "
                                "server. Most settings are available; some, such as "

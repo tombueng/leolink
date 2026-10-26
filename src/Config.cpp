@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "Protocols.h"
 
 #include "Keyring.h"
 #include "Log.h"
@@ -72,27 +73,7 @@ QString CameraConfig::effectiveTransport() const
 {
     if (transport != QLatin1String("auto"))
         return transport;
-    if (!caps.known)
-        return QStringLiteral("rtsp");
-
-    // Ordered by what each costs this machine, cheapest first. HTTP-FLV is
-    // one HTTP connection whose container the player reads as it comes. RTSP
-    // adds a session to negotiate and a stream to reassemble from RTP
-    // packets. Baichuan is all of that done by leolink itself — login,
-    // decryption, the camera's own container taken apart and wrapped again as
-    // MPEG-TS — plus a loopback hop before the player sees a byte.
-    const auto usable = [this](const QString &name, bool offered) {
-        return offered && !caps.failed.contains(name);
-    };
-    if (usable(QStringLiteral("flv"), (caps.http || caps.https) && caps.rtmp))
-        return QStringLiteral("flv");
-    if (usable(QStringLiteral("rtsp"), caps.rtsp))
-        return QStringLiteral("rtsp");
-    if (usable(QStringLiteral("baichuan"), caps.baichuan))
-        return QStringLiteral("baichuan");
-    // Everything offered has failed, or nothing was found at all. RTSP is the
-    // one most likely to come back by itself.
-    return QStringLiteral("rtsp");
+    return transportName(route(Feature::Video, caps));
 }
 
 bool CameraConfig::effectiveHttps() const

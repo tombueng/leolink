@@ -1,15 +1,22 @@
 // What leolink concludes a camera offers, and what it then uses.
 
+#include <algorithm>
+
 #include <QFile>
+#include <QSet>
 #include <QTest>
 
 #include "CameraProbe.h"
 #include "Config.h"
 #include "MpvWidget.h"
+#include "Protocols.h"
 
 using leolink::CameraConfig;
 using leolink::CameraProbe;
 using leolink::Capabilities;
+using leolink::Feature;
+using leolink::Protocol;
+using leolink::route;
 
 namespace {
 
@@ -35,6 +42,20 @@ Capabilities offering(std::initializer_list<const char *> services)
     return c;
 }
 
+/// For the log of a failed comparison: "baichuan" rather than "5".
+QString name(Protocol p)
+{
+    switch (p) {
+    case Protocol::None: return QStringLiteral("none");
+    case Protocol::HttpApi: return QStringLiteral("http api");
+    case Protocol::HttpFlv: return QStringLiteral("http-flv");
+    case Protocol::Rtsp: return QStringLiteral("rtsp");
+    case Protocol::Onvif: return QStringLiteral("onvif");
+    case Protocol::Baichuan: return QStringLiteral("baichuan");
+    }
+    return {};
+}
+
 CameraConfig automatic(const Capabilities &caps)
 {
     CameraConfig camera;
@@ -46,6 +67,8 @@ CameraConfig automatic(const Capabilities &caps)
 } // namespace
 
 Q_DECLARE_METATYPE(leolink::Capabilities)
+Q_DECLARE_METATYPE(leolink::Feature)
+Q_DECLARE_METATYPE(leolink::Protocol)
 
 class TestTransport : public QObject {
     Q_OBJECT
@@ -53,26 +76,146 @@ class TestTransport : public QObject {
 private slots:
     // ── choosing how to fetch the picture ───────────────────────────────────
 
-    void automaticChoice_data()
+    /// Which protocol each feature takes, for the cameras seen so far and a
+    /// few that could be. Every feature decides through the one table, so
+    /// this is where its choices are checked.
+    void routes_data()
     {
+        QTest::addColumn<Feature>("feature");
         QTest::addColumn<Capabilities>("caps");
-        QTest::addColumn<QString>("chosen");
-        QTest::addRow("everything") << offering({"http", "rtmp", "rtsp", "baichuan"}) << "flv";
-        QTest::addRow("https only, as an E1 Zoom") << offering({"https", "rtmp", "rtsp", "baichuan"}) << "flv";
-        QTest::addRow("web server without RTMP") << offering({"http", "rtsp", "baichuan"}) << "rtsp";
-        QTest::addRow("RTMP without a web server") << offering({"rtmp", "rtsp", "baichuan"}) << "rtsp";
-        QTest::addRow("E1 Pro") << offering({"rtsp", "onvif", "baichuan"}) << "rtsp";
-        QTest::addRow("E1 with everything else off") << offering({"baichuan"}) << "baichuan";
-        QTest::addRow("nothing usable") << offering({"onvif"}) << "rtsp";
-        QTest::addRow("not asked yet") << Capabilities{} << "rtsp";
+        QTest::addColumn<Protocol>("chosen");
+        using F = Feature;
+        using P = Protocol;
+        const Capabilities unasked;
+        Capabilities unaskedWithBaichuan;
+        unaskedWithBaichuan.baichuan = true;
+
+        // Video: cheapest for this machine first — HTTP-FLV, RTSP, Baichuan.
+        QTest::addRow("video, everything") << F::Video << offering({"http", "rtmp", "rtsp", "baichuan"}) << P::HttpFlv;
+        QTest::addRow("video, https only, as an E1 Zoom") << F::Video << offering({"https", "rtmp", "rtsp", "baichuan"}) << P::HttpFlv;
+        QTest::addRow("video, web server without RTMP") << F::Video << offering({"http", "rtsp", "baichuan"}) << P::Rtsp;
+        QTest::addRow("video, RTMP without a web server") << F::Video << offering({"rtmp", "rtsp", "baichuan"}) << P::Rtsp;
+        QTest::addRow("video, E1 Pro") << F::Video << offering({"rtsp", "onvif", "baichuan"}) << P::Rtsp;
+        QTest::addRow("video, E1 with everything else off") << F::Video << offering({"baichuan"}) << P::Baichuan;
+        QTest::addRow("video, nothing usable") << F::Video << offering({"onvif"}) << P::Rtsp;
+        QTest::addRow("video, not asked yet") << F::Video << unasked << P::Rtsp;
+
+        // Settings over Baichuan only where there is no web server. Not asked
+        // yet keeps the HTTP API, as leolink always did, even where something
+        // has already said Baichuan works.
+        QTest::addRow("settings, web server") << F::Settings << offering({"http", "baichuan"}) << P::HttpApi;
+        QTest::addRow("settings, https server") << F::Settings << offering({"https", "baichuan"}) << P::HttpApi;
+        QTest::addRow("settings, no web server") << F::Settings << offering({"rtsp", "baichuan"}) << P::Baichuan;
+        QTest::addRow("settings, neither") << F::Settings << offering({"rtsp"}) << P::None;
+        QTest::addRow("settings, not asked yet") << F::Settings << unasked << P::HttpApi;
+        QTest::addRow("settings, not asked, Baichuan seen") << F::Settings << unaskedWithBaichuan << P::HttpApi;
+
+        // The camera's own motion: ONVIF where there is one, Baichuan or not.
+        QTest::addRow("motion, ONVIF and Baichuan") << F::CameraMotion << offering({"onvif", "baichuan"}) << P::Onvif;
+        QTest::addRow("motion, Baichuan only") << F::CameraMotion << offering({"baichuan"}) << P::Baichuan;
+        QTest::addRow("motion, neither") << F::CameraMotion << offering({"http", "rtsp"}) << P::None;
+        QTest::addRow("motion, not asked yet") << F::CameraMotion << unasked << P::Onvif;
+
+        QTest::addRow("turning, web server") << F::Ptz << offering({"https", "baichuan"}) << P::HttpApi;
+        QTest::addRow("turning, no web server") << F::Ptz << offering({"rtsp", "baichuan"}) << P::Baichuan;
+        QTest::addRow("talk, RTSP") << F::Talk << offering({"rtsp", "onvif"}) << P::Rtsp;
+        QTest::addRow("talk, no RTSP") << F::Talk << offering({"baichuan"}) << P::None;
+        QTest::addRow("talk, not asked yet") << F::Talk << unasked << P::Rtsp;
+        QTest::addRow("Wi-Fi meter, no web server") << F::WifiSignal << offering({"rtsp", "baichuan"}) << P::None;
+        QTest::addRow("firmware file, no Baichuan") << F::FirmwareFile << offering({"http", "rtsp"}) << P::None;
+        QTest::addRow("firmware file, not asked yet") << F::FirmwareFile << unasked << P::Baichuan;
     }
 
-    /// Cheapest for this machine first: HTTP-FLV, then RTSP, then Baichuan.
-    void automaticChoice()
+    void routes()
     {
+        QFETCH(Feature, feature);
         QFETCH(Capabilities, caps);
-        QFETCH(QString, chosen);
-        QCOMPARE(automatic(caps).effectiveTransport(), chosen);
+        QFETCH(Protocol, chosen);
+        QCOMPARE(name(route(feature, caps)), name(chosen));
+    }
+
+    /// The automatic transport is the video route, by the name it is stored
+    /// under.
+    void automaticIsTheVideoRoute()
+    {
+        QCOMPARE(automatic(offering({"http", "rtmp"})).effectiveTransport(), QStringLiteral("flv"));
+        QCOMPARE(automatic(offering({"rtsp"})).effectiveTransport(), QStringLiteral("rtsp"));
+        QCOMPARE(automatic(offering({"baichuan"})).effectiveTransport(), QStringLiteral("baichuan"));
+    }
+
+    /// The README's table of what each feature needs says what the routes do.
+    /// A feature that gains or loses a protocol fails here until the README
+    /// says so too.
+    void readmeSaysTheSame()
+    {
+        QFile readme(QStringLiteral(LEOLINK_FIXTURES "/../../README.md"));
+        QVERIFY(readme.open(QIODevice::ReadOnly));
+        const QStringList lines = QString::fromUtf8(readme.readAll()).split(QLatin1Char('\n'));
+        const int start = lines.indexOf(QStringLiteral("### What each feature needs"));
+        QVERIFY(start >= 0);
+
+        // The table's rows, by the start of their first cell. Rows about no
+        // single camera's protocols are left out on purpose.
+        const QList<QPair<QString, Feature>> rows{
+            {QStringLiteral("Live video"), Feature::Video},
+            {QStringLiteral("Camera settings"), Feature::Settings},
+            {QStringLiteral("About page"), Feature::Settings},
+            {QStringLiteral("Still for drawing"), Feature::Snapshot},
+            {QStringLiteral("Motion alerts from the camera"), Feature::CameraMotion},
+            {QStringLiteral("Motion and sound detected here"), Feature::Video},
+            {QStringLiteral("Recording to disk"), Feature::Video},
+            {QStringLiteral("Turning and zooming"), Feature::Ptz},
+            {QStringLiteral("Recordings on the SD card"), Feature::CardRecordings},
+            {QStringLiteral("Wi-Fi strength"), Feature::WifiSignal},
+            {QStringLiteral("Firmware update, downloaded"), Feature::FirmwareDownload},
+            {QStringLiteral("Firmware update from a .pak"), Feature::FirmwareFile},
+            {QStringLiteral("Sending sound"), Feature::Talk},
+        };
+        const QStringList elsewhere{QStringLiteral("Finding cameras"),
+                                    QStringLiteral("Reaching a camera by UID")};
+        // The table's columns, in order.
+        const QList<Protocol> columns{Protocol::HttpApi, Protocol::HttpFlv, Protocol::Rtsp,
+                                      Protocol::Onvif, Protocol::Baichuan};
+
+        QSet<Feature> seen;
+        int checked = 0;
+        for (int i = start + 1; i < lines.size(); ++i) {
+            const QString line = lines.at(i).trimmed();
+            if (line.startsWith(QLatin1String("#")))
+                break;
+            if (!line.startsWith(QLatin1Char('|')) || line.startsWith(QLatin1String("|---")) ||
+                line.startsWith(QLatin1String("| |")))
+                continue;
+            QStringList cells = line.split(QLatin1Char('|'));
+            cells = cells.mid(1, cells.size() - 2);
+            const QString label = cells.value(0).trimmed();
+            if (std::any_of(elsewhere.cbegin(), elsewhere.cend(),
+                            [&](const QString &e) { return label.startsWith(e); }))
+                continue;
+            const auto row = std::find_if(rows.cbegin(), rows.cend(),
+                                          [&](const auto &r) { return label.startsWith(r.first); });
+            QVERIFY2(row != rows.cend(), qPrintable(QStringLiteral("README row not known: ") + label));
+
+            QList<Protocol> said;
+            for (int c = 0; c < columns.size(); ++c) {
+                const QString cell = cells.value(c + 1).trimmed();
+                if (!cell.isEmpty() && !cell.startsWith(QStringLiteral("—")))
+                    said << columns.at(c);
+            }
+            QList<Protocol> routed;
+            for (const leolink::Route &r : leolink::routes()) {
+                if (r.feature == row->second)
+                    routed = r.order;
+            }
+            QSet<Protocol> saidSet(said.cbegin(), said.cend());
+            QSet<Protocol> routedSet(routed.cbegin(), routed.cend());
+            QVERIFY2(saidSet == routedSet, qPrintable(QStringLiteral("README and routes differ on: ") + label));
+            seen.insert(row->second);
+            ++checked;
+        }
+        QVERIFY(checked >= rows.size());
+        for (const leolink::Route &r : leolink::routes())
+            QVERIFY2(seen.contains(r.feature), "a feature in the routes has no README row");
     }
 
     /// A transport that never produced a picture is passed over, in order.
@@ -108,31 +251,6 @@ private slots:
         QVERIFY(!camera.effectiveHttps());
     }
 
-    // ── which way the settings go ───────────────────────────────────────────
-
-    void settingsRoute_data()
-    {
-        QTest::addColumn<Capabilities>("caps");
-        QTest::addColumn<bool>("overBaichuan");
-        QTest::addRow("web server") << offering({"http", "baichuan"}) << false;
-        QTest::addRow("https server") << offering({"https", "baichuan"}) << false;
-        QTest::addRow("no web server") << offering({"rtsp", "baichuan"}) << true;
-        QTest::addRow("neither") << offering({"rtsp"}) << false;
-        // Asked nothing yet: keep the HTTP API, as leolink always did, even
-        // where something has already said Baichuan works.
-        QTest::addRow("not asked yet") << Capabilities{} << false;
-        Capabilities unasked;
-        unasked.baichuan = true;
-        QTest::addRow("not asked, Baichuan seen") << unasked << false;
-    }
-
-    void settingsRoute()
-    {
-        QFETCH(Capabilities, caps);
-        QFETCH(bool, overBaichuan);
-        QCOMPARE(caps.settingsOverBaichuan(), overBaichuan);
-    }
-
     // ── what the probe makes of a camera ────────────────────────────────────
 
     /// Nothing answering is a camera that is off, not one with every service
@@ -141,8 +259,8 @@ private slots:
     {
         const Capabilities caps = CameraProbe::interpret({}, false, QString());
         QVERIFY(!caps.known);
-        QVERIFY(caps.api());
-        QVERIFY(caps.events());
+        QCOMPARE(name(route(Feature::Settings, caps)), name(Protocol::HttpApi));
+        QCOMPARE(name(route(Feature::CameraMotion, caps)), name(Protocol::Onvif));
     }
 
     /// An E1 on 3.1.0.1643 says HTTPS is on with nothing listening on 443.
@@ -155,8 +273,8 @@ private slots:
         QVERIFY(!caps.https);
         QVERIFY(!caps.http);
         QVERIFY(!caps.rtsp);
-        QVERIFY(caps.settingsOverBaichuan());
-        QCOMPARE(automatic(caps).effectiveTransport(), QStringLiteral("baichuan"));
+        QCOMPARE(name(route(Feature::Settings, caps)), name(Protocol::Baichuan));
+        QCOMPARE(name(route(Feature::Video, caps)), name(Protocol::Baichuan));
     }
 
     /// A port that answers for a service the camera says is off is not used.
@@ -177,9 +295,8 @@ private slots:
         QVERIFY(caps.rtsp);
         QVERIFY(caps.onvif);
         QVERIFY(caps.baichuan);
-        QVERIFY(!caps.api());
-        QVERIFY(caps.settingsOverBaichuan());
-        QCOMPARE(automatic(caps).effectiveTransport(), QStringLiteral("rtsp"));
+        QCOMPARE(name(route(Feature::Settings, caps)), name(Protocol::Baichuan));
+        QCOMPARE(name(route(Feature::Video, caps)), name(Protocol::Rtsp));
     }
 
     void e1Zoom()
@@ -189,8 +306,8 @@ private slots:
         QVERIFY(!caps.http);   // port 80 only redirects, and says it is off
         QVERIFY(caps.https);
         QVERIFY(caps.rtmp);
-        QVERIFY(!caps.settingsOverBaichuan());
-        QCOMPARE(automatic(caps).effectiveTransport(), QStringLiteral("flv"));
+        QCOMPARE(name(route(Feature::Settings, caps)), name(Protocol::HttpApi));
+        QCOMPARE(name(route(Feature::Video, caps)), name(Protocol::HttpFlv));
     }
 
     /// Without a Baichuan login there is no list, and the ports alone decide.

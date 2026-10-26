@@ -45,6 +45,7 @@
 #include "MotionDetector.h"
 #include "MotionWatcher.h"
 #include "PlaybackBrowser.h"
+#include "Protocols.h"
 #include "Recorder.h"
 #include "SegmentBuffer.h"
 #include "ReolinkClient.h"
@@ -825,11 +826,11 @@ void MainWindow::startWatchers()
 
     for (const CameraConfig &camera : m_config.active()) {
         const QString source = camera.motionSource;
-        // The camera's own events come over ONVIF; without it there is
+        // Without a protocol to carry the camera's own events there is
         // nothing to subscribe to, only a refusal to retry every few seconds.
         const bool useCamera = (source == QLatin1String("camera") ||
                                 source == QLatin1String("both")) &&
-                               camera.caps.events();
+                               route(Feature::CameraMotion, camera.caps) != Protocol::None;
         const bool useLocal = source == QLatin1String("local") ||
                               source == QLatin1String("both");
 
@@ -879,7 +880,7 @@ void MainWindow::startWatchers()
             const QString source = camera.motionSource;
             const bool useCamera = (source == QLatin1String("camera") ||
                                     source == QLatin1String("both")) &&
-                                   camera.caps.events();
+                                   route(Feature::CameraMotion, camera.caps) != Protocol::None;
             if (useCamera && camera.host == host)
                 onThisHost.append(camera);
         }
@@ -995,14 +996,15 @@ void MainWindow::pollCameraStatus()
         // not enough on its own: the same camera added twice, once for its main
         // stream and once for its sub stream, is also two entries on one
         // address — and it has a Wi-Fi meter like any other camera.
-        // No web server, no status: the Wi-Fi meter comes from the HTTP API,
-        // and asking a camera without one is a refused login every half minute.
-        bool hasApi = true;
+        // No protocol for the Wi-Fi meter, no status: asking a camera without
+        // a web server is a refused login every half minute.
+        bool hasMeter = true;
         for (const CameraConfig &camera : active) {
-            if (camera.host == host && !camera.caps.api())
-                hasApi = false;
+            if (camera.host == host &&
+                route(Feature::WifiSignal, camera.caps) == Protocol::None)
+                hasMeter = false;
         }
-        if (!hasApi)
+        if (!hasMeter)
             continue;
 
         bool recorder = ReolinkClient::isRecorder(host);
@@ -1937,7 +1939,7 @@ void MainWindow::askAboutPtz()
     for (const CameraConfig &camera : m_config.active()) {
         if (camera.channel != 0 || ReolinkClient::isRecorder(camera.host))
             continue;
-        if (!camera.caps.api() && !camera.caps.settingsOverBaichuan())
+        if (route(Feature::Ptz, camera.caps) == Protocol::None)
             continue;
         ptzClient(camera)->fetchPtzAbility();
     }
@@ -1968,9 +1970,9 @@ void MainWindow::askAboutSpeakers()
     // presses it in the first few seconds.
     m_speakerQueue.clear();
     for (const CameraConfig &camera : m_config.active()) {
-        // The question is asked over RTSP, so a camera without it cannot
-        // answer — and would be asked again every time the grid is built.
-        if (camera.caps.rtspReachable())
+        // A camera with no protocol for it cannot answer — and would be asked
+        // again every time the grid is built.
+        if (route(Feature::Talk, camera.caps) != Protocol::None)
             m_speakerQueue[camera.host].append(camera);
     }
 

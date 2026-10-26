@@ -170,8 +170,9 @@ machine's loopback interface. The tests cover:
 - **writing back:** for every write, sending a section back unchanged leaves
   the camera's document exactly as it was, and changing one field changes that
   field and nothing else
-- **choosing how to reach a camera:** the probe's verdict on each model, the
-  order of automatic transports, and when settings go over Baichuan
+- **choosing how to reach a camera:** the probe's verdict on each model, and
+  which protocol each feature then takes, all from one table that the table
+  below, of what each feature needs, is checked against
 - **video tables:** the transport-stream tables Baichuan video is wrapped in,
   checked by a parser of their own
 - **sharing the video:** two readers arriving together both served from one
@@ -298,7 +299,9 @@ port, and over Baichuan reads the camera's own list of which services are
 switched on. A service counts only when both agree. After that a feature uses
 what is there and leaves alone what is not, so a camera without a web server
 is never asked to log in to one. The camera dialog's **About** page shows what
-was found.
+was found. Which protocol each feature takes is one table in
+[src/Protocols.cpp](src/Protocols.cpp), and a test fails if this one says
+otherwise.
 
 | | HTTP API<br>80 / 443 | HTTP-FLV<br>80 / 443 + RTMP | RTSP<br>554 | ONVIF<br>8000 | Baichuan<br>9000 |
 |---|:-:|:-:|:-:|:-:|:-:|

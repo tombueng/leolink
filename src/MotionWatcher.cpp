@@ -15,6 +15,7 @@
 #include <algorithm>
 
 #include "BaichuanApi.h"
+#include "Protocols.h"
 #include "ReolinkClient.h"
 
 namespace leolink {
@@ -132,7 +133,7 @@ void MotionWatcher::watch(const QList<CameraConfig> &cameras)
     m_running = true;
     m_failures = 0;
 
-    if (m_camera.caps.eventsOverBaichuan()) {
+    if (route(Feature::CameraMotion, m_camera.caps) == Protocol::Baichuan) {
         m_baichuan = BaichuanApi::forCamera(m_camera, m_camera.secret());
         m_alarmWatch = m_baichuan->watchAlarms(
             this,

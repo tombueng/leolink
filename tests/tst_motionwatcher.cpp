@@ -454,22 +454,6 @@ private slots:
         m_watcher->stop();
         m_watcher.reset();
     }
-
-    /// One with ONVIF keeps it, Baichuan or not.
-    void onvifIsPreferred()
-    {
-        CameraConfig c = camera();
-        c.caps.known = true;
-        c.caps.onvif = true;
-        c.caps.baichuan = true;
-        QVERIFY(c.caps.events());
-        QVERIFY(!c.caps.eventsOverBaichuan());
-        c.caps.onvif = false;
-        QVERIFY(c.caps.events());
-        QVERIFY(c.caps.eventsOverBaichuan());
-        c.caps.baichuan = false;
-        QVERIFY(!c.caps.events());
-    }
 };
 
 QTEST_GUILESS_MAIN(TestMotionWatcher)

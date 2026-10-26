@@ -19,6 +19,7 @@
 #include "BaichuanApi.h"
 #include "Firmware.h"
 #include "Log.h"
+#include "Protocols.h"
 
 namespace leolink {
 
@@ -643,7 +644,7 @@ void ReolinkClient::sendNow(const QString &command, const QJsonObject &param,
 
 bool ReolinkClient::overBaichuan() const
 {
-    return m_camera.caps.settingsOverBaichuan();
+    return route(Feature::Settings, m_camera.caps) == Protocol::Baichuan;
 }
 
 void ReolinkClient::sendOverBaichuan(const QString &command, const QJsonObject &param,
@@ -1230,7 +1231,7 @@ void ReolinkClient::upgradeFirmware()
 
 void ReolinkClient::installFirmwareFile(const QString &fileName, const QByteArray &pak)
 {
-    if (m_camera.caps.known && !m_camera.caps.baichuan) {
+    if (route(Feature::FirmwareFile, m_camera.caps) == Protocol::None) {
         emit readoutFailed(QStringLiteral("firmware"),
                            tr("Installing from a file needs the camera's port 9000, "
                               "which it does not offer."));
@@ -1436,7 +1437,7 @@ void ReolinkClient::changePassword(const QString &name, const QString &password)
 
 void ReolinkClient::fetchSnapshot()
 {
-    if (overBaichuan()) {
+    if (route(Feature::Snapshot, m_camera.caps) == Protocol::None) {
         emit failed(tr("Snapshots from %1 need its web server, which it does "
                        "not have.").arg(m_camera.label()));
         return;
