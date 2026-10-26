@@ -17,8 +17,9 @@ camera and no vendor software is involved. See
   more than one cell (2×1, 1×2, 2×2 …), or be placed automatically.
 - **Volume and mute per camera**, because eight rooms at once is not a feature.
 - **Motion alerts** either from the camera, over ONVIF or Baichuan, or worked
-  out here from the picture — for cameras that report nothing. The local detector takes
-  drawable zones, so a tree in the wind or a neighbour's door can be left out.
+  out here from the picture — for cameras that report nothing. The local
+  detector takes drawable zones, so a tree in the wind or a neighbour's door can
+  be left out.
 - **Sound detection** with a threshold in dBFS, for what the picture misses.
 - **Records to your own disk** — on motion or at the press of a button. Works
   on cameras with no SD card, because the recording happens here. A separate
@@ -27,6 +28,9 @@ camera and no vendor software is involved. See
 - **Turns the camera**: buttons over the picture pan and tilt it for as long
   as they are held, and zoom it where it has a zoom lens. Offered only on a
   camera that says it has a motor.
+- **Plays sound through the camera's speaker**: an announcement or any sound
+  file, over the camera's ONVIF audio backchannel. Offered only on a camera
+  that has one.
 - **Changes settings on the camera**: resolution, frame rate, bit rate, H.264
   profile and the picture controls. Every choice offered is one the camera
   itself reported, so no model is shown an option it cannot do. Also the

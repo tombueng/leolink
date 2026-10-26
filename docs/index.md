@@ -117,6 +117,19 @@ The button appears only on a camera that says it has a motor: over the HTTP API
 where it has one, otherwise from what it reports over Baichuan when leolink logs
 in. Either way the same commands go to the camera.
 
+## Speaking through the camera
+
+A camera with a speaker gets a 🗣 button in its tile's strip. Press it, pick a
+sound file — WAV, MP3, Ogg, Opus, FLAC or M4A — and it plays through the
+camera; press it again to stop early. leolink converts the file with ffmpeg and
+sends it over the camera's ONVIF audio backchannel, inside the RTSP connection,
+so it reaches the camera wherever the picture does.
+
+The button appears only on a camera that says it has a backchannel. leolink asks
+each camera over RTSP, one at a time and a few seconds after the pictures have
+started, so a camera without RTSP never shows it. Sound over Baichuan is not
+supported yet.
+
 ---
 
 ## Events
