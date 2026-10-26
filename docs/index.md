@@ -42,9 +42,17 @@ RLC-410W — and is what you want full-screen or for recording.
 
 ### Which transport
 
-**RTSP** is the default and works everywhere. **HTTP-FLV** is the path the
-camera's own web interface uses: slightly lower latency, and it only needs port
-80, which helps when RTSP is filtered.
+**Automatic** is what a new camera gets. When leolink starts, it asks each
+camera which services it offers: it tries each port, and over Baichuan reads
+the camera's own list of what is switched on. Video then takes the first of
+HTTP-FLV, RTSP and Baichuan the camera has, cheapest for this computer first.
+If one shows no picture after three tries, the next is used for the rest of the
+session. Choosing a transport by hand overrides all of this, and cameras added
+before Automatic existed keep the one they had.
+
+**RTSP** works everywhere. **HTTP-FLV** is the path the camera's own web
+interface uses: slightly lower latency, and it only needs port 80, which helps
+when RTSP is filtered.
 
 **Baichuan** is Reolink's own protocol on port 9000 — what their app speaks.
 Reach for it when RTSP gives you nothing: battery-powered models keep it
@@ -52,6 +60,13 @@ switched off to save power, and some firmware disables it by default. It also
 leaves the camera's small pool of web sessions alone, which matters on a device
 that only allows a handful at once. leolink speaks the protocol itself and hands
 the player a plain video stream on a loopback port; sound still comes over RTSP.
+
+A camera with no web server — an E1 Pro has none, and an E1 can have it
+switched off — is configured over Baichuan instead, with no setting to change.
+**Camera settings** shows the same panels; the few the protocol does not carry
+yet, such as user accounts and formatting the card, say so. The dialog opens on
+**About**, which lists the model, hardware, firmware, serial, UID and MAC, and
+which services leolink found and uses for that camera.
 
 ### Keeping the password out of the file
 
@@ -338,6 +353,7 @@ and a bright surround glares at night.
 leolink                                    normal start
 leolink --baichuan-test <host> --user u --password p
 leolink --baichuan-video <host> --user u --password p --out /tmp/x.h264
+leolink --baichuan-api <host> <command> ['<json parameters>']
 leolink --baichuan-p2p <UID>               UNTESTED, see below
 ```
 
@@ -345,6 +361,12 @@ The Baichuan probes print what the camera's proprietary protocol on port 9000
 replies. Useful when reporting a problem with an unusual model. The video probe
 also reports what the media container held — frame counts, codec, anything it
 did not recognise — and writes the stream out so `ffprobe` can confirm it.
+
+`--baichuan-api` answers one HTTP API command over Baichuan, the way the
+settings dialog does for a camera without a web server, and prints the reply:
+`leolink --baichuan-api 192.168.1.20 GetEnc`. It uses the password saved for
+that camera unless `--password` is given, so nothing secret needs to go on the
+command line.
 
 | Variable | What it does |
 |---|---|
@@ -429,9 +451,10 @@ run against a P2P-capable camera. `leolink --baichuan-p2p <UID>` reports each
 step. If you have such a camera, that output attached to an
 [issue](https://github.com/tombueng/leolink/issues) would be very welcome.
 
-**Two-way audio** is not implemented. The vendor's SDK can do it and the
-protocol notes describe where it lives, but the development camera has no
-speaker. The Baichuan transport is now in place, which is most of what it needs.
+**Two-way audio over Baichuan** is not implemented. The vendor's SDK can do it
+and the protocol notes describe where it lives, but the development camera has
+no speaker. The Baichuan transport is now in place, which is most of what it
+needs.
 
 **Mobile data** — SIM, APN, signal — is implemented from the protocol and has
 never run against a camera with a modem. Nothing there can do damage: a command

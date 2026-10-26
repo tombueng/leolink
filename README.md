@@ -292,7 +292,7 @@ was found.
 | Wi-Fi strength on the tile | ✓ | | | | — |
 | Finding cameras on the network | | | | ✓ discovery | |
 | Reaching a camera by UID (P2P) | | | | | ✓ |
-| Sending sound to the camera's speaker (`--talk`) | | | ✓ ONVIF backchannel | | |
+| Sending sound to the camera's speaker | | | ✓ ONVIF backchannel | | — |
 
 ✓ is the protocol a feature uses, and — means it is not available over that
 protocol yet. An empty cell means the feature never uses that protocol.
@@ -385,8 +385,8 @@ Missing before a Flathub submission: **screenshots**. They must not show a real
 camera feed; add a camera with the custom-URL transport pointing at freely
 licensed footage, then capture the window.
 
-Two-way audio is not implemented. Baichuan carries it and the transport is now
-in place, so it is the obvious next thing.
+Two-way audio over Baichuan is not implemented. Baichuan carries it and the
+transport is now in place, so it is the obvious next thing.
 
 ## Credit
 
