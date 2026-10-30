@@ -1118,8 +1118,11 @@ void ReolinkClient::pollFirmware()
 {
     if (!m_firmwareWatch.active)
         return;
-    // A session from before the restart is gone with it.
-    m_http->forgetToken();
+    // The session is kept between polls. Throwing it away on every poll, as
+    // this once did, opened a new one each time without closing the last, and
+    // a camera still on the old build ran out of sessions within minutes and
+    // answered -5 to everyone. One from before a restart is answered with -6
+    // or -27, which clears it, and the next poll logs in afresh.
     auto gone = [this](const QString &) { firmwareAnswered(QString()); };
     login([this, gone] {
         post(QStringLiteral("GetDevInfo"), {},
