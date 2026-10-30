@@ -1952,8 +1952,13 @@ ReolinkClient *MainWindow::ptzClient(const CameraConfig &camera)
                     statusBar()->showMessage(tr("The camera would not move: %1")
                                                  .arg(why), 8000);
                 });
+        // Once, here. setCamera() logs out and drops the Baichuan session, so
+        // calling it on every press and release put a whole login between
+        // letting go and "Stop" — and on a camera short of sessions, lost the
+        // Stop, and the camera turned to its end stop. The clients are made
+        // afresh with every grid, so a changed camera gets a new one anyway.
+        client->setCamera(camera);
     }
-    client->setCamera(camera);
     return client;
 }
 
