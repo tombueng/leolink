@@ -23,8 +23,10 @@ Later additions name their camera: an **E1** (`v3.1.0.1643`), an **E1 Pro**
 
 Readable via `GetNetPort`, and each can be switched off.
 
-For a wired camera, **CGI + RTSP + ONVIF covers everything**. Baichuan only
-becomes necessary for battery models, remote access by UID, and two-way audio.
+For a wired camera, **CGI + RTSP + ONVIF covers everything**. Baichuan becomes
+necessary for battery models that keep RTSP off, for cameras without a web
+server (an E1 Pro, or an E1 with it switched off), and for installing firmware
+from a `.pak` file.
 
 ---
 
@@ -607,7 +609,8 @@ Whether a card is present is `<diskNum>` — `0` here, matching the empty
 
 ### Message types
 
-From the dissector; only type 1 verified here.
+From the dissector. The ones leolink uses, listed in `src/BaichuanMessages.h`,
+have been verified against the cameras named at the top; the rest have not.
 
 ```
 1 login   2 logout   3/4 video preview   5–16 file/replay
@@ -803,7 +806,7 @@ Installed this way so far: an E1 (3.1.0.1643 → 4450), two E1 Pros (3149 →
 server too, and took the file over Baichuan all the same. Each was back on the
 new build within a few minutes, which the dialog followed through the restart.
 
-### P2P — implemented, never run
+### P2P — first step only, never run
 
 Reaching a camera by UID goes through Reolink's rendezvous servers,
 `p2p.reolink.com` through `p2p11.reolink.com` on UDP 9999. The exchange is

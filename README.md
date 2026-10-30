@@ -211,6 +211,12 @@ machine's loopback interface. The tests cover:
   its own, and the event log
 - **the log:** passwords, tokens and public addresses kept out of the log
   and out of the diagnostics report
+- **installing firmware:** a package checked against the camera before it is
+  sent, sent in pieces to an E1 and an E1 Pro as each expects, a refused piece
+  stopping it, and the camera followed through its restart. One missed poll is
+  not taken for a restart.
+- **the handbook:** both pages shipped in the program, and every link in them
+  leading to a page, a heading or a file that exists
 - **the program itself:** `--version` and `--help`
 
 Building them needs Qt Test, which comes with `qt6-base-dev`. To leave them out,
@@ -255,6 +261,8 @@ line, and is pruned to 90 days on start.
 | `Ctrl+S` | snapshot every camera |
 | `Ctrl+R` | start/stop recording every camera |
 | `Ctrl+L` | event log |
+| `Ctrl+D` | diagnostics |
+| `F1` | the handbook, the copy that came with this version |
 | `F11` | full screen — the whole grid, every bar hidden |
 | `Esc` | leave full screen |
 | double-click a tile | that camera alone fills the screen, again to go back |
@@ -293,14 +301,18 @@ streaming paths, ONVIF's two firmware quirks, and the Baichuan protocol on port
 
 Baichuan is not needed for ordinary viewing of a wired camera. It matters for
 battery models that keep RTSP switched off, for cameras with no web server at
-all (an E1 Pro has none, and an E1 can have it switched off), for reaching a
-camera by UID from outside the network, and for two-way audio.
+all (an E1 Pro has none, and an E1 can have it switched off), and for
+installing firmware from a .pak file. Sound to the camera's speaker goes over
+RTSP.
 
 ### What each feature needs
 
 At startup leolink asks every camera which of these it offers. It tries each
-port, and over Baichuan reads the camera's own list of which services are
-switched on. A service counts only when both agree. After that a feature uses
+port, giving any that did not answer a second try, and over Baichuan reads the
+camera's own list of which services are switched on. A port that is closed, or
+that the camera's list says is off, counts as off. ONVIF counts whenever the
+camera says it is on, since losing it would end motion events, and RTMP rests on
+the list, since it lives behind the web server. After that a feature uses
 what is there and leaves alone what is not, so a camera without a web server
 is never asked to log in to one. The camera dialog's **About** page shows what
 was found. Which protocol each feature takes is one table in
@@ -322,7 +334,7 @@ otherwise.
 | Firmware update, downloaded by the camera | ✓ | | | | — |
 | Firmware update from a .pak file ³ | | | | | ✓ |
 | Finding cameras on the network | | | | ✓ discovery | |
-| Reaching a camera by UID (P2P) | | | | | ✓ |
+| Reaching a camera by UID (P2P) | | | | | probe only ⁴ |
 | Sending sound to the camera's speaker | | | ✓ ONVIF backchannel | | — |
 
 ✓ is the protocol a feature uses, and — means it is not available over that
@@ -334,14 +346,16 @@ they cost this machine. HTTP-FLV is a single HTTP connection. RTSP adds a
 session and RTP reassembly. Baichuan is done entirely by leolink: login,
 decryption, unpacking the camera's container and repackaging it as MPEG-TS for
 the player. If a transport fails, the next one is tried. Choosing a transport
-by hand overrides all of this. Cameras that never answered the probe are
-treated as offering everything, which is how leolink behaved before it asked.
+by hand overrides all of this. Cameras that never answered the probe, or not
+within six seconds, are treated as offering everything, which is how leolink
+behaved before it asked; their video then goes over RTSP.
 
 ¹ Over Baichuan the settings dialog has video, picture, on-screen text, privacy
 mask (on and off, but not drawing areas), detection area, sensitivity and AI
 detection types, the recording and alert schedules, the e-mail, FTP, push and
 siren switches, network ports, Wi-Fi, time zone and clock, infrared and status
-lights, storage, and restart. It does not have user accounts, e-mail and FTP
+lights, storage, and restart. Wi-Fi is shown and scanned, but joining a
+network needs the web server. It does not have user accounts, e-mail and FTP
 server details, daylight saving and NTP, the camera checking Reolink for an
 update, formatting the card, or snapshots. Those panels say so instead of
 failing. The message numbers and the mapping of each field are in
@@ -365,6 +379,10 @@ is back on the new build, or that it came back on the old one. From the
 terminal, `leolink --baichuan-firmware <host> <file.pak>` runs the same checks,
 and with `--yes` installs and waits for the camera to come back on the new
 build.
+
+⁴ Only the first step of the lookup exists, as `leolink --baichuan-p2p <UID>`,
+and it has never met a P2P-capable camera. leolink cannot yet reach a camera by
+its UID; the UID field is kept for when it can.
 
 Inside, each protocol is spoken in one place, and the features above it do
 not know which one they are using. The HTTP API's commands — settings, PTZ,
@@ -420,11 +438,12 @@ one: traffic footage changed 6.3% of watched pixels on average, a static camera
 with room to spare.
 
 Not yet verified, because the test camera cannot: **playback from the SD card**
-(none fitted, so every search answers -17), the **P2P path** (no P2P-capable
-camera here) and **mobile data** (no camera with a modem). All three are
-implemented from the documented protocol and report what the camera actually
-said rather than guessing, so a first run on real hardware should show plainly
-where reality differs.
+(none fitted, so every search answers -17) and **mobile data** (no camera with
+a modem). Both are implemented from the documented protocol and report what
+the camera actually said rather than guessing, so a first run on real hardware
+should show plainly where reality differs. **P2P** is not implemented: only
+the first lookup step exists, as a command-line probe, and it has never met a
+P2P-capable camera, so leolink cannot reach a camera by its UID.
 
 If you have such a camera, two things would genuinely help: the output of
 `leolink --baichuan-p2p <UID>`, and — for an LTE model — the list from
@@ -439,12 +458,14 @@ a form that reveals the order, and this camera's web interface has no schedule
 screen to compare against. If your recordings land a day out, say so — it is one
 constant in `CameraSettingsDialog.cpp`.
 
-Missing before a Flathub submission: **screenshots**. They must not show a real
-camera feed; add a camera with the custom-URL transport pointing at freely
-licensed footage, then capture the window.
+The screenshots in `docs/screenshots` show freely licensed photographs through
+the custom-URL transport, never a real camera, and predate the settings window's
+split into its current tabs.
 
-Two-way audio over Baichuan is not implemented. Baichuan carries it and the
-transport is now in place, so it is the obvious next thing.
+Sound to the camera over Baichuan is not implemented: it goes over the ONVIF
+backchannel, inside RTSP, so a camera without RTSP gets no speak button.
+Baichuan carries it and the transport is in place, so it is the obvious next
+thing.
 
 ## Credit
 

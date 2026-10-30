@@ -9,7 +9,9 @@ leolink shows the live picture from Reolink cameras on Linux and reacts when
 they see something. It speaks the camera's own protocols directly, so nothing
 needs installing on the camera itself.
 
-This is the help the application's **Help → Online handbook** menu opens.
+This is the help that **Help → Handbook** (F1) opens. It comes with leolink, so
+it describes the version you have and needs no internet; **View on the web**
+shows the same page on GitHub, as it was for that version.
 
 ---
 
@@ -59,7 +61,8 @@ Reach for it when RTSP gives you nothing: battery-powered models keep it
 switched off to save power, and some firmware disables it by default. It also
 leaves the camera's small pool of web sessions alone, which matters on a device
 that only allows a handful at once. leolink speaks the protocol itself and hands
-the player a plain video stream on a loopback port; sound still comes over RTSP.
+the player a plain video stream on a loopback port. It carries no sound, so a
+camera watched over Baichuan has picture only.
 Recording and motion detection open the same port, so one connection to the
 camera serves the tile and everything else that reads it — and a camera that
 offers nothing but Baichuan can be recorded and watched like any other.
@@ -107,8 +110,8 @@ the camera.
 
 ## Turning the camera
 
-A camera with a motor — an E1, E1 Pro or E1 Zoom — gets a ✥ button in its tile's
-strip. Press it and arrows appear over the picture, in its lower right corner,
+A camera with a motor — an E1, E1 Pro or E1 Zoom — gets a **Turn the camera**
+button in its tile's strip. Press it and arrows appear over the picture, in its lower right corner,
 with **+** and **−** for the zoom on a camera that has one. The camera turns for
 as long as an arrow is held and stops when it is let go, so it can be aimed
 while watching what it sees.
@@ -119,11 +122,12 @@ in. Either way the same commands go to the camera.
 
 ## Speaking through the camera
 
-A camera with a speaker gets a 🗣 button in its tile's strip. Press it, pick a
+A camera with a speaker gets a **Speak through the camera** button in its tile's
+strip. Press it, pick a
 sound file — WAV, MP3, Ogg, Opus, FLAC or M4A — and it plays through the
 camera; press it again to stop early. leolink converts the file with ffmpeg and
-sends it over the camera's ONVIF audio backchannel, inside the RTSP connection,
-so it reaches the camera wherever the picture does.
+sends it over the camera's ONVIF audio backchannel, inside an RTSP connection,
+so it needs RTSP, whichever way the picture comes.
 
 The button appears only on a camera that says it has a backchannel. leolink asks
 each camera over RTSP, one at a time and a few seconds after the pictures have
@@ -511,15 +515,16 @@ come from the documented API — see the [protocol notes](protocol.md) — and t
 dialog reports what the camera actually said, so a first run with a card in
 should show plainly where reality differs.
 
-**P2P access by UID** is implemented from the protocol description and has never
-run against a P2P-capable camera. `leolink --baichuan-p2p <UID>` reports each
-step. If you have such a camera, that output attached to an
+**P2P access by UID** does not exist yet: leolink cannot reach a camera by its
+UID. Only the first lookup step does, written from the protocol description, as
+`leolink --baichuan-p2p <UID>`, and it has never run against a P2P-capable
+camera. If you have such a camera, that output attached to an
 [issue](https://github.com/tombueng/leolink/issues) would be very welcome.
 
-**Two-way audio over Baichuan** is not implemented. The vendor's SDK can do it
-and the protocol notes describe where it lives, but the development camera has
-no speaker. The Baichuan transport is now in place, which is most of what it
-needs.
+**Sound to the camera over Baichuan** is not implemented. leolink sends sound
+over the ONVIF backchannel, inside RTSP, so a camera without RTSP gets no speak
+button. The vendor's SDK can do it over Baichuan, and the Baichuan transport is
+in place, but nobody has worked out the messages yet.
 
 **Mobile data** — SIM, APN, signal — is implemented from the protocol and has
 never run against a camera with a modem. Nothing there can do damage: a command

@@ -25,74 +25,40 @@
 
   <description>
     <p>
-      leolink shows the live picture from Reolink IP cameras on Linux. It speaks
-      the camera's own protocols directly — the HTTP API, RTSP and ONVIF on the
-      local network, and Reolink's P2P service for cameras that are somewhere
-      else. On the local network nothing is sent to any third party.
+      leolink shows the live picture from Reolink IP cameras on Linux. It speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server. Nothing is sent to any third party.
     </p>
     <p xml:lang="ar">
-      يعرض leolink الصورة الحية من كاميرات Reolink على لينكس. وهو يتحدث بروتوكولات
-      الكاميرا نفسها مباشرة — واجهة HTTP وRTSP وONVIF داخل الشبكة المحلية، وخدمة P2P
-      من Reolink للكاميرات البعيدة. وداخل الشبكة المحلية لا يُرسل شيء إلى أي طرف ثالث.
+      يعرض leolink الصورة الحية من كاميرات Reolink على لينكس. وهو يتحدث بروتوكولات الكاميرا نفسها مباشرة داخل الشبكة المحلية: واجهة HTTP وRTSP وONVIF، وبروتوكول Baichuan الخاص بـ Reolink للكاميرات التي لا خادم ويب فيها. ولا يُرسل شيء إلى أي طرف ثالث.
     </p>
     <p xml:lang="de">
-      leolink zeigt das Livebild von Reolink-IP-Kameras unter Linux. Es spricht
-      direkt die Protokolle der Kamera — die HTTP-API, RTSP und ONVIF im lokalen
-      Netz, und Reolinks P2P-Dienst für Kameras, die woanders stehen. Im lokalen
-      Netz geht nichts an Dritte.
+      leolink zeigt das Livebild von Reolink-IP-Kameras unter Linux. Es spricht direkt die Protokolle der Kamera, im lokalen Netz: die HTTP-API, RTSP, ONVIF und Reolinks eigenes Baichuan für Kameras ohne Webserver. Nichts geht an Dritte.
     </p>
     <p xml:lang="es">
-      leolink muestra la imagen en directo de las cámaras IP de Reolink en Linux.
-      Habla directamente los protocolos de la cámara — la interfaz HTTP, RTSP y
-      ONVIF en la red local, y el servicio P2P de Reolink para las cámaras que
-      están en otro sitio. En la red local no se envía nada a terceros.
+      leolink muestra la imagen en directo de las cámaras IP de Reolink en Linux. Habla directamente los protocolos de la cámara, en la red local: la interfaz HTTP, RTSP, ONVIF y Baichuan, el protocolo propio de Reolink, para cámaras sin servidor web. No se envía nada a terceros.
     </p>
     <p xml:lang="fr">
-      leolink affiche l'image en direct des caméras IP Reolink sous Linux. Il parle
-      directement les protocoles de la caméra — l'interface HTTP, RTSP et ONVIF sur
-      le réseau local, et le service P2P de Reolink pour les caméras situées
-      ailleurs. Sur le réseau local, rien n'est envoyé à un tiers.
+      leolink affiche l'image en direct des caméras IP Reolink sous Linux. Il parle directement les protocoles de la caméra, sur le réseau local : l'interface HTTP, RTSP, ONVIF et Baichuan, le protocole propre de Reolink, pour les caméras sans serveur web. Rien n'est envoyé à un tiers.
     </p>
     <p xml:lang="hi">
-      leolink लिनक्स पर Reolink आईपी कैमरों का सीधा चित्र दिखाता है। यह कैमरे के अपने
-      प्रोटोकॉल सीधे बोलता है — स्थानीय नेटवर्क पर HTTP इंटरफ़ेस, RTSP और ONVIF, और कहीं
-      दूर लगे कैमरों के लिए Reolink की P2P सेवा। स्थानीय नेटवर्क पर कुछ भी किसी तीसरे पक्ष
-      को नहीं भेजा जाता।
+      leolink लिनक्स पर Reolink आईपी कैमरों का सीधा चित्र दिखाता है। यह स्थानीय नेटवर्क पर कैमरे के अपने प्रोटोकॉल सीधे बोलता है: HTTP इंटरफ़ेस, RTSP, ONVIF, और बिना वेब सर्वर वाले कैमरों के लिए Reolink का अपना Baichuan। कुछ भी किसी तीसरे पक्ष को नहीं भेजा जाता।
     </p>
     <p xml:lang="it">
-      leolink mostra l'immagine dal vivo delle telecamere IP Reolink su Linux. Parla
-      direttamente i protocolli della telecamera — l'interfaccia HTTP, RTSP e ONVIF
-      sulla rete locale, e il servizio P2P di Reolink per le telecamere che stanno
-      altrove. Sulla rete locale non viene inviato nulla a terzi.
+      leolink mostra l'immagine dal vivo delle telecamere IP Reolink su Linux. Parla direttamente i protocolli della telecamera, sulla rete locale: l'interfaccia HTTP, RTSP, ONVIF e Baichuan, il protocollo proprio di Reolink, per le telecamere senza server web. Non viene inviato nulla a terzi.
     </p>
     <p xml:lang="ja">
-      leolink は Linux 上で Reolink の IP カメラのライブ映像を表示します。カメラ自身の
-      プロトコルを直接話します — ローカルネットワークでは HTTP API・RTSP・ONVIF、離れた
-      場所にあるカメラには Reolink の P2P サービス。ローカルネットワーク上では第三者に
-      何も送信しません。
+      leolink は Linux 上で Reolink の IP カメラのライブ映像を表示します。ローカルネットワーク上で、カメラ自身のプロトコルを直接話します。HTTP API・RTSP・ONVIF、そして Web サーバーのないカメラには Reolink 独自の Baichuan。第三者には何も送信しません。
     </p>
     <p xml:lang="pt_BR">
-      O leolink mostra a imagem ao vivo das câmeras IP Reolink no Linux. Ele fala
-      diretamente os protocolos da própria câmera — a interface HTTP, RTSP e ONVIF
-      na rede local, e o serviço P2P da Reolink para câmeras que estão em outro
-      lugar. Na rede local nada é enviado a terceiros.
+      O leolink mostra a imagem ao vivo das câmeras IP Reolink no Linux. Ele fala diretamente os protocolos da própria câmera, na rede local: a interface HTTP, RTSP, ONVIF e o Baichuan, protocolo próprio da Reolink, para câmeras sem servidor web. Nada é enviado a terceiros.
     </p>
     <p xml:lang="ru">
-      leolink показывает живую картинку с IP-камер Reolink под Linux. Он напрямую
-      говорит на собственных протоколах камеры — HTTP-интерфейс, RTSP и ONVIF в
-      локальной сети, а также служба P2P от Reolink для камер, которые находятся
-      где-то ещё. В локальной сети ничего не уходит третьим лицам.
+      leolink показывает живую картинку с IP-камер Reolink под Linux. Он напрямую говорит на собственных протоколах камеры, в локальной сети: HTTP-интерфейс, RTSP, ONVIF и собственный протокол Reolink Baichuan для камер без веб-сервера. Ничего не уходит третьим лицам.
     </p>
     <p xml:lang="tr">
-      leolink, Reolink IP kameralarının canlı görüntüsünü Linux üzerinde gösterir.
-      Kameranın kendi protokollerini doğrudan konuşur — yerel ağda HTTP arayüzü,
-      RTSP ve ONVIF; başka bir yerdeki kameralar için de Reolink'in P2P hizmeti.
-      Yerel ağda hiçbir şey üçüncü taraflara gönderilmez.
+      leolink, Reolink IP kameralarının canlı görüntüsünü Linux üzerinde gösterir. Kameranın kendi protokollerini yerel ağda doğrudan konuşur: HTTP arayüzü, RTSP, ONVIF ve web sunucusu olmayan kameralar için Reolink'in kendi Baichuan protokolü. Hiçbir şey üçüncü taraflara gönderilmez.
     </p>
     <p xml:lang="zh_CN">
-      leolink 在 Linux 上显示 Reolink 网络摄像机的实时画面。它直接讲摄像机自己的协议 —
-      局域网内的 HTTP 接口、RTSP 和 ONVIF，以及用于异地摄像机的 Reolink P2P 服务。
-      在局域网内，不会向任何第三方发送任何内容。
+      leolink 在 Linux 上显示 Reolink 网络摄像机的实时画面。它在局域网内直接讲摄像机自己的协议：HTTP 接口、RTSP、ONVIF，以及用于没有 Web 服务器的摄像机的 Reolink 自有协议 Baichuan。不会向任何第三方发送任何内容。
     </p>
     <p>Features:</p>
     <p xml:lang="ar">المزايا:</p>
@@ -150,25 +116,18 @@
       <li xml:lang="tr">Kamera başına ses düzeyi ve sessize alma; gürültülü bir oda
           diğerlerini bastırmasın</li>
       <li xml:lang="zh_CN">每台摄像机独立音量与静音，一间吵闹的屋子不会盖过其余</li>
-      <li>Motion alerts pushed by the camera over ONVIF instead of constant polling</li>
-      <li xml:lang="ar">تنبيهات الحركة تدفعها الكاميرا عبر ONVIF بدل الاستعلام المتواصل</li>
-      <li xml:lang="de">Bewegungsmeldungen, die die Kamera per ONVIF schickt, statt
-          ständigem Nachfragen</li>
-      <li xml:lang="es">Avisos de movimiento que la cámara envía por ONVIF, en vez de
-          preguntar sin parar</li>
-      <li xml:lang="fr">Alertes de mouvement poussées par la caméra via ONVIF, sans
-          interrogation permanente</li>
-      <li xml:lang="hi">लगातार पूछताछ के बजाय, ONVIF से कैमरे द्वारा भेजी गई गति-सूचनाएँ</li>
-      <li xml:lang="it">Avvisi di movimento inviati dalla telecamera via ONVIF invece
-          di continue interrogazioni</li>
-      <li xml:lang="ja">絶えず問い合わせるのではなく、ONVIF でカメラから届く動体通知</li>
-      <li xml:lang="pt_BR">Alertas de movimento enviados pela câmera via ONVIF, em vez
-          de consultas constantes</li>
-      <li xml:lang="ru">Уведомления о движении, которые камера присылает по ONVIF,
-          вместо постоянных опросов</li>
-      <li xml:lang="tr">Sürekli yoklama yerine, kameranın ONVIF ile ilettiği hareket
-          uyarıları</li>
-      <li xml:lang="zh_CN">由摄像机通过 ONVIF 推送的移动提醒，而非不停轮询</li>
+      <li>Motion alerts pushed by the camera, over ONVIF or Baichuan, instead of constant polling</li>
+      <li xml:lang="ar">تنبيهات الحركة تدفعها الكاميرا عبر ONVIF أو Baichuan بدل الاستعلام المتواصل</li>
+      <li xml:lang="de">Bewegungsmeldungen, die die Kamera per ONVIF oder Baichuan schickt, statt ständigem Nachfragen</li>
+      <li xml:lang="es">Avisos de movimiento que la cámara envía por ONVIF o Baichuan, en vez de preguntar sin parar</li>
+      <li xml:lang="fr">Alertes de mouvement poussées par la caméra via ONVIF ou Baichuan, sans interrogation permanente</li>
+      <li xml:lang="hi">लगातार पूछताछ के बजाय, ONVIF या Baichuan से कैमरे द्वारा भेजी गई गति-सूचनाएँ</li>
+      <li xml:lang="it">Avvisi di movimento inviati dalla telecamera via ONVIF o Baichuan invece di continue interrogazioni</li>
+      <li xml:lang="ja">絶えず問い合わせるのではなく、ONVIF または Baichuan でカメラから届く動体通知</li>
+      <li xml:lang="pt_BR">Alertas de movimento enviados pela câmera via ONVIF ou Baichuan, em vez de consultas constantes</li>
+      <li xml:lang="ru">Уведомления о движении, которые камера присылает сама по ONVIF или Baichuan, вместо постоянных опросов</li>
+      <li xml:lang="tr">Sürekli sorgulama yerine kameranın ONVIF ya da Baichuan üzerinden gönderdiği hareket uyarıları</li>
+      <li xml:lang="zh_CN">由摄像机通过 ONVIF 或 Baichuan 主动推送的移动提醒，无需不停轮询</li>
       <li>Records on motion to your own disk, which works even when the camera
           has no SD card fitted</li>
       <li xml:lang="ar">يسجّل عند الحركة على قرصك أنت، وهو ما يعمل حتى لو لم تكن في
@@ -251,38 +210,30 @@
       <li xml:lang="ru">Аппаратно ускоренное декодирование через libmpv</li>
       <li xml:lang="tr">libmpv üzerinden donanım hızlandırmalı kod çözme</li>
       <li xml:lang="zh_CN">通过 libmpv 进行硬件加速解码</li>
-      <li>Choice of RTSP or the lower-latency HTTP-FLV transport</li>
-      <li xml:lang="ar">اختيار بين RTSP ونقل HTTP-FLV الأقل كموناً</li>
-      <li xml:lang="de">Wahl zwischen RTSP und dem latenzärmeren HTTP-FLV</li>
-      <li xml:lang="es">Elección entre RTSP y el transporte HTTP-FLV, de menor latencia</li>
-      <li xml:lang="fr">Choix entre RTSP et le transport HTTP-FLV, à plus faible
-          latence</li>
-      <li xml:lang="hi">RTSP या कम विलंब वाले HTTP-FLV परिवहन में से चुनाव</li>
-      <li xml:lang="it">Scelta fra RTSP e il trasporto HTTP-FLV, a latenza più bassa</li>
-      <li xml:lang="ja">RTSP と、より低遅延な HTTP-FLV 伝送のどちらかを選べます</li>
-      <li xml:lang="pt_BR">Escolha entre RTSP e o transporte HTTP-FLV, de menor latência</li>
-      <li xml:lang="ru">Выбор между RTSP и транспортом HTTP-FLV с меньшей задержкой</li>
-      <li xml:lang="tr">RTSP ile daha düşük gecikmeli HTTP-FLV taşıması arasında seçim</li>
-      <li xml:lang="zh_CN">可选 RTSP，或延迟更低的 HTTP-FLV 传输</li>
-      <li>Passwords can be kept outside the config file by way of a helper command</li>
-      <li xml:lang="ar">يمكن إبقاء كلمات المرور خارج ملف الإعدادات عن طريق أمر مساعد</li>
-      <li xml:lang="de">Passwörter lassen sich über einen Hilfsbefehl außerhalb der
-          Konfigurationsdatei halten</li>
-      <li xml:lang="es">Las contraseñas pueden quedar fuera del archivo de
-          configuración mediante un comando auxiliar</li>
-      <li xml:lang="fr">Les mots de passe peuvent rester hors du fichier de
-          configuration grâce à une commande auxiliaire</li>
-      <li xml:lang="hi">एक सहायक कमांड के ज़रिए पासवर्ड सेटिंग फ़ाइल से बाहर रखे जा सकते हैं</li>
-      <li xml:lang="it">Le password possono restare fuori dal file di configurazione
-          tramite un comando di appoggio</li>
-      <li xml:lang="ja">補助コマンドを使えば、パスワードを設定ファイルの外に置けます</li>
-      <li xml:lang="pt_BR">As senhas podem ficar fora do arquivo de configuração por
-          meio de um comando auxiliar</li>
-      <li xml:lang="ru">Пароли можно держать вне файла настроек с помощью
-          вспомогательной команды</li>
-      <li xml:lang="tr">Parolalar, bir yardımcı komut aracılığıyla yapılandırma
-          dosyasının dışında tutulabilir</li>
-      <li xml:lang="zh_CN">借助一条辅助命令，密码可以放在配置文件之外</li>
+      <li>An Automatic transport that takes HTTP-FLV, RTSP or Baichuan by what the camera offers, or any of them chosen by hand</li>
+      <li xml:lang="ar">نقل «تلقائي» يختار HTTP-FLV أو RTSP أو Baichuan بحسب ما تقدمه الكاميرا، أو أيّاً منها تختاره بنفسك</li>
+      <li xml:lang="de">Ein automatischer Transport, der HTTP-FLV, RTSP oder Baichuan nach dem wählt, was die Kamera anbietet, oder jeden davon von Hand</li>
+      <li xml:lang="es">Un transporte automático que toma HTTP-FLV, RTSP o Baichuan según lo que ofrezca la cámara, o cualquiera de ellos elegido a mano</li>
+      <li xml:lang="fr">Un transport automatique qui prend HTTP-FLV, RTSP ou Baichuan selon ce que la caméra propose, ou l'un d'eux choisi à la main</li>
+      <li xml:lang="hi">एक स्वचालित परिवहन जो कैमरे की पेशकश के अनुसार HTTP-FLV, RTSP या Baichuan चुनता है, या इनमें से कोई भी हाथ से चुना हुआ</li>
+      <li xml:lang="it">Un trasporto automatico che sceglie HTTP-FLV, RTSP o Baichuan secondo ciò che la telecamera offre, o uno di essi scelto a mano</li>
+      <li xml:lang="ja">カメラが提供するものに応じて HTTP-FLV・RTSP・Baichuan を選ぶ「自動」伝送、または手動でのいずれかの選択</li>
+      <li xml:lang="pt_BR">Um transporte automático que escolhe HTTP-FLV, RTSP ou Baichuan pelo que a câmera oferece, ou qualquer um deles escolhido à mão</li>
+      <li xml:lang="ru">Автоматический транспорт, выбирающий HTTP-FLV, RTSP или Baichuan по тому, что предлагает камера, либо любой из них вручную</li>
+      <li xml:lang="tr">Kameranın sunduğuna göre HTTP-FLV, RTSP ya da Baichuan'ı seçen otomatik taşıma veya bunlardan elle seçilen biri</li>
+      <li xml:lang="zh_CN">“自动”传输会按摄像机提供的服务选用 HTTP-FLV、RTSP 或 Baichuan，也可以手动选择其中任意一种</li>
+      <li>Passwords can be kept in the system keyring, or come from a helper command, instead of the config file</li>
+      <li xml:lang="ar">يمكن حفظ كلمات المرور في حلقة مفاتيح النظام أو أخذها من أمر مساعد، بدل ملف الإعدادات</li>
+      <li xml:lang="de">Passwörter können im Schlüsselbund des Systems liegen oder aus einem Hilfsbefehl kommen statt aus der Konfigurationsdatei</li>
+      <li xml:lang="es">Las contraseñas pueden guardarse en el llavero del sistema o venir de un comando auxiliar, en vez del archivo de configuración</li>
+      <li xml:lang="fr">Les mots de passe peuvent résider dans le trousseau du système ou provenir d'une commande auxiliaire, plutôt que du fichier de configuration</li>
+      <li xml:lang="hi">पासवर्ड सेटिंग फ़ाइल के बजाय सिस्टम कीरिंग में रह सकते हैं या किसी सहायक कमांड से आ सकते हैं</li>
+      <li xml:lang="it">Le password possono stare nel portachiavi di sistema o arrivare da un comando di appoggio, invece che dal file di configurazione</li>
+      <li xml:lang="ja">パスワードは設定ファイルではなく、システムのキーリングや補助コマンドから取れます</li>
+      <li xml:lang="pt_BR">As senhas podem ficar no chaveiro do sistema, ou vir de um comando auxiliar, em vez do arquivo de configuração</li>
+      <li xml:lang="ru">Пароли могут храниться в хранилище ключей системы или приходить из вспомогательной команды, а не из файла настроек</li>
+      <li xml:lang="tr">Parolalar yapılandırma dosyası yerine sistem anahtarlığında durabilir ya da yardımcı bir komuttan gelebilir</li>
+      <li xml:lang="zh_CN">密码可存放在系统密钥环，或由辅助命令提供，而不必写在配置文件里</li>
       <li>Twelve languages: Arabic, Chinese, English, French, German, Hindi,
           Italian, Japanese, Portuguese, Russian, Spanish and Turkish</li>
       <li xml:lang="ar">اثنتا عشرة لغة: الإنجليزية والألمانية والإسبانية والفرنسية
@@ -312,63 +263,40 @@
           土耳其语、俄语、阿拉伯语、印地语、中文和日语</li>
     </ul>
     <p>
-      Tested against an RLC-410W. Other Reolink models speak the same protocols
-      and the application asks each camera at start-up what it can do, so
-      unsupported features are simply hidden.
+      Tested against an RLC-410W, an E1, an E1 Pro, an E1 Zoom and a Video Doorbell WiFi. Other Reolink models speak the same protocols and the application asks each camera at start-up what it can do, so unsupported features are simply hidden.
     </p>
     <p xml:lang="ar">
-      اختُبر على طراز RLC-410W. وطرازات Reolink الأخرى تتحدث البروتوكولات نفسها،
-      والتطبيق يسأل كل كاميرا عند الإقلاع عما تستطيعه، فتُخفى ببساطة المزايا غير
-      المدعومة.
+      اختُبر على RLC-410W وE1 وE1 Pro وE1 Zoom وVideo Doorbell WiFi. وطرازات Reolink الأخرى تتحدث البروتوكولات نفسها، والتطبيق يسأل كل كاميرا عند الإقلاع عما تستطيعه، فتُخفى ببساطة المزايا غير المدعومة.
     </p>
     <p xml:lang="de">
-      Getestet mit einer RLC-410W. Andere Reolink-Modelle sprechen dieselben
-      Protokolle, und das Programm fragt jede Kamera beim Start, was sie kann —
-      nicht unterstützte Funktionen werden einfach ausgeblendet.
+      Getestet mit einer RLC-410W, einer E1, einer E1 Pro, einer E1 Zoom und einer Video Doorbell WiFi. Andere Reolink-Modelle sprechen dieselben Protokolle, und das Programm fragt jede Kamera beim Start, was sie kann — nicht unterstützte Funktionen werden einfach ausgeblendet.
     </p>
     <p xml:lang="es">
-      Probado con una RLC-410W. Otros modelos de Reolink hablan los mismos
-      protocolos, y la aplicación pregunta a cada cámara al arrancar qué sabe
-      hacer, de modo que las funciones no admitidas simplemente se ocultan.
+      Probado con una RLC-410W, una E1, una E1 Pro, una E1 Zoom y un Video Doorbell WiFi. Otros modelos de Reolink hablan los mismos protocolos, y la aplicación pregunta a cada cámara al arrancar qué sabe hacer, de modo que las funciones no admitidas simplemente se ocultan.
     </p>
     <p xml:lang="fr">
-      Testé avec une RLC-410W. Les autres modèles Reolink parlent les mêmes
-      protocoles, et l'application demande à chaque caméra au démarrage ce
-      qu'elle sait faire : les fonctions non prises en charge sont simplement
-      masquées.
+      Testé avec une RLC-410W, une E1, une E1 Pro, une E1 Zoom et une Video Doorbell WiFi. Les autres modèles Reolink parlent les mêmes protocoles, et l'application demande à chaque caméra au démarrage ce qu'elle sait faire : les fonctions non prises en charge sont simplement masquées.
     </p>
     <p xml:lang="hi">
-      RLC-410W पर परखा गया। Reolink के दूसरे मॉडल भी वही प्रोटोकॉल बोलते हैं, और
-      अनुप्रयोग शुरू होते समय हर कैमरे से पूछ लेता है कि वह क्या कर सकता है, इसलिए
-      असमर्थित सुविधाएँ बस छिपा दी जाती हैं।
+      RLC-410W, E1, E1 Pro, E1 Zoom और Video Doorbell WiFi पर परखा गया। Reolink के दूसरे मॉडल भी वही प्रोटोकॉल बोलते हैं, और अनुप्रयोग शुरू होते समय हर कैमरे से पूछ लेता है कि वह क्या कर सकता है, इसलिए असमर्थित सुविधाएँ बस छिपा दी जाती हैं।
     </p>
     <p xml:lang="it">
-      Provato con una RLC-410W. Gli altri modelli Reolink parlano gli stessi
-      protocolli e all'avvio l'applicazione chiede a ogni telecamera che cosa sa
-      fare, così le funzioni non supportate vengono semplicemente nascoste.
+      Provato con una RLC-410W, una E1, una E1 Pro, una E1 Zoom e un Video Doorbell WiFi. Gli altri modelli Reolink parlano gli stessi protocolli e all'avvio l'applicazione chiede a ogni telecamera che cosa sa fare, così le funzioni non supportate vengono semplicemente nascoste.
     </p>
     <p xml:lang="ja">
-      RLC-410W で検証しました。ほかの Reolink 機種も同じプロトコルを話し、起動時に
-      各カメラへ何ができるかを尋ねるので、対応していない機能は単に隠されます。
+      RLC-410W、E1、E1 Pro、E1 Zoom、Video Doorbell WiFi で検証しました。ほかの Reolink 機種も同じプロトコルを話し、起動時に各カメラへ何ができるかを尋ねるので、対応していない機能は単に隠されます。
     </p>
     <p xml:lang="pt_BR">
-      Testado com uma RLC-410W. Outros modelos da Reolink falam os mesmos
-      protocolos e o aplicativo pergunta a cada câmera, ao iniciar, o que ela sabe
-      fazer, de modo que os recursos não suportados são simplesmente ocultados.
+      Testado com uma RLC-410W, uma E1, uma E1 Pro, uma E1 Zoom e uma Video Doorbell WiFi. Outros modelos da Reolink falam os mesmos protocolos e o aplicativo pergunta a cada câmera, ao iniciar, o que ela sabe fazer, de modo que os recursos não suportados são simplesmente ocultados.
     </p>
     <p xml:lang="ru">
-      Проверено на RLC-410W. Другие модели Reolink говорят на тех же протоколах, а
-      программа при запуске спрашивает каждую камеру, что она умеет, — поэтому
-      неподдерживаемые функции просто скрываются.
+      Проверено на RLC-410W, E1, E1 Pro, E1 Zoom и Video Doorbell WiFi. Другие модели Reolink говорят на тех же протоколах, а программа при запуске спрашивает каждую камеру, что она умеет, — поэтому неподдерживаемые функции просто скрываются.
     </p>
     <p xml:lang="tr">
-      RLC-410W ile denendi. Diğer Reolink modelleri de aynı protokolleri konuşur ve
-      uygulama açılışta her kameraya neler yapabildiğini sorar; desteklenmeyen
-      özellikler böylece gizlenir.
+      RLC-410W, E1, E1 Pro, E1 Zoom ve Video Doorbell WiFi ile denendi. Diğer Reolink modelleri de aynı protokolleri konuşur ve uygulama açılışta her kameraya neler yapabildiğini sorar; desteklenmeyen özellikler böylece gizlenir.
     </p>
     <p xml:lang="zh_CN">
-      在 RLC-410W 上验证过。其他 Reolink 型号讲同样的协议，程序会在启动时逐一询问
-      摄像机能做什么，因此不受支持的功能只会被隐藏起来。
+      在 RLC-410W、E1、E1 Pro、E1 Zoom 和 Video Doorbell WiFi 上验证过。其他 Reolink 型号讲同样的协议，程序会在启动时逐一询问摄像机能做什么，因此不受支持的功能只会被隐藏起来。
     </p>
     <p>
       leolink is an independent project and is not affiliated with, endorsed by

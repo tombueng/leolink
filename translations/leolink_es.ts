@@ -3767,68 +3767,68 @@ Si la imagen sale rota, pruebe las otras por turno. «Solo software» siempre fu
 <context>
     <name>leolink::SettingsDialog</name>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="38"/>
-        <location filename="../src/SettingsDialog.cpp" line="44"/>
+        <location filename="../src/SettingsDialog.cpp" line="40"/>
+        <location filename="../src/SettingsDialog.cpp" line="46"/>
         <source>Cameras</source>
         <translation>Cámaras</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="45"/>
+        <location filename="../src/SettingsDialog.cpp" line="47"/>
         <source>Layout</source>
         <translation>Disposición</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="96"/>
+        <location filename="../src/SettingsDialog.cpp" line="98"/>
         <source>Add</source>
         <translation>Añadir</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="97"/>
+        <location filename="../src/SettingsDialog.cpp" line="99"/>
         <source>Remove</source>
         <translation>Quitar</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="101"/>
+        <location filename="../src/SettingsDialog.cpp" line="103"/>
         <source>Scan network…</source>
         <translation>Explorar la red…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="103"/>
+        <location filename="../src/SettingsDialog.cpp" line="105"/>
         <source>Ask the network which ONVIF cameras are present. This sends one multicast probe; devices that stay quiet are never contacted.</source>
         <translation>Pregunta a la red qué cámaras ONVIF hay. Envía una sola consulta multidifusión; con los aparatos que callan no se contacta nunca.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="118"/>
+        <location filename="../src/SettingsDialog.cpp" line="120"/>
         <source>192.168.1.10 or camera.lan</source>
         <translation>192.168.1.10 o camara.lan</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="123"/>
+        <location filename="../src/SettingsDialog.cpp" line="125"/>
         <source>optional: pass show reolink/hall</source>
         <translation>opcional: pass show reolink/entrada</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="125"/>
+        <location filename="../src/SettingsDialog.cpp" line="127"/>
         <source>If set, this command runs and its output is used as the password. Keeps the secret out of the configuration file.</source>
         <translation>Si se indica, se ejecuta este comando y su salida se usa como contraseña. Mantiene el secreto fuera del archivo de configuración.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="129"/>
+        <location filename="../src/SettingsDialog.cpp" line="131"/>
         <source>This configuration file</source>
         <translation>Este archivo de configuración</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="131"/>
+        <location filename="../src/SettingsDialog.cpp" line="133"/>
         <source>A command</source>
         <translation>Un comando</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="132"/>
+        <location filename="../src/SettingsDialog.cpp" line="134"/>
         <source>The system keyring</source>
         <translation>El llavero del sistema</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="135"/>
+        <location filename="../src/SettingsDialog.cpp" line="137"/>
         <source>Where this camera&apos;s password is kept.
 
 The configuration file holds it in clear text, readable only by you (mode 600). A command — pass, secret-tool, anything that prints the password — keeps it out of the file. The system keyring stores it in the desktop&apos;s own secret service.
@@ -3841,12 +3841,12 @@ El archivo de configuración la guarda en texto claro, legible solo por usted (m
 El llavero suele estar bloqueado hasta que alguien inicia sesión, así que una máquina que arranca sin vigilancia y muestra cámaras en una pared se sirve mejor del archivo o de un comando.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="161"/>
-        <source>optional, for P2P access</source>
-        <translation>opcional, para el acceso P2P</translation>
+        <location filename="../src/SettingsDialog.cpp" line="163"/>
+        <source>optional, not used yet</source>
+        <translation>opcional, aún no se usa</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="166"/>
+        <location filename="../src/SettingsDialog.cpp" line="168"/>
         <source>Which input of the device this is. Leave at 0 for a camera.
 
 An NVR answers for all of its cameras on one address, one login and one port, and the channel is the only thing that tells them apart. Testing the connection to a recorder offers to add them all, so this rarely has to be set by hand.</source>
@@ -3855,48 +3855,48 @@ An NVR answers for all of its cameras on one address, one login and one port, an
 Un NVR responde por todas sus cámaras en una dirección, un inicio de sesión y un puerto, y el canal es lo único que las distingue. Al probar la conexión con un grabador se ofrece añadirlas todas, así que rara vez hay que ponerlo a mano.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="175"/>
+        <location filename="../src/SettingsDialog.cpp" line="177"/>
         <source>Any address libmpv can open. Use this for cameras from other makers, an NVR stream, or a local file.</source>
         <translation>Cualquier dirección que libmpv pueda abrir. Úsela para cámaras de otros fabricantes, un flujo de un NVR o un archivo local.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="179"/>
+        <location filename="../src/SettingsDialog.cpp" line="181"/>
         <source>Sub stream (low bandwidth)</source>
         <translation>Flujo secundario (poco ancho de banda)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="180"/>
+        <location filename="../src/SettingsDialog.cpp" line="182"/>
         <source>Main stream (full resolution)</source>
         <translation>Flujo principal (resolución completa)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="183"/>
+        <location filename="../src/SettingsDialog.cpp" line="185"/>
         <source>Automatic (HTTP-FLV, then RTSP, then Baichuan)</source>
         <translation>Automático (HTTP-FLV, luego RTSP, luego Baichuan)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="185"/>
+        <location filename="../src/SettingsDialog.cpp" line="187"/>
         <source>RTSP</source>
         <translation>RTSP</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="186"/>
+        <location filename="../src/SettingsDialog.cpp" line="188"/>
         <source>HTTP-FLV (lower latency)</source>
         <translation>HTTP-FLV (menos latencia)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="187"/>
+        <location filename="../src/SettingsDialog.cpp" line="189"/>
         <source>Baichuan (the camera&apos;s own protocol)</source>
         <translation>Baichuan (el protocolo propio de la cámara)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="189"/>
-        <location filename="../src/SettingsDialog.cpp" line="215"/>
+        <location filename="../src/SettingsDialog.cpp" line="191"/>
+        <location filename="../src/SettingsDialog.cpp" line="217"/>
         <source>Custom URL</source>
         <translation>Dirección propia</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="191"/>
+        <location filename="../src/SettingsDialog.cpp" line="193"/>
         <source>Automatic asks the camera what it offers and takes the first of HTTP-FLV, RTSP and Baichuan, cheapest for this computer first. If one never shows a picture it moves on to the next.
 
 RTSP suits most cameras.
@@ -3913,241 +3913,241 @@ HTTP-FLV solo necesita el puerto 80, lo que ayuda allí donde RTSP está bloquea
 Baichuan es lo que habla la aplicación de Reolink. Es la respuesta para las cámaras que dejan RTSP apagado — los modelos con batería lo hacen — y no consume ninguna de las pocas sesiones web de la cámara. Solo vídeo: el sonido sigue llegando por RTSP.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="201"/>
+        <location filename="../src/SettingsDialog.cpp" line="203"/>
         <source>Use HTTPS for the control API</source>
         <translation>Usar HTTPS para la interfaz de control</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="202"/>
+        <location filename="../src/SettingsDialog.cpp" line="204"/>
         <source>Show this camera</source>
         <translation>Mostrar esta cámara</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="205"/>
+        <location filename="../src/SettingsDialog.cpp" line="207"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="206"/>
+        <location filename="../src/SettingsDialog.cpp" line="208"/>
         <source>Host</source>
         <translation>Dirección</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="207"/>
+        <location filename="../src/SettingsDialog.cpp" line="209"/>
         <source>User</source>
         <translation>Usuario</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="208"/>
+        <location filename="../src/SettingsDialog.cpp" line="210"/>
         <source>Password kept in</source>
         <translation>Contraseña guardada en</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="209"/>
+        <location filename="../src/SettingsDialog.cpp" line="211"/>
         <source>Password</source>
         <translation>Contraseña</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="210"/>
+        <location filename="../src/SettingsDialog.cpp" line="212"/>
         <source>Password command</source>
         <translation>Comando de contraseña</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="211"/>
+        <location filename="../src/SettingsDialog.cpp" line="213"/>
         <source>UID</source>
         <translation>UID</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="212"/>
+        <location filename="../src/SettingsDialog.cpp" line="214"/>
         <source>Channel</source>
         <translation>Canal</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="213"/>
+        <location filename="../src/SettingsDialog.cpp" line="215"/>
         <source>Stream</source>
         <translation>Flujo</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="214"/>
+        <location filename="../src/SettingsDialog.cpp" line="216"/>
         <source>Transport</source>
         <translation>Transporte</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="228"/>
+        <location filename="../src/SettingsDialog.cpp" line="230"/>
         <source>Test connection</source>
         <translation>Probar la conexión</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="240"/>
+        <location filename="../src/SettingsDialog.cpp" line="242"/>
         <source>Settings for this camera…</source>
         <translation>Ajustes de esta cámara…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="242"/>
+        <location filename="../src/SettingsDialog.cpp" line="244"/>
         <source>Detection, reactions and recording in leolink, and the camera&apos;s own encoder, picture and schedules.</source>
         <translation>Detección, reacciones y grabación en leolink, y el codificador, la imagen y los horarios de la propia cámara.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="272"/>
-        <location filename="../src/SettingsDialog.cpp" line="281"/>
-        <location filename="../src/SettingsDialog.cpp" line="300"/>
+        <location filename="../src/SettingsDialog.cpp" line="274"/>
+        <location filename="../src/SettingsDialog.cpp" line="283"/>
+        <location filename="../src/SettingsDialog.cpp" line="302"/>
         <source>automatic</source>
         <translation>automático</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="289"/>
+        <location filename="../src/SettingsDialog.cpp" line="291"/>
         <source>Columns</source>
         <translation>Columnas</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="290"/>
+        <location filename="../src/SettingsDialog.cpp" line="292"/>
         <source>Rows</source>
         <translation>Filas</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="292"/>
+        <location filename="../src/SettingsDialog.cpp" line="294"/>
         <source>Grid size</source>
         <translation>Tamaño de la cuadrícula</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="317"/>
+        <location filename="../src/SettingsDialog.cpp" line="319"/>
         <source>Row</source>
         <translation>Fila</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="318"/>
+        <location filename="../src/SettingsDialog.cpp" line="320"/>
         <source>Column</source>
         <translation>Columna</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="319"/>
+        <location filename="../src/SettingsDialog.cpp" line="321"/>
         <source>Row span</source>
         <translation>Filas que ocupa</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="320"/>
+        <location filename="../src/SettingsDialog.cpp" line="322"/>
         <source>Column span</source>
         <translation>Columnas que ocupa</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="322"/>
+        <location filename="../src/SettingsDialog.cpp" line="324"/>
         <source>Position of the selected camera</source>
         <translation>Posición de la cámara seleccionada</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="333"/>
+        <location filename="../src/SettingsDialog.cpp" line="335"/>
         <source>Leave row and column on “automatic” to let cameras fill the grid in order. Spans let one camera cover several cells.</source>
         <translation>Deje la fila y la columna en «automático» para que las cámaras llenen la cuadrícula por orden. Ocupando varias celdas, una cámara puede cubrir más de una.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="492"/>
-        <location filename="../src/SettingsDialog.cpp" line="696"/>
+        <location filename="../src/SettingsDialog.cpp" line="494"/>
+        <location filename="../src/SettingsDialog.cpp" line="722"/>
         <source>New camera</source>
         <translation>Cámara nueva</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="510"/>
+        <location filename="../src/SettingsDialog.cpp" line="512"/>
         <source>Remove camera</source>
         <translation>Quitar la cámara</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="511"/>
+        <location filename="../src/SettingsDialog.cpp" line="513"/>
         <source>Remove “%1” from the list?</source>
         <translation>¿Quitar «%1» de la lista?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="539"/>
+        <location filename="../src/SettingsDialog.cpp" line="541"/>
         <source>type it once; it moves to the keyring when you save</source>
         <translation>escríbala una vez; pasará al llavero al guardar</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="540"/>
+        <location filename="../src/SettingsDialog.cpp" line="542"/>
         <source>no keyring is answering — it will stay in the file</source>
         <translation>ningún llavero responde — se quedará en el archivo</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="554"/>
+        <location filename="../src/SettingsDialog.cpp" line="556"/>
         <source>Enter a host first.</source>
         <translation>Indique antes una dirección.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="561"/>
+        <location filename="../src/SettingsDialog.cpp" line="563"/>
         <source>Contacting %1…</source>
         <translation>Contactando con %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="620"/>
+        <location filename="../src/SettingsDialog.cpp" line="646"/>
         <source>Cameras on this recorder</source>
         <translation>Cámaras en este grabador</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="623"/>
+        <location filename="../src/SettingsDialog.cpp" line="649"/>
         <source>%1 answers for %n channel(s). Which of them should be added?</source>
         <translation><numerusform>%1 responde por %n canal. ¿Quiere añadirlo?</numerusform><numerusform>%1 responde por %n canales. ¿Cuáles quiere añadir?</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="642"/>
-        <location filename="../src/SettingsDialog.cpp" line="713"/>
+        <location filename="../src/SettingsDialog.cpp" line="668"/>
+        <location filename="../src/SettingsDialog.cpp" line="739"/>
         <source>Channel %1</source>
         <translation>Canal %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="644"/>
+        <location filename="../src/SettingsDialog.cpp" line="670"/>
         <source>%1 — %2</source>
         <translation>%1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="646"/>
+        <location filename="../src/SettingsDialog.cpp" line="672"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="648"/>
+        <location filename="../src/SettingsDialog.cpp" line="674"/>
         <source>%1 — already in the list</source>
         <translation>%1 — ya está en la lista</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="650"/>
+        <location filename="../src/SettingsDialog.cpp" line="676"/>
         <source>%1 — nothing connected</source>
         <translation>%1 — nada conectado</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="662"/>
+        <location filename="../src/SettingsDialog.cpp" line="688"/>
         <source>All</source>
         <translation>Todos</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="663"/>
+        <location filename="../src/SettingsDialog.cpp" line="689"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="741"/>
+        <location filename="../src/SettingsDialog.cpp" line="767"/>
         <source>Added %n camera(s) from this recorder.</source>
         <translation><numerusform>Añadida %n cámara de este grabador.</numerusform><numerusform>Añadidas %n cámaras de este grabador.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="750"/>
+        <location filename="../src/SettingsDialog.cpp" line="776"/>
         <source>Looking for cameras…</source>
         <translation>Buscando cámaras…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="750"/>
+        <location filename="../src/SettingsDialog.cpp" line="776"/>
         <source>Stop</source>
         <translation>Detener</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="764"/>
+        <location filename="../src/SettingsDialog.cpp" line="790"/>
         <source>Found %n device(s)…</source>
         <translation><numerusform>%n aparato encontrado…</numerusform><numerusform>%n aparatos encontrados…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="774"/>
+        <location filename="../src/SettingsDialog.cpp" line="800"/>
         <source>No cameras found</source>
         <translation>No se encontraron cámaras</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="775"/>
+        <location filename="../src/SettingsDialog.cpp" line="801"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -4156,47 +4156,47 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 Las cámaras solo contestan si ONVIF está encendido, y la consulta no atraviesa los routers ni la mayoría de las VPN. Aún puede añadir una cámara escribiendo su dirección.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="801"/>
+        <location filename="../src/SettingsDialog.cpp" line="827"/>
         <source>unnamed device</source>
         <translation>aparato sin nombre</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="802"/>
+        <location filename="../src/SettingsDialog.cpp" line="828"/>
         <source> (Reolink)</source>
         <translation> (Reolink)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="803"/>
+        <location filename="../src/SettingsDialog.cpp" line="829"/>
         <source>  · already added</source>
         <translation>  · ya añadida</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="809"/>
+        <location filename="../src/SettingsDialog.cpp" line="835"/>
         <source>Cameras found</source>
         <translation>Cámaras encontradas</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="810"/>
+        <location filename="../src/SettingsDialog.cpp" line="836"/>
         <source>Add which one?</source>
         <translation>¿Cuál añadir?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="854"/>
+        <location filename="../src/SettingsDialog.cpp" line="880"/>
         <source>Incomplete camera</source>
         <translation>Cámara incompleta</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="855"/>
+        <location filename="../src/SettingsDialog.cpp" line="881"/>
         <source>“%1” has no host address.</source>
         <translation>«%1» no tiene dirección.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="871"/>
+        <location filename="../src/SettingsDialog.cpp" line="897"/>
         <source>The keyring would not take it</source>
         <translation>El llavero no la aceptó</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="872"/>
+        <location filename="../src/SettingsDialog.cpp" line="898"/>
         <source>“%1” could not be saved in the system keyring: %2
 
 Its password has been left in the configuration file.</source>

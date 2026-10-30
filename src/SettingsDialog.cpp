@@ -160,7 +160,7 @@ QWidget *SettingsDialog::buildCameraTab()
         }
     }
     m_uid = new QLineEdit(page);
-    m_uid->setPlaceholderText(tr("optional, for P2P access"));
+    m_uid->setPlaceholderText(tr("optional, not used yet"));
 
     m_channel = new QSpinBox(page);
     m_channel->setRange(0, 31);

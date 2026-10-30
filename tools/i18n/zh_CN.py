@@ -1298,6 +1298,10 @@ STRINGS: dict[str, str] = {
         "手册(&H)",
     "<h3>leolink %1</h3><p>A native Linux client for Reolink cameras.</p><p>Speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server.</p><p><a href=\"%2\">Handbook</a> · <a href=\"https://github.com/tombueng/leolink\">Source</a></p><p>Not affiliated with or endorsed by Reolink.</p>":
         "<h3>leolink %1</h3><p>面向 Reolink 摄像机的 Linux 原生客户端。</p><p>在局域网内直接讲摄像机自己的协议：HTTP 接口、RTSP、ONVIF，以及用于没有 Web 服务器的摄像机的 Reolink 自有协议 Baichuan。</p><p><a href=\"%2\">手册</a> · <a href=\"https://github.com/tombueng/leolink\">源代码</a></p><p>与 Reolink 无关，也未获其背书。</p>",
+
+    # The camera list: the UID field, until P2P exists.
+    "optional, not used yet":
+        "可选，暂未使用",
 }
 
 

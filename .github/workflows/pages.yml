@@ -1,8 +1,8 @@
 name: Handbook
 
-# The application's Help menu points at this site, so it is rebuilt on every
-# push to main rather than by hand — a menu entry leading to stale help is
-# worse than no menu entry.
+# The program ships its own copy of the handbook; this site is the copy for
+# everyone else, and what software centres link to. It is rebuilt on every push
+# to main rather than by hand, since a link to stale help is worse than none.
 on:
   push:
     branches: [main]

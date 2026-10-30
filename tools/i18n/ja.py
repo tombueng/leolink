@@ -1351,6 +1351,10 @@ STRINGS: dict[str, str] = {
         "手引き(&H)",
     "<h3>leolink %1</h3><p>A native Linux client for Reolink cameras.</p><p>Speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server.</p><p><a href=\"%2\">Handbook</a> · <a href=\"https://github.com/tombueng/leolink\">Source</a></p><p>Not affiliated with or endorsed by Reolink.</p>":
         "<h3>leolink %1</h3><p>Reolink カメラのための Linux ネイティブクライアント。</p><p>ローカルネットワーク上で、カメラ自身のプロトコルを直接話します。HTTP API・RTSP・ONVIF、そして Web サーバーのないカメラには Reolink 独自の Baichuan。</p><p><a href=\"%2\">手引き</a> · <a href=\"https://github.com/tombueng/leolink\">ソースコード</a></p><p>Reolink とは無関係で、同社の承認も受けていません。</p>",
+
+    # The camera list: the UID field, until P2P exists.
+    "optional, not used yet":
+        "任意（まだ使われません）",
 }
 
 

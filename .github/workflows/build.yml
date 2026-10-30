@@ -56,7 +56,7 @@ jobs:
           if ! git diff --quiet translations/; then
             echo "::warning::Translation files are out of date."
             echo "Run: cmake --build build --target update_translations"
-            echo "then: python3 tools/fill_german.py"
+            echo "then: python3 tools/fill_translations.py"
             git diff --stat translations/
           fi
 
