@@ -900,11 +900,19 @@ QJsonObject setMask(Exchange &x)
 /// Baichuan: a bitmap of `columns` by `rows` bits, base64, most significant
 /// bit first, with the active `width` by `height` in its top left corner —
 /// 80 by 60 inside 96 by 64 on every camera seen.
+/// A grid dimension as the camera gives it, held to something sane: the sizes
+/// are multiplied and looped over, and a broken camera saying two billion must
+/// not take leolink's memory with it.
+int gridSize(const QDomElement &md, const QString &path)
+{
+    return qBound(0, number(md, path), 1024);
+}
+
 QString gridFromBitmap(const QDomElement &md)
 {
-    const int width = number(md, QStringLiteral("width"));
-    const int height = number(md, QStringLiteral("height"));
-    const int columns = number(md, QStringLiteral("scope/columns"));
+    const int width = gridSize(md, QStringLiteral("width"));
+    const int height = gridSize(md, QStringLiteral("height"));
+    const int columns = gridSize(md, QStringLiteral("scope/columns"));
     const QByteArray bits =
         QByteArray::fromBase64(text(md, QStringLiteral("scope/valueTable")).toLatin1());
     const int stride = (columns + 7) / 8;
@@ -922,10 +930,10 @@ QString gridFromBitmap(const QDomElement &md)
 
 QString bitmapFromGrid(const QDomElement &md, const QString &grid)
 {
-    const int width = number(md, QStringLiteral("width"));
-    const int height = number(md, QStringLiteral("height"));
-    const int columns = number(md, QStringLiteral("scope/columns"));
-    const int rows = number(md, QStringLiteral("scope/rows"));
+    const int width = gridSize(md, QStringLiteral("width"));
+    const int height = gridSize(md, QStringLiteral("height"));
+    const int columns = gridSize(md, QStringLiteral("scope/columns"));
+    const int rows = gridSize(md, QStringLiteral("scope/rows"));
     const int stride = (columns + 7) / 8;
     QByteArray bits(stride * rows, '\0');
     for (int r = 0; r < height && r < rows; ++r) {
