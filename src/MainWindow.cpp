@@ -40,6 +40,7 @@
 #include "Log.h"
 #include "EventLog.h"
 #include "EventLogDialog.h"
+#include "HandbookWindow.h"
 #include "SoundPlayer.h"
 #include "AudioDetector.h"
 #include "MotionDetector.h"
@@ -462,18 +463,18 @@ void MainWindow::buildMenus()
     // ── Help ────────────────────────────────────────────────────────────────
     auto *helpMenu = menuBar()->addMenu(tr("&Help"));
 
-    auto *handbook = helpMenu->addAction(tr("&Online handbook"));
+    // The handbook ships with the program, so it describes this build and
+    // needs no internet: many installations keep the cameras, and the machine
+    // watching them, off it.
+    auto *handbook = helpMenu->addAction(tr("&Handbook"));
     handbook->setShortcut(QKeySequence::HelpContents);
     handbook->setIcon(QIcon::fromTheme(QStringLiteral("help-contents")));
-    connect(handbook, &QAction::triggered, this, [] {
-        QDesktopServices::openUrl(QUrl(QStringLiteral(LEOLINK_HELP_URL)));
-    });
+    connect(handbook, &QAction::triggered, this,
+            [this] { showHandbook(QStringLiteral("index.md")); });
 
     auto *protocolDocs = helpMenu->addAction(tr("&Protocol notes"));
-    connect(protocolDocs, &QAction::triggered, this, [] {
-        QDesktopServices::openUrl(
-            QUrl(QStringLiteral(LEOLINK_HELP_URL "protocol.html")));
-    });
+    connect(protocolDocs, &QAction::triggered, this,
+            [this] { showHandbook(QStringLiteral("protocol.md")); });
 
     auto *diagnostics = helpMenu->addAction(tr("&Diagnostics…"));
     diagnostics->setShortcut(QKeySequence(QStringLiteral("Ctrl+D")));
@@ -517,14 +518,14 @@ void MainWindow::buildMenus()
             this, tr("About leolink"),
             tr("<h3>leolink %1</h3>"
                "<p>A native Linux client for Reolink cameras.</p>"
-               "<p>Speaks the camera's own protocols directly: HTTP API, RTSP "
-               "and ONVIF on the local network, and Reolink's P2P service when "
-               "you want to reach a camera from elsewhere.</p>"
+               "<p>Speaks the camera's own protocols directly, on the local "
+               "network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan "
+               "for cameras without a web server.</p>"
                "<p><a href=\"%2\">Handbook</a> · "
                "<a href=\"https://github.com/tombueng/leolink\">Source</a></p>"
                "<p>Not affiliated with or endorsed by Reolink.</p>")
                 .arg(QStringLiteral(LEOLINK_VERSION),
-                     QStringLiteral(LEOLINK_HELP_URL)));
+                     HandbookWindow::webUrl(QStringLiteral("docs/index.md")).toString()));
     });
 
     auto *toolbar = addToolBar(tr("Main"));
@@ -2287,7 +2288,14 @@ void MainWindow::showFirstRunHint()
     if (box.clickedButton() == add)
         openSettings();
     else if (box.clickedButton() == help)
-        QDesktopServices::openUrl(QUrl(QStringLiteral(LEOLINK_HELP_URL)));
+        showHandbook(QStringLiteral("index.md"));
+}
+
+void MainWindow::showHandbook(const QString &page)
+{
+    if (!m_handbook)
+        m_handbook = new HandbookWindow(this);
+    m_handbook->open(page);
 }
 
 void MainWindow::quitApplication()

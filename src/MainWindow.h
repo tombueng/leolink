@@ -19,6 +19,7 @@ namespace leolink {
 
 class AudioDetector;
 class DiagnosticsDialog;
+class HandbookWindow;
 class EventDispatcher;
 class MotionDetector;
 class Recorder;
@@ -58,6 +59,8 @@ private slots:
     void onSoundChanged(const QString &cameraId, bool active);
     /// Really stops the application, from wherever Quit was chosen.
     void quitApplication();
+    /// The handbook shipped with this build, at `page` ("index.md", …).
+    void showHandbook(const QString &page);
     void onRecordToggled(const QString &cameraId, bool recording);
     void onTalkToggled(const QString &cameraId, bool talking);
     void onPtzRequested(const QString &cameraId, const QString &op);
@@ -238,6 +241,8 @@ private:
     EventLog *m_eventLog{nullptr};
     /// Kept alive between openings so the filter survives; deleted on close.
     DiagnosticsDialog *m_diagnostics{nullptr};
+    /// Made on first use and kept, so its history survives being closed.
+    HandbookWindow *m_handbook{nullptr};
     EventDispatcher *m_dispatcher{nullptr};
     SoundPlayer *m_sound{nullptr};
     QSystemTrayIcon *m_tray{nullptr};

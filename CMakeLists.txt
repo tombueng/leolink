@@ -73,6 +73,7 @@ set(LEOLINK_SOURCES
     src/TsMuxer.cpp           src/TsMuxer.h
     src/Log.cpp               src/Log.h
     src/DiagnosticsDialog.cpp src/DiagnosticsDialog.h
+    src/HandbookWindow.cpp    src/HandbookWindow.h
     src/SchedulePicker.cpp    src/SchedulePicker.h
     src/TalkSession.cpp       src/TalkSession.h
     src/PtzPad.cpp            src/PtzPad.h
@@ -89,7 +90,6 @@ qt_add_executable(leolink
 target_compile_definitions(leolink PRIVATE
     LEOLINK_VERSION="${PROJECT_VERSION}"
     LEOLINK_APP_ID="${APP_ID}"
-    LEOLINK_HELP_URL="https://tombueng.github.io/leolink/"
 )
 
 target_link_libraries(leolink PRIVATE
@@ -101,6 +101,16 @@ qt_add_resources(leolink "assets"
     PREFIX "/"
     BASE resources
     FILES resources/icons/leolink.svg
+)
+
+# The handbook, compiled in like the icon and the translations: Help shows the
+# pages written for this very build, and needs no internet to do it. The
+# website is made from the same files.
+set(LEOLINK_HANDBOOK docs/index.md docs/protocol.md)
+qt_add_resources(leolink "handbook"
+    PREFIX "/handbook"
+    BASE docs
+    FILES ${LEOLINK_HANDBOOK}
 )
 
 # ── Translations ────────────────────────────────────────────────────────────

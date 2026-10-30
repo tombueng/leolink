@@ -1508,6 +1508,26 @@ STRINGS: dict[str, str] = {
         'Uzaklaştır',
     'Turn the camera':
         'Kamerayı döndür',
+
+    # The handbook shipped with the program.
+    "leolink handbook":
+        "leolink el kitabı",
+    "Back":
+        "Geri",
+    "Forward":
+        "İleri",
+    "Contents":
+        "İçindekiler",
+    "Protocol notes":
+        "Protokol notları",
+    "View on the web":
+        "Web'de görüntüle",
+    "This page on GitHub, as it was for leolink %1":
+        "Bu sayfanın leolink %1 için olan GitHub hâli",
+    "&Handbook":
+        "&El kitabı",
+    "<h3>leolink %1</h3><p>A native Linux client for Reolink cameras.</p><p>Speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server.</p><p><a href=\"%2\">Handbook</a> · <a href=\"https://github.com/tombueng/leolink\">Source</a></p><p>Not affiliated with or endorsed by Reolink.</p>":
+        "<h3>leolink %1</h3><p>Reolink kameraları için yerel bir Linux istemcisi.</p><p>Kameranın kendi protokollerini yerel ağda doğrudan konuşur: HTTP arayüzü, RTSP, ONVIF ve web sunucusu olmayan kameralar için Reolink'in kendi Baichuan protokolü.</p><p><a href=\"%2\">El kitabı</a> · <a href=\"https://github.com/tombueng/leolink\">Kaynak kodu</a></p><p>Reolink ile bağlantılı değildir, Reolink tarafından desteklenmez.</p>",
 }
 
 

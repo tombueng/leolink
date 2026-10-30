@@ -1278,6 +1278,26 @@ STRINGS: dict[str, str] = {
         '缩小',
     'Turn the camera':
         '转动摄像头',
+
+    # The handbook shipped with the program.
+    "leolink handbook":
+        "leolink 手册",
+    "Back":
+        "后退",
+    "Forward":
+        "前进",
+    "Contents":
+        "目录",
+    "Protocol notes":
+        "协议笔记",
+    "View on the web":
+        "在网页上查看",
+    "This page on GitHub, as it was for leolink %1":
+        "此页面在 GitHub 上对应 leolink %1 的版本",
+    "&Handbook":
+        "手册(&H)",
+    "<h3>leolink %1</h3><p>A native Linux client for Reolink cameras.</p><p>Speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server.</p><p><a href=\"%2\">Handbook</a> · <a href=\"https://github.com/tombueng/leolink\">Source</a></p><p>Not affiliated with or endorsed by Reolink.</p>":
+        "<h3>leolink %1</h3><p>面向 Reolink 摄像机的 Linux 原生客户端。</p><p>在局域网内直接讲摄像机自己的协议：HTTP 接口、RTSP、ONVIF，以及用于没有 Web 服务器的摄像机的 Reolink 自有协议 Baichuan。</p><p><a href=\"%2\">手册</a> · <a href=\"https://github.com/tombueng/leolink\">源代码</a></p><p>与 Reolink 无关，也未获其背书。</p>",
 }
 
 

@@ -184,12 +184,12 @@
         <translation>कैमरे ने वीडियो भेजने से मना किया: %1</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="478"/>
+        <location filename="../src/BaichuanStream.cpp" line="482"/>
         <source>The player did not connect.</source>
         <translation>प्लेयर जुड़ा ही नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="493"/>
+        <location filename="../src/BaichuanStream.cpp" line="497"/>
         <source>The camera stopped sending.</source>
         <translation>कैमरे ने भेजना बंद कर दिया।</translation>
     </message>
@@ -2350,6 +2350,44 @@ Recorded videos and images stay on disk — only the log is cleared.</source>
     </message>
 </context>
 <context>
+    <name>leolink::HandbookWindow</name>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="103"/>
+        <source>leolink handbook</source>
+        <translation>leolink पुस्तिका</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="122"/>
+        <source>Back</source>
+        <translation>पीछे</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="123"/>
+        <source>Forward</source>
+        <translation>आगे</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="124"/>
+        <source>Contents</source>
+        <translation>विषय-सूची</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="125"/>
+        <source>Protocol notes</source>
+        <translation>प्रोटोकॉल टिप्पणियाँ</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="126"/>
+        <source>View on the web</source>
+        <translation>वेब पर देखें</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="127"/>
+        <source>This page on GitHub, as it was for leolink %1</source>
+        <translation>यह पृष्ठ GitHub पर, जैसा leolink %1 के लिए था</translation>
+    </message>
+</context>
+<context>
     <name>leolink::Log</name>
     <message>
         <location filename="../src/Log.cpp" line="283"/>
@@ -2411,12 +2449,12 @@ Recorded videos and images stay on disk — only the log is cleared.</source>
 <context>
     <name>leolink::MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="75"/>
+        <location filename="../src/MainWindow.cpp" line="84"/>
         <source>%1 failed: %2</source>
         <translation>%1 विफल: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="114"/>
+        <location filename="../src/MainWindow.cpp" line="123"/>
         <source>No cameras configured yet.
 
 Use “Cameras…” to add one.</source>
@@ -2425,154 +2463,149 @@ Use “Cameras…” to add one.</source>
 एक जोड़ने के लिए «कैमरे…» का उपयोग करें।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="126"/>
+        <location filename="../src/MainWindow.cpp" line="135"/>
         <source>Asking the cameras what they offer…</source>
         <translation>कैमरों से पूछा जा रहा है कि वे क्या देते हैं…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="288"/>
+        <location filename="../src/MainWindow.cpp" line="297"/>
         <source>&amp;File</source>
         <translation>फ़ाइल (&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="290"/>
+        <location filename="../src/MainWindow.cpp" line="299"/>
         <source>&amp;Cameras…</source>
         <translation>कैमरे (&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="295"/>
+        <location filename="../src/MainWindow.cpp" line="304"/>
         <source>&amp;Settings…</source>
         <translation>&amp;सेटिंग…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="301"/>
+        <location filename="../src/MainWindow.cpp" line="310"/>
         <source>&amp;Save snapshots…</source>
         <translation>स्नैपशॉट सहेजें (&amp;S)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="306"/>
+        <location filename="../src/MainWindow.cpp" line="315"/>
         <source>&amp;Record all cameras</source>
         <translation>सभी कैमरे रिकॉर्ड करें (&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="313"/>
+        <location filename="../src/MainWindow.cpp" line="322"/>
         <source>&amp;Event log…</source>
         <translation>घटना लॉग (&amp;E)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="321"/>
+        <location filename="../src/MainWindow.cpp" line="330"/>
         <source>Recordings on the &amp;camera…</source>
         <translation>कैमरे में रखी रिकॉर्डिंग (&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="323"/>
+        <location filename="../src/MainWindow.cpp" line="332"/>
         <source>Browse what is stored on the camera&apos;s own SD card.</source>
         <translation>देखें कि कैमरे के अपने SD कार्ड पर क्या रखा है।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="327"/>
-        <location filename="../src/MainWindow.cpp" line="766"/>
-        <location filename="../src/MainWindow.cpp" line="2107"/>
+        <location filename="../src/MainWindow.cpp" line="336"/>
+        <location filename="../src/MainWindow.cpp" line="775"/>
+        <location filename="../src/MainWindow.cpp" line="2143"/>
         <source>No cameras configured</source>
         <translation>कोई कैमरा सेट नहीं है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Which camera</source>
         <translation>कौन-सा कैमरा</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Show recordings from</source>
         <translation>इनकी रिकॉर्डिंग दिखाएँ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="350"/>
+        <location filename="../src/MainWindow.cpp" line="359"/>
         <source>Open &amp;recordings folder</source>
         <translation>रिकॉर्डिंग फ़ोल्डर खोलें (&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="358"/>
+        <location filename="../src/MainWindow.cpp" line="367"/>
         <source>&amp;Quit</source>
         <translation>बाहर निकलें (&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="363"/>
+        <location filename="../src/MainWindow.cpp" line="372"/>
         <source>&amp;View</source>
         <translation>दृश्य (&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="365"/>
+        <location filename="../src/MainWindow.cpp" line="374"/>
         <source>&amp;Full screen</source>
         <translation>पूर्ण स्क्रीन (&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="404"/>
+        <location filename="../src/MainWindow.cpp" line="413"/>
         <source>Show &amp;menu bar</source>
         <translation>मेन्यू पट्टी दिखाएँ (&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="418"/>
+        <location filename="../src/MainWindow.cpp" line="427"/>
         <source>Show &amp;toolbar</source>
         <translation>औज़ार पट्टी दिखाएँ (&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="427"/>
+        <location filename="../src/MainWindow.cpp" line="436"/>
         <source>Show status &amp;bar</source>
         <translation>स्थिति पट्टी दिखाएँ (&amp;B)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="436"/>
+        <location filename="../src/MainWindow.cpp" line="445"/>
         <source>Hide window &amp;decoration</source>
         <translation>खिड़की का ढाँचा छिपाएँ (&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="448"/>
+        <location filename="../src/MainWindow.cpp" line="457"/>
         <source>Drag the strip under a camera to move the window. Ctrl+Shift+D brings the frame back, Ctrl+M the menu.</source>
         <translation>खिड़की खिसकाने के लिए किसी कैमरे के नीचे की पट्टी खींचें। Ctrl+Shift+D ढाँचा लौटाता है, Ctrl+M मेन्यू।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="455"/>
+        <location filename="../src/MainWindow.cpp" line="464"/>
         <source>&amp;Help</source>
         <translation>सहायता (&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="457"/>
-        <source>&amp;Online handbook</source>
-        <translation>ऑनलाइन पुस्तिका (&amp;O)</translation>
-    </message>
-    <message>
-        <location filename="../src/MainWindow.cpp" line="464"/>
+        <location filename="../src/MainWindow.cpp" line="475"/>
         <source>&amp;Protocol notes</source>
         <translation>प्रोटोकॉल टिप्पणियाँ (&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="470"/>
+        <location filename="../src/MainWindow.cpp" line="479"/>
         <source>&amp;Diagnostics…</source>
         <translation>निदान (&amp;D)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="473"/>
+        <location filename="../src/MainWindow.cpp" line="482"/>
         <source>What leolink and the cameras have been doing — and a report to attach to a bug report.</source>
         <translation>leolink और कैमरों ने अब तक क्या किया — और एक रिपोर्ट जिसे बग रिपोर्ट के साथ भेजा जा सके।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="477"/>
+        <location filename="../src/MainWindow.cpp" line="486"/>
         <source>&amp;Report a problem</source>
         <translation>समस्या की सूचना दें (&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="482"/>
+        <location filename="../src/MainWindow.cpp" line="491"/>
         <source>Report a problem</source>
         <translation>समस्या की सूचना दें</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="484"/>
+        <location filename="../src/MainWindow.cpp" line="493"/>
         <source>&lt;b&gt;Attach a diagnostics report&lt;/b&gt;</source>
         <translation>&lt;b&gt;निदान रिपोर्ट संलग्न करें&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="486"/>
+        <location filename="../src/MainWindow.cpp" line="495"/>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
@@ -2581,239 +2614,244 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 यदि समस्या आप स्वयं पैदा कर सकते हैं, तो पहले निदान विंडो में विस्तृत लॉग चालू करें, उसे दोबारा घटित करें, और तब रिपोर्ट कॉपी करें।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="493"/>
+        <location filename="../src/MainWindow.cpp" line="502"/>
         <source>Open diagnostics</source>
         <translation>निदान खोलें</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="495"/>
+        <location filename="../src/MainWindow.cpp" line="504"/>
         <source>Go to the issue tracker</source>
         <translation>समस्या-सूची पर जाएँ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="506"/>
+        <location filename="../src/MainWindow.cpp" line="515"/>
         <source>&amp;About leolink</source>
         <translation>leolink के बारे में (&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="509"/>
+        <location filename="../src/MainWindow.cpp" line="518"/>
         <source>About leolink</source>
         <translation>leolink के बारे में</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="510"/>
-        <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly: HTTP API, RTSP and ONVIF on the local network, and Reolink&apos;s P2P service when you want to reach a camera from elsewhere.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Reolink कैमरों के लिए एक मूल Linux क्लाइंट।&lt;/p&gt;&lt;p&gt;कैमरे के अपने प्रोटोकॉल सीधे बोलता है: स्थानीय नेटवर्क पर HTTP इंटरफ़ेस, RTSP और ONVIF, तथा कहीं दूर से कैमरे तक पहुँचना हो तो Reolink की P2P सेवा।&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;पुस्तिका&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;स्रोत कोड&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Reolink से न कोई संबंध है, न उसका समर्थन प्राप्त है।&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../src/MainWindow.cpp" line="522"/>
+        <location filename="../src/MainWindow.cpp" line="531"/>
         <source>Main</source>
         <translation>मुख्य</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="534"/>
+        <location filename="../src/MainWindow.cpp" line="543"/>
         <source>Ready</source>
         <translation>तैयार</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="550"/>
+        <location filename="../src/MainWindow.cpp" line="559"/>
         <source>Leave full screen</source>
         <translation>पूर्ण स्क्रीन से बाहर आएँ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="557"/>
-        <location filename="../src/MainWindow.cpp" line="621"/>
+        <location filename="../src/MainWindow.cpp" line="566"/>
+        <location filename="../src/MainWindow.cpp" line="630"/>
         <source>Cameras…</source>
         <translation>कैमरे…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="559"/>
+        <location filename="../src/MainWindow.cpp" line="568"/>
         <source>Event log…</source>
         <translation>घटना लॉग…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="565"/>
-        <location filename="../src/MainWindow.cpp" line="624"/>
+        <location filename="../src/MainWindow.cpp" line="574"/>
+        <location filename="../src/MainWindow.cpp" line="633"/>
         <source>Quit</source>
         <translation>बाहर निकलें</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="615"/>
+        <location filename="../src/MainWindow.cpp" line="624"/>
         <source>Show window</source>
         <translation>खिड़की दिखाएँ</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="791"/>
+        <location filename="../src/MainWindow.cpp" line="800"/>
         <source>%n camera(s) live</source>
         <translation><numerusform>%n कैमरा सीधे प्रसारण में</numerusform><numerusform>%n कैमरे सीधे प्रसारण में</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1100"/>
+        <location filename="../src/MainWindow.cpp" line="1109"/>
         <source>Esc leaves full screen</source>
         <translation>Esc पूर्ण स्क्रीन से बाहर लाता है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1107"/>
-        <location filename="../src/MainWindow.cpp" line="1146"/>
+        <location filename="../src/MainWindow.cpp" line="1116"/>
+        <location filename="../src/MainWindow.cpp" line="1155"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>जाली के लिए दो बार क्लिक करें · Esc पूर्ण स्क्रीन से बाहर लाता है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1144"/>
+        <location filename="../src/MainWindow.cpp" line="1153"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>Esc पूर्ण स्क्रीन से बाहर लाता है · किसी कैमरे पर दो बार क्लिक करने से वह पूरी स्क्रीन भर देता है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1169"/>
+        <location filename="../src/MainWindow.cpp" line="1178"/>
         <source>Grid view</source>
         <translation>जाली दृश्य</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1355"/>
-        <location filename="../src/MainWindow.cpp" line="1373"/>
-        <location filename="../src/MainWindow.cpp" line="1608"/>
+        <location filename="../src/MainWindow.cpp" line="1364"/>
+        <location filename="../src/MainWindow.cpp" line="1382"/>
+        <location filename="../src/MainWindow.cpp" line="1617"/>
         <source>Cannot create %1</source>
         <translation>%1 बनाया नहीं जा सकता</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1498"/>
+        <location filename="../src/MainWindow.cpp" line="1507"/>
         <source>Recording %1</source>
         <translation>%1 रिकॉर्ड हो रहा है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1420"/>
-        <location filename="../src/MainWindow.cpp" line="1506"/>
+        <location filename="../src/MainWindow.cpp" line="1429"/>
+        <location filename="../src/MainWindow.cpp" line="1515"/>
         <source>Saved %1</source>
         <translation>%1 सहेजा गया</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1512"/>
-        <location filename="../src/MainWindow.cpp" line="1643"/>
+        <location filename="../src/MainWindow.cpp" line="469"/>
+        <source>&amp;Handbook</source>
+        <translation>पुस्तिका (&amp;H)</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="519"/>
+        <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink&apos;s own Baichuan for cameras without a web server.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Reolink कैमरों के लिए एक मूल Linux क्लाइंट।&lt;/p&gt;&lt;p&gt;स्थानीय नेटवर्क पर कैमरे के अपने प्रोटोकॉल सीधे बोलता है: HTTP इंटरफ़ेस, RTSP, ONVIF, और बिना वेब सर्वर वाले कैमरों के लिए Reolink का अपना Baichuan।&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;पुस्तिका&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;स्रोत कोड&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Reolink से न कोई संबंध है, न उसका समर्थन प्राप्त है।&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1521"/>
+        <location filename="../src/MainWindow.cpp" line="1652"/>
         <source>Recording stopped</source>
         <translation>रिकॉर्डिंग रुक गई</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1519"/>
+        <location filename="../src/MainWindow.cpp" line="1528"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1624"/>
+        <location filename="../src/MainWindow.cpp" line="1633"/>
         <source>Recording started</source>
         <translation>रिकॉर्डिंग शुरू हुई</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1642"/>
+        <location filename="../src/MainWindow.cpp" line="1651"/>
         <source>Recording all cameras</source>
         <translation>सभी कैमरे रिकॉर्ड हो रहे हैं</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1723"/>
+        <location filename="../src/MainWindow.cpp" line="1732"/>
         <source>%1 at %2</source>
         <translation>%2 पर %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1743"/>
+        <location filename="../src/MainWindow.cpp" line="1752"/>
         <source>Motion detected</source>
         <translation>गति पहचानी गई</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1755"/>
+        <location filename="../src/MainWindow.cpp" line="1764"/>
         <source>Sound detected</source>
         <translation>ध्वनि पहचानी गई</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1778"/>
+        <location filename="../src/MainWindow.cpp" line="1787"/>
         <source>Menu bar hidden</source>
         <translation>मेन्यू पट्टी छिपी है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1779"/>
+        <location filename="../src/MainWindow.cpp" line="1788"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>मेन्यू पट्टी और औज़ार पट्टी दोनों छिपी हों तो मेन्यू वापस लाने के लिए Ctrl+M दबाएँ।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1798"/>
+        <location filename="../src/MainWindow.cpp" line="1807"/>
         <source>Cannot save</source>
         <translation>सहेजा नहीं जा सकता</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1799"/>
+        <location filename="../src/MainWindow.cpp" line="1808"/>
         <source>Settings could not be written to %1.</source>
         <translation>सेटिंग %1 में नहीं लिखी जा सकीं।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1922"/>
+        <location filename="../src/MainWindow.cpp" line="1953"/>
         <source>The camera would not move: %1</source>
         <translation>कैमरा नहीं घूमा: %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2042"/>
+        <location filename="../src/MainWindow.cpp" line="2078"/>
         <source>Play through %1</source>
         <translation>%1 के ज़रिए बजाएँ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2043"/>
+        <location filename="../src/MainWindow.cpp" line="2079"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>ध्वनि फ़ाइलें (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;सभी फ़ाइलें (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2055"/>
+        <location filename="../src/MainWindow.cpp" line="2091"/>
         <source>Speaking through the camera…</source>
         <translation>कैमरे के ज़रिए बोल रहे हैं…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2062"/>
+        <location filename="../src/MainWindow.cpp" line="2098"/>
         <source>Finished.</source>
         <translation>समाप्त।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2198"/>
+        <location filename="../src/MainWindow.cpp" line="2234"/>
         <source>Nothing to capture</source>
         <translation>लेने को कुछ नहीं</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2203"/>
+        <location filename="../src/MainWindow.cpp" line="2239"/>
         <source>Save snapshots to</source>
         <translation>स्नैपशॉट यहाँ सहेजें</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="2221"/>
+        <location filename="../src/MainWindow.cpp" line="2257"/>
         <source>Saved %n snapshot(s)</source>
         <translation><numerusform>%n स्नैपशॉट सहेजा गया</numerusform><numerusform>%n स्नैपशॉट सहेजे गए</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2239"/>
+        <location filename="../src/MainWindow.cpp" line="2275"/>
         <source>Welcome to leolink</source>
         <translation>leolink में आपका स्वागत है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2241"/>
+        <location filename="../src/MainWindow.cpp" line="2277"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;अभी तक कोई कैमरा सेट नहीं किया गया है।&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2243"/>
+        <location filename="../src/MainWindow.cpp" line="2279"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>पता, उपयोक्ता-नाम और पासवर्ड देकर एक कैमरा जोड़ें। leolink आपके अपने नेटवर्क में कैमरे से सीधे बात करता है — किसी क्लाउड खाते की ज़रूरत नहीं।&lt;p&gt;हर विकल्प क्या करता है, यह पुस्तिका में लिखा है।</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2247"/>
+        <location filename="../src/MainWindow.cpp" line="2283"/>
         <source>Add camera…</source>
         <translation>कैमरा जोड़ें…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2248"/>
+        <location filename="../src/MainWindow.cpp" line="2284"/>
         <source>Open handbook</source>
         <translation>पुस्तिका खोलें</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2324"/>
+        <location filename="../src/MainWindow.cpp" line="2367"/>
         <source>leolink is still running</source>
         <translation>leolink अब भी चल रहा है</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2325"/>
+        <location filename="../src/MainWindow.cpp" line="2368"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>कैमरे रिकॉर्ड करते रहेंगे। लौटने के लिए सूचना क्षेत्र के चिह्न का उपयोग करें।</translation>
     </message>
@@ -3530,97 +3568,97 @@ If the picture is broken, try the others in turn. “Software only” always wor
         <translation>कैमरे ने त्रुटि %1 बताई।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="452"/>
+        <location filename="../src/ReolinkClient.cpp" line="453"/>
         <source>The camera is not answering requests just now. It does this when it has had too many at once; it recovers on its own after a moment.</source>
         <translation>कैमरा इस समय अनुरोधों का उत्तर नहीं दे रहा। जब उसे एक साथ बहुत अनुरोध मिल जाएँ तो वह ऐसा करता है; थोड़ी देर में वह अपने आप सँभल जाता है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="512"/>
+        <location filename="../src/ReolinkClient.cpp" line="513"/>
         <source>Cannot reach %1: %2</source>
         <translation>%1 तक नहीं पहुँच पा रहे: %2</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="501"/>
+        <location filename="../src/ReolinkClient.cpp" line="502"/>
         <source>Unexpected reply from %1.</source>
         <translation>%1 से अप्रत्याशित उत्तर।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="495"/>
+        <location filename="../src/ReolinkClient.cpp" line="496"/>
         <source>Not available without the camera&apos;s web server.</source>
         <translation>कैमरे के वेब सर्वर के बिना उपलब्ध नहीं।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="585"/>
+        <location filename="../src/ReolinkClient.cpp" line="597"/>
         <source>Login returned no token.</source>
         <translation>लॉगिन से कोई टोकन नहीं मिला।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="624"/>
+        <location filename="../src/ReolinkClient.cpp" line="636"/>
         <source>%1 — firmware %2, %3 channel(s)</source>
         <translation>%1 — फ़र्मवेयर %2, %3 चैनल</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="974"/>
+        <location filename="../src/ReolinkClient.cpp" line="986"/>
         <source>The camera could not join that network: %1</source>
         <translation>कैमरा उस नेटवर्क से नहीं जुड़ सका: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="984"/>
+        <location filename="../src/ReolinkClient.cpp" line="996"/>
         <source>E-mail</source>
         <translation>ई-मेल</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="994"/>
+        <location filename="../src/ReolinkClient.cpp" line="1006"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1034"/>
+        <location filename="../src/ReolinkClient.cpp" line="1046"/>
         <source>Update available: %1</source>
         <translation>अद्यतन उपलब्ध: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1035"/>
+        <location filename="../src/ReolinkClient.cpp" line="1047"/>
         <source>The firmware is up to date.</source>
         <translation>फ़र्मवेयर नया ही है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1052"/>
+        <location filename="../src/ReolinkClient.cpp" line="1064"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>अद्यतन हो रहा है। कैमरा अपने आप दोबारा चालू होगा और कई मिनट तक पहुँच से बाहर रहेगा। उसकी बिजली न काटें।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1066"/>
+        <location filename="../src/ReolinkClient.cpp" line="1078"/>
         <source>Installing from a file needs the camera&apos;s port 9000, which it does not offer.</source>
         <translation>फ़ाइल से इंस्टॉल करने के लिए कैमरे का पोर्ट 9000 चाहिए, जो यह नहीं देता।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1083"/>
+        <location filename="../src/ReolinkClient.cpp" line="1095"/>
         <source>Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.</source>
         <translation>भेज दिया। कैमरा इसे इंस्टॉल कर रहा है और अपने आप रीस्टार्ट होगा, कुछ मिनट तक उपलब्ध नहीं रहेगा। बिजली न काटें।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1148"/>
+        <location filename="../src/ReolinkClient.cpp" line="1171"/>
         <source>The camera restarted on %1, the build it had before, so the update was not installed.</source>
         <translation>कैमरा %1 पर रीस्टार्ट हुआ, जो पहले वाला बिल्ड है, इसलिए अपडेट इंस्टॉल नहीं हुआ।</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1154"/>
+        <location filename="../src/ReolinkClient.cpp" line="1177"/>
         <source>The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.</source>
         <translation><numerusform>कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।</numerusform><numerusform>कैमरे ने %n मिनट से जवाब नहीं दिया। शायद वह अभी भी इंस्टॉल कर रहा है; बिजली चालू रखें और बाद में फिर देखें।</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1157"/>
+        <location filename="../src/ReolinkClient.cpp" line="1180"/>
         <source>The camera still reports %1 after %n minute(s).</source>
         <translation><numerusform>%n मिनट बाद भी कैमरा %1 बता रहा है।</numerusform><numerusform>%n मिनट बाद भी कैमरा %1 बता रहा है।</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1269"/>
+        <location filename="../src/ReolinkClient.cpp" line="1292"/>
         <source>Snapshots from %1 need its web server, which it does not have.</source>
         <translation>%1 के स्नैपशॉट के लिए उसका वेब सर्वर चाहिए, जो उसमें नहीं है।</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1289"/>
+        <location filename="../src/ReolinkClient.cpp" line="1312"/>
         <source>Snapshot failed.</source>
         <translation>स्नैपशॉट विफल।</translation>
     </message>

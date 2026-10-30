@@ -184,12 +184,12 @@
         <translation>カメラが映像の送信を拒否しました: %1</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="478"/>
+        <location filename="../src/BaichuanStream.cpp" line="482"/>
         <source>The player did not connect.</source>
         <translation>プレーヤーが接続しませんでした。</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanStream.cpp" line="493"/>
+        <location filename="../src/BaichuanStream.cpp" line="497"/>
         <source>The camera stopped sending.</source>
         <translation>カメラが送信を止めました。</translation>
     </message>
@@ -2350,6 +2350,44 @@ Recorded videos and images stay on disk — only the log is cleared.</source>
     </message>
 </context>
 <context>
+    <name>leolink::HandbookWindow</name>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="103"/>
+        <source>leolink handbook</source>
+        <translation>leolink の手引き</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="122"/>
+        <source>Back</source>
+        <translation>戻る</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="123"/>
+        <source>Forward</source>
+        <translation>進む</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="124"/>
+        <source>Contents</source>
+        <translation>目次</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="125"/>
+        <source>Protocol notes</source>
+        <translation>プロトコルの覚え書き</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="126"/>
+        <source>View on the web</source>
+        <translation>Web で見る</translation>
+    </message>
+    <message>
+        <location filename="../src/HandbookWindow.cpp" line="127"/>
+        <source>This page on GitHub, as it was for leolink %1</source>
+        <translation>leolink %1 の時点での、このページの GitHub 版</translation>
+    </message>
+</context>
+<context>
     <name>leolink::Log</name>
     <message>
         <location filename="../src/Log.cpp" line="283"/>
@@ -2411,12 +2449,12 @@ Recorded videos and images stay on disk — only the log is cleared.</source>
 <context>
     <name>leolink::MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="75"/>
+        <location filename="../src/MainWindow.cpp" line="84"/>
         <source>%1 failed: %2</source>
         <translation>%1 に失敗しました: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="114"/>
+        <location filename="../src/MainWindow.cpp" line="123"/>
         <source>No cameras configured yet.
 
 Use “Cameras…” to add one.</source>
@@ -2425,154 +2463,149 @@ Use “Cameras…” to add one.</source>
 「カメラ…」から追加してください。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="126"/>
+        <location filename="../src/MainWindow.cpp" line="135"/>
         <source>Asking the cameras what they offer…</source>
         <translation>カメラに対応機能を問い合わせています…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="288"/>
+        <location filename="../src/MainWindow.cpp" line="297"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="290"/>
+        <location filename="../src/MainWindow.cpp" line="299"/>
         <source>&amp;Cameras…</source>
         <translation>カメラ(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="295"/>
+        <location filename="../src/MainWindow.cpp" line="304"/>
         <source>&amp;Settings…</source>
         <translation>設定(&amp;S)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="301"/>
+        <location filename="../src/MainWindow.cpp" line="310"/>
         <source>&amp;Save snapshots…</source>
         <translation>静止画を保存(&amp;S)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="306"/>
+        <location filename="../src/MainWindow.cpp" line="315"/>
         <source>&amp;Record all cameras</source>
         <translation>すべてのカメラを録画(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="313"/>
+        <location filename="../src/MainWindow.cpp" line="322"/>
         <source>&amp;Event log…</source>
         <translation>イベントログ(&amp;E)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="321"/>
+        <location filename="../src/MainWindow.cpp" line="330"/>
         <source>Recordings on the &amp;camera…</source>
         <translation>カメラ内の録画(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="323"/>
+        <location filename="../src/MainWindow.cpp" line="332"/>
         <source>Browse what is stored on the camera&apos;s own SD card.</source>
         <translation>カメラ自身の SD カードに入っているものを一覧します。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="327"/>
-        <location filename="../src/MainWindow.cpp" line="766"/>
-        <location filename="../src/MainWindow.cpp" line="2107"/>
+        <location filename="../src/MainWindow.cpp" line="336"/>
+        <location filename="../src/MainWindow.cpp" line="775"/>
+        <location filename="../src/MainWindow.cpp" line="2143"/>
         <source>No cameras configured</source>
         <translation>カメラが設定されていません</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Which camera</source>
         <translation>どのカメラ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="338"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Show recordings from</source>
         <translation>録画を表示するカメラ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="350"/>
+        <location filename="../src/MainWindow.cpp" line="359"/>
         <source>Open &amp;recordings folder</source>
         <translation>録画フォルダーを開く(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="358"/>
+        <location filename="../src/MainWindow.cpp" line="367"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="363"/>
+        <location filename="../src/MainWindow.cpp" line="372"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="365"/>
+        <location filename="../src/MainWindow.cpp" line="374"/>
         <source>&amp;Full screen</source>
         <translation>全画面表示(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="404"/>
+        <location filename="../src/MainWindow.cpp" line="413"/>
         <source>Show &amp;menu bar</source>
         <translation>メニューバーを表示(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="418"/>
+        <location filename="../src/MainWindow.cpp" line="427"/>
         <source>Show &amp;toolbar</source>
         <translation>ツールバーを表示(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="427"/>
+        <location filename="../src/MainWindow.cpp" line="436"/>
         <source>Show status &amp;bar</source>
         <translation>ステータスバーを表示(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="436"/>
+        <location filename="../src/MainWindow.cpp" line="445"/>
         <source>Hide window &amp;decoration</source>
         <translation>ウィンドウ枠を隠す(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="448"/>
+        <location filename="../src/MainWindow.cpp" line="457"/>
         <source>Drag the strip under a camera to move the window. Ctrl+Shift+D brings the frame back, Ctrl+M the menu.</source>
         <translation>ウィンドウを動かすには、カメラの下の帯をドラッグしてください。Ctrl+Shift+D で枠が、Ctrl+M でメニューが戻ります。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="455"/>
+        <location filename="../src/MainWindow.cpp" line="464"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="457"/>
-        <source>&amp;Online handbook</source>
-        <translation>オンラインの手引き(&amp;O)</translation>
-    </message>
-    <message>
-        <location filename="../src/MainWindow.cpp" line="464"/>
+        <location filename="../src/MainWindow.cpp" line="475"/>
         <source>&amp;Protocol notes</source>
         <translation>プロトコルの覚え書き(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="470"/>
+        <location filename="../src/MainWindow.cpp" line="479"/>
         <source>&amp;Diagnostics…</source>
         <translation>診断(&amp;D)…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="473"/>
+        <location filename="../src/MainWindow.cpp" line="482"/>
         <source>What leolink and the cameras have been doing — and a report to attach to a bug report.</source>
         <translation>leolink とカメラのこれまでの動作 — そして不具合報告に添付できるレポート。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="477"/>
+        <location filename="../src/MainWindow.cpp" line="486"/>
         <source>&amp;Report a problem</source>
         <translation>問題を報告(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="482"/>
+        <location filename="../src/MainWindow.cpp" line="491"/>
         <source>Report a problem</source>
         <translation>問題を報告</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="484"/>
+        <location filename="../src/MainWindow.cpp" line="493"/>
         <source>&lt;b&gt;Attach a diagnostics report&lt;/b&gt;</source>
         <translation>&lt;b&gt;診断レポートを添付してください&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="486"/>
+        <location filename="../src/MainWindow.cpp" line="495"/>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
@@ -2581,239 +2614,244 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 自分で起こせる問題なら、まず診断ウィンドウで詳細ログをオンにし、もう一度起こしてから、レポートをコピーしてください。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="493"/>
+        <location filename="../src/MainWindow.cpp" line="502"/>
         <source>Open diagnostics</source>
         <translation>診断を開く</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="495"/>
+        <location filename="../src/MainWindow.cpp" line="504"/>
         <source>Go to the issue tracker</source>
         <translation>課題トラッカーへ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="506"/>
+        <location filename="../src/MainWindow.cpp" line="515"/>
         <source>&amp;About leolink</source>
         <translation>leolink について(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="509"/>
+        <location filename="../src/MainWindow.cpp" line="518"/>
         <source>About leolink</source>
         <translation>leolink について</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="510"/>
-        <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly: HTTP API, RTSP and ONVIF on the local network, and Reolink&apos;s P2P service when you want to reach a camera from elsewhere.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Reolink カメラのための Linux ネイティブクライアント。&lt;/p&gt;&lt;p&gt;カメラ自身のプロトコルを直接話します。ローカルネットワークでは HTTP API・RTSP・ONVIF、外出先からカメラに届きたいときは Reolink の P2P サービス。&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;手引き&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;ソースコード&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Reolink とは無関係で、同社の承認も受けていません。&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location filename="../src/MainWindow.cpp" line="522"/>
+        <location filename="../src/MainWindow.cpp" line="531"/>
         <source>Main</source>
         <translation>メイン</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="534"/>
+        <location filename="../src/MainWindow.cpp" line="543"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="550"/>
+        <location filename="../src/MainWindow.cpp" line="559"/>
         <source>Leave full screen</source>
         <translation>全画面表示をやめる</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="557"/>
-        <location filename="../src/MainWindow.cpp" line="621"/>
+        <location filename="../src/MainWindow.cpp" line="566"/>
+        <location filename="../src/MainWindow.cpp" line="630"/>
         <source>Cameras…</source>
         <translation>カメラ…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="559"/>
+        <location filename="../src/MainWindow.cpp" line="568"/>
         <source>Event log…</source>
         <translation>イベントログ…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="565"/>
-        <location filename="../src/MainWindow.cpp" line="624"/>
+        <location filename="../src/MainWindow.cpp" line="574"/>
+        <location filename="../src/MainWindow.cpp" line="633"/>
         <source>Quit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="615"/>
+        <location filename="../src/MainWindow.cpp" line="624"/>
         <source>Show window</source>
         <translation>ウィンドウを表示</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="791"/>
+        <location filename="../src/MainWindow.cpp" line="800"/>
         <source>%n camera(s) live</source>
         <translation><numerusform>%n 台のカメラがライブ</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1100"/>
+        <location filename="../src/MainWindow.cpp" line="1109"/>
         <source>Esc leaves full screen</source>
         <translation>Esc で全画面表示を抜けます</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1107"/>
-        <location filename="../src/MainWindow.cpp" line="1146"/>
+        <location filename="../src/MainWindow.cpp" line="1116"/>
+        <location filename="../src/MainWindow.cpp" line="1155"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>ダブルクリックでグリッドへ · Esc で全画面表示を抜けます</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1144"/>
+        <location filename="../src/MainWindow.cpp" line="1153"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>Esc で全画面表示を抜けます · カメラをダブルクリックすると画面いっぱいに表示します</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1169"/>
+        <location filename="../src/MainWindow.cpp" line="1178"/>
         <source>Grid view</source>
         <translation>グリッド表示</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1355"/>
-        <location filename="../src/MainWindow.cpp" line="1373"/>
-        <location filename="../src/MainWindow.cpp" line="1608"/>
+        <location filename="../src/MainWindow.cpp" line="1364"/>
+        <location filename="../src/MainWindow.cpp" line="1382"/>
+        <location filename="../src/MainWindow.cpp" line="1617"/>
         <source>Cannot create %1</source>
         <translation>%1 を作成できません</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1498"/>
+        <location filename="../src/MainWindow.cpp" line="1507"/>
         <source>Recording %1</source>
         <translation>%1 を録画中</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1420"/>
-        <location filename="../src/MainWindow.cpp" line="1506"/>
+        <location filename="../src/MainWindow.cpp" line="1429"/>
+        <location filename="../src/MainWindow.cpp" line="1515"/>
         <source>Saved %1</source>
         <translation>%1 を保存しました</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1512"/>
-        <location filename="../src/MainWindow.cpp" line="1643"/>
+        <location filename="../src/MainWindow.cpp" line="469"/>
+        <source>&amp;Handbook</source>
+        <translation>手引き(&amp;H)</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="519"/>
+        <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink&apos;s own Baichuan for cameras without a web server.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Reolink カメラのための Linux ネイティブクライアント。&lt;/p&gt;&lt;p&gt;ローカルネットワーク上で、カメラ自身のプロトコルを直接話します。HTTP API・RTSP・ONVIF、そして Web サーバーのないカメラには Reolink 独自の Baichuan。&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;手引き&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;ソースコード&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Reolink とは無関係で、同社の承認も受けていません。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1521"/>
+        <location filename="../src/MainWindow.cpp" line="1652"/>
         <source>Recording stopped</source>
         <translation>録画を停止しました</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1519"/>
+        <location filename="../src/MainWindow.cpp" line="1528"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1624"/>
+        <location filename="../src/MainWindow.cpp" line="1633"/>
         <source>Recording started</source>
         <translation>録画を開始しました</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1642"/>
+        <location filename="../src/MainWindow.cpp" line="1651"/>
         <source>Recording all cameras</source>
         <translation>すべてのカメラを録画中</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1723"/>
+        <location filename="../src/MainWindow.cpp" line="1732"/>
         <source>%1 at %2</source>
         <translation>%2 で %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1743"/>
+        <location filename="../src/MainWindow.cpp" line="1752"/>
         <source>Motion detected</source>
         <translation>動きを検知しました</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1755"/>
+        <location filename="../src/MainWindow.cpp" line="1764"/>
         <source>Sound detected</source>
         <translation>音を検知しました</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1778"/>
+        <location filename="../src/MainWindow.cpp" line="1787"/>
         <source>Menu bar hidden</source>
         <translation>メニューバーが隠れています</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1779"/>
+        <location filename="../src/MainWindow.cpp" line="1788"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>メニューバーもツールバーも隠れているときは、Ctrl+M でメニューを呼び戻せます。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1798"/>
+        <location filename="../src/MainWindow.cpp" line="1807"/>
         <source>Cannot save</source>
         <translation>保存できません</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1799"/>
+        <location filename="../src/MainWindow.cpp" line="1808"/>
         <source>Settings could not be written to %1.</source>
         <translation>設定を %1 に書き込めませんでした。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1922"/>
+        <location filename="../src/MainWindow.cpp" line="1953"/>
         <source>The camera would not move: %1</source>
         <translation>カメラが動きませんでした: %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2042"/>
+        <location filename="../src/MainWindow.cpp" line="2078"/>
         <source>Play through %1</source>
         <translation>%1 を通して再生</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2043"/>
+        <location filename="../src/MainWindow.cpp" line="2079"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>音声ファイル (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2055"/>
+        <location filename="../src/MainWindow.cpp" line="2091"/>
         <source>Speaking through the camera…</source>
         <translation>カメラを通して話しています…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2062"/>
+        <location filename="../src/MainWindow.cpp" line="2098"/>
         <source>Finished.</source>
         <translation>終了しました。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2198"/>
+        <location filename="../src/MainWindow.cpp" line="2234"/>
         <source>Nothing to capture</source>
         <translation>取り込むものがありません</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2203"/>
+        <location filename="../src/MainWindow.cpp" line="2239"/>
         <source>Save snapshots to</source>
         <translation>静止画の保存先</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="2221"/>
+        <location filename="../src/MainWindow.cpp" line="2257"/>
         <source>Saved %n snapshot(s)</source>
         <translation><numerusform>静止画を %n 枚保存しました</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2239"/>
+        <location filename="../src/MainWindow.cpp" line="2275"/>
         <source>Welcome to leolink</source>
         <translation>leolink へようこそ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2241"/>
+        <location filename="../src/MainWindow.cpp" line="2277"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;カメラがまだ 1 台も設定されていません。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2243"/>
+        <location filename="../src/MainWindow.cpp" line="2279"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>アドレス・ユーザー名・パスワードを入れてカメラを追加してください。leolink はお使いのネットワーク内でカメラと直接やり取りします — クラウドアカウントは一切関係ありません。&lt;p&gt;各項目の意味は手引きに書かれています。</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2247"/>
+        <location filename="../src/MainWindow.cpp" line="2283"/>
         <source>Add camera…</source>
         <translation>カメラを追加…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2248"/>
+        <location filename="../src/MainWindow.cpp" line="2284"/>
         <source>Open handbook</source>
         <translation>手引きを開く</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2324"/>
+        <location filename="../src/MainWindow.cpp" line="2367"/>
         <source>leolink is still running</source>
         <translation>leolink は動き続けています</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2325"/>
+        <location filename="../src/MainWindow.cpp" line="2368"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>カメラは録画を続けています。戻るには通知領域のアイコンをお使いください。</translation>
     </message>
@@ -3530,97 +3568,97 @@ If the picture is broken, try the others in turn. “Software only” always wor
         <translation>カメラがエラー %1 を報告しました。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="452"/>
+        <location filename="../src/ReolinkClient.cpp" line="453"/>
         <source>The camera is not answering requests just now. It does this when it has had too many at once; it recovers on its own after a moment.</source>
         <translation>カメラは今、要求に応じていません。一度に多くの要求を受けたときにこうなります。しばらくすれば自分で戻ります。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="512"/>
+        <location filename="../src/ReolinkClient.cpp" line="513"/>
         <source>Cannot reach %1: %2</source>
         <translation>%1 に届きません: %2</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="501"/>
+        <location filename="../src/ReolinkClient.cpp" line="502"/>
         <source>Unexpected reply from %1.</source>
         <translation>%1 から予期しない応答がありました。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="495"/>
+        <location filename="../src/ReolinkClient.cpp" line="496"/>
         <source>Not available without the camera&apos;s web server.</source>
         <translation>カメラの Web サーバーがないと利用できません。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="585"/>
+        <location filename="../src/ReolinkClient.cpp" line="597"/>
         <source>Login returned no token.</source>
         <translation>ログインでトークンが返りませんでした。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="624"/>
+        <location filename="../src/ReolinkClient.cpp" line="636"/>
         <source>%1 — firmware %2, %3 channel(s)</source>
         <translation>%1 — ファームウェア %2、%3 チャンネル</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="974"/>
+        <location filename="../src/ReolinkClient.cpp" line="986"/>
         <source>The camera could not join that network: %1</source>
         <translation>カメラはそのネットワークに接続できませんでした: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="984"/>
+        <location filename="../src/ReolinkClient.cpp" line="996"/>
         <source>E-mail</source>
         <translation>メール</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="994"/>
+        <location filename="../src/ReolinkClient.cpp" line="1006"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1034"/>
+        <location filename="../src/ReolinkClient.cpp" line="1046"/>
         <source>Update available: %1</source>
         <translation>更新があります: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1035"/>
+        <location filename="../src/ReolinkClient.cpp" line="1047"/>
         <source>The firmware is up to date.</source>
         <translation>ファームウェアは最新です。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1052"/>
+        <location filename="../src/ReolinkClient.cpp" line="1064"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>更新しています。カメラは自分で再起動し、数分間つながらなくなります。電源を切らないでください。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1066"/>
+        <location filename="../src/ReolinkClient.cpp" line="1078"/>
         <source>Installing from a file needs the camera&apos;s port 9000, which it does not offer.</source>
         <translation>ファイルからのインストールにはカメラのポート 9000 が必要ですが、このカメラは提供していません。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1083"/>
+        <location filename="../src/ReolinkClient.cpp" line="1095"/>
         <source>Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.</source>
         <translation>送信しました。カメラがインストール中で、自動的に再起動します。数分間は接続できません。電源を切らないでください。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1148"/>
+        <location filename="../src/ReolinkClient.cpp" line="1171"/>
         <source>The camera restarted on %1, the build it had before, so the update was not installed.</source>
         <translation>カメラは以前と同じビルド %1 で再起動したため、更新はインストールされませんでした。</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1154"/>
+        <location filename="../src/ReolinkClient.cpp" line="1177"/>
         <source>The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.</source>
         <translation><numerusform>カメラが %n 分間応答していません。まだインストール中かもしれません。電源を入れたまま、後でもう一度確認してください。</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1157"/>
+        <location filename="../src/ReolinkClient.cpp" line="1180"/>
         <source>The camera still reports %1 after %n minute(s).</source>
         <translation><numerusform>%n 分経ってもカメラは %1 と報告しています。</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1269"/>
+        <location filename="../src/ReolinkClient.cpp" line="1292"/>
         <source>Snapshots from %1 need its web server, which it does not have.</source>
         <translation>%1 のスナップショットには Web サーバーが必要ですが、このカメラにはありません。</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1289"/>
+        <location filename="../src/ReolinkClient.cpp" line="1312"/>
         <source>Snapshot failed.</source>
         <translation>静止画の取得に失敗しました。</translation>
     </message>

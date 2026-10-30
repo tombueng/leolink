@@ -24,13 +24,18 @@ target_compile_definitions(leolink_testable PUBLIC
     LEOLINK_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/fixtures"
     LEOLINK_VERSION="${PROJECT_VERSION}"
     LEOLINK_APP_ID="${APP_ID}"
-    LEOLINK_HELP_URL="https://tombueng.github.io/leolink/"
+)
+list(TRANSFORM LEOLINK_HANDBOOK PREPEND "${PROJECT_SOURCE_DIR}/" OUTPUT_VARIABLE handbook_pages)
+qt_add_resources(leolink_testable "handbook"
+    PREFIX "/handbook"
+    BASE "${PROJECT_SOURCE_DIR}/docs"
+    FILES ${handbook_pages}
 )
 target_compile_options(leolink_testable PUBLIC -Wall -Wextra -Wpedantic)
 
 foreach(name aes baichuanclient baichuanapi transport tsmuxer alarmmerge
              config log events discovery reolinkclient motionwatcher dialogs
-             firmware relay ptzpad xmltext)
+             firmware relay ptzpad xmltext handbook)
     qt_add_executable(tst_${name} tst_${name}.cpp)
     target_link_libraries(tst_${name} PRIVATE leolink_testable)
     add_test(NAME ${name} COMMAND tst_${name})

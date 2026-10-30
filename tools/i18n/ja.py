@@ -1331,6 +1331,26 @@ STRINGS: dict[str, str] = {
         'ズームアウト',
     'Turn the camera':
         'カメラの向きを変える',
+
+    # The handbook shipped with the program.
+    "leolink handbook":
+        "leolink の手引き",
+    "Back":
+        "戻る",
+    "Forward":
+        "進む",
+    "Contents":
+        "目次",
+    "Protocol notes":
+        "プロトコルの覚え書き",
+    "View on the web":
+        "Web で見る",
+    "This page on GitHub, as it was for leolink %1":
+        "leolink %1 の時点での、このページの GitHub 版",
+    "&Handbook":
+        "手引き(&H)",
+    "<h3>leolink %1</h3><p>A native Linux client for Reolink cameras.</p><p>Speaks the camera's own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink's own Baichuan for cameras without a web server.</p><p><a href=\"%2\">Handbook</a> · <a href=\"https://github.com/tombueng/leolink\">Source</a></p><p>Not affiliated with or endorsed by Reolink.</p>":
+        "<h3>leolink %1</h3><p>Reolink カメラのための Linux ネイティブクライアント。</p><p>ローカルネットワーク上で、カメラ自身のプロトコルを直接話します。HTTP API・RTSP・ONVIF、そして Web サーバーのないカメラには Reolink 独自の Baichuan。</p><p><a href=\"%2\">手引き</a> · <a href=\"https://github.com/tombueng/leolink\">ソースコード</a></p><p>Reolink とは無関係で、同社の承認も受けていません。</p>",
 }
 
 
