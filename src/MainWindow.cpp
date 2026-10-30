@@ -56,6 +56,14 @@
 
 namespace leolink {
 
+namespace {
+
+/// How long the grid waits for the cameras to say what they offer: the port
+/// window twice over, and a Baichuan login on a slow network.
+constexpr int kProbeWaitMs = 6000;
+
+} // namespace
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), m_config(Config::load()),
       m_eventLog(new EventLog(this)),
@@ -1846,19 +1854,41 @@ void MainWindow::probeCameras(const std::function<void()> &then)
         return;
     }
 
+    // The grid waits for the answers, but not for long: a device that accepts
+    // the connection and then answers slowly, or not at all, would otherwise
+    // keep every camera black. One that has not answered by then starts as one
+    // not asked yet, which is what leolink did before it asked, and its answer
+    // is kept for whatever opens next.
     auto remaining = std::make_shared<int>(int(toAsk.size()));
+    auto done = std::make_shared<bool>(false);
+    QTimer::singleShot(kProbeWaitMs, this, [this, done, then] {
+        if (*done)
+            return;
+        *done = true;
+        LEO_WARN(App, QString(),
+                 QStringLiteral("Not every camera said what it offers within %1 s; "
+                                "starting without waiting for the rest")
+                     .arg(kProbeWaitMs / 1000));
+        attachCapabilities(m_config);
+        then();
+    });
     for (const CameraConfig &camera : std::as_const(toAsk)) {
         // Resolved here, not on the worker: a keyring or a password command
         // wants the interface thread.
         const QString secret = camera.secret();
-        QThread *worker = QThread::create([this, camera, secret, remaining, then] {
+        QThread *worker = QThread::create([this, camera, secret, remaining, done, then] {
             const Capabilities caps = CameraProbe::run(camera, secret);
-            QMetaObject::invokeMethod(this, [this, camera, caps, remaining, then] {
+            QMetaObject::invokeMethod(this, [this, camera, caps, remaining, done, then] {
                 m_caps.insert(camera.host, caps);
                 CameraConfig described = camera;
                 described.caps = caps;
                 LEO_INFO(App, camera.label(), CameraProbe::describe(described));
+                if (*done) {
+                    attachCapabilities(m_config);
+                    return;
+                }
                 if (--*remaining == 0) {
+                    *done = true;
                     attachCapabilities(m_config);
                     then();
                 }
