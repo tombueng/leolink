@@ -435,12 +435,16 @@ void BaichuanStream::run()
             r.socket = socket;
             ++readers;
             // Whoever has just connected needs the tables before anything else
-            // means anything, and then a picture to start from.
+            // means anything, and then a picture to start from. Not before the
+            // camera has named its codec, though: the tables would say H.264
+            // for an H.265 camera, and a recording copying the stream keeps the
+            // first codec it is told. Every key frame carries the tables, so a
+            // reader that came early gets the right ones with its first picture.
             if (!parser.videoCodec().isEmpty()) {
                 r.codec = parser.videoCodec();
                 r.muxer.setCodec(r.codec);
+                hand(r, r.muxer.tables());
             }
-            hand(r, r.muxer.tables());
             if (!primer.isEmpty()) {
                 hand(r, r.muxer.frame(primer, true, primerPts));
                 r.lastCameraPts = primerPts;
