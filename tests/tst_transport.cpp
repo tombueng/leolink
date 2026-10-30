@@ -312,6 +312,17 @@ private slots:
         QCOMPARE(name(route(Feature::Video, caps)), name(Protocol::Rtsp));
     }
 
+    /// ONVIF the camera says is on is believed even when port 8000 missed the
+    /// window: switching it off would end motion events until a restart, and
+    /// believing it wrongly costs only a subscription that fails.
+    void onvifTheCameraSaysIsOn()
+    {
+        const Capabilities caps =
+            CameraProbe::interpret({554, 9000}, true, portList(QStringLiteral("e1pro")));
+        QVERIFY(caps.onvif);
+        QCOMPARE(name(route(Feature::CameraMotion, caps)), name(Protocol::Onvif));
+    }
+
     void e1Zoom()
     {
         const Capabilities caps =

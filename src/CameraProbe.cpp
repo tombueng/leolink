@@ -66,6 +66,22 @@ Capabilities CameraProbe::run(const CameraConfig &camera, const QString &secret)
 {
     QList<Port> ports{{80}, {443}, {554}, {1935}, {8000}, {9000}};
     probePorts(camera.host, ports);
+    // A camera on poor Wi-Fi, or half booted after a power cut, can miss the
+    // window on one port while answering on others, and what is missed here
+    // stays switched off until leolink restarts. So a camera that answered at
+    // all gets a second window for the ports it did not answer on. A closed
+    // port refuses at once, so this costs time only for a filtered one.
+    QList<Port> missed;
+    for (const Port &p : std::as_const(ports))
+        if (!p.open)
+            missed.append(p);
+    if (!missed.isEmpty() && missed.size() < ports.size()) {
+        probePorts(camera.host, missed);
+        for (const Port &m : std::as_const(missed))
+            for (Port &p : ports)
+                if (p.number == m.number && m.open)
+                    p.open = true;
+    }
     QList<quint16> open;
     for (const Port &p : ports)
         if (p.open)
@@ -110,6 +126,13 @@ Capabilities CameraProbe::interpret(const QList<quint16> &openPorts, bool baichu
     caps.https = offered(QStringLiteral("HttpsPort"), 443);
     caps.rtsp = offered(QStringLiteral("RtspPort"), 554);
     caps.onvif = offered(QStringLiteral("OnvifPort"), 8000);
+    // Except ONVIF, where the camera says outright it is on: a port that missed
+    // the window is then a slow connection, and switching ONVIF off would end
+    // the camera's motion events until leolink restarts. Wrongly believing it
+    // costs only a subscription that fails, which is what leolink did for
+    // every camera before it asked.
+    if (!portList.isEmpty() && stated(portList, QStringLiteral("OnvifPort")) == Stated::On)
+        caps.onvif = true;
     // RTMP is reached through the web server rather than directly, so its own
     // port is not what decides. Where the camera says nothing, an open 1935
     // is the only evidence there is.
