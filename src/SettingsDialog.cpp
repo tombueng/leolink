@@ -22,8 +22,10 @@
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QTableWidget>
+#include <QThread>
 #include <QVBoxLayout>
 
+#include "CameraProbe.h"
 #include "CameraSettingsDialog.h"
 #include "Discovery.h"
 #include "Log.h"
@@ -559,8 +561,32 @@ void SettingsDialog::onTest()
     m_testButton->setEnabled(false);
     m_testResult->setStyleSheet(QString());
     m_testResult->setText(tr("Contacting %1…").arg(c.host));
-    m_tester->setCamera(c);
-    m_tester->testConnection();
+
+    // Asked first what the camera offers, as leolink does at startup. A camera
+    // only just added has not been asked yet, and one not asked is tested over
+    // its web server, which an E1 Pro does not have: Test failed on exactly
+    // the cameras it now supports. Asked every time, since the address may
+    // have changed since; on a LAN it takes a moment.
+    const QString id = c.id;
+    const QString secret = c.secret();
+    auto caps = std::make_shared<Capabilities>();
+    QThread *worker = QThread::create([c, secret, caps] { *caps = CameraProbe::run(c, secret); });
+    connect(worker, &QThread::finished, worker, &QObject::deleteLater);
+    connect(worker, &QThread::finished, this, [this, id, caps] {
+        for (int i = 0; i < m_config.cameras.size(); ++i) {
+            CameraConfig &camera = m_config.cameras[i];
+            if (camera.id != id)
+                continue;
+            const QStringList failed = camera.caps.failed;
+            camera.caps = *caps;
+            camera.caps.failed = failed;
+            m_tester->setCamera(camera);
+            m_tester->testConnection();
+            return;
+        }
+        m_testButton->setEnabled(true);
+    });
+    worker->start();
 }
 
 // ── recorders ───────────────────────────────────────────────────────────────
