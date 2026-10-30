@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QTextStream>
 #include <QThread>
+#include <QHostInfo>
 #include <QUdpSocket>
 
 #include "Baichuan.h"
@@ -242,10 +243,21 @@ int runP2PProbe(const QString &uid, const QString &user, const QString &password
         return 1;
     }
 
-    const QStringList servers = rendezvousServers();
-    for (const QString &server : servers)
-        socket.writeDatagram(packet, QHostAddress(server), kP2PPort);
-    out() << "Query sent to " << servers.size() << " rendezvous servers.\n";
+    // The servers are names. QHostAddress takes only numbers, and handed a
+    // name it is null, so the query used to go nowhere while this said it had
+    // gone to every server.
+    int sent = 0;
+    for (const QString &server : rendezvousServers()) {
+        const QHostInfo info = QHostInfo::fromName(server);
+        for (const QHostAddress &address : info.addresses()) {
+            if (address.protocol() != QAbstractSocket::IPv4Protocol)
+                continue;
+            if (socket.writeDatagram(packet, address, kP2PPort) == packet.size())
+                ++sent;
+            break;
+        }
+    }
+    out() << "Query sent to " << sent << " rendezvous servers.\n";
     out().flush();
 
     int replies = 0;
