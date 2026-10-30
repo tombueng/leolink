@@ -1107,7 +1107,7 @@ void ReolinkClient::setFirmwareWatchTiming(int intervalMs, int limitMs)
 
 void ReolinkClient::awaitFirmware(int wantedBuild, int previousBuild)
 {
-    m_firmwareWatch = {true, wantedBuild, previousBuild, false,
+    m_firmwareWatch = {true, wantedBuild, previousBuild, false, 0,
                        QDateTime::currentMSecsSinceEpoch()};
     // Not at once: a camera still writing the image answers on the old build,
     // and that says nothing yet.
@@ -1149,8 +1149,16 @@ void ReolinkClient::firmwareAnswered(const QString &firmVer)
         emit readoutFailed(QStringLiteral("firmware"), reason);
     };
 
+    // Gone only after three polls missed in a row, some 45 s: a restart to
+    // install firmware keeps a camera away for minutes. On one miss, a camera
+    // still installing that then answered on its old build was taken for one
+    // that had restarted without the update, and the install was offered
+    // again in the middle of it.
+    if (!firmVer.isEmpty())
+        w.misses = 0;
     if (firmVer.isEmpty()) {
-        w.wentAway = true;
+        if (++w.misses >= 3)
+            w.wentAway = true;
     } else if (w.wanted ? build == w.wanted : build > 0 && build != w.previous) {
         w.active = false;
         LEO_INFO(Api, m_camera.label(),

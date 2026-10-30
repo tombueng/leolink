@@ -314,6 +314,9 @@ private:
         int wanted{0};
         int previous{0};
         bool wentAway{false};
+        /// Polls missed in a row. One is not a restart: a camera busy writing
+        /// its flash, or on poor Wi-Fi, can miss one and still be installing.
+        int misses{0};
         qint64 startedAt{0};
     } m_firmwareWatch;
     int m_firmwareInterval{15000};

@@ -313,13 +313,31 @@ private slots:
         QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
         m_camera->silent = true;
         client->awaitFirmware(4450, 1643);
-        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 1, 5000);
+        // Away for three polls in a row, as a restart is.
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 3, 15000);
         m_camera->silent = false;
         QTRY_COMPARE_WITH_TIMEOUT(failed.size(), 1, 5000);
         QCOMPARE(failed.first().at(0).toString(), QStringLiteral("firmware"));
         QVERIFY2(failed.first().at(1).toString().contains(QLatin1String("1643")),
                  qPrintable(failed.first().at(1).toString()));
         QCOMPARE(installed.size(), 0);
+    }
+
+    /// One missed poll is not a restart: a camera busy writing its flash can
+    /// miss one and answer on the old build while it is still installing, and
+    /// must not be offered the package again in the middle of it.
+    void oneMissIsNotARestart()
+    {
+        auto client = watchingClient();
+        QSignalSpy waiting(client.get(), &leolink::ReolinkClient::firmwareWaiting);
+        QSignalSpy failed(client.get(), &leolink::ReolinkClient::readoutFailed);
+        m_camera->silent = true;
+        client->awaitFirmware(4450, 1643);
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= 1, 5000);
+        m_camera->silent = false;
+        const qsizetype before = waiting.size();
+        QTRY_VERIFY_WITH_TIMEOUT(waiting.size() >= before + 3, 5000);
+        QCOMPARE(failed.size(), 0);
     }
 
     /// One that never comes back is not waited on for ever.
