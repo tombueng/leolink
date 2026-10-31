@@ -46,6 +46,9 @@ public:
     /// Answer a login that asks for XOR. An E1 Pro on 3.1.0.3149 does not, and
     /// leaves the client waiting.
     bool answerXorRequest{true};
+    /// Answer a login that asks for AES. Off, it is a camera that knows only
+    /// XOR and ignores anything else, which leolink must then ask again.
+    bool answerAesRequest{true};
     /// Send an unrelated message (an alarm, as cameras do) ahead of every
     /// reply, which the client must step over.
     bool chatter{false};

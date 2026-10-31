@@ -72,6 +72,20 @@ private slots:
         QCOMPARE(client.field(QStringLiteral("diskNum")), QStringLiteral("1"));
     }
 
+    /// A camera that knows only XOR and ignores a request for AES is asked
+    /// again, for XOR, on a new connection: leolink asked for XOR until the
+    /// E1 Pro, and such a camera must not stop working because of it.
+    void asksForXorWhenAesGoesUnanswered()
+    {
+        m_camera->answerAesRequest = false;
+        m_camera->grantAes = false;
+        m_camera->begin();
+        BaichuanClient client(QStringLiteral("127.0.0.1"), kUser, kPassword, m_camera->port());
+        QVERIFY2(client.login(), qPrintable(client.lastError()));
+        QCOMPARE(m_camera->askedFor(), quint16(0xDC01));
+        QVERIFY(!client.usesAes());
+    }
+
     /// An older camera may grant XOR when asked for AES; the session follows.
     void followsAnXorGrant()
     {

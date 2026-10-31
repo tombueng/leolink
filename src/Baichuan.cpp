@@ -26,6 +26,8 @@ constexpr quint16 kClassModern = 0x6414;
 // answers either and grants what is asked.
 constexpr quint16 kEncAes = 0xDC12;
 constexpr quint16 kGrantedAes = 0xDD12;
+// Asked for only when a camera leaves the request for AES unanswered.
+constexpr quint16 kEncXor = 0xDC01;
 
 // Fixed, and the same for every message: each one starts a fresh keystream.
 // The IV, the key derivation in login() and the 0xDC12 request follow
@@ -519,34 +521,58 @@ QByteArray BaichuanClient::encryptXml(const QString &xml, quint8 xorOffset) cons
 
 bool BaichuanClient::login()
 {
+    // AES first: an E1 Pro answers nothing else, and firmware that grants XOR
+    // instead says so in its reply. leolink asked for XOR until the E1 Pro
+    // came along, so a camera that knows only that, and ignores a request for
+    // AES outright, would now fail where it used to work. One that says
+    // nothing at all is therefore asked again, for XOR, on a new connection.
+    switch (loginAsking(kEncAes)) {
+    case Attempt::Done:
+        return true;
+    case Attempt::Failed:
+        return false;
+    case Attempt::Unanswered:
+        break;
+    }
+    const QString unanswered = m_error;
+    if (loginAsking(kEncXor) == Attempt::Done)
+        return true;
+    m_error = QStringLiteral("%1; asked for XOR instead: %2").arg(unanswered, m_error);
+    return false;
+}
+
+BaichuanClient::Attempt BaichuanClient::loginAsking(quint16 encryption)
+{
+    // A previous attempt's connection, or a previous session's, goes first.
+    delete m_socket;
     m_socket = new QTcpSocket;
     m_socket->connectToHost(m_host, m_port);
     if (!m_socket->waitForConnected(kTimeoutMs)) {
         m_error = QStringLiteral("cannot connect to %1:%2 — %3")
                       .arg(m_host).arg(m_port).arg(m_socket->errorString());
-        return false;
+        return Attempt::Failed;
     }
 
-    // 1. Legacy login, asking for AES. Older firmware that grants XOR instead
+    // 1. Legacy login, asking for an encryption. Firmware that grants another
     //    says so in the reply, and the rest of the session follows suit.
     m_aes.reset();
     QByteArray body;
     body += md5Trunc(m_user).toLatin1().leftJustified(32, '\0');
     body += md5Trunc(m_password).toLatin1().leftJustified(32, '\0');
-    m_socket->write(legacyHeader(kLogin, body.size(), kEncAes) + body);
+    m_socket->write(legacyHeader(kLogin, body.size(), encryption) + body);
     m_socket->flush();
 
     // 2. Nonce.
     BcHeader header;
     QByteArray reply;
     if (!readMessage(header, reply))
-        return false;
+        return Attempt::Unanswered;
 
     const QString nonce = xml::text(bodyText(header, reply), QStringLiteral("nonce"));
     if (nonce.isEmpty()) {
         m_error = QStringLiteral("no nonce in the reply (class 0x%1)")
                       .arg(header.msgClass, 4, 16, QLatin1Char('0'));
-        return false;
+        return Attempt::Failed;
     }
 
     const bool aesGranted = header.field16 == kGrantedAes;
@@ -580,13 +606,13 @@ bool BaichuanClient::login()
 
     // 4. Device info.
     if (!readMessage(header, reply))
-        return false;
+        return Attempt::Failed;
     if (header.isModern() && header.status() != 200) {
         m_error = QStringLiteral("login rejected, status %1").arg(header.status());
-        return false;
+        return Attempt::Failed;
     }
     m_deviceInfo = bodyText(header, reply);
-    return true;
+    return Attempt::Done;
 }
 
 bool BaichuanClient::requestVideo(int channel, bool mainStream)

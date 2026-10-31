@@ -146,6 +146,11 @@ public:
     static QString md5Trunc(const QString &text);
 
 private:
+    /// One login, asking for `encryption`. Unanswered: connected, and the
+    /// camera said nothing at all, which is worth asking again differently.
+    enum class Attempt { Done, Unanswered, Failed };
+    Attempt loginAsking(quint16 encryption);
+
     bool readMessage(BcHeader &header, QByteArray &body,
                      int timeoutMs = 10000);
     QString bodyText(const BcHeader &header, const QByteArray &body) const;

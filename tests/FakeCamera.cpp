@@ -282,6 +282,8 @@ void FakeCamera::serve(QTcpSocket &socket)
             m_askedFor = h.field16;
             if (h.field16 != kAskAes && !answerXorRequest)
                 continue;
+            if (h.field16 == kAskAes && !answerAesRequest)
+                continue;
             const bool granted = grantAes && h.field16 == kAskAes;
             const QByteArray nonce = BaichuanClient::xorCrypt(
                 QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<body>\n"
