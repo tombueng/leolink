@@ -16,6 +16,13 @@ Both were found by somebody building the package rather than by us.
     python3 tools/check_arch_package.py                 # metadata only
     python3 tools/check_arch_package.py --download      # and the released tarball
     python3 tools/check_arch_package.py --write-srcinfo # regenerate .SRCINFO
+    python3 tools/check_arch_package.py --set-checksum  # take it from the tarball
+
+A PKGBUILD inside a tag's tree can never carry that tag's checksum: the file is
+part of the tarball it would have to describe. So the copy in a release's
+source is one release behind by necessity, and the release workflow instead
+runs --set-checksum once the tag exists and attaches the PKGBUILD it writes to
+the release, which is the one to build from.
 
 The download is skipped silently when there is no network and when the tag has
 not been pushed yet — before a release there is nothing to compare against, and
@@ -127,9 +134,28 @@ def main() -> int:
     parser.add_argument("--write-srcinfo", action="store_true",
                         help="rewrite .SRCINFO from the PKGBUILD, as makepkg "
                              "--printsrcinfo would on an Arch machine")
+    parser.add_argument("--set-checksum", action="store_true",
+                        help="download the released tarball, write its sha256 "
+                             "into the PKGBUILD and rewrite .SRCINFO")
     args = parser.parse_args()
 
     pkgbuild = from_pkgbuild()
+    if args.set_checksum:
+        url = pkgbuild["source"][0].split("::", 1)[-1]
+        actual = released_tarball_sha256(url)
+        if actual is None:
+            print("error: the checksum cannot be set without the tarball")
+            return 1
+        text = PKGBUILD.read_text()
+        text, count = re.subn(r"^sha256sums=\('[^']*'\)", f"sha256sums=('{actual}')",
+                              text, flags=re.MULTILINE)
+        if count != 1:
+            print("error: no single sha256sums=('…') line in the PKGBUILD")
+            return 1
+        PKGBUILD.write_text(text)
+        print(f"sha256sums set to {actual}")
+        pkgbuild = from_pkgbuild()
+        args.write_srcinfo = True
     if args.write_srcinfo:
         SRCINFO.write_text(as_srcinfo(pkgbuild))
         print(f"wrote {SRCINFO.relative_to(ROOT)}")

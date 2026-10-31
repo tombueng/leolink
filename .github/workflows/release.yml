@@ -132,6 +132,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
 
       - uses: actions/download-artifact@v4
         with:
@@ -145,6 +147,12 @@ jobs:
                -o -name 'leolink*.tar.gz' -o -name 'leolink*.AppImage' \
                -o -name 'leolink*.AppImage.zsync' \) \
             -exec cp {} release/ \;
+          # The PKGBUILD in the tag's own tree cannot carry the checksum of the
+          # tarball it is part of, so it is always a release behind. The tag
+          # exists now, and so does its tarball: this one is set from it, and
+          # it is the PKGBUILD the release offers.
+          python3 tools/check_arch_package.py --set-checksum
+          cp packaging/arch/PKGBUILD release/PKGBUILD
           # Checksums so anyone can tell that what they downloaded is what was
           # built. Generated here, from the artefacts themselves.
           (cd release && sha256sum * > SHA256SUMS)
@@ -169,6 +177,12 @@ jobs:
             **Fedora, openSUSE**
             ```bash
             sudo dnf install ./leolink-*.rpm
+            ```
+
+            **Arch Linux** — the `PKGBUILD` attached here, in an empty folder:
+            ```bash
+            curl -LO https://github.com/tombueng/leolink/releases/download/${{ github.event.inputs.tag || github.ref_name }}/PKGBUILD
+            makepkg -si
             ```
 
             **Anywhere else**
