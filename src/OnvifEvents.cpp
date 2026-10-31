@@ -150,11 +150,18 @@ void OnvifEvents::subscribe()
                   QStringLiteral("application/soap+xml; charset=utf-8"));
 
     // No WS-Addressing here — Reolink rejects the subscribe request with it.
+    // The lifetime is asked for, so that renewing at half of it keeps the
+    // subscription from lapsing between polls; without one a camera picks its
+    // own, which can be ten seconds.
+    const QString lifetime =
+        m_askLifetime ? QStringLiteral("<tev:InitialTerminationTime>PT%1S"
+                                       "</tev:InitialTerminationTime>")
+                            .arg(kLifetimeSeconds)
+                      : QString();
     QNetworkReply *reply = m_net->post(
-        req, envelope(QStringLiteral("<tev:CreatePullPointSubscription>"
-                                     "<tev:InitialTerminationTime>PT%1S</tev:InitialTerminationTime>"
+        req, envelope(QStringLiteral("<tev:CreatePullPointSubscription>%1"
                                      "</tev:CreatePullPointSubscription>")
-                          .arg(kLifetimeSeconds),
+                          .arg(lifetime),
                       {}, {}));
 
     connect(reply, &QNetworkReply::finished, this, [this, reply] {
@@ -178,6 +185,18 @@ void OnvifEvents::subscribe()
             LEO_WARN(Onvif, m_camera.label(),
                      QStringLiteral("Subscription refused by %1; reply was: %2")
                          .arg(m_camera.host, answer.left(500)));
+            // Firmware that takes the lifetime for something it does not
+            // know would refuse every subscription with it, and lose the
+            // camera's motion events entirely. So it is asked once more,
+            // straight away, as leolink asked before it named a lifetime.
+            if (m_askLifetime) {
+                m_askLifetime = false;
+                LEO_INFO(Onvif, m_camera.label(),
+                         QStringLiteral("Asking again without a lifetime"));
+                QTimer::singleShot(0, this, &OnvifEvents::subscribe);
+                return;
+            }
+            m_askLifetime = true;
             emit lost(tr("ONVIF subscription failed."));
             if (m_running)
                 QTimer::singleShot(30000, this, &OnvifEvents::subscribe);

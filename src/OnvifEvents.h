@@ -59,6 +59,9 @@ private:
     QTimer *m_renewTimer;
     CameraConfig m_camera;
     QString m_subscription;
+    /// Whether the next subscription names a lifetime. Off for one try after
+    /// a refusal, in case the firmware took exception to it.
+    bool m_askLifetime{true};
     bool m_running{false};
     int m_failures{0};
 };
