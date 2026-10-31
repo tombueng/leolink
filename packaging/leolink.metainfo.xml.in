@@ -515,6 +515,96 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.3.0" date="2026-10-31">
+      <description>
+        <p>A large release: cameras without a web server, a transport chosen by itself, turning the camera from its tile, and a handbook that comes with the program.</p>
+        <p xml:lang="ar">إصدار كبير: كاميرات بلا خادم ويب، ونقل يُختار تلقائياً، وتدوير الكاميرا من مربعها، ودليل يأتي مع البرنامج.</p>
+        <p xml:lang="de">Eine große Ausgabe: Kameras ohne Webserver, ein Transport, der sich selbst wählt, die Kamera aus ihrer Kachel schwenken, und ein Handbuch, das mit dem Programm kommt.</p>
+        <p xml:lang="es">Una versión grande: cámaras sin servidor web, un transporte que se elige solo, girar la cámara desde su mosaico y un manual que viene con el programa.</p>
+        <p xml:lang="fr">Une version importante : des caméras sans serveur web, un transport qui se choisit tout seul, orienter la caméra depuis sa vignette, et un manuel fourni avec le programme.</p>
+        <p xml:lang="hi">एक बड़ा संस्करण: बिना वेब सर्वर वाले कैमरे, अपने आप चुना जाने वाला परिवहन, टाइल से कैमरा घुमाना, और प्रोग्राम के साथ आने वाली पुस्तिका।</p>
+        <p xml:lang="it">Una versione corposa: telecamere senza server web, un trasporto scelto da solo, girare la telecamera dal suo riquadro e un manuale che arriva con il programma.</p>
+        <p xml:lang="ja">大きなリリースです。Web サーバーのないカメラ、自動で選ばれる伝送、タイルからのカメラの旋回、そしてプログラムに同梱された手引き。</p>
+        <p xml:lang="pt_BR">Uma versão grande: câmeras sem servidor web, um transporte que se escolhe sozinho, girar a câmera pelo seu bloco e um manual que vem com o programa.</p>
+        <p xml:lang="ru">Крупный выпуск: камеры без веб-сервера, транспорт, который выбирается сам, поворот камеры прямо с плитки и руководство, поставляемое вместе с программой.</p>
+        <p xml:lang="tr">Büyük bir sürüm: web sunucusu olmayan kameralar, kendiliğinden seçilen taşıma, kamerayı kutucuğundan döndürmek ve programla birlikte gelen el kitabı.</p>
+        <p xml:lang="zh_CN">一个大版本：支持没有 Web 服务器的摄像机、自动选择传输方式、在画面格中转动摄像机，以及随程序附带的手册。</p>
+        <ul>
+          <li>The E1, E1 Pro and E1 Zoom, which have no web server or keep it off, over Reolink's own Baichuan: picture, settings, recording, motion alarms</li>
+          <li xml:lang="ar">كاميرات E1 وE1 Pro وE1 Zoom، التي لا خادم ويب فيها أو يكون مطفأً، عبر Baichuan الخاص بـ Reolink: الصورة والإعدادات والتسجيل وتنبيهات الحركة</li>
+          <li xml:lang="de">E1, E1 Pro und E1 Zoom, die keinen Webserver haben oder ihn ausgeschaltet lassen, über Reolinks eigenes Baichuan: Bild, Einstellungen, Aufnahme, Bewegungsalarme</li>
+          <li xml:lang="es">Las E1, E1 Pro y E1 Zoom, que no tienen servidor web o lo mantienen apagado, por Baichuan, el protocolo propio de Reolink: imagen, ajustes, grabación, alarmas de movimiento</li>
+          <li xml:lang="fr">Les E1, E1 Pro et E1 Zoom, sans serveur web ou qui le gardent éteint, via Baichuan, le protocole propre de Reolink : image, réglages, enregistrement, alarmes de mouvement</li>
+          <li xml:lang="hi">E1, E1 Pro और E1 Zoom, जिनमें वेब सर्वर नहीं होता या बंद रहता है, Reolink के अपने Baichuan से: चित्र, सेटिंग, रिकॉर्डिंग, गति-अलार्म</li>
+          <li xml:lang="it">Le E1, E1 Pro ed E1 Zoom, senza server web o che lo tengono spento, tramite Baichuan, il protocollo proprio di Reolink: immagine, impostazioni, registrazione, allarmi di movimento</li>
+          <li xml:lang="ja">Web サーバーがない、またはオフにしている E1・E1 Pro・E1 Zoom に、Reolink 独自の Baichuan で対応：映像、設定、録画、動体アラーム</li>
+          <li xml:lang="pt_BR">As E1, E1 Pro e E1 Zoom, que não têm servidor web ou o mantêm desligado, pelo Baichuan, protocolo próprio da Reolink: imagem, configurações, gravação, alarmes de movimento</li>
+          <li xml:lang="ru">E1, E1 Pro и E1 Zoom, у которых нет веб-сервера или он выключен, через собственный протокол Reolink Baichuan: картинка, настройки, запись, тревоги движения</li>
+          <li xml:lang="tr">Web sunucusu olmayan ya da onu kapalı tutan E1, E1 Pro ve E1 Zoom, Reolink'in kendi Baichuan protokolüyle: görüntü, ayarlar, kayıt, hareket alarmları</li>
+          <li xml:lang="zh_CN">通过 Reolink 自有的 Baichuan 协议支持没有 Web 服务器或关闭了它的 E1、E1 Pro 和 E1 Zoom：画面、设置、录像、移动报警</li>
+          <li>A new camera gets the Automatic transport: leolink asks each camera what it offers and takes HTTP-FLV, RTSP or Baichuan accordingly</li>
+          <li xml:lang="ar">تحصل الكاميرا الجديدة على النقل «التلقائي»: يسأل leolink كل كاميرا عما تقدمه ويختار HTTP-FLV أو RTSP أو Baichuan وفقاً لذلك</li>
+          <li xml:lang="de">Eine neue Kamera bekommt den automatischen Transport: leolink fragt jede Kamera, was sie anbietet, und nimmt danach HTTP-FLV, RTSP oder Baichuan</li>
+          <li xml:lang="es">Una cámara nueva recibe el transporte automático: leolink pregunta a cada cámara qué ofrece y toma HTTP-FLV, RTSP o Baichuan según eso</li>
+          <li xml:lang="fr">Une nouvelle caméra reçoit le transport automatique : leolink demande à chaque caméra ce qu'elle propose et prend HTTP-FLV, RTSP ou Baichuan en conséquence</li>
+          <li xml:lang="hi">नए कैमरे को स्वचालित परिवहन मिलता है: leolink हर कैमरे से पूछता है कि वह क्या देता है और उसी हिसाब से HTTP-FLV, RTSP या Baichuan चुनता है</li>
+          <li xml:lang="it">Una nuova telecamera riceve il trasporto automatico: leolink chiede a ogni telecamera che cosa offre e sceglie di conseguenza HTTP-FLV, RTSP o Baichuan</li>
+          <li xml:lang="ja">新しいカメラには「自動」伝送が設定されます。leolink が各カメラに提供内容を尋ね、それに応じて HTTP-FLV・RTSP・Baichuan を選びます</li>
+          <li xml:lang="pt_BR">Uma câmera nova recebe o transporte automático: o leolink pergunta a cada câmera o que ela oferece e escolhe HTTP-FLV, RTSP ou Baichuan de acordo</li>
+          <li xml:lang="ru">Новая камера получает автоматический транспорт: leolink спрашивает каждую камеру, что она предлагает, и выбирает HTTP-FLV, RTSP или Baichuan</li>
+          <li xml:lang="tr">Yeni bir kamera otomatik taşımayı alır: leolink her kameraya ne sunduğunu sorar ve buna göre HTTP-FLV, RTSP ya da Baichuan'ı seçer</li>
+          <li xml:lang="zh_CN">新添加的摄像机使用“自动”传输：leolink 会询问每台摄像机提供哪些服务，并据此选用 HTTP-FLV、RTSP 或 Baichuan</li>
+          <li>Turning and zooming the camera from its tile, and playing a sound file through its speaker</li>
+          <li xml:lang="ar">تدوير الكاميرا وتقريبها من مربعها، وتشغيل ملف صوتي عبر سماعتها</li>
+          <li xml:lang="de">Die Kamera aus ihrer Kachel schwenken und zoomen, und eine Tondatei über ihren Lautsprecher abspielen</li>
+          <li xml:lang="es">Girar y acercar la cámara desde su mosaico, y reproducir un archivo de sonido por su altavoz</li>
+          <li xml:lang="fr">Orienter et zoomer la caméra depuis sa vignette, et jouer un fichier son par son haut-parleur</li>
+          <li xml:lang="hi">टाइल से कैमरे को घुमाना और ज़ूम करना, और उसके स्पीकर से कोई ध्वनि फ़ाइल बजाना</li>
+          <li xml:lang="it">Girare e zoomare la telecamera dal suo riquadro, e riprodurre un file audio dal suo altoparlante</li>
+          <li xml:lang="ja">タイルからカメラを旋回・ズームでき、カメラのスピーカーから音声ファイルを再生できます</li>
+          <li xml:lang="pt_BR">Girar e dar zoom na câmera pelo seu bloco, e tocar um arquivo de som pelo alto-falante dela</li>
+          <li xml:lang="ru">Поворот и зум камеры прямо с плитки, и воспроизведение звукового файла через её динамик</li>
+          <li xml:lang="tr">Kamerayı kutucuğundan döndürmek ve yakınlaştırmak, hoparlöründen bir ses dosyası çalmak</li>
+          <li xml:lang="zh_CN">可在画面格中转动和缩放摄像机，并通过摄像机的扬声器播放声音文件</li>
+          <li>Firmware installed from a .pak file over Baichuan, checked against the camera before it is sent</li>
+          <li xml:lang="ar">تثبيت البرامج الثابتة من ملف ‎.pak عبر Baichuan، بعد مطابقته مع الكاميرا قبل إرساله</li>
+          <li xml:lang="de">Firmware aus einer .pak-Datei über Baichuan installieren, vor dem Senden mit der Kamera abgeglichen</li>
+          <li xml:lang="es">Firmware instalado desde un archivo .pak por Baichuan, comprobado con la cámara antes de enviarlo</li>
+          <li xml:lang="fr">Micrologiciel installé depuis un fichier .pak via Baichuan, vérifié auprès de la caméra avant l'envoi</li>
+          <li xml:lang="hi">Baichuan से .pak फ़ाइल द्वारा फ़र्मवेयर इंस्टॉल करना, भेजने से पहले कैमरे से मिलान करके</li>
+          <li xml:lang="it">Firmware installato da un file .pak tramite Baichuan, verificato con la telecamera prima dell'invio</li>
+          <li xml:lang="ja">.pak ファイルからの Baichuan 経由のファームウェア導入。送信前にカメラと照合します</li>
+          <li xml:lang="pt_BR">Firmware instalado de um arquivo .pak pelo Baichuan, conferido com a câmera antes do envio</li>
+          <li xml:lang="ru">Установка прошивки из файла .pak через Baichuan, со сверкой с камерой перед отправкой</li>
+          <li xml:lang="tr">Baichuan üzerinden bir .pak dosyasından yazılım kurulumu, göndermeden önce kameraya göre denetlenir</li>
+          <li xml:lang="zh_CN">可通过 Baichuan 从 .pak 文件安装固件，发送前会与摄像机核对</li>
+          <li>The handbook comes with the program and opens in a window of its own, without the internet</li>
+          <li xml:lang="ar">يأتي الدليل مع البرنامج ويُفتح في نافذة خاصة به، دون الحاجة إلى الإنترنت</li>
+          <li xml:lang="de">Das Handbuch kommt mit dem Programm und öffnet sich in einem eigenen Fenster, ohne Internet</li>
+          <li xml:lang="es">El manual viene con el programa y se abre en una ventana propia, sin internet</li>
+          <li xml:lang="fr">Le manuel est fourni avec le programme et s'ouvre dans sa propre fenêtre, sans internet</li>
+          <li xml:lang="hi">पुस्तिका प्रोग्राम के साथ आती है और बिना इंटरनेट के अपनी अलग विंडो में खुलती है</li>
+          <li xml:lang="it">Il manuale arriva con il programma e si apre in una finestra propria, senza internet</li>
+          <li xml:lang="ja">手引きはプログラムに同梱され、インターネットなしで専用のウィンドウに開きます</li>
+          <li xml:lang="pt_BR">O manual vem com o programa e abre em uma janela própria, sem internet</li>
+          <li xml:lang="ru">Руководство поставляется с программой и открывается в отдельном окне, без интернета</li>
+          <li xml:lang="tr">El kitabı programla birlikte gelir ve internete gerek olmadan kendi penceresinde açılır</li>
+          <li xml:lang="zh_CN">手册随程序附带，无需联网即可在单独的窗口中打开</li>
+          <li>Camera motion over ONVIF no longer lapses between polls, and a password with spaces stays out of the log</li>
+          <li xml:lang="ar">لم تعد حركة الكاميرا عبر ONVIF تنقطع بين الاستعلامات، وتبقى كلمة السر التي فيها مسافات خارج السجل</li>
+          <li xml:lang="de">Kamerabewegung über ONVIF reißt zwischen den Abfragen nicht mehr ab, und ein Passwort mit Leerzeichen bleibt aus dem Protokoll</li>
+          <li xml:lang="es">El movimiento de la cámara por ONVIF ya no se corta entre consultas, y una contraseña con espacios queda fuera del registro</li>
+          <li xml:lang="fr">Le mouvement de la caméra via ONVIF ne s'interrompt plus entre deux interrogations, et un mot de passe avec des espaces reste hors du journal</li>
+          <li xml:lang="hi">ONVIF से कैमरे की गति अब पूछताछ के बीच नहीं छूटती, और रिक्त स्थानों वाला पासवर्ड लॉग से बाहर रहता है</li>
+          <li xml:lang="it">Il movimento della telecamera via ONVIF non si interrompe più tra un'interrogazione e l'altra, e una password con spazi resta fuori dal registro</li>
+          <li xml:lang="ja">ONVIF によるカメラの動体検知がポーリングの合間に途切れなくなり、空白を含むパスワードもログに残りません</li>
+          <li xml:lang="pt_BR">O movimento da câmera via ONVIF não se perde mais entre consultas, e uma senha com espaços fica fora do registro</li>
+          <li xml:lang="ru">Движение от камеры по ONVIF больше не пропадает между опросами, а пароль с пробелами не попадает в журнал</li>
+          <li xml:lang="tr">ONVIF üzerinden kamera hareketi artık sorgular arasında kopmuyor ve boşluk içeren bir parola günlüğe girmiyor</li>
+          <li xml:lang="zh_CN">通过 ONVIF 的摄像机移动事件不再在两次轮询之间中断，含空格的密码也不会再出现在日志中</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.2.5" date="2026-10-01">
       <description>
         <p>More screenshots in software centres and the AppImage catalog: arranging the grid, the camera's picture settings, and the window settings.</p>
