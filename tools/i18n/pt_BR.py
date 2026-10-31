@@ -1546,6 +1546,16 @@ STRINGS: dict[str, str] = {
     # The camera list: the UID field, until P2P exists.
     "optional, not used yet":
         "opcional, ainda não usado",
+
+    # The camera dialog, closed while a firmware package is on its way.
+    "The firmware is still being sent to the camera.":
+        "O firmware ainda está sendo enviado para a câmera.",
+    "This window can be closed once it says the camera is installing. Closing it now cuts the package short.":
+        "Esta janela pode ser fechada quando disser que a câmera está instalando. Fechá-la agora corta o pacote pela metade.",
+    "Keep open":
+        "Manter aberta",
+    "Close anyway":
+        "Fechar mesmo assim",
 }
 
 

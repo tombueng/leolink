@@ -62,6 +62,9 @@ public:
     /// outside the process.
     void reportForTesting() const;
 
+    /// Closes, except while a firmware package is being sent.
+    void done(int result) override;
+
 signals:
     /// The camera's encoder was changed, so its stream has just restarted.
     void streamReconfigured();
@@ -233,6 +236,8 @@ private:
     /// Newer firmware keeps the bands under newSens and says so with
     /// useNewSens; editing the other copy would have no effect.
     bool m_usesNewSens{false};
+    /// From pressing Install until the last piece of the package has gone.
+    bool m_sendingFirmware{false};
     bool m_alarmDirty{false};
     /// Stops the table's own signals from marking the dialog dirty while it is
     /// being filled.

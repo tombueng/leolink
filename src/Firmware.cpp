@@ -11,10 +11,9 @@ namespace {
 /// The first four bytes of every package seen: E1 and E1 Pro, 2025.
 constexpr char kPakMagic[4] = {'\x13', '\x59', '\x72', '\x32'};
 
-/// A package is a boot loader, a kernel and a root file system: some
-/// megabytes, never a few kilobytes, and nothing like a hundred.
+/// A package is some megabytes, never a few kilobytes. The upper limit is
+/// kMaxPakBytes, in the header, which the dialog reads no more than.
 constexpr qsizetype kMinPakBytes = 1 * 1024 * 1024;
-constexpr qsizetype kMaxPakBytes = 64 * 1024 * 1024;
 
 QString tr(const char *text)
 {

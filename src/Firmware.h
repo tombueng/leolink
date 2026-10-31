@@ -6,6 +6,10 @@
 
 namespace leolink::firmware {
 
+/// The largest file taken for a package: a boot loader, a kernel and a root
+/// file system come to some megabytes, never anything like a hundred.
+constexpr qsizetype kMaxPakBytes = 64 * 1024 * 1024;
+
 /// What a Reolink package's name says about it.
 ///
 /// Reolink names every package after the board it is for, then the build:

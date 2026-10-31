@@ -256,6 +256,7 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                 m_checkFirmwareButton->setEnabled(true);
             });
     connect(m_client, &ReolinkClient::firmwareSent, this, [this] {
+        m_sendingFirmware = false;
         m_checkFirmwareButton->setEnabled(false);
         m_client->awaitFirmware(m_awaitedBuild, firmware::buildOf(m_firmVer));
     });
@@ -314,6 +315,7 @@ CameraSettingsDialog::CameraSettingsDialog(const CameraConfig &camera,
                         ? QStringLiteral("color:#7f8c8d;")
                         : QStringLiteral("color:#c0392b;");
                 if (what == QLatin1String("firmware")) {
+                    m_sendingFirmware = false;
                     m_firmware->setText(reason);
                     m_firmware->setStyleSheet(style);
                     m_checkFirmwareButton->setEnabled(true);
@@ -1054,6 +1056,30 @@ void CameraSettingsDialog::onFormatStorage()
     m_client->formatStorage();
 }
 
+void CameraSettingsDialog::done(int result)
+{
+    // Not while a package is on its way. Closing ends the connection it goes
+    // over, which first holds the window until the rest is sent — a minute
+    // or two in which leolink looks hung, and the desktop may offer to end it
+    // — and, if it is ended, leaves the camera with part of a package.
+    if (m_sendingFirmware) {
+        QMessageBox ask(this);
+        ask.setWindowTitle(tr("Install firmware"));
+        ask.setIcon(QMessageBox::Warning);
+        ask.setText(tr("The firmware is still being sent to the camera."));
+        ask.setInformativeText(
+            tr("This window can be closed once it says the camera is installing. "
+               "Closing it now cuts the package short."));
+        QAbstractButton *keep = ask.addButton(tr("Keep open"), QMessageBox::RejectRole);
+        ask.addButton(tr("Close anyway"), QMessageBox::DestructiveRole);
+        ask.setDefaultButton(qobject_cast<QPushButton *>(keep));
+        ask.exec();
+        if (ask.clickedButton() == keep)
+            return;
+    }
+    QDialog::done(result);
+}
+
 void CameraSettingsDialog::onInstallFirmwareFile()
 {
     const QString path = QFileDialog::getOpenFileName(
@@ -1068,7 +1094,9 @@ void CameraSettingsDialog::onInstallFirmwareFile()
                              tr("%1 cannot be read.").arg(path));
         return;
     }
-    const QByteArray pak = file.readAll();
+    // Never more than one byte past the largest package: a file picked by
+    // mistake, a disk image say, is turned down without being read whole.
+    const QByteArray pak = file.read(firmware::kMaxPakBytes + 1);
     const QString fileName = QFileInfo(path).fileName();
     if (const QString why = firmware::refusal(fileName, pak, m_hardVer, m_firmVer);
         !why.isEmpty()) {
@@ -1105,6 +1133,7 @@ void CameraSettingsDialog::onInstallFirmwareFile()
     m_awaitedBuild = package.build;
     m_firmware->setStyleSheet(QString());
     m_firmware->setText(tr("Sending the firmware…"));
+    m_sendingFirmware = true;
     m_client->installFirmwareFile(fileName, pak);
 }
 
