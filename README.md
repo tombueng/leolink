@@ -86,8 +86,8 @@ from and what was blurred.
 |---|---|
 | ![Cameras](docs/screenshots/settings-01-cameras.png) | ![Layout](docs/screenshots/settings-02-layout.png) |
 | **Cameras** — address, credentials, stream and transport | **Layout** — the grid, and which cell a camera occupies |
-| ![Events](docs/screenshots/settings-03-events.png) | ![Window](docs/screenshots/settings-04-window.png) |
-| **Events** — what counts as motion and what happens then | **Window** — chrome, tray, language, decoding, diagnostics |
+| ![On motion](docs/screenshots/preferences-02-on-motion.png) | ![Reactions](docs/screenshots/preferences-03-reactions.png) |
+| **Settings → On motion** — what the window does when a camera sees something | **Settings → Reactions** — a command, a webhook, an MQTT message |
 
 ### Camera settings
 
@@ -459,8 +459,7 @@ screen to compare against. If your recordings land a day out, say so — it is o
 constant in `CameraSettingsDialog.cpp`.
 
 The screenshots in `docs/screenshots` show freely licensed photographs through
-the custom-URL transport, never a real camera, and predate the settings window's
-split into its current tabs.
+the custom-URL transport, never a real camera.
 
 Sound to the camera over Baichuan is not implemented: it goes over the ONVIF
 backchannel, inside RTSP, so a camera without RTSP gets no speak button.

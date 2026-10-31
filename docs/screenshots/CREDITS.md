@@ -46,7 +46,7 @@ invented figures.
 ## Reproducing them
 
 `LEOLINK_SCREENSHOT=<dir>` saves the main window; add
-`LEOLINK_SCREENSHOT_OF=settings` or `camera:<host>` for every page of a
-settings dialog, one file per tab. Dialogs render correctly on a virtual
+`LEOLINK_SCREENSHOT_OF=settings`, `preferences` or `camera:<host>` for every
+page of a settings dialog, one file per tab. Dialogs render correctly on a virtual
 display; the video tiles need a real graphics card, so the grid shot is taken
 on a normal session, capturing the leolink window alone by its window id.

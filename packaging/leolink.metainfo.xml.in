@@ -373,6 +373,21 @@
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/01-grid.png</image>
     </screenshot>
     <screenshot>
+      <caption>The camera list: address, password, stream and how it is reached</caption>
+      <caption xml:lang="ar">قائمة الكاميرات: العنوان وكلمة السر والبث وطريقة الوصول</caption>
+      <caption xml:lang="de">Die Kameraliste: Adresse, Passwort, Stream und wie sie erreicht wird</caption>
+      <caption xml:lang="es">La lista de cámaras: dirección, contraseña, flujo y cómo se llega a ella</caption>
+      <caption xml:lang="fr">La liste des caméras : adresse, mot de passe, flux et façon de la joindre</caption>
+      <caption xml:lang="hi">कैमरों की सूची: पता, पासवर्ड, स्ट्रीम और उस तक पहुँचने का तरीका</caption>
+      <caption xml:lang="it">L'elenco delle telecamere: indirizzo, password, flusso e come raggiungerla</caption>
+      <caption xml:lang="ja">カメラ一覧：アドレス、パスワード、ストリーム、接続方法</caption>
+      <caption xml:lang="pt_BR">A lista de câmeras: endereço, senha, fluxo e como alcançá-la</caption>
+      <caption xml:lang="ru">Список камер: адрес, пароль, поток и способ подключения</caption>
+      <caption xml:lang="tr">Kamera listesi: adres, parola, akış ve kameraya nasıl ulaşılacağı</caption>
+      <caption xml:lang="zh_CN">摄像机列表：地址、密码、码流以及连接方式</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-01-cameras.png</image>
+    </screenshot>
+    <screenshot>
       <caption>Arranging the grid: how many cells, and which camera goes where</caption>
       <caption xml:lang="ar">ترتيب الشبكة: عدد الخانات، وأين توضع كل كاميرا</caption>
       <caption xml:lang="de">Das Gitter anordnen: wie viele Felder, und welche Kamera wohin kommt</caption>
@@ -388,19 +403,19 @@
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-02-layout.png</image>
     </screenshot>
     <screenshot>
-      <caption>Motion, recording and what happens when a camera sees something</caption>
-      <caption xml:lang="ar">الحركة والتسجيل وما يحدث حين ترى الكاميرا شيئاً</caption>
-      <caption xml:lang="de">Bewegung, Aufnahme und was geschieht, wenn eine Kamera etwas sieht</caption>
-      <caption xml:lang="es">Movimiento, grabación y qué ocurre cuando una cámara ve algo</caption>
-      <caption xml:lang="fr">Mouvement, enregistrement et ce qui se passe quand une caméra voit quelque chose</caption>
-      <caption xml:lang="hi">गति, रिकॉर्डिंग और जब कोई कैमरा कुछ देखे तब क्या हो</caption>
-      <caption xml:lang="it">Movimento, registrazione e che cosa succede quando una telecamera vede qualcosa</caption>
-      <caption xml:lang="ja">動体、録画、そしてカメラが何かを捉えたときの動作</caption>
-      <caption xml:lang="pt_BR">Movimento, gravação e o que acontece quando uma câmera vê algo</caption>
-      <caption xml:lang="ru">Движение, запись и что происходит, когда камера что-то видит</caption>
-      <caption xml:lang="tr">Hareket, kayıt ve bir kamera bir şey gördüğünde ne olacağı</caption>
-      <caption xml:lang="zh_CN">移动、录制，以及摄像机看到动静时会发生什么</caption>
-      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-03-events.png</image>
+      <caption>What happens when a camera sees something: a command, a webhook, an MQTT message</caption>
+      <caption xml:lang="ar">ما يحدث حين ترى الكاميرا شيئاً: أمر، أو Webhook، أو رسالة MQTT</caption>
+      <caption xml:lang="de">Was passiert, wenn eine Kamera etwas sieht: ein Befehl, ein Webhook, eine MQTT-Nachricht</caption>
+      <caption xml:lang="es">Qué ocurre cuando una cámara ve algo: un comando, un webhook, un mensaje MQTT</caption>
+      <caption xml:lang="fr">Ce qui se passe quand une caméra voit quelque chose : une commande, un webhook, un message MQTT</caption>
+      <caption xml:lang="hi">जब कैमरा कुछ देखे तब क्या हो: एक कमांड, एक वेबहुक, एक MQTT संदेश</caption>
+      <caption xml:lang="it">Cosa succede quando una telecamera vede qualcosa: un comando, un webhook, un messaggio MQTT</caption>
+      <caption xml:lang="ja">カメラが何かを捉えたときの動作：コマンド、Webhook、MQTT メッセージ</caption>
+      <caption xml:lang="pt_BR">O que acontece quando uma câmera vê algo: um comando, um webhook, uma mensagem MQTT</caption>
+      <caption xml:lang="ru">Что происходит, когда камера что-то замечает: команда, вебхук, сообщение MQTT</caption>
+      <caption xml:lang="tr">Bir kamera bir şey gördüğünde ne olacağı: bir komut, bir webhook, bir MQTT mesajı</caption>
+      <caption xml:lang="zh_CN">摄像机发现情况时要做什么：运行命令、调用 Webhook、发送 MQTT 消息</caption>
+      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/preferences-03-reactions.png</image>
     </screenshot>
     <screenshot>
       <caption>Changing the camera's own encoder settings</caption>
@@ -446,21 +461,6 @@
       <caption xml:lang="tr">Kameranın nereye baktığı, ne zaman bildirdiği ve ne kolaylıkla tetiklendiği</caption>
       <caption xml:lang="zh_CN">摄像机看向哪里、何时上报，以及多容易被触发</caption>
       <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/camera-04-detection.png</image>
-    </screenshot>
-    <screenshot>
-      <caption>How the window behaves: decoding, the tray icon, the language</caption>
-      <caption xml:lang="ar">سلوك النافذة: فك الترميز، وأيقونة منطقة الإشعارات، واللغة</caption>
-      <caption xml:lang="de">Wie sich das Fenster verhält: Dekodierung, Symbol im Systembereich, Sprache</caption>
-      <caption xml:lang="es">Cómo se comporta la ventana: decodificación, icono de la bandeja, idioma</caption>
-      <caption xml:lang="fr">Le comportement de la fenêtre : décodage, icône de la zone de notification, langue</caption>
-      <caption xml:lang="hi">विंडो का व्यवहार: डिकोडिंग, सूचना क्षेत्र का आइकन, भाषा</caption>
-      <caption xml:lang="it">Come si comporta la finestra: decodifica, icona nell'area di notifica, lingua</caption>
-      <caption xml:lang="ja">ウィンドウの動作：デコード方法、通知領域のアイコン、言語</caption>
-      <caption xml:lang="pt_BR">Como a janela se comporta: decodificação, ícone na bandeja, idioma</caption>
-      <caption xml:lang="ru">Поведение окна: декодирование, значок в области уведомлений, язык</caption>
-      <caption xml:lang="tr">Pencerenin davranışı: kod çözme, bildirim alanı simgesi, dil</caption>
-      <caption xml:lang="zh_CN">窗口行为：解码方式、托盘图标、界面语言</caption>
-      <image>https://raw.githubusercontent.com/tombueng/leolink/main/docs/screenshots/settings-04-window.png</image>
     </screenshot>
   </screenshots>
 

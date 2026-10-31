@@ -217,6 +217,13 @@ MainWindow::MainWindow(QWidget *parent)
                 QApplication::quit();
                 return;
             }
+            if (which == QLatin1String("preferences")) {
+                PreferencesDialog dialog(m_config, this);
+                dialog.resize(900, 760);
+                shootTabs(dialog, QStringLiteral("preferences"));
+                QApplication::quit();
+                return;
+            }
             if (which.startsWith(QLatin1String("camera:"))) {
                 const QString host = which.mid(7);
                 for (const CameraConfig &camera : m_config.active()) {
