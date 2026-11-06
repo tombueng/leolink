@@ -822,6 +822,13 @@ QUrl ReolinkClient::downloadUrl(const Recording &recording) const
     return url;
 }
 
+QNetworkRequest ReolinkClient::downloadRequest(const Recording &recording) const
+{
+    QNetworkRequest request(downloadUrl(recording));
+    m_http->secure(request);
+    return request;
+}
+
 void ReolinkClient::reboot()
 {
     login([this] {

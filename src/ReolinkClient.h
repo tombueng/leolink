@@ -5,6 +5,7 @@
 
 #include <QDateTime>
 #include <QMap>
+#include <QNetworkRequest>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QObject>
@@ -114,6 +115,8 @@ public:
     QUrl playbackUrl(const Recording &recording) const;
     /// URL that downloads it as a file.
     QUrl downloadUrl(const Recording &recording) const;
+    /// The same as a request, set up for this camera's HTTPS.
+    QNetworkRequest downloadRequest(const Recording &recording) const;
 
     /// Restarts the camera. It drops off the network for a minute or so and
     /// comes back by itself; there is no confirmation beyond the command being

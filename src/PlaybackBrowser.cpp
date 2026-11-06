@@ -221,7 +221,7 @@ void PlaybackBrowser::onDownload()
         return;
     }
 
-    m_download = m_net->get(QNetworkRequest(m_client->downloadUrl(recording)));
+    m_download = m_net->get(m_client->downloadRequest(recording));
     m_downloadButton->setEnabled(false);
     m_progress->setVisible(true);
     m_progress->setValue(0);
@@ -229,8 +229,8 @@ void PlaybackBrowser::onDownload()
     // Written as it arrives rather than buffered: these files run to hundreds
     // of megabytes and there is no reason to hold one in memory.
     connect(m_download, &QNetworkReply::readyRead, this, [this] {
-        if (m_target)
-            m_target->write(m_download->readAll());
+        if (m_target && m_target->write(m_download->readAll()) < 0)
+            m_download->abort();
     });
     connect(m_download, &QNetworkReply::downloadProgress, this,
             [this](qint64 received, qint64 total) {
@@ -242,11 +242,18 @@ void PlaybackBrowser::onDownload()
                 }
             });
     connect(m_download, &QNetworkReply::finished, this, [this, target] {
-        const bool ok = m_download->error() == QNetworkReply::NoError;
-        const QString error = m_download->errorString();
+        bool ok = m_download->error() == QNetworkReply::NoError;
+        QString error = m_download->errorString();
         if (m_target) {
             m_target->write(m_download->readAll());
-            m_target->close();
+            if (ok && (m_target->error() != QFileDevice::NoError || !m_target->flush())) {
+                ok = false;
+                error = m_target->errorString();
+            }
+            if (ok)
+                m_target->close();
+            else
+                m_target->remove();
             delete m_target;
             m_target = nullptr;
         }

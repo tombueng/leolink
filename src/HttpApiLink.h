@@ -55,10 +55,12 @@ public:
     /// that is merely dropped stays occupied until its lease runs out.
     void releaseSession();
 
-private:
     /// HTTPS without verifying the camera's self-signed certificate.
     void secure(QNetworkRequest &request) const;
+    /// How long a request may go without progress. For tests.
+    static void setRequestTimeout(int ms);
 
+private:
     QNetworkAccessManager *m_net;
     CameraConfig m_camera;
     QString m_token;

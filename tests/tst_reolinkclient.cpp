@@ -6,9 +6,12 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSignalSpy>
+#include <QSslConfiguration>
+#include <QSslSocket>
 #include <QTest>
 
 #include "FakeWebServer.h"
+#include "HttpApiLink.h"
 #include "ReolinkClient.h"
 
 using leolink::CameraConfig;
@@ -135,6 +138,34 @@ private slots:
     {
         m_client.reset();
         m_server.reset();
+        leolink::HttpApiLink::setRequestTimeout(60000);
+    }
+
+    /// The camera lost power with the request under way: no answer, ever.
+    void unansweredRequestGivesUp()
+    {
+        leolink::HttpApiLink::setRequestTimeout(300);
+        m_server = std::make_unique<FakeWebServer>([](const FakeWebServer::Request &) {
+            FakeWebServer::Response r;
+            r.delayMs = 60000;
+            return r;
+        });
+        connectTo(config());
+        QSignalSpy failed(m_client.get(), &ReolinkClient::testFailed);
+        m_client->testConnection();
+        QVERIFY(failed.wait(10000));
+    }
+
+    void downloadAcceptsTheCamerasCertificate()
+    {
+        CameraConfig camera = config();
+        camera.https = true;
+        connectTo(camera);
+        leolink::Recording recording;
+        recording.name = QStringLiteral("a.mp4");
+        const QNetworkRequest request = m_client->downloadRequest(recording);
+        QCOMPARE(request.url().scheme(), QStringLiteral("https"));
+        QCOMPARE(request.sslConfiguration().peerVerifyMode(), QSslSocket::VerifyNone);
     }
 
     /// The Test button in the camera list.

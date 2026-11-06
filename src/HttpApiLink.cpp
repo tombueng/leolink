@@ -22,6 +22,12 @@ namespace {
 /// not hold up closing the window.
 constexpr int kLogoutWaitMs = 700;
 
+int &requestTimeoutMs()
+{
+    static int timeout = 60000;
+    return timeout;
+}
+
 std::function<QNetworkAccessManager *(QObject *)> &networkFactory()
 {
     static std::function<QNetworkAccessManager *(QObject *)> factory;
@@ -57,6 +63,11 @@ void HttpApiLink::setToken(const QString &token)
     Log::addSecret(token);
 }
 
+void HttpApiLink::setRequestTimeout(int ms)
+{
+    requestTimeoutMs() = ms;
+}
+
 void HttpApiLink::secure(QNetworkRequest &request) const
 {
     if (!m_camera.effectiveHttps())
@@ -87,6 +98,7 @@ QNetworkReply *HttpApiLink::get(const QUrl &url)
 {
     QNetworkRequest request(url);
     secure(request);
+    request.setTransferTimeout(requestTimeoutMs());
     return m_net->get(request);
 }
 
@@ -96,6 +108,9 @@ void HttpApiLink::send(const QString &command, const QJsonObject &param, int act
     QNetworkRequest req(apiUrl(command));
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     secure(req);
+    // A camera that loses power mid-request never answers, and its slot in the
+    // host's queue would stay taken.
+    req.setTransferTimeout(requestTimeoutMs());
 
     const QByteArray payload = body(command, param, action);
     LEO_DEBUG(Api, m_camera.label(),
