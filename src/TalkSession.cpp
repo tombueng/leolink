@@ -457,6 +457,8 @@ void TalkSession::stop()
         m_pacer = nullptr;
     }
     if (m_socket) {
+        // A write error here would call back into stop() through errorOccurred.
+        m_socket->disconnect(this);
         if (m_socket->state() == QAbstractSocket::ConnectedState &&
             !m_session.isEmpty()) {
             sendRequest(QStringLiteral("TEARDOWN"), streamUrlForTalk());

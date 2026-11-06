@@ -64,6 +64,8 @@ public:
     int refusePiece{-1};
     /// Refuse the upload's announcement, the file's name and size, with 400.
     bool refuseAnnouncement{false};
+    /// Send half of the login's first reply and nothing more.
+    bool truncateNonce{false};
     /// Hang up on everything, at once, as a camera restarting does.
     std::atomic<bool> silent{false};
     /// What a login is answered with, when set: the device info, which is

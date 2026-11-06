@@ -2871,6 +2871,8 @@ void CameraSettingsDialog::onApply()
     m_applyButton->setEnabled(false);
     m_status->setText(tr("Writing to the camera…"));
     m_pending = 0;
+    m_wroteSomething = false;
+    m_writeFailed = false;
 
     if (!m_encValue.isEmpty()) {
         ++m_pending;
@@ -2949,12 +2951,24 @@ void CameraSettingsDialog::onSectionApplied(const QString &command)
     if (command == QLatin1String("SetEnc"))
         emit streamReconfigured();
 
-    if (--m_pending > 0)
+    m_wroteSomething = true;
+    writeEnded();
+}
+
+void CameraSettingsDialog::writeEnded()
+{
+    if (m_pending > 0)
+        --m_pending;
+    if (m_pending > 0)
         return;
     m_applyButton->setEnabled(true);
+    if (m_writeFailed)
+        return;   // the failure stays on screen
     m_status->setText(
-        tr("Saved. Changing the encoder restarts the stream, so the picture "
-           "may drop out for a moment."));
+        m_wroteSomething
+            ? tr("Saved. Changing the encoder restarts the stream, so the picture "
+                 "may drop out for a moment.")
+            : tr("Nothing to write."));
 }
 
 void CameraSettingsDialog::reportForTesting() const
@@ -2998,10 +3012,15 @@ void CameraSettingsDialog::onFailed(const QString &reason)
         LEO_DEBUG(Api, m_camera.label(),
                   QStringLiteral("Section not available on this model: %1")
                       .arg(reason));
+        if (m_pending > 0)
+            writeEnded();
         return;
     }
 
-    m_pending = 0;
+    if (m_pending > 0) {
+        m_writeFailed = true;
+        --m_pending;
+    }
 
     // Every button that was disabled while waiting comes back. A disabled
     // control with no explanation is the same as a frozen program from where

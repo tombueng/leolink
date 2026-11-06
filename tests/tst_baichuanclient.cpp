@@ -86,6 +86,16 @@ private slots:
         QVERIFY(!client.usesAes());
     }
 
+    void cutOffReplyIsAnError()
+    {
+        m_camera->truncateNonce = true;
+        m_camera->begin();
+        BaichuanClient client(QStringLiteral("127.0.0.1"), kUser, kPassword, m_camera->port());
+        QVERIFY(!client.login());
+        QVERIFY2(client.lastError().contains(QLatin1String("truncated body")),
+                 qPrintable(client.lastError()));
+    }
+
     /// An older camera may grant XOR when asked for AES; the session follows.
     void followsAnXorGrant()
     {

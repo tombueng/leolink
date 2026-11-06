@@ -294,7 +294,7 @@ void FakeCamera::serve(QTcpSocket &socket)
                 0);
             socket.write(header(kLogin, nonce.size(), 0, granted ? kGrantAes : kGrantXor,
                                 kClassLegacyReply) +
-                         nonce);
+                         (truncateNonce ? nonce.left(nonce.size() / 2) : nonce));
             socket.flush();
             if (granted) {
                 const QByteArray phrase = (QLatin1String(kNonce) + QLatin1Char('-') + m_password).toUtf8();

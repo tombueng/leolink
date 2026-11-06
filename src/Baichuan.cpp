@@ -37,6 +37,7 @@ constexpr char kAesIv[] = "0123456789abcdef";
 
 
 constexpr int kTimeoutMs = 10000;
+constexpr quint32 kMaxBodyBytes = 64 * 1024 * 1024;
 
 /// The camera closes a connection that sends it a message of 40,000 bytes or
 /// more, so a firmware piece is cut to leave a whole message under this.
@@ -483,13 +484,20 @@ bool BaichuanClient::readMessage(BcHeader &header, QByteArray &body,
         header.payloadOffset = readU32(tail, 0);
     }
 
+    if (header.bodyLen > kMaxBodyBytes) {
+        m_error = QStringLiteral("message body of %1 bytes").arg(header.bodyLen);
+        return false;
+    }
+
     body.clear();
-    while (body.size() < int(header.bodyLen)) {
+    const int length = int(header.bodyLen);
+    while (body.size() < length) {
         if (m_socket->bytesAvailable() == 0 &&
             !m_socket->waitForReadyRead(timeoutMs)) {
-            break;
+            m_error = QStringLiteral("truncated body");
+            return false;
         }
-        body += m_socket->read(int(header.bodyLen) - body.size());
+        body += m_socket->read(length - body.size());
     }
     return true;
 }

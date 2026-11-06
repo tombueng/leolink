@@ -354,6 +354,81 @@ private slots:
         ReolinkClient::setNetworkFactory(nullptr);
     }
 
+    /// Apply comes back whatever the camera answers, and only says saved when
+    /// nothing was refused.
+    void applyReportsWhatHappened_data()
+    {
+        QTest::addColumn<int>("rspCode");
+        QTest::addColumn<int>("refused");   // how many writes, 0 = all
+        QTest::addColumn<QString>("status");
+        QTest::addColumn<QString>("notStatus");
+        QTest::newRow("one refused") << -4 << 1 << QString() << QStringLiteral("Saved");
+        QTest::newRow("one unsupported") << -9 << 1 << QStringLiteral("Saved") << QString();
+        QTest::newRow("all unsupported") << -9 << 0 << QStringLiteral("Nothing to write") << QStringLiteral("Saved");
+    }
+
+    void applyReportsWhatHappened()
+    {
+        QFETCH(int, rspCode);
+        QFETCH(int, refused);
+        QFETCH(QString, status);
+        QFETCH(QString, notStatus);
+
+        int writes = 0;
+        FakeWebServer server([&](const FakeWebServer::Request &request) {
+            const QString cmd = QJsonDocument::fromJson(request.body).array().first().toObject()
+                                    .value(QStringLiteral("cmd")).toString();
+            if (!cmd.startsWith(QLatin1String("Set")))
+                return httpCamera(request);
+            ++writes;
+            FakeWebServer::Response r;
+            r.body = (refused == 0 || writes <= refused)
+                         ? QJsonDocument(QJsonArray{QJsonObject{
+                               {QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 1},
+                               {QStringLiteral("error"), QJsonObject{{QStringLiteral("rspCode"), rspCode}}}}})
+                               .toJson()
+                         : QJsonDocument(QJsonArray{QJsonObject{
+                               {QStringLiteral("cmd"), cmd}, {QStringLiteral("code"), 0}}})
+                               .toJson();
+            return r;
+        });
+        ReolinkClient::setNetworkFactory(
+            [&server](QObject *owner) { return new RedirectingNetwork(server.port(), owner); });
+
+        CameraConfig c;
+        c.id = QStringLiteral("writes");
+        c.host = QStringLiteral("192.0.2.12");
+        c.password = kPassword;
+        c.caps.known = true;
+        c.caps.https = true;
+        c.caps.rtsp = true;
+        c.caps.onvif = true;
+        c.caps.baichuan = true;
+        {
+            CameraSettingsDialog dialog(c);
+            dialog.show();
+            QTRY_VERIFY_WITH_TIMEOUT(editorWith(dialog, QStringLiteral("antiFlicker")), 15000);
+            QPushButton *apply = button(&dialog, QStringLiteral("Apply to camera"));
+            QVERIFY(apply);
+            QTRY_VERIFY_WITH_TIMEOUT(apply->isEnabled(), 15000);
+            QTest::qWait(1000);
+            apply->click();
+            QTRY_VERIFY_WITH_TIMEOUT(writes >= 2 && apply->isEnabled(), 15000);
+            // The rest of the writes come in after a refusal has enabled it.
+            int settled = -1;
+            while (settled != writes) {
+                settled = writes;
+                QTest::qWait(1000);
+            }
+            QVERIFY(apply->isEnabled());
+            if (!status.isEmpty())
+                QVERIFY(hasLabel(dialog, status));
+            if (!notStatus.isEmpty())
+                QVERIFY(!hasLabel(dialog, notStatus));
+        }
+        ReolinkClient::setNetworkFactory(nullptr);
+    }
+
     /// Firmware that has only the older commands still gets asked them.
     void olderFirmwareGetsTheOlderCommands()
     {

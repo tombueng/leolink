@@ -74,6 +74,7 @@ private slots:
                         const QJsonObject &ranges);
     void onSectionApplied(const QString &command);
     void onFailed(const QString &reason);
+    void writeEnded();
     void onApply();
     void onReboot();
     void onNetworkInfo(const QJsonObject &info);
@@ -305,6 +306,8 @@ private:
     QSlider *m_hue{nullptr};
 
     int m_pending{0};   ///< outstanding writes, so status only clears at the end
+    bool m_wroteSomething{false};
+    bool m_writeFailed{false};
 };
 
 } // namespace leolink
