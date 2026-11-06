@@ -105,6 +105,7 @@ private:
 
     mpv_handle *m_mpv{nullptr};
     mpv_render_context *m_render{nullptr};
+    bool m_initialized{false};
     void drainEvents();
 
     QString m_pendingUrl;

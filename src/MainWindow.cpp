@@ -619,13 +619,9 @@ void MainWindow::applyChrome()
     const bool wantFrameless = m_config.frameless;
     if (bool(windowFlags() & Qt::FramelessWindowHint) != wantFrameless) {
         const bool wasVisible = isVisible();
-        // Changing this flag destroys and recreates the native window, which
-        // takes every tile's mpv surface with it — so rebuild afterwards.
         setWindowFlag(Qt::FramelessWindowHint, wantFrameless);
-        if (wasVisible) {
+        if (wasVisible)
             show();
-            rebuildGrid();
-        }
     }
 }
 
@@ -711,6 +707,7 @@ void MainWindow::teardownGrid()
         recorder->deleteLater();
     }
     m_recorders.clear();
+    m_motionRecordings.clear();
 
     for (auto *tile : std::as_const(m_tiles)) {
         tile->stop();
@@ -1411,7 +1408,8 @@ void MainWindow::beginMotionRecording(const CameraConfig &camera)
             tr("Cannot create %1").arg(m_config.effectiveRecordDir()), 8000);
         return;
     }
-    recorderFor(camera)->start(camera, path);
+    if (recorderFor(camera)->start(camera, path))
+        m_motionRecordings.insert(camera.id);
 }
 
 SegmentBuffer *MainWindow::bufferFor(const QString &cameraId) const
@@ -1497,8 +1495,8 @@ void MainWindow::finishBufferedRecording(const CameraConfig &camera)
 
 void MainWindow::scheduleRecordingStop(const CameraConfig &camera)
 {
-    const bool buffered = m_bufferedStart.contains(camera.id);
-    if (!buffered && !isRecording(camera.id))
+    if (!m_bufferedStart.contains(camera.id) &&
+        !m_motionRecordings.contains(camera.id))
         return;
 
     QTimer *timer = m_stopTimers.value(camera.id);
@@ -1537,6 +1535,7 @@ Recorder *MainWindow::recorderFor(const CameraConfig &camera)
     });
     connect(recorder, &Recorder::stopped, this,
             [this, id, name](const QString &path) {
+                m_motionRecordings.remove(id);
                 if (auto *tile = m_tiles.value(id))
                     tile->setRecording(false);
                 if (path.isEmpty())
@@ -1552,6 +1551,7 @@ Recorder *MainWindow::recorderFor(const CameraConfig &camera)
                 m_eventLog->append(entry);
             });
     connect(recorder, &Recorder::failed, this, [this, id, name](const QString &why) {
+        m_motionRecordings.remove(id);
         if (auto *tile = m_tiles.value(id))
             tile->setRecording(false);
         statusBar()->showMessage(tr("%1: %2").arg(name, why), 10000);

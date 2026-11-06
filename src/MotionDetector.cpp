@@ -6,6 +6,7 @@
 #include <cstdlib>
 
 #include <QProcess>
+#include <QTimer>
 #include <QStandardPaths>
 
 #include "ProcessUtil.h"
@@ -21,6 +22,8 @@ constexpr int kHeight = 90;
 constexpr int kFrameBytes = kWidth * kHeight;   // one byte per pixel, greyscale
 constexpr int kFramesPerSecond = 5;
 
+constexpr int kRestartMs = 10000;
+
 QString ffmpegPath()
 {
     static const QString path =
@@ -30,7 +33,18 @@ QString ffmpegPath()
 
 } // namespace
 
-MotionDetector::MotionDetector(QObject *parent) : QObject(parent) {}
+MotionDetector::MotionDetector(QObject *parent) : QObject(parent)
+{
+    m_restart = new QTimer(this);
+    m_restart->setSingleShot(true);
+    m_restart->setInterval(kRestartMs);
+    connect(m_restart, &QTimer::timeout, this, [this] {
+        const auto startAgain = m_startAgain;   // start() replaces m_startAgain
+        m_restarting = true;
+        startAgain();
+        m_restarting = false;
+    });
+}
 
 MotionDetector::~MotionDetector()
 {
@@ -51,6 +65,9 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
                            int sensitivity, int minimumArea)
 {
     stop();
+    m_startAgain = [this, camera, mask, sensitivity, minimumArea] {
+        start(camera, mask, sensitivity, minimumArea);
+    };
 
     const QString ffmpeg = ffmpegPath();
     if (ffmpeg.isEmpty()) {
@@ -98,7 +115,10 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
         analysis.stream = QStringLiteral("sub");
     const QString url = BaichuanStream::openUrl(analysis);
     if (url.isEmpty()) {
-        emit failed(tr("No stream address for %1.").arg(camera.label()));
+        if (m_restarting)
+            m_restart->start();
+        else
+            emit failed(tr("No stream address for %1.").arg(camera.label()));
         return;
     }
 
@@ -121,6 +141,10 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
 
     connect(m_process, &QProcess::readyReadStandardOutput,
             this, &MotionDetector::consume);
+    connect(m_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, process = m_process](int code, QProcess::ExitStatus) {
+                onExited(process, code);
+            });
     connect(m_process, &QProcess::errorOccurred, this, [this] {
         // Not while we are the ones ending it. Shutting down killed ffmpeg and
         // then reported the kill as a fault, which is a log crying wolf at
@@ -157,12 +181,30 @@ void MotionDetector::start(const CameraConfig &camera, const QString &mask,
         emit failed(tr("Could not start ffmpeg for motion detection."));
         m_process->deleteLater();
         m_process = nullptr;
+        if (m_restarting)
+            m_restart->start();
     }
+}
+
+void MotionDetector::onExited(QProcess *process, int exitCode)
+{
+    if (m_stopping || process != m_process)
+        return;
+    LEO_WARN(Motion, m_label,
+             QStringLiteral("ffmpeg exited (%1), trying again").arg(exitCode));
+    process->deleteLater();
+    m_process = nullptr;
+    if (m_active) {
+        m_active = false;
+        emit motionChanged(false);
+    }
+    m_restart->start();
 }
 
 void MotionDetector::stop()
 {
     m_stopping = true;
+    m_restart->stop();
     if (!m_process)
         return;
     m_process->kill();          // no container to finalise here

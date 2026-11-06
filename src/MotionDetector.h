@@ -1,11 +1,14 @@
 // Motion detection performed here, for cameras that report none themselves.
 #pragma once
 
+#include <functional>
+
 #include <QByteArray>
 #include <QObject>
 #include <QString>
 
 class QProcess;
+class QTimer;
 
 namespace leolink {
 
@@ -62,9 +65,14 @@ signals:
 
 private:
     void consume();
+    void onExited(QProcess *process, int exitCode);
     void analyse(const QByteArray &frame);
 
     QProcess *m_process{nullptr};
+    /// Starts it again after ffmpeg exits: the stream ended or the camera went.
+    QTimer *m_restart{nullptr};
+    std::function<void()> m_startAgain;
+    bool m_restarting{false};
     QByteArray m_previous;      ///< last frame, for differencing
     QByteArray m_buffer;        ///< partial frame from the pipe
     QByteArray m_mask;          ///< one byte per pixel: 1 watch, 0 ignore

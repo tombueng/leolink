@@ -15,6 +15,8 @@ class QMenu;
 class QSystemTrayIcon;
 class QTimer;
 
+class TestMainWindow;
+
 namespace leolink {
 
 class AudioDetector;
@@ -33,6 +35,7 @@ class VideoTile;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+    friend class ::TestMainWindow;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -226,6 +229,8 @@ private:
     QHash<QString, QTimer *> m_stopTimers;
     /// One ffmpeg process per camera being recorded, keyed by camera id.
     QHash<QString, Recorder *> m_recorders;
+    /// Recorders started by motion. Motion ending doesn't stop the others.
+    QSet<QString> m_motionRecordings;
     /// One per camera that pre-records, archives round the clock, or both.
     QHash<QString, SegmentBuffer *> m_buffers;
     /// Where a buffered event began, from the moment motion was reported

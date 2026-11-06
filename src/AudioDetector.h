@@ -1,11 +1,14 @@
 // Sound detection, for cameras with a microphone.
 #pragma once
 
+#include <functional>
+
 #include <QByteArray>
 #include <QObject>
 #include <QString>
 
 class QProcess;
+class QTimer;
 
 namespace leolink {
 
@@ -48,9 +51,14 @@ signals:
 
 private:
     void consume();
+    void onExited(QProcess *process, int exitCode);
     void analyse(const QByteArray &window);
 
     QProcess *m_process{nullptr};
+    /// Starts it again after ffmpeg exits: the stream ended or the camera went.
+    QTimer *m_restart{nullptr};
+    std::function<void()> m_startAgain;
+    bool m_restarting{false};
     /// Camera name for the log, and a flag so a deliberate kill is not
     /// reported as a fault.
     QString m_label;

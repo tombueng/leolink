@@ -22,7 +22,7 @@ jobs:
             qt6-base-dev qt6-base-dev-tools qt6-svg-dev \
             qt6-tools-dev qt6-tools-dev-tools \
             libmpv-dev qtkeychain-qt6-dev \
-            desktop-file-utils appstream
+            desktop-file-utils appstream ffmpeg
 
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release

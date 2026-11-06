@@ -227,8 +227,13 @@ void MpvWidget::initializeGL()
         }
     }
 
-    if (mpv_initialize(m_mpv) < 0)
-        return;
+    // Once: this runs again if making the render context failed, and libmpv
+    // aborts on a second call.
+    if (!m_initialized) {
+        if (mpv_initialize(m_mpv) < 0)
+            return;
+        m_initialized = true;
+    }
 
     mpv_opengl_init_params glInit{getProcAddress, nullptr};
     // Advanced control is deliberately OFF. With it on, mpv hands frame timing

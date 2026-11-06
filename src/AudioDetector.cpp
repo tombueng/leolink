@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include <QProcess>
+#include <QTimer>
 #include <QStandardPaths>
 
 #include "ProcessUtil.h"
@@ -21,6 +22,8 @@ constexpr int kWindowMs = 250;
 constexpr int kWindowBytes = kSampleRate * kWindowMs / 1000 * 2;
 constexpr double kSilenceDb = -100.0;
 
+constexpr int kRestartMs = 10000;
+
 QString ffmpegPath()
 {
     static const QString path =
@@ -30,7 +33,18 @@ QString ffmpegPath()
 
 } // namespace
 
-AudioDetector::AudioDetector(QObject *parent) : QObject(parent) {}
+AudioDetector::AudioDetector(QObject *parent) : QObject(parent)
+{
+    m_restart = new QTimer(this);
+    m_restart->setSingleShot(true);
+    m_restart->setInterval(kRestartMs);
+    connect(m_restart, &QTimer::timeout, this, [this] {
+        const auto startAgain = m_startAgain;   // start() replaces m_startAgain
+        m_restarting = true;
+        startAgain();
+        m_restarting = false;
+    });
+}
 
 AudioDetector::~AudioDetector()
 {
@@ -51,6 +65,9 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
                           int holdSeconds)
 {
     stop();
+    m_startAgain = [this, camera, thresholdDb, holdSeconds] {
+        start(camera, thresholdDb, holdSeconds);
+    };
 
     const QString ffmpeg = ffmpegPath();
     if (ffmpeg.isEmpty()) {
@@ -71,7 +88,10 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
         analysis.stream = QStringLiteral("sub");
     const QString url = analysis.streamUrl();
     if (url.isEmpty()) {
-        emit failed(tr("No stream address for %1.").arg(camera.label()));
+        if (m_restarting)
+            m_restart->start();
+        else
+            emit failed(tr("No stream address for %1.").arg(camera.label()));
         return;
     }
 
@@ -95,6 +115,10 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
 
     connect(m_process, &QProcess::readyReadStandardOutput,
             this, &AudioDetector::consume);
+    connect(m_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, process = m_process](int code, QProcess::ExitStatus) {
+                onExited(process, code);
+            });
     connect(m_process, &QProcess::errorOccurred, this, [this] {
         if (m_stopping)
             return;   // we killed it; that is not a fault
@@ -108,12 +132,30 @@ void AudioDetector::start(const CameraConfig &camera, double thresholdDb,
         emit failed(tr("Could not start ffmpeg for sound detection."));
         m_process->deleteLater();
         m_process = nullptr;
+        if (m_restarting)
+            m_restart->start();
     }
+}
+
+void AudioDetector::onExited(QProcess *process, int exitCode)
+{
+    if (m_stopping || process != m_process)
+        return;
+    LEO_WARN(Motion, m_label,
+             QStringLiteral("ffmpeg exited (%1), trying again").arg(exitCode));
+    process->deleteLater();
+    m_process = nullptr;
+    if (m_active) {
+        m_active = false;
+        emit soundChanged(false);
+    }
+    m_restart->start();
 }
 
 void AudioDetector::stop()
 {
     m_stopping = true;
+    m_restart->stop();
     if (!m_process)
         return;
     m_process->kill();
