@@ -120,6 +120,10 @@ private:
     void reconcileGrid(const Config &previous);
     /// Same for the things that watch for motion and sound.
     void reconcileWatchers(const QHash<QString, CameraConfig> &previous);
+    /// Replaces clients whose camera's login changed, asks new cameras what
+    /// they have.
+    void reconcileClients(const QHash<QString, CameraConfig> &previous);
+    void startStatusPolling();
     /// Places every tile per Config::layout(). Separate from rebuildGrid() so
     /// leaving full screen does not restart the streams.
     void applyLayout();

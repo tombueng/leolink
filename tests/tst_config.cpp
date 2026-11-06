@@ -242,6 +242,56 @@ private slots:
         }
     }
 
+    void passwordSourceDecides()
+    {
+        CameraConfig c = camera(QStringLiteral("Hall"), QStringLiteral("192.0.2.10"));
+        c.password = QStringLiteral("typed");
+        c.passwordCommand = QStringLiteral("printf 'from the command'");
+        c.passwordSource = QStringLiteral("config");
+        QCOMPARE(c.secret(), QStringLiteral("typed"));
+        c.passwordSource = QStringLiteral("command");
+        QCOMPARE(c.secret(), QStringLiteral("from the command"));
+    }
+
+    void sameStreamSeesBaichuanChanges_data()
+    {
+        QTest::addColumn<QString>("field");
+        QTest::addColumn<bool>("same");
+        QTest::newRow("name") << QStringLiteral("name") << true;
+        QTest::newRow("host") << QStringLiteral("host") << false;
+        QTest::newRow("user") << QStringLiteral("user") << false;
+        QTest::newRow("password") << QStringLiteral("password") << false;
+        QTest::newRow("channel") << QStringLiteral("channel") << false;
+        QTest::newRow("stream") << QStringLiteral("stream") << false;
+        QTest::newRow("transport") << QStringLiteral("transport") << false;
+    }
+
+    void sameStreamSeesBaichuanChanges()
+    {
+        QFETCH(QString, field);
+        QFETCH(bool, same);
+        CameraConfig a = camera(QStringLiteral("Hall"), QStringLiteral("192.0.2.10"));
+        a.transport = QStringLiteral("baichuan");
+        a.password = QStringLiteral("one");
+        QVERIFY(a.streamUrl().isEmpty());
+        CameraConfig b = a;
+        if (field == QLatin1String("name"))
+            b.name = QStringLiteral("Porch");
+        else if (field == QLatin1String("host"))
+            b.host = QStringLiteral("192.0.2.11");
+        else if (field == QLatin1String("user"))
+            b.user = QStringLiteral("other");
+        else if (field == QLatin1String("password"))
+            b.password = QStringLiteral("two");
+        else if (field == QLatin1String("channel"))
+            b.channel = 2;
+        else if (field == QLatin1String("stream"))
+            b.stream = QStringLiteral("main");
+        else
+            b.transport = QStringLiteral("rtsp");
+        QCOMPARE(a.sameStream(b), same);
+    }
+
     void passwordFromACommand()
     {
         CameraConfig c = camera(QStringLiteral("Hall"), QStringLiteral("192.0.2.10"));

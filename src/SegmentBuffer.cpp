@@ -71,9 +71,7 @@ bool SegmentBuffer::start(const CameraConfig &camera, const Settings &settings)
     // are re-applied on every change to the configuration, and tearing the
     // buffer down for an unrelated edit would punch a hole in the archive.
     if (isRunning() && m_camera && m_camera->id == camera.id &&
-        m_camera->streamUrl() == camera.streamUrl() &&
-        m_camera->effectiveTransport() == camera.effectiveTransport() &&
-        m_camera->stream == camera.stream &&
+        m_camera->sameStream(camera) &&
         m_settings.directory == settings.directory &&
         m_settings.segmentSeconds == settings.segmentSeconds) {
         m_settings.retentionSeconds = settings.retentionSeconds;

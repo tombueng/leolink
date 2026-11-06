@@ -156,6 +156,17 @@ private:
     }
 
 private slots:
+    /// Holders of an old password must not hand it to new callers.
+    void sessionsAreSharedPerLogin()
+    {
+        leolink::CameraConfig camera;
+        camera.host = QStringLiteral("192.0.2.77");
+        camera.baichuanPort = 1;
+        const auto first = BaichuanApi::forCamera(camera, QStringLiteral("one"));
+        QCOMPARE(BaichuanApi::forCamera(camera, QStringLiteral("one")), first);
+        QVERIFY(BaichuanApi::forCamera(camera, QStringLiteral("two")) != first);
+    }
+
     void cleanup()
     {
         m_client.reset();

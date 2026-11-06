@@ -148,6 +148,12 @@ struct CameraConfig {
     /// that redirect without this flag meant verifying a self-signed
     /// certificate and failing every login.
     bool effectiveHttps() const;
+
+    /// Same device, same credentials.
+    bool sameLogin(const CameraConfig &other) const;
+    /// sameLogin(), and the same picture from it. streamUrl() can't tell: it
+    /// is empty for Baichuan.
+    bool sameStream(const CameraConfig &other) const;
 };
 
 /// A camera together with the cell it occupies.

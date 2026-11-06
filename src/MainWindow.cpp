@@ -811,6 +811,13 @@ void MainWindow::rebuildGrid()
     askAboutSpeakers();
     askAboutPtz();
 
+    startStatusPolling();
+
+    statusBar()->showMessage(tr("%n camera(s) live", nullptr, cameras.size()));
+}
+
+void MainWindow::startStatusPolling()
+{
     // Every half minute is plenty: signal strength drifts, it does not jump,
     // and each poll is a login plus one request on a small embedded device.
     if (!m_statusTimer) {
@@ -820,8 +827,6 @@ void MainWindow::rebuildGrid()
     }
     m_statusTimer->start();
     QTimer::singleShot(2000, this, &MainWindow::pollCameraStatus);
-
-    statusBar()->showMessage(tr("%n camera(s) live", nullptr, cameras.size()));
 }
 
 void MainWindow::applyLayout()
@@ -1862,6 +1867,7 @@ void MainWindow::applyConfig(const Config &next)
         reconcileGrid(previous);
         reconcileWatchers(watched);
         reconcileBuffers();
+        reconcileClients(watched);
     });
 }
 
@@ -1980,8 +1986,8 @@ ReolinkClient *MainWindow::ptzClient(const CameraConfig &camera)
         // Once, here. setCamera() logs out and drops the Baichuan session, so
         // calling it on every press and release put a whole login between
         // letting go and "Stop" — and on a camera short of sessions, lost the
-        // Stop, and the camera turned to its end stop. The clients are made
-        // afresh with every grid, so a changed camera gets a new one anyway.
+        // Stop, and the camera turned to its end stop. reconcileClients()
+        // replaces this one if the camera's login changes.
         client->setCamera(camera);
     }
     return client;
@@ -2206,8 +2212,7 @@ void MainWindow::reconcileWatchers(const QHash<QString, CameraConfig> &previous)
                a.audioDetection != b.audioDetection ||
                a.audioThresholdDb != b.audioThresholdDb ||
                a.audioHoldSeconds != b.audioHoldSeconds ||
-               a.streamUrl() != b.streamUrl() ||
-               a.effectiveTransport() != b.effectiveTransport();
+               !a.sameStream(b);
     };
 
     QSet<QString> live;
@@ -2256,6 +2261,32 @@ void MainWindow::reconcileWatchers(const QHash<QString, CameraConfig> &previous)
     // startWatchers() creates only what is missing, so the untouched ones stay
     // exactly as they were.
     startWatchers();
+}
+
+void MainWindow::reconcileClients(const QHash<QString, CameraConfig> &previous)
+{
+    bool askAgain = false;
+    QSet<QString> live;
+    for (const CameraConfig &camera : m_config.active()) {
+        live.insert(camera.id);
+        const auto was = previous.constFind(camera.id);
+        if (was != previous.constEnd() && was->sameLogin(camera))
+            continue;
+        askAgain = true;
+        if (was != previous.constEnd())
+            delete m_statusClients.take(was->host);
+        delete m_statusClients.take(camera.host);
+    }
+    for (const QString &id : m_ptzClients.keys()) {
+        if (!live.contains(id))
+            m_ptzClients.take(id)->deleteLater();
+    }
+    if (askAgain) {
+        askAboutSpeakers();
+        askAboutPtz();
+    }
+    if (!live.isEmpty() && (!m_statusTimer || !m_statusTimer->isActive()))
+        startStatusPolling();
 }
 
 void MainWindow::snapshotAll()

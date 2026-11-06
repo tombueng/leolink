@@ -135,7 +135,7 @@ QString CameraConfig::secret() const
         return remember(stored);
     }
 
-    if (passwordCommand.isEmpty())
+    if (passwordSource != QLatin1String("command") || passwordCommand.isEmpty())
         return remember(password);
 
     // Deliberately synchronous and short-lived: this runs once per stream
@@ -145,6 +145,22 @@ QString CameraConfig::secret() const
     if (!proc.waitForFinished(15000) || proc.exitCode() != 0)
         return {};
     return remember(QString::fromUtf8(proc.readAllStandardOutput()).trimmed());
+}
+
+bool CameraConfig::sameLogin(const CameraConfig &other) const
+{
+    return host == other.host && user == other.user &&
+           baichuanPort == other.baichuanPort &&
+           effectiveHttps() == other.effectiveHttps() &&
+           secret() == other.secret();
+}
+
+bool CameraConfig::sameStream(const CameraConfig &other) const
+{
+    return channel == other.channel && stream == other.stream &&
+           customUrl == other.customUrl &&
+           effectiveTransport() == other.effectiveTransport() &&
+           sameLogin(other);
 }
 
 QString CameraConfig::streamUrl() const

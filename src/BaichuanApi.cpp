@@ -245,8 +245,11 @@ std::shared_ptr<BaichuanApi> BaichuanApi::forCamera(const CameraConfig &camera,
                                                     const QString &secret)
 {
     const QMutexLocker lock(&registryLock());
+    // With the login: holders of an old password must not hand it to new callers.
     std::weak_ptr<BaichuanApi> &slot =
-        registry()[camera.host + QLatin1Char(':') + QString::number(camera.baichuanPort)];
+        registry()[QStringList{camera.host, QString::number(camera.baichuanPort),
+                               camera.user, secret}
+                       .join(QLatin1Char(':'))];
     if (std::shared_ptr<BaichuanApi> existing = slot.lock())
         return existing;
     std::shared_ptr<BaichuanApi> made(new BaichuanApi(camera, secret));

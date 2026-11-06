@@ -721,6 +721,13 @@ void SettingsDialog::offerNvrChannels(const QJsonArray &channels)
     bool consumed = false;
     int added = 0;
 
+    // New ids have no keyring entry: the password goes along, to be moved there
+    // on save.
+    const QString keyringPassword =
+        probed.passwordSource == QLatin1String("keyring") && probed.password.isEmpty()
+            ? probed.secret()
+            : QString();
+
     for (int i = 0; i < list->count(); ++i) {
         const QListWidgetItem *item = list->item(i);
         if (item->checkState() != Qt::Checked)
@@ -748,6 +755,8 @@ void SettingsDialog::offerNvrChannels(const QJsonArray &channels)
             consumed = true;
         } else {
             c.id = Config::newId();
+            if (!keyringPassword.isEmpty())
+                c.password = keyringPassword;
             m_config.cameras.append(c);
         }
         ++added;

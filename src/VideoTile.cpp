@@ -442,6 +442,11 @@ void VideoTile::createPlayer()
         // itself, which is the point of the container being there at all.
         set("demuxer", QStringLiteral("lavf"));
         set("demuxer-lavf-format", QStringLiteral("mpegts"));
+    } else {
+        // Options outlive the stream, and the player stays when the transport
+        // changes.
+        set("demuxer", QString());
+        set("demuxer-lavf-format", QString());
     }
 
     set("keep-open", QStringLiteral("no"));
@@ -704,13 +709,7 @@ void VideoTile::restart()
 
 void VideoTile::applyConfig(const CameraConfig &config)
 {
-    // Compared as configuration, not as URL: the Baichuan transport has no URL
-    // until its connection is up, and comparing empty against empty would make
-    // a switch between stream types look like no change at all.
-    const bool streamChanged =
-        config.streamUrl() != m_config.streamUrl() ||
-        config.effectiveTransport() != m_config.effectiveTransport() ||
-        config.stream != m_config.stream;
+    const bool streamChanged = !config.sameStream(m_config);
     m_config = config;
 
     m_title->setText(m_config.label());
