@@ -26,7 +26,7 @@
         <translation>Соединение с %1 потеряно.</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanApi.cpp" line="377"/>
+        <location filename="../src/BaichuanApi.cpp" line="380"/>
         <source>The camera did not take the firmware: %1</source>
         <translation>Камера не приняла прошивку: %1</translation>
     </message>
@@ -138,22 +138,22 @@
 <context>
     <name>leolink::AudioDetector</name>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="57"/>
+        <location filename="../src/AudioDetector.cpp" line="74"/>
         <source>ffmpeg is not installed, so sound detection is unavailable.</source>
         <translation>ffmpeg не установлен, поэтому обнаружение звука недоступно.</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="74"/>
+        <location filename="../src/AudioDetector.cpp" line="94"/>
         <source>No stream address for %1.</source>
         <translation>Нет адреса потока для %1.</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="103"/>
+        <location filename="../src/AudioDetector.cpp" line="127"/>
         <source>Sound detection stopped: %1</source>
         <translation>Обнаружение звука остановлено: %1</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="108"/>
+        <location filename="../src/AudioDetector.cpp" line="132"/>
         <source>Could not start ffmpeg for sound detection.</source>
         <translation>Не удалось запустить ffmpeg для обнаружения звука.</translation>
     </message>
@@ -197,12 +197,12 @@
 <context>
     <name>leolink::CameraConfig</name>
     <message>
-        <location filename="../src/Config.cpp" line="95"/>
+        <location filename="../src/Config.cpp" line="96"/>
         <source>%1 channel %2</source>
         <translation>%1 канал %2</translation>
     </message>
     <message>
-        <location filename="../src/Config.cpp" line="102"/>
+        <location filename="../src/Config.cpp" line="103"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
@@ -2054,12 +2054,13 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
         <translation>Запись в камеру…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2939"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2941"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2971"/>
         <source>Nothing to write.</source>
         <translation>Записывать нечего.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2956"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2969"/>
         <source>Saved. Changing the encoder restarts the stream, so the picture may drop out for a moment.</source>
         <translation>Сохранено. Смена кодировщика перезапускает поток, поэтому изображение может ненадолго пропасть.</translation>
     </message>
@@ -2189,29 +2190,29 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
 <context>
     <name>leolink::EventDispatcher</name>
     <message>
-        <location filename="../src/EventActions.cpp" line="116"/>
-        <location filename="../src/EventActions.cpp" line="123"/>
+        <location filename="../src/EventActions.cpp" line="179"/>
+        <location filename="../src/EventActions.cpp" line="185"/>
         <source>Command</source>
         <translation>Команда</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="116"/>
+        <location filename="../src/EventActions.cpp" line="179"/>
         <source>could not be started</source>
         <translation>не удалось запустить</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="134"/>
-        <location filename="../src/EventActions.cpp" line="172"/>
+        <location filename="../src/EventActions.cpp" line="196"/>
+        <location filename="../src/EventActions.cpp" line="234"/>
         <source>Webhook</source>
         <translation>Webhook</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="134"/>
+        <location filename="../src/EventActions.cpp" line="196"/>
         <source>invalid URL</source>
         <translation>неверный адрес</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="178"/>
+        <location filename="../src/EventActions.cpp" line="240"/>
         <source>Webhook → %1</source>
         <translation>Webhook → %1</translation>
     </message>
@@ -2489,144 +2490,154 @@ Use “Cameras…” to add one.</source>
         <translation>Камеры сообщают, что они поддерживают…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="297"/>
+        <location filename="../src/MainWindow.cpp" line="146"/>
+        <source>Configuration not readable</source>
+        <translation>Конфигурация не читается</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="147"/>
+        <source>%1 could not be read. It was kept as %2, and leolink started without it.</source>
+        <translation>Не удалось прочитать %1. Файл сохранён как %2, leolink запущен без него.</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="314"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="299"/>
+        <location filename="../src/MainWindow.cpp" line="316"/>
         <source>&amp;Cameras…</source>
         <translation>&amp;Камеры…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="304"/>
+        <location filename="../src/MainWindow.cpp" line="321"/>
         <source>&amp;Settings…</source>
         <translation>&amp;Настройки…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="310"/>
+        <location filename="../src/MainWindow.cpp" line="327"/>
         <source>&amp;Save snapshots…</source>
         <translation>&amp;Сохранить снимки…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="315"/>
+        <location filename="../src/MainWindow.cpp" line="332"/>
         <source>&amp;Record all cameras</source>
         <translation>&amp;Записывать все камеры</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="322"/>
+        <location filename="../src/MainWindow.cpp" line="339"/>
         <source>&amp;Event log…</source>
         <translation>&amp;Журнал событий…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="330"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Recordings on the &amp;camera…</source>
         <translation>Записи на &amp;камере…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="332"/>
+        <location filename="../src/MainWindow.cpp" line="349"/>
         <source>Browse what is stored on the camera&apos;s own SD card.</source>
         <translation>Просмотрите то, что лежит на собственной карте SD камеры.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="336"/>
-        <location filename="../src/MainWindow.cpp" line="775"/>
-        <location filename="../src/MainWindow.cpp" line="2143"/>
+        <location filename="../src/MainWindow.cpp" line="353"/>
+        <location filename="../src/MainWindow.cpp" line="796"/>
+        <location filename="../src/MainWindow.cpp" line="2179"/>
         <source>No cameras configured</source>
         <translation>Камеры не настроены</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="347"/>
+        <location filename="../src/MainWindow.cpp" line="364"/>
         <source>Which camera</source>
         <translation>Какая камера</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="347"/>
+        <location filename="../src/MainWindow.cpp" line="364"/>
         <source>Show recordings from</source>
         <translation>Показать записи с</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="359"/>
+        <location filename="../src/MainWindow.cpp" line="376"/>
         <source>Open &amp;recordings folder</source>
         <translation>Открыть папку &amp;записей</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="367"/>
+        <location filename="../src/MainWindow.cpp" line="384"/>
         <source>&amp;Quit</source>
         <translation>В&amp;ыход</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="372"/>
+        <location filename="../src/MainWindow.cpp" line="389"/>
         <source>&amp;View</source>
         <translation>&amp;Вид</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="374"/>
+        <location filename="../src/MainWindow.cpp" line="391"/>
         <source>&amp;Full screen</source>
         <translation>&amp;Полный экран</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="413"/>
+        <location filename="../src/MainWindow.cpp" line="430"/>
         <source>Show &amp;menu bar</source>
         <translation>Показывать строку &amp;меню</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="427"/>
+        <location filename="../src/MainWindow.cpp" line="444"/>
         <source>Show &amp;toolbar</source>
         <translation>Показывать панель &amp;инструментов</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="436"/>
+        <location filename="../src/MainWindow.cpp" line="453"/>
         <source>Show status &amp;bar</source>
         <translation>Показывать строку &amp;состояния</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="445"/>
+        <location filename="../src/MainWindow.cpp" line="462"/>
         <source>Hide window &amp;decoration</source>
         <translation>Скрыть &amp;рамку окна</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="457"/>
+        <location filename="../src/MainWindow.cpp" line="474"/>
         <source>Drag the strip under a camera to move the window. Ctrl+Shift+D brings the frame back, Ctrl+M the menu.</source>
         <translation>Чтобы передвинуть окно, потяните полосу под камерой. Ctrl+Shift+D возвращает рамку, Ctrl+M — меню.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="464"/>
+        <location filename="../src/MainWindow.cpp" line="481"/>
         <source>&amp;Help</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="475"/>
+        <location filename="../src/MainWindow.cpp" line="492"/>
         <source>&amp;Protocol notes</source>
         <translation>Заметки о &amp;протоколе</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="479"/>
+        <location filename="../src/MainWindow.cpp" line="496"/>
         <source>&amp;Diagnostics…</source>
         <translation>&amp;Диагностика…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="482"/>
+        <location filename="../src/MainWindow.cpp" line="499"/>
         <source>What leolink and the cameras have been doing — and a report to attach to a bug report.</source>
         <translation>Чем занимались leolink и камеры — и отчёт, который можно приложить к сообщению об ошибке.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="486"/>
+        <location filename="../src/MainWindow.cpp" line="503"/>
         <source>&amp;Report a problem</source>
         <translation>Сообщить о п&amp;роблеме</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="491"/>
+        <location filename="../src/MainWindow.cpp" line="508"/>
         <source>Report a problem</source>
         <translation>Сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="493"/>
+        <location filename="../src/MainWindow.cpp" line="510"/>
         <source>&lt;b&gt;Attach a diagnostics report&lt;/b&gt;</source>
         <translation>&lt;b&gt;Приложите диагностический отчёт&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="495"/>
+        <location filename="../src/MainWindow.cpp" line="512"/>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
@@ -2635,244 +2646,244 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 Если проблему удаётся вызвать самому, сначала включите подробный журнал в окне диагностики, повторите её и лишь затем скопируйте отчёт.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="502"/>
+        <location filename="../src/MainWindow.cpp" line="519"/>
         <source>Open diagnostics</source>
         <translation>Открыть диагностику</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="504"/>
+        <location filename="../src/MainWindow.cpp" line="521"/>
         <source>Go to the issue tracker</source>
         <translation>Перейти к трекеру задач</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="515"/>
+        <location filename="../src/MainWindow.cpp" line="532"/>
         <source>&amp;About leolink</source>
         <translation>&amp;О leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="518"/>
+        <location filename="../src/MainWindow.cpp" line="535"/>
         <source>About leolink</source>
         <translation>О leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="548"/>
         <source>Main</source>
         <translation>Основная</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="543"/>
+        <location filename="../src/MainWindow.cpp" line="560"/>
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="559"/>
+        <location filename="../src/MainWindow.cpp" line="576"/>
         <source>Leave full screen</source>
         <translation>Выйти из полного экрана</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="566"/>
-        <location filename="../src/MainWindow.cpp" line="630"/>
+        <location filename="../src/MainWindow.cpp" line="583"/>
+        <location filename="../src/MainWindow.cpp" line="643"/>
         <source>Cameras…</source>
         <translation>Камеры…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="568"/>
+        <location filename="../src/MainWindow.cpp" line="585"/>
         <source>Event log…</source>
         <translation>Журнал событий…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="574"/>
-        <location filename="../src/MainWindow.cpp" line="633"/>
+        <location filename="../src/MainWindow.cpp" line="591"/>
+        <location filename="../src/MainWindow.cpp" line="646"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="624"/>
+        <location filename="../src/MainWindow.cpp" line="637"/>
         <source>Show window</source>
         <translation>Показать окно</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="800"/>
+        <location filename="../src/MainWindow.cpp" line="813"/>
         <source>%n camera(s) live</source>
         <translation><numerusform>%n камера в эфире</numerusform><numerusform>%n камеры в эфире</numerusform><numerusform>%n камер в эфире</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1109"/>
+        <location filename="../src/MainWindow.cpp" line="1135"/>
         <source>Esc leaves full screen</source>
         <translation>Esc выходит из полного экрана</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1116"/>
-        <location filename="../src/MainWindow.cpp" line="1155"/>
+        <location filename="../src/MainWindow.cpp" line="1142"/>
+        <location filename="../src/MainWindow.cpp" line="1181"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>Двойной щелчок — вернуться к сетке · Esc выходит из полного экрана</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1153"/>
+        <location filename="../src/MainWindow.cpp" line="1179"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>Esc выходит из полного экрана · двойной щелчок по камере разворачивает её на весь экран</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1178"/>
+        <location filename="../src/MainWindow.cpp" line="1204"/>
         <source>Grid view</source>
         <translation>Сетка</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1364"/>
-        <location filename="../src/MainWindow.cpp" line="1382"/>
-        <location filename="../src/MainWindow.cpp" line="1617"/>
+        <location filename="../src/MainWindow.cpp" line="1389"/>
+        <location filename="../src/MainWindow.cpp" line="1408"/>
+        <location filename="../src/MainWindow.cpp" line="1646"/>
         <source>Cannot create %1</source>
         <translation>Не удаётся создать %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1507"/>
+        <location filename="../src/MainWindow.cpp" line="1534"/>
         <source>Recording %1</source>
         <translation>Запись %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1429"/>
-        <location filename="../src/MainWindow.cpp" line="1515"/>
+        <location filename="../src/MainWindow.cpp" line="1456"/>
+        <location filename="../src/MainWindow.cpp" line="1543"/>
         <source>Saved %1</source>
         <translation>Сохранено %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="469"/>
+        <location filename="../src/MainWindow.cpp" line="486"/>
         <source>&amp;Handbook</source>
         <translation>&amp;Руководство</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="519"/>
+        <location filename="../src/MainWindow.cpp" line="536"/>
         <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink&apos;s own Baichuan for cameras without a web server.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;Родной клиент Linux для камер Reolink.&lt;/p&gt;&lt;p&gt;Говорит на собственных протоколах камеры напрямую, в локальной сети: HTTP-интерфейс, RTSP, ONVIF и собственный протокол Reolink Baichuan для камер без веб-сервера.&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;Руководство&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;Исходный код&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Не связан с Reolink и не поддерживается ею.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1521"/>
-        <location filename="../src/MainWindow.cpp" line="1652"/>
+        <location filename="../src/MainWindow.cpp" line="1549"/>
+        <location filename="../src/MainWindow.cpp" line="1681"/>
         <source>Recording stopped</source>
         <translation>Запись остановлена</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1528"/>
+        <location filename="../src/MainWindow.cpp" line="1557"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1633"/>
+        <location filename="../src/MainWindow.cpp" line="1662"/>
         <source>Recording started</source>
         <translation>Запись начата</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1651"/>
+        <location filename="../src/MainWindow.cpp" line="1680"/>
         <source>Recording all cameras</source>
         <translation>Идёт запись всех камер</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1732"/>
+        <location filename="../src/MainWindow.cpp" line="1761"/>
         <source>%1 at %2</source>
         <translation>%1 у %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1752"/>
+        <location filename="../src/MainWindow.cpp" line="1781"/>
         <source>Motion detected</source>
         <translation>Обнаружено движение</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1764"/>
+        <location filename="../src/MainWindow.cpp" line="1793"/>
         <source>Sound detected</source>
         <translation>Обнаружен звук</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1787"/>
+        <location filename="../src/MainWindow.cpp" line="1816"/>
         <source>Menu bar hidden</source>
         <translation>Строка меню скрыта</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1788"/>
+        <location filename="../src/MainWindow.cpp" line="1817"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>Когда скрыты и строка меню, и панель инструментов, нажмите Ctrl+M, чтобы вернуть меню.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1807"/>
+        <location filename="../src/MainWindow.cpp" line="1836"/>
         <source>Cannot save</source>
         <translation>Не удаётся сохранить</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1808"/>
+        <location filename="../src/MainWindow.cpp" line="1837"/>
         <source>Settings could not be written to %1.</source>
         <translation>Настройки не удалось записать в %1.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1953"/>
+        <location filename="../src/MainWindow.cpp" line="1983"/>
         <source>The camera would not move: %1</source>
         <translation>Камера не сдвинулась: %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2078"/>
+        <location filename="../src/MainWindow.cpp" line="2108"/>
         <source>Play through %1</source>
         <translation>Воспроизвести через %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2079"/>
+        <location filename="../src/MainWindow.cpp" line="2109"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>Звуковые файлы (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2091"/>
+        <location filename="../src/MainWindow.cpp" line="2121"/>
         <source>Speaking through the camera…</source>
         <translation>Говорим через камеру…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2098"/>
+        <location filename="../src/MainWindow.cpp" line="2128"/>
         <source>Finished.</source>
         <translation>Готово.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2234"/>
+        <location filename="../src/MainWindow.cpp" line="2295"/>
         <source>Nothing to capture</source>
         <translation>Снимать нечего</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2239"/>
+        <location filename="../src/MainWindow.cpp" line="2300"/>
         <source>Save snapshots to</source>
         <translation>Сохранять снимки в</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="2257"/>
+        <location filename="../src/MainWindow.cpp" line="2318"/>
         <source>Saved %n snapshot(s)</source>
         <translation><numerusform>Сохранён %n снимок</numerusform><numerusform>Сохранено %n снимка</numerusform><numerusform>Сохранено %n снимков</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2275"/>
+        <location filename="../src/MainWindow.cpp" line="2336"/>
         <source>Welcome to leolink</source>
         <translation>Добро пожаловать в leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2277"/>
+        <location filename="../src/MainWindow.cpp" line="2338"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Пока не настроено ни одной камеры.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2279"/>
+        <location filename="../src/MainWindow.cpp" line="2340"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>Добавьте камеру с её адресом, именем пользователя и паролем. leolink говорит с камерой напрямую в вашей сети — никакой облачной учётной записи не требуется.&lt;p&gt;Что делает каждый параметр, описано в руководстве.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2283"/>
+        <location filename="../src/MainWindow.cpp" line="2344"/>
         <source>Add camera…</source>
         <translation>Добавить камеру…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2284"/>
+        <location filename="../src/MainWindow.cpp" line="2345"/>
         <source>Open handbook</source>
         <translation>Открыть руководство</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2367"/>
+        <location filename="../src/MainWindow.cpp" line="2428"/>
         <source>leolink is still running</source>
         <translation>leolink продолжает работать</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2368"/>
+        <location filename="../src/MainWindow.cpp" line="2429"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>Камеры продолжают запись. Чтобы вернуться, воспользуйтесь значком в области уведомлений.</translation>
     </message>
@@ -2926,22 +2937,22 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 <context>
     <name>leolink::MotionDetector</name>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="60"/>
+        <location filename="../src/MotionDetector.cpp" line="77"/>
         <source>ffmpeg is not installed, so motion detection is unavailable.</source>
         <translation>ffmpeg не установлен, поэтому обнаружение движения недоступно.</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="101"/>
+        <location filename="../src/MotionDetector.cpp" line="121"/>
         <source>No stream address for %1.</source>
         <translation>Нет адреса потока для %1.</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="132"/>
+        <location filename="../src/MotionDetector.cpp" line="156"/>
         <source>Motion detection stopped: %1</source>
         <translation>Обнаружение движения остановлено: %1</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="157"/>
+        <location filename="../src/MotionDetector.cpp" line="181"/>
         <source>Could not start ffmpeg for motion detection.</source>
         <translation>Не удалось запустить ffmpeg для обнаружения движения.</translation>
     </message>
@@ -3095,12 +3106,12 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
         <translation>Не удаётся записать в %1.</translation>
     </message>
     <message>
-        <location filename="../src/PlaybackBrowser.cpp" line="260"/>
+        <location filename="../src/PlaybackBrowser.cpp" line="267"/>
         <source>Saved to %1</source>
         <translation>Сохранено в %1</translation>
     </message>
     <message>
-        <location filename="../src/PlaybackBrowser.cpp" line="263"/>
+        <location filename="../src/PlaybackBrowser.cpp" line="270"/>
         <source>Download failed: %1</source>
         <translation>Не удалось скачать: %1</translation>
     </message>
@@ -3619,67 +3630,67 @@ If the picture is broken, try the others in turn. “Software only” always wor
         <translation>%1 — прошивка %2, каналов: %3</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="986"/>
+        <location filename="../src/ReolinkClient.cpp" line="993"/>
         <source>The camera could not join that network: %1</source>
         <translation>Камере не удалось подключиться к этой сети: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="996"/>
+        <location filename="../src/ReolinkClient.cpp" line="1003"/>
         <source>E-mail</source>
         <translation>Эл. почта</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1006"/>
+        <location filename="../src/ReolinkClient.cpp" line="1013"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1046"/>
+        <location filename="../src/ReolinkClient.cpp" line="1053"/>
         <source>Update available: %1</source>
         <translation>Доступно обновление: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1047"/>
+        <location filename="../src/ReolinkClient.cpp" line="1054"/>
         <source>The firmware is up to date.</source>
         <translation>Прошивка актуальна.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1064"/>
+        <location filename="../src/ReolinkClient.cpp" line="1071"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>Идёт обновление. Камера перезапустится сама и несколько минут будет недоступна. Не отключайте ей питание.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1078"/>
+        <location filename="../src/ReolinkClient.cpp" line="1085"/>
         <source>Installing from a file needs the camera&apos;s port 9000, which it does not offer.</source>
         <translation>Для установки из файла нужен порт 9000 камеры, а она его не предоставляет.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1095"/>
+        <location filename="../src/ReolinkClient.cpp" line="1102"/>
         <source>Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.</source>
         <translation>Отправлено. Камера устанавливает прошивку и сама перезагрузится, несколько минут она будет недоступна. Не отключайте питание.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1171"/>
+        <location filename="../src/ReolinkClient.cpp" line="1178"/>
         <source>The camera restarted on %1, the build it had before, so the update was not installed.</source>
         <translation>Камера перезагрузилась на %1 — сборке, что была раньше, значит обновление не установилось.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1177"/>
+        <location filename="../src/ReolinkClient.cpp" line="1184"/>
         <source>The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.</source>
         <translation><numerusform>Камера не отвечает %n минуту. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.</numerusform><numerusform>Камера не отвечает %n минуты. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.</numerusform><numerusform>Камера не отвечает %n минут. Возможно, установка ещё идёт; не отключайте питание и проверьте позже.</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1180"/>
+        <location filename="../src/ReolinkClient.cpp" line="1187"/>
         <source>The camera still reports %1 after %n minute(s).</source>
         <translation><numerusform>Через %n минуту камера всё ещё сообщает %1.</numerusform><numerusform>Через %n минуты камера всё ещё сообщает %1.</numerusform><numerusform>Через %n минут камера всё ещё сообщает %1.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1292"/>
+        <location filename="../src/ReolinkClient.cpp" line="1299"/>
         <source>Snapshots from %1 need its web server, which it does not have.</source>
         <translation>Для снимков с %1 нужен её веб-сервер, а его нет.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1312"/>
+        <location filename="../src/ReolinkClient.cpp" line="1319"/>
         <source>Snapshot failed.</source>
         <translation>Не удалось сделать снимок.</translation>
     </message>
@@ -3765,22 +3776,23 @@ If the picture is broken, try the others in turn. “Software only” always wor
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="93"/>
-        <location filename="../src/SegmentBuffer.cpp" line="284"/>
+        <location filename="../src/SegmentBuffer.cpp" line="294"/>
         <source>Cannot write to %1.</source>
         <translation>Не удаётся записать в %1.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="260"/>
+        <location filename="../src/SegmentBuffer.cpp" line="268"/>
         <source>Nothing had been buffered yet.</source>
         <translation>В буфере ещё ничего не было.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="275"/>
+        <location filename="../src/SegmentBuffer.cpp" line="284"/>
         <source>That moment is no longer in the buffer.</source>
         <translation>Этого момента в буфере уже нет.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="330"/>
+        <location filename="../src/SegmentBuffer.cpp" line="341"/>
+        <location filename="../src/SegmentBuffer.cpp" line="357"/>
         <source>The recording could not be cut out of the buffer.</source>
         <translation>Запись не удалось вырезать из буфера.</translation>
     </message>
@@ -4062,7 +4074,7 @@ Baichuan — то, на чём говорит приложение Reolink. Эт
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="494"/>
-        <location filename="../src/SettingsDialog.cpp" line="722"/>
+        <location filename="../src/SettingsDialog.cpp" line="720"/>
         <source>New camera</source>
         <translation>Новая камера</translation>
     </message>
@@ -4077,98 +4089,98 @@ Baichuan — то, на чём говорит приложение Reolink. Эт
         <translation>Удалить «%1» из списка?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="541"/>
+        <location filename="../src/SettingsDialog.cpp" line="539"/>
         <source>type it once; it moves to the keyring when you save</source>
         <translation>введите один раз — при сохранении он уйдёт в хранилище</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="542"/>
+        <location filename="../src/SettingsDialog.cpp" line="540"/>
         <source>no keyring is answering — it will stay in the file</source>
         <translation>хранилище не отвечает — пароль останется в файле</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="556"/>
+        <location filename="../src/SettingsDialog.cpp" line="554"/>
         <source>Enter a host first.</source>
         <translation>Сначала укажите адрес.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="563"/>
+        <location filename="../src/SettingsDialog.cpp" line="561"/>
         <source>Contacting %1…</source>
         <translation>Связываемся с %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="646"/>
+        <location filename="../src/SettingsDialog.cpp" line="644"/>
         <source>Cameras on this recorder</source>
         <translation>Камеры на этом регистраторе</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="649"/>
+        <location filename="../src/SettingsDialog.cpp" line="647"/>
         <source>%1 answers for %n channel(s). Which of them should be added?</source>
         <translation><numerusform>%1 отвечает за %n канал. Добавить его?</numerusform><numerusform>%1 отвечает за %n канала. Какие из них добавить?</numerusform><numerusform>%1 отвечает за %n каналов. Какие из них добавить?</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="668"/>
-        <location filename="../src/SettingsDialog.cpp" line="739"/>
+        <location filename="../src/SettingsDialog.cpp" line="666"/>
+        <location filename="../src/SettingsDialog.cpp" line="744"/>
         <source>Channel %1</source>
         <translation>Канал %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="670"/>
+        <location filename="../src/SettingsDialog.cpp" line="668"/>
         <source>%1 — %2</source>
         <translation>%1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="672"/>
+        <location filename="../src/SettingsDialog.cpp" line="670"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="674"/>
+        <location filename="../src/SettingsDialog.cpp" line="672"/>
         <source>%1 — already in the list</source>
         <translation>%1 — уже в списке</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="676"/>
+        <location filename="../src/SettingsDialog.cpp" line="674"/>
         <source>%1 — nothing connected</source>
         <translation>%1 — ничего не подключено</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="688"/>
+        <location filename="../src/SettingsDialog.cpp" line="686"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="689"/>
+        <location filename="../src/SettingsDialog.cpp" line="687"/>
         <source>None</source>
         <translation>Ни одной</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="767"/>
+        <location filename="../src/SettingsDialog.cpp" line="774"/>
         <source>Added %n camera(s) from this recorder.</source>
         <translation><numerusform>Добавлена %n камера с этого регистратора.</numerusform><numerusform>Добавлено %n камеры с этого регистратора.</numerusform><numerusform>Добавлено %n камер с этого регистратора.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="776"/>
+        <location filename="../src/SettingsDialog.cpp" line="783"/>
         <source>Looking for cameras…</source>
         <translation>Поиск камер…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="776"/>
+        <location filename="../src/SettingsDialog.cpp" line="783"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="790"/>
+        <location filename="../src/SettingsDialog.cpp" line="797"/>
         <source>Found %n device(s)…</source>
         <translation><numerusform>Найдено %n устройство…</numerusform><numerusform>Найдено %n устройства…</numerusform><numerusform>Найдено %n устройств…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="800"/>
+        <location filename="../src/SettingsDialog.cpp" line="807"/>
         <source>No cameras found</source>
         <translation>Камеры не найдены</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="801"/>
+        <location filename="../src/SettingsDialog.cpp" line="808"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -4177,47 +4189,47 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 Камеры отвечают, только если ONVIF включён, а запрос не проходит ни через маршрутизаторы, ни через большинство VPN. Камеру всё равно можно добавить, введя её адрес вручную.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="827"/>
+        <location filename="../src/SettingsDialog.cpp" line="834"/>
         <source>unnamed device</source>
         <translation>устройство без названия</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="828"/>
+        <location filename="../src/SettingsDialog.cpp" line="835"/>
         <source> (Reolink)</source>
         <translation> (Reolink)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="829"/>
+        <location filename="../src/SettingsDialog.cpp" line="836"/>
         <source>  · already added</source>
         <translation>  · уже добавлена</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="835"/>
+        <location filename="../src/SettingsDialog.cpp" line="842"/>
         <source>Cameras found</source>
         <translation>Найдены камеры</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="836"/>
+        <location filename="../src/SettingsDialog.cpp" line="843"/>
         <source>Add which one?</source>
         <translation>Какую добавить?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="880"/>
+        <location filename="../src/SettingsDialog.cpp" line="887"/>
         <source>Incomplete camera</source>
         <translation>Камера заполнена не полностью</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="881"/>
+        <location filename="../src/SettingsDialog.cpp" line="888"/>
         <source>“%1” has no host address.</source>
         <translation>У «%1» нет адреса.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="897"/>
+        <location filename="../src/SettingsDialog.cpp" line="904"/>
         <source>The keyring would not take it</source>
         <translation>Хранилище ключей его не приняло</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="898"/>
+        <location filename="../src/SettingsDialog.cpp" line="905"/>
         <source>“%1” could not be saved in the system keyring: %2
 
 Its password has been left in the configuration file.</source>
@@ -4331,7 +4343,7 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="300"/>
-        <location filename="../src/VideoTile.cpp" line="760"/>
+        <location filename="../src/VideoTile.cpp" line="759"/>
         <source>Mute this camera</source>
         <translation>Приглушить эту камеру</translation>
     </message>
@@ -4342,13 +4354,13 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="316"/>
-        <location filename="../src/VideoTile.cpp" line="1087"/>
+        <location filename="../src/VideoTile.cpp" line="1086"/>
         <source>Record this camera</source>
         <translation>Записывать эту камеру</translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="327"/>
-        <location filename="../src/VideoTile.cpp" line="1065"/>
+        <location filename="../src/VideoTile.cpp" line="1064"/>
         <source>Speak through the camera</source>
         <translation>Говорить через камеру</translation>
     </message>
@@ -4363,81 +4375,81 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
         <translation>Настройки камеры</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="477"/>
+        <location filename="../src/VideoTile.cpp" line="482"/>
         <source>no host configured</source>
         <translation>адрес не задан</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="563"/>
+        <location filename="../src/VideoTile.cpp" line="568"/>
         <source>connecting over Baichuan…</source>
         <translation>подключение через Baichuan…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="587"/>
-        <location filename="../src/VideoTile.cpp" line="1007"/>
+        <location filename="../src/VideoTile.cpp" line="592"/>
+        <location filename="../src/VideoTile.cpp" line="1006"/>
         <source>custom stream</source>
         <translation>свой поток</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="589"/>
-        <location filename="../src/VideoTile.cpp" line="1009"/>
+        <location filename="../src/VideoTile.cpp" line="594"/>
+        <location filename="../src/VideoTile.cpp" line="1008"/>
         <source>main stream</source>
         <translation>основной поток</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="590"/>
-        <location filename="../src/VideoTile.cpp" line="1010"/>
+        <location filename="../src/VideoTile.cpp" line="595"/>
+        <location filename="../src/VideoTile.cpp" line="1009"/>
         <source>sub stream</source>
         <translation>дополнительный поток</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="759"/>
+        <location filename="../src/VideoTile.cpp" line="758"/>
         <source>Unmute this camera</source>
         <translation>Вернуть звук этой камеры</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="777"/>
+        <location filename="../src/VideoTile.cpp" line="776"/>
         <source>MOTION</source>
         <translation>ДВИЖЕНИЕ</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="895"/>
-        <location filename="../src/VideoTile.cpp" line="915"/>
+        <location filename="../src/VideoTile.cpp" line="894"/>
+        <location filename="../src/VideoTile.cpp" line="914"/>
         <source>camera is reconfiguring… %1 s</source>
         <translation>камера перенастраивается… %1 с</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="917"/>
+        <location filename="../src/VideoTile.cpp" line="916"/>
         <source>camera is reconfiguring…</source>
         <translation>камера перенастраивается…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="982"/>
+        <location filename="../src/VideoTile.cpp" line="981"/>
         <source>stream lost — reconnecting (%1)</source>
         <translation>поток потерян — переподключение (%1)</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1013"/>
+        <location filename="../src/VideoTile.cpp" line="1012"/>
         <source>%1 fps</source>
         <translation>%1 кадр/с</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1016"/>
+        <location filename="../src/VideoTile.cpp" line="1015"/>
         <source>%1 Mbit/s</source>
         <translation>%1 Мбит/с</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1017"/>
+        <location filename="../src/VideoTile.cpp" line="1016"/>
         <source>%1 kbit/s</source>
         <translation>%1 кбит/с</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1064"/>
+        <location filename="../src/VideoTile.cpp" line="1063"/>
         <source>Stop speaking</source>
         <translation>Прекратить говорить</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1086"/>
+        <location filename="../src/VideoTile.cpp" line="1085"/>
         <source>Stop recording</source>
         <translation>Остановить запись</translation>
     </message>

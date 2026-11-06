@@ -60,6 +60,25 @@ private slots:
 
     void init() { QFile::remove(file()); }
 
+    void unreadableFileIsKept()
+    {
+        const QByteArray broken("{ \"cameras\": [ oops");
+        QFile f(file());
+        QVERIFY(f.open(QIODevice::WriteOnly));
+        f.write(broken);
+        f.close();
+
+        Config c = Config::load();
+        QVERIFY(c.cameras.isEmpty());
+        QVERIFY(!QFile::exists(file()));
+        QFile aside(Config::setAsideFile());
+        QVERIFY2(aside.open(QIODevice::ReadOnly), qPrintable(Config::setAsideFile()));
+        QCOMPARE(aside.readAll(), broken);
+
+        QVERIFY(c.save());
+        QVERIFY(QFile::exists(Config::setAsideFile()));
+    }
+
     void nothingThereIsEmpty()
     {
         const Config c = Config::load();

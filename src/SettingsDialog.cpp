@@ -514,11 +514,9 @@ void SettingsDialog::onRemove()
         != QMessageBox::Yes)
         return;
 
-    // A camera that kept its password in the keyring takes it with it, rather
-    // than leaving an entry behind that nothing will ever ask for again.
     const CameraConfig &going = m_config.cameras.at(row);
     if (going.passwordSource == QLatin1String("keyring"))
-        Keyring::remove(Keyring::keyForCamera(going.id));
+        m_keyringToForget.append(Keyring::keyForCamera(going.id));
 
     m_config.cameras.removeAt(row);
     m_current = -1;
@@ -906,6 +904,9 @@ void SettingsDialog::onAccept()
         LEO_INFO(App, c.label(),
                  QStringLiteral("Password moved into the system keyring"));
     }
+
+    for (const QString &key : std::as_const(m_keyringToForget))
+        Keyring::remove(key);
 
     accept();
 }

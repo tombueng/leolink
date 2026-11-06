@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QDateTime>
+#include <QList>
 #include <QObject>
 #include <QString>
 
@@ -52,6 +53,10 @@ public:
     bool isRunning() const;
     Settings settings() const { return m_settings; }
 
+    /// Keeps segments from `from` on past the retention, for an event still
+    /// going. extract() with the same `from` releases it once the cut is done.
+    void holdFrom(const QDateTime &from);
+
     /// Cuts everything between `from` and `to` out of the buffered segments
     /// into one file, without re-encoding. Answers with extracted() or
     /// failed(); `outPath` is echoed back so several can be in flight.
@@ -86,6 +91,7 @@ private:
     /// Restarts after an unexpected exit, backing off so a camera that is
     /// simply gone does not spin.
     QTimer *m_restart{nullptr};
+    QList<QDateTime> m_holds;
 };
 
 } // namespace leolink

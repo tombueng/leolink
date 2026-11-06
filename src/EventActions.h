@@ -67,6 +67,9 @@ public:
     void dispatch(const ActionConfig &actions, const EventContext &context);
 
     static QString expand(const QString &tmpl, const EventContext &context);
+    /// `tmpl` with placeholders as quoted shell variables, so a value can't run
+    /// as code.
+    static QString shellCommand(const QString &tmpl);
     /// The JSON sent when no webhook body or MQTT payload is given.
     static QByteArray defaultPayload(const EventContext &context);
 

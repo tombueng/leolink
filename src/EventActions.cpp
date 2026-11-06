@@ -6,12 +6,32 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QUrl>
 
 #include "Log.h"
 #include "MqttPublisher.h"
 
 namespace leolink {
+
+namespace {
+
+const char *shellVariable(QChar placeholder)
+{
+    switch (placeholder.unicode()) {
+    case 'n': return "LEOLINK_CAMERA";
+    case 'i': return "LEOLINK_ID";
+    case 'h': return "LEOLINK_HOST";
+    case 't': return "LEOLINK_TIME";
+    case 'e': return "LEOLINK_EVENT";
+    case 's': return "LEOLINK_STATE";
+    case 'f': return "LEOLINK_RECORDING";
+    case 'p': return "LEOLINK_IMAGE";
+    default: return nullptr;
+    }
+}
+
+} // namespace
 
 EventDispatcher::EventDispatcher(QObject *parent)
     : QObject(parent), m_net(new QNetworkAccessManager(this)),
@@ -54,6 +74,42 @@ QString EventDispatcher::expand(const QString &tmpl, const EventContext &c)
             continue;   // not a placeholder: the next character stays as it is
         }
         ++i;
+    }
+    return out;
+}
+
+QString EventDispatcher::shellCommand(const QString &tmpl)
+{
+    QString out;
+    QChar quote;   // ' or " while inside one
+    for (int i = 0; i < tmpl.size(); ++i) {
+        const QChar ch = tmpl.at(i);
+        const bool more = i + 1 < tmpl.size();
+        if (ch == QLatin1Char('\\') && quote != QLatin1Char('\'') && more) {
+            out += ch;
+            out += tmpl.at(++i);
+            continue;
+        }
+        if (ch == QLatin1Char('\'') || ch == QLatin1Char('"')) {
+            if (quote.isNull())
+                quote = ch;
+            else if (quote == ch)
+                quote = QChar();
+        }
+        const char *variable =
+            ch == QLatin1Char('%') && more ? shellVariable(tmpl.at(i + 1)) : nullptr;
+        if (!variable) {
+            out += ch;
+            continue;
+        }
+        ++i;
+        const QString reference = QStringLiteral("${%1}").arg(QLatin1String(variable));
+        if (quote == QLatin1Char('"'))
+            out += reference;
+        else if (quote == QLatin1Char('\''))
+            out += QStringLiteral("'\"%1\"'").arg(reference);
+        else
+            out += QStringLiteral("\"%1\"").arg(reference);
     }
     return out;
 }
@@ -108,16 +164,22 @@ void EventDispatcher::runCommand(const ActionConfig &actions,
                                  const EventContext &context)
 {
     const QString command = expand(actions.command, context);
+    QProcess process;
+    process.setProgram(QStringLiteral("/bin/sh"));
+    process.setArguments({QStringLiteral("-c"), shellCommand(actions.command)});
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    for (const QChar placeholder : QStringLiteral("nihtesfp"))
+        environment.insert(QLatin1String(shellVariable(placeholder)),
+                           expand(QStringLiteral("%") + placeholder, context));
+    process.setProcessEnvironment(environment);
     // Detached, because a hook that blocks must not stall the video.
-    if (!QProcess::startDetached(QStringLiteral("/bin/sh"),
-                                 {QStringLiteral("-c"), command})) {
+    if (!process.startDetached()) {
         LEO_WARN(Event, context.cameraName,
                  QStringLiteral("Command could not be started: %1").arg(command));
         emit actionFailed(tr("Command"), tr("could not be started"));
         return;
     }
-    // The expanded command, not the template: a placeholder that resolved to
-    // an empty string is invisible in the template and obvious here.
+    // For reading only: what ran has the values as variables.
     LEO_INFO(Event, context.cameraName,
              QStringLiteral("Ran: %1").arg(command));
     emit actionSucceeded(tr("Command"));

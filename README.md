@@ -224,8 +224,9 @@ configure with `-DLEOLINK_BUILD_TESTS=OFF`.
 
 ## Configuration
 
-Settings live in `~/.config/leolink/config.json`, mode 600. Where each camera's
-password lives is per camera, under **Password kept in**:
+Settings live in `~/.config/leolink/config.json`, mode 600. A file that can't be
+read is kept as `config.json.broken-<time>`, and leolink starts without it. Where
+each camera's password lives is per camera, under **Password kept in**:
 
 - **This configuration file** — in clear text, readable only by you. The
   default, and the only one that works on a machine which starts unattended.
@@ -288,6 +289,9 @@ Available in commands, webhook bodies, MQTT topics and payloads:
 | `%s` | `on` / `off` |
 | `%f` | recording file, if one was started |
 | `%p` | still image file |
+
+In a command, values reach the shell as quoted variables, so a camera name can't
+run as code.
 
 With no webhook body or MQTT payload given, a small JSON document describing the
 event is sent instead.

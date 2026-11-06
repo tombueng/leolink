@@ -140,6 +140,16 @@ MainWindow::MainWindow(QWidget *parent)
         reconcileBuffers();
     });
 
+    if (!Config::setAsideFile().isEmpty()) {
+        QTimer::singleShot(0, this, [this] {
+            QMessageBox::warning(
+                this, tr("Configuration not readable"),
+                tr("%1 could not be read. It was kept as %2, and leolink started "
+                   "without it.")
+                    .arg(Config::path(), Config::setAsideFile()));
+        });
+    }
+
     // LEOLINK_SCREENSHOT=<dir> saves a picture of the window and quits. Grabbed
     // through Qt rather than off the X server: under a software renderer only
     // whichever tile happened to have repainted last comes out, and the rest
@@ -660,6 +670,13 @@ void MainWindow::buildTray()
 
 void MainWindow::teardownGrid()
 {
+    // Their stop timers go below.
+    const QStringList buffered = m_bufferedStart.keys();
+    for (const QString &id : buffered) {
+        if (const CameraConfig *camera = cameraById(id))
+            finishBufferedRecording(*camera);
+    }
+
     for (auto *watcher : std::as_const(m_watchers)) {
         watcher->stop();
         watcher->deleteLater();
@@ -1362,7 +1379,6 @@ void MainWindow::beginMotionRecording(const CameraConfig &camera)
     // over. That is the only way the seconds *before* the trigger can be in
     // the file: by then they are already on disk.
     if (SegmentBuffer *buffer = bufferFor(camera.id)) {
-        Q_UNUSED(buffer);
         if (m_bufferedStart.contains(camera.id))
             return;   // the same event, still going
         const QString path = recordingPathFor(camera);
@@ -1371,9 +1387,10 @@ void MainWindow::beginMotionRecording(const CameraConfig &camera)
                 tr("Cannot create %1").arg(m_config.effectiveRecordDir()), 8000);
             return;
         }
-        m_bufferedStart.insert(
-            camera.id, QDateTime::currentDateTime().addSecs(
-                           -qMax(0, camera.recordPreSeconds)));
+        const QDateTime from = QDateTime::currentDateTime().addSecs(
+            -qMax(0, camera.recordPreSeconds));
+        buffer->holdFrom(from);
+        m_bufferedStart.insert(camera.id, from);
         m_bufferedPath.insert(camera.id, path);
         if (auto *tile = m_tiles.value(camera.id))
             tile->setRecording(true);
@@ -2142,6 +2159,12 @@ void MainWindow::reconcileGrid(const Config &previous)
             tile->stop();
             tile->deleteLater();
         }
+        if (Recorder *recorder = m_recorders.take(id)) {
+            recorder->stop();
+            recorder->deleteLater();
+        }
+        if (QTimer *timer = m_stopTimers.take(id))
+            timer->deleteLater();
     }
 
     if (cameras.isEmpty()) {

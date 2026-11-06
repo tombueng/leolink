@@ -74,6 +74,8 @@ private:
     /// Asked once, when the dialog opens: a keyring that is not there should
     /// say so before a password is typed into it, not afterwards.
     bool m_keyringAvailable{false};
+    /// Keys of removed cameras, deleted when the dialog is saved.
+    QStringList m_keyringToForget;
     QLineEdit *m_uid{nullptr};
     QSpinBox *m_channel{nullptr};
     QLineEdit *m_customUrl{nullptr};

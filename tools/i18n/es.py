@@ -5,6 +5,9 @@ from __future__ import annotations
 # Source string -> Spanish. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Configuration not readable": "Configuración ilegible",
+    "%1 could not be read. It was kept as %2, and leolink started without it.":
+        "No se pudo leer %1. Se ha conservado como %2 y leolink se ha iniciado sin ella.",
     "Diagnostics": "Diagnóstico",
     "&Diagnostics…": "&Diagnóstico…",
     "What leolink and the cameras have been doing — and a report to attach to "

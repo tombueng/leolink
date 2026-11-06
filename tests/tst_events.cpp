@@ -187,6 +187,38 @@ private slots:
         QCOMPARE(f.readAll().trimmed(), QByteArray("Hall on"));
     }
 
+    void valuesCannotRunAsCode_data()
+    {
+        QTest::addColumn<QString>("command");
+        QTest::addColumn<QString>("prefix");
+        QTest::newRow("bare") << QStringLiteral("echo %n") << QString();
+        QTest::newRow("double quotes") << QStringLiteral("echo \"at %n\"") << QStringLiteral("at ");
+        QTest::newRow("single quotes") << QStringLiteral("echo 'at %n'") << QStringLiteral("at ");
+    }
+
+    void valuesCannotRunAsCode()
+    {
+        QFETCH(QString, command);
+        QFETCH(QString, prefix);
+        QTemporaryDir dir;
+        const QString out = dir.filePath(QStringLiteral("ran"));
+        const QString marker = dir.filePath(QStringLiteral("marker"));
+        EventContext c = context();
+        c.cameraName = QStringLiteral("x$(touch ") + marker + QStringLiteral(");\"'`touch ") +
+                       marker + QStringLiteral("`");
+
+        ActionConfig actions;
+        actions.runCommand = true;
+        actions.command = command + QStringLiteral(" > '") + out + QStringLiteral("'");
+        EventDispatcher dispatcher;
+        dispatcher.dispatch(actions, c);
+        QTRY_VERIFY_WITH_TIMEOUT(QFileInfo(out).size() > 0, 5000);
+        QFile f(out);
+        QVERIFY(f.open(QIODevice::ReadOnly));
+        QCOMPARE(QString::fromUtf8(f.readAll().trimmed()), prefix + c.cameraName);
+        QVERIFY(!QFile::exists(marker));
+    }
+
     void nothingConfiguredDoesNothing()
     {
         EventDispatcher dispatcher;

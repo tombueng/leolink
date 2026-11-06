@@ -26,7 +26,7 @@
         <translation>انقطع الاتصال بـ %1.</translation>
     </message>
     <message>
-        <location filename="../src/BaichuanApi.cpp" line="377"/>
+        <location filename="../src/BaichuanApi.cpp" line="380"/>
         <source>The camera did not take the firmware: %1</source>
         <translation>لم تقبل الكاميرا البرنامج الثابت: %1</translation>
     </message>
@@ -138,22 +138,22 @@
 <context>
     <name>leolink::AudioDetector</name>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="57"/>
+        <location filename="../src/AudioDetector.cpp" line="74"/>
         <source>ffmpeg is not installed, so sound detection is unavailable.</source>
         <translation>‏ffmpeg غير مثبت، ولذا يتعذّر كشف الصوت.</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="74"/>
+        <location filename="../src/AudioDetector.cpp" line="94"/>
         <source>No stream address for %1.</source>
         <translation>لا عنوان بث لـ %1.</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="103"/>
+        <location filename="../src/AudioDetector.cpp" line="127"/>
         <source>Sound detection stopped: %1</source>
         <translation>توقّف كشف الصوت: %1</translation>
     </message>
     <message>
-        <location filename="../src/AudioDetector.cpp" line="108"/>
+        <location filename="../src/AudioDetector.cpp" line="132"/>
         <source>Could not start ffmpeg for sound detection.</source>
         <translation>تعذّر تشغيل ffmpeg لكشف الصوت.</translation>
     </message>
@@ -197,12 +197,12 @@
 <context>
     <name>leolink::CameraConfig</name>
     <message>
-        <location filename="../src/Config.cpp" line="95"/>
+        <location filename="../src/Config.cpp" line="96"/>
         <source>%1 channel %2</source>
         <translation>%1 القناة %2</translation>
     </message>
     <message>
-        <location filename="../src/Config.cpp" line="102"/>
+        <location filename="../src/Config.cpp" line="103"/>
         <source>Camera</source>
         <translation>الكاميرا</translation>
     </message>
@@ -2054,12 +2054,13 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
         <translation>تجري الكتابة إلى الكاميرا…</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2939"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2941"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2971"/>
         <source>Nothing to write.</source>
         <translation>لا شيء لكتابته.</translation>
     </message>
     <message>
-        <location filename="../src/CameraSettingsDialog.cpp" line="2956"/>
+        <location filename="../src/CameraSettingsDialog.cpp" line="2969"/>
         <source>Saved. Changing the encoder restarts the stream, so the picture may drop out for a moment.</source>
         <translation>حُفظ. تغيير المرمِّز يعيد تشغيل البث، ولذا قد تنقطع الصورة للحظة.</translation>
     </message>
@@ -2189,29 +2190,29 @@ If your camera has a SIM, “What this camera supports” under Maintenance list
 <context>
     <name>leolink::EventDispatcher</name>
     <message>
-        <location filename="../src/EventActions.cpp" line="116"/>
-        <location filename="../src/EventActions.cpp" line="123"/>
+        <location filename="../src/EventActions.cpp" line="179"/>
+        <location filename="../src/EventActions.cpp" line="185"/>
         <source>Command</source>
         <translation>الأمر</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="116"/>
+        <location filename="../src/EventActions.cpp" line="179"/>
         <source>could not be started</source>
         <translation>تعذّر تشغيله</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="134"/>
-        <location filename="../src/EventActions.cpp" line="172"/>
+        <location filename="../src/EventActions.cpp" line="196"/>
+        <location filename="../src/EventActions.cpp" line="234"/>
         <source>Webhook</source>
         <translation>Webhook</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="134"/>
+        <location filename="../src/EventActions.cpp" line="196"/>
         <source>invalid URL</source>
         <translation>عنوان غير صالح</translation>
     </message>
     <message>
-        <location filename="../src/EventActions.cpp" line="178"/>
+        <location filename="../src/EventActions.cpp" line="240"/>
         <source>Webhook → %1</source>
         <translation>‏Webhook ← %1</translation>
     </message>
@@ -2489,144 +2490,154 @@ Use “Cameras…” to add one.</source>
         <translation>جارٍ سؤال الكاميرات عمّا تقدّمه…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="297"/>
+        <location filename="../src/MainWindow.cpp" line="146"/>
+        <source>Configuration not readable</source>
+        <translation>تعذّرت قراءة الإعدادات</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="147"/>
+        <source>%1 could not be read. It was kept as %2, and leolink started without it.</source>
+        <translation>تعذّرت قراءة %1. حُفظ الملف باسم %2، وبدأ leolink من دونه.</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="314"/>
         <source>&amp;File</source>
         <translation>&amp;ملف</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="299"/>
+        <location filename="../src/MainWindow.cpp" line="316"/>
         <source>&amp;Cameras…</source>
         <translation>&amp;كاميرات…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="304"/>
+        <location filename="../src/MainWindow.cpp" line="321"/>
         <source>&amp;Settings…</source>
         <translation>الإ&amp;عدادات…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="310"/>
+        <location filename="../src/MainWindow.cpp" line="327"/>
         <source>&amp;Save snapshots…</source>
         <translation>ا&amp;حفظ اللقطات…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="315"/>
+        <location filename="../src/MainWindow.cpp" line="332"/>
         <source>&amp;Record all cameras</source>
         <translation>&amp;سجّل كل الكاميرات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="322"/>
+        <location filename="../src/MainWindow.cpp" line="339"/>
         <source>&amp;Event log…</source>
         <translation>س&amp;جل الأحداث…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="330"/>
+        <location filename="../src/MainWindow.cpp" line="347"/>
         <source>Recordings on the &amp;camera…</source>
         <translation>التسجيلات على ال&amp;كاميرا…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="332"/>
+        <location filename="../src/MainWindow.cpp" line="349"/>
         <source>Browse what is stored on the camera&apos;s own SD card.</source>
         <translation>تصفّح ما هو مخزّن على بطاقة SD الخاصة بالكاميرا.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="336"/>
-        <location filename="../src/MainWindow.cpp" line="775"/>
-        <location filename="../src/MainWindow.cpp" line="2143"/>
+        <location filename="../src/MainWindow.cpp" line="353"/>
+        <location filename="../src/MainWindow.cpp" line="796"/>
+        <location filename="../src/MainWindow.cpp" line="2179"/>
         <source>No cameras configured</source>
         <translation>لا كاميرات مضبوطة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="347"/>
+        <location filename="../src/MainWindow.cpp" line="364"/>
         <source>Which camera</source>
         <translation>أي كاميرا</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="347"/>
+        <location filename="../src/MainWindow.cpp" line="364"/>
         <source>Show recordings from</source>
         <translation>أظهر تسجيلات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="359"/>
+        <location filename="../src/MainWindow.cpp" line="376"/>
         <source>Open &amp;recordings folder</source>
         <translation>افتح مجلد الت&amp;سجيلات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="367"/>
+        <location filename="../src/MainWindow.cpp" line="384"/>
         <source>&amp;Quit</source>
         <translation>&amp;خروج</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="372"/>
+        <location filename="../src/MainWindow.cpp" line="389"/>
         <source>&amp;View</source>
         <translation>&amp;عرض</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="374"/>
+        <location filename="../src/MainWindow.cpp" line="391"/>
         <source>&amp;Full screen</source>
         <translation>&amp;ملء الشاشة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="413"/>
+        <location filename="../src/MainWindow.cpp" line="430"/>
         <source>Show &amp;menu bar</source>
         <translation>أظهر شريط ال&amp;قوائم</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="427"/>
+        <location filename="../src/MainWindow.cpp" line="444"/>
         <source>Show &amp;toolbar</source>
         <translation>أظهر شريط الأ&amp;دوات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="436"/>
+        <location filename="../src/MainWindow.cpp" line="453"/>
         <source>Show status &amp;bar</source>
         <translation>أظهر شريط الحال&amp;ة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="445"/>
+        <location filename="../src/MainWindow.cpp" line="462"/>
         <source>Hide window &amp;decoration</source>
         <translation>أخفِ إ&amp;طار النافذة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="457"/>
+        <location filename="../src/MainWindow.cpp" line="474"/>
         <source>Drag the strip under a camera to move the window. Ctrl+Shift+D brings the frame back, Ctrl+M the menu.</source>
         <translation>اسحب الشريط أسفل إحدى الكاميرات لتحريك النافذة. ويعيد Ctrl+Shift+D الإطار، وCtrl+M القائمة.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="464"/>
+        <location filename="../src/MainWindow.cpp" line="481"/>
         <source>&amp;Help</source>
         <translation>م&amp;ساعدة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="475"/>
+        <location filename="../src/MainWindow.cpp" line="492"/>
         <source>&amp;Protocol notes</source>
         <translation>ملاحظات الب&amp;روتوكول</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="479"/>
+        <location filename="../src/MainWindow.cpp" line="496"/>
         <source>&amp;Diagnostics…</source>
         <translation>الت&amp;شخيص…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="482"/>
+        <location filename="../src/MainWindow.cpp" line="499"/>
         <source>What leolink and the cameras have been doing — and a report to attach to a bug report.</source>
         <translation>ما الذي فعله leolink والكاميرات — وتقرير يمكن إرفاقه ببلاغ عن خلل.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="486"/>
+        <location filename="../src/MainWindow.cpp" line="503"/>
         <source>&amp;Report a problem</source>
         <translation>أ&amp;بلغ عن مشكلة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="491"/>
+        <location filename="../src/MainWindow.cpp" line="508"/>
         <source>Report a problem</source>
         <translation>أبلغ عن مشكلة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="493"/>
+        <location filename="../src/MainWindow.cpp" line="510"/>
         <source>&lt;b&gt;Attach a diagnostics report&lt;/b&gt;</source>
         <translation>&lt;b&gt;أرفق تقرير تشخيص&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="495"/>
+        <location filename="../src/MainWindow.cpp" line="512"/>
         <source>It records what your machine is, what the cameras answered and where things went wrong — with passwords and addresses already removed. Without it, most reports cannot be followed up.
 
 If the problem is one you can trigger, switch on detailed logging in the diagnostics window first, make it happen again, then copy the report.</source>
@@ -2635,244 +2646,244 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 إن كانت المشكلة مما يمكنك إحداثه، فشغّل أولاً السجل المفصّل في نافذة التشخيص، ثم أعد إحداثها، ثم انسخ التقرير.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="502"/>
+        <location filename="../src/MainWindow.cpp" line="519"/>
         <source>Open diagnostics</source>
         <translation>افتح التشخيص</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="504"/>
+        <location filename="../src/MainWindow.cpp" line="521"/>
         <source>Go to the issue tracker</source>
         <translation>اذهب إلى متتبّع المشكلات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="515"/>
+        <location filename="../src/MainWindow.cpp" line="532"/>
         <source>&amp;About leolink</source>
         <translation>&amp;عن leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="518"/>
+        <location filename="../src/MainWindow.cpp" line="535"/>
         <source>About leolink</source>
         <translation>عن leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="531"/>
+        <location filename="../src/MainWindow.cpp" line="548"/>
         <source>Main</source>
         <translation>الرئيسي</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="543"/>
+        <location filename="../src/MainWindow.cpp" line="560"/>
         <source>Ready</source>
         <translation>جاهز</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="559"/>
+        <location filename="../src/MainWindow.cpp" line="576"/>
         <source>Leave full screen</source>
         <translation>غادر ملء الشاشة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="566"/>
-        <location filename="../src/MainWindow.cpp" line="630"/>
+        <location filename="../src/MainWindow.cpp" line="583"/>
+        <location filename="../src/MainWindow.cpp" line="643"/>
         <source>Cameras…</source>
         <translation>كاميرات…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="568"/>
+        <location filename="../src/MainWindow.cpp" line="585"/>
         <source>Event log…</source>
         <translation>سجل الأحداث…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="574"/>
-        <location filename="../src/MainWindow.cpp" line="633"/>
+        <location filename="../src/MainWindow.cpp" line="591"/>
+        <location filename="../src/MainWindow.cpp" line="646"/>
         <source>Quit</source>
         <translation>خروج</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="624"/>
+        <location filename="../src/MainWindow.cpp" line="637"/>
         <source>Show window</source>
         <translation>أظهر النافذة</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="800"/>
+        <location filename="../src/MainWindow.cpp" line="813"/>
         <source>%n camera(s) live</source>
         <translation><numerusform>لا كاميرات مباشرة</numerusform><numerusform>كاميرا واحدة مباشرة</numerusform><numerusform>كاميرتان مباشرة</numerusform><numerusform>%n كاميرات مباشرة</numerusform><numerusform>%n كاميرا مباشرة</numerusform><numerusform>%n كاميرا مباشرة</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1109"/>
+        <location filename="../src/MainWindow.cpp" line="1135"/>
         <source>Esc leaves full screen</source>
         <translation>‏Esc يغادر ملء الشاشة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1116"/>
-        <location filename="../src/MainWindow.cpp" line="1155"/>
+        <location filename="../src/MainWindow.cpp" line="1142"/>
+        <location filename="../src/MainWindow.cpp" line="1181"/>
         <source>Double-click for the grid · Esc leaves full screen</source>
         <translation>نقر مزدوج للعودة إلى الشبكة · Esc يغادر ملء الشاشة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1153"/>
+        <location filename="../src/MainWindow.cpp" line="1179"/>
         <source>Esc leaves full screen · double-click a camera to fill the screen</source>
         <translation>‏Esc يغادر ملء الشاشة · والنقر المزدوج على كاميرا يملأ بها الشاشة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1178"/>
+        <location filename="../src/MainWindow.cpp" line="1204"/>
         <source>Grid view</source>
         <translation>عرض شبكي</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1364"/>
-        <location filename="../src/MainWindow.cpp" line="1382"/>
-        <location filename="../src/MainWindow.cpp" line="1617"/>
+        <location filename="../src/MainWindow.cpp" line="1389"/>
+        <location filename="../src/MainWindow.cpp" line="1408"/>
+        <location filename="../src/MainWindow.cpp" line="1646"/>
         <source>Cannot create %1</source>
         <translation>تعذّر إنشاء %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1507"/>
+        <location filename="../src/MainWindow.cpp" line="1534"/>
         <source>Recording %1</source>
         <translation>يجري تسجيل %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1429"/>
-        <location filename="../src/MainWindow.cpp" line="1515"/>
+        <location filename="../src/MainWindow.cpp" line="1456"/>
+        <location filename="../src/MainWindow.cpp" line="1543"/>
         <source>Saved %1</source>
         <translation>حُفظ %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="469"/>
+        <location filename="../src/MainWindow.cpp" line="486"/>
         <source>&amp;Handbook</source>
         <translation>ال&amp;دليل</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="519"/>
+        <location filename="../src/MainWindow.cpp" line="536"/>
         <source>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;A native Linux client for Reolink cameras.&lt;/p&gt;&lt;p&gt;Speaks the camera&apos;s own protocols directly, on the local network: the HTTP API, RTSP, ONVIF, and Reolink&apos;s own Baichuan for cameras without a web server.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;Handbook&lt;/a&gt; · &lt;a href=&quot;https://github.com/tombueng/leolink&quot;&gt;Source&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Not affiliated with or endorsed by Reolink.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;leolink %1&lt;/h3&gt;&lt;p&gt;عميل أصيل على لينكس لكاميرات Reolink.&lt;/p&gt;&lt;p&gt;يتحدث بروتوكولات الكاميرا نفسها مباشرة داخل الشبكة المحلية: واجهة HTTP وRTSP وONVIF، وبروتوكول Baichuan الخاص بـ Reolink للكاميرات التي لا خادم ويب فيها.&lt;/p&gt;&lt;p&gt;&lt;a href="%2"&gt;الدليل&lt;/a&gt; · &lt;a href="https://github.com/tombueng/leolink"&gt;الشيفرة المصدرية&lt;/a&gt;&lt;/p&gt;&lt;p&gt;لا صلة له بشركة Reolink ولا يحظى بدعمها.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1521"/>
-        <location filename="../src/MainWindow.cpp" line="1652"/>
+        <location filename="../src/MainWindow.cpp" line="1549"/>
+        <location filename="../src/MainWindow.cpp" line="1681"/>
         <source>Recording stopped</source>
         <translation>توقّف التسجيل</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1528"/>
+        <location filename="../src/MainWindow.cpp" line="1557"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1633"/>
+        <location filename="../src/MainWindow.cpp" line="1662"/>
         <source>Recording started</source>
         <translation>بدأ التسجيل</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1651"/>
+        <location filename="../src/MainWindow.cpp" line="1680"/>
         <source>Recording all cameras</source>
         <translation>يجري تسجيل كل الكاميرات</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1732"/>
+        <location filename="../src/MainWindow.cpp" line="1761"/>
         <source>%1 at %2</source>
         <translation>%1 عند %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1752"/>
+        <location filename="../src/MainWindow.cpp" line="1781"/>
         <source>Motion detected</source>
         <translation>رُصدت حركة</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1764"/>
+        <location filename="../src/MainWindow.cpp" line="1793"/>
         <source>Sound detected</source>
         <translation>رُصد صوت</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1787"/>
+        <location filename="../src/MainWindow.cpp" line="1816"/>
         <source>Menu bar hidden</source>
         <translation>شريط القوائم مخفي</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1788"/>
+        <location filename="../src/MainWindow.cpp" line="1817"/>
         <source>With both the menu bar and the toolbar hidden, press Ctrl+M to bring the menu back.</source>
         <translation>مع إخفاء شريط القوائم وشريط الأدوات معاً، اضغط Ctrl+M لاستعادة القائمة.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1807"/>
+        <location filename="../src/MainWindow.cpp" line="1836"/>
         <source>Cannot save</source>
         <translation>تعذّر الحفظ</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1808"/>
+        <location filename="../src/MainWindow.cpp" line="1837"/>
         <source>Settings could not be written to %1.</source>
         <translation>تعذّرت كتابة الإعدادات إلى %1.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1953"/>
+        <location filename="../src/MainWindow.cpp" line="1983"/>
         <source>The camera would not move: %1</source>
         <translation>لم تتحرك الكاميرا: %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2078"/>
+        <location filename="../src/MainWindow.cpp" line="2108"/>
         <source>Play through %1</source>
         <translation>شغّل عبر %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2079"/>
+        <location filename="../src/MainWindow.cpp" line="2109"/>
         <source>Sound files (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;All files (*)</source>
         <translation>ملفات صوتية (*.wav *.mp3 *.ogg *.opus *.flac *.m4a);;كل الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2091"/>
+        <location filename="../src/MainWindow.cpp" line="2121"/>
         <source>Speaking through the camera…</source>
         <translation>يجري التحدث عبر الكاميرا…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2098"/>
+        <location filename="../src/MainWindow.cpp" line="2128"/>
         <source>Finished.</source>
         <translation>انتهى.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2234"/>
+        <location filename="../src/MainWindow.cpp" line="2295"/>
         <source>Nothing to capture</source>
         <translation>لا شيء لالتقاطه</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2239"/>
+        <location filename="../src/MainWindow.cpp" line="2300"/>
         <source>Save snapshots to</source>
         <translation>احفظ اللقطات في</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="2257"/>
+        <location filename="../src/MainWindow.cpp" line="2318"/>
         <source>Saved %n snapshot(s)</source>
         <translation><numerusform>لم تُحفظ لقطات</numerusform><numerusform>حُفظت لقطة واحدة</numerusform><numerusform>حُفظت لقطتان</numerusform><numerusform>حُفظت %n لقطات</numerusform><numerusform>حُفظت %n لقطة</numerusform><numerusform>حُفظت %n لقطة</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2275"/>
+        <location filename="../src/MainWindow.cpp" line="2336"/>
         <source>Welcome to leolink</source>
         <translation>مرحباً بك في leolink</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2277"/>
+        <location filename="../src/MainWindow.cpp" line="2338"/>
         <source>&lt;b&gt;No cameras are configured yet.&lt;/b&gt;</source>
         <translation>&lt;b&gt;لم تُضبط أي كاميرا بعد.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2279"/>
+        <location filename="../src/MainWindow.cpp" line="2340"/>
         <source>Add a camera with its address, user name and password. leolink talks to the camera directly on your network — no cloud account is involved.&lt;p&gt;The handbook covers what each option does.</source>
         <translation>أضف كاميرا بعنوانها واسم مستخدمها وكلمة مرورها. يتحدث leolink إلى الكاميرا مباشرة داخل شبكتك — دون أي حساب سحابي.&lt;p&gt;ويشرح الدليل ما يفعله كل خيار.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2283"/>
+        <location filename="../src/MainWindow.cpp" line="2344"/>
         <source>Add camera…</source>
         <translation>أضف كاميرا…</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2284"/>
+        <location filename="../src/MainWindow.cpp" line="2345"/>
         <source>Open handbook</source>
         <translation>افتح الدليل</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2367"/>
+        <location filename="../src/MainWindow.cpp" line="2428"/>
         <source>leolink is still running</source>
         <translation>‏leolink ما زال يعمل</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2368"/>
+        <location filename="../src/MainWindow.cpp" line="2429"/>
         <source>Cameras keep recording. Use the tray icon to come back.</source>
         <translation>تواصل الكاميرات التسجيل. استخدم أيقونة منطقة التنبيه للعودة.</translation>
     </message>
@@ -2926,22 +2937,22 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
 <context>
     <name>leolink::MotionDetector</name>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="60"/>
+        <location filename="../src/MotionDetector.cpp" line="77"/>
         <source>ffmpeg is not installed, so motion detection is unavailable.</source>
         <translation>‏ffmpeg غير مثبت، ولذا يتعذّر كشف الحركة.</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="101"/>
+        <location filename="../src/MotionDetector.cpp" line="121"/>
         <source>No stream address for %1.</source>
         <translation>لا عنوان بث لـ %1.</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="132"/>
+        <location filename="../src/MotionDetector.cpp" line="156"/>
         <source>Motion detection stopped: %1</source>
         <translation>توقّف كشف الحركة: %1</translation>
     </message>
     <message>
-        <location filename="../src/MotionDetector.cpp" line="157"/>
+        <location filename="../src/MotionDetector.cpp" line="181"/>
         <source>Could not start ffmpeg for motion detection.</source>
         <translation>تعذّر تشغيل ffmpeg لكشف الحركة.</translation>
     </message>
@@ -3095,12 +3106,12 @@ If the problem is one you can trigger, switch on detailed logging in the diagnos
         <translation>تعذّرت الكتابة إلى %1.</translation>
     </message>
     <message>
-        <location filename="../src/PlaybackBrowser.cpp" line="260"/>
+        <location filename="../src/PlaybackBrowser.cpp" line="267"/>
         <source>Saved to %1</source>
         <translation>حُفظ في %1</translation>
     </message>
     <message>
-        <location filename="../src/PlaybackBrowser.cpp" line="263"/>
+        <location filename="../src/PlaybackBrowser.cpp" line="270"/>
         <source>Download failed: %1</source>
         <translation>أخفق التنزيل: %1</translation>
     </message>
@@ -3619,67 +3630,67 @@ If the picture is broken, try the others in turn. “Software only” always wor
         <translation>%1 — البرمجية الثابتة %2، %3 قناة</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="986"/>
+        <location filename="../src/ReolinkClient.cpp" line="993"/>
         <source>The camera could not join that network: %1</source>
         <translation>تعذّر على الكاميرا الانضمام إلى تلك الشبكة: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="996"/>
+        <location filename="../src/ReolinkClient.cpp" line="1003"/>
         <source>E-mail</source>
         <translation>البريد الإلكتروني</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1006"/>
+        <location filename="../src/ReolinkClient.cpp" line="1013"/>
         <source>FTP</source>
         <translation>FTP</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1046"/>
+        <location filename="../src/ReolinkClient.cpp" line="1053"/>
         <source>Update available: %1</source>
         <translation>يتوفر تحديث: %1</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1047"/>
+        <location filename="../src/ReolinkClient.cpp" line="1054"/>
         <source>The firmware is up to date.</source>
         <translation>البرمجية الثابتة محدّثة.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1064"/>
+        <location filename="../src/ReolinkClient.cpp" line="1071"/>
         <source>Upgrading. The camera will restart on its own and be unreachable for several minutes. Do not cut its power.</source>
         <translation>يجري التحديث. ستعيد الكاميرا التشغيل من تلقاء نفسها وتتعذّر مخاطبتها عدة دقائق. لا تقطع عنها التيار.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1078"/>
+        <location filename="../src/ReolinkClient.cpp" line="1085"/>
         <source>Installing from a file needs the camera&apos;s port 9000, which it does not offer.</source>
         <translation>يتطلب التثبيت من ملف المنفذ 9000 في الكاميرا، وهي لا توفّره.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1095"/>
+        <location filename="../src/ReolinkClient.cpp" line="1102"/>
         <source>Sent. The camera is installing it and will restart on its own, unreachable for several minutes. Do not cut its power.</source>
         <translation>أُرسل. تثبّته الكاميرا الآن وستعيد التشغيل من تلقاء نفسها، ولا يمكن الوصول إليها لبضع دقائق. لا تقطع الكهرباء.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1171"/>
+        <location filename="../src/ReolinkClient.cpp" line="1178"/>
         <source>The camera restarted on %1, the build it had before, so the update was not installed.</source>
         <translation>أعادت الكاميرا التشغيل على %1، وهو الإصدار الذي كان لديها، لذا لم يُثبَّت التحديث.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1177"/>
+        <location filename="../src/ReolinkClient.cpp" line="1184"/>
         <source>The camera has not answered for %n minute(s). It may still be installing; leave its power on and look again later.</source>
         <translation><numerusform>لم تستجب الكاميرا منذ أقل من دقيقة. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform><numerusform>لم تستجب الكاميرا منذ دقيقة. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform><numerusform>لم تستجب الكاميرا منذ دقيقتين. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform><numerusform>لم تستجب الكاميرا منذ %n دقائق. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform><numerusform>لم تستجب الكاميرا منذ %n دقيقة. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform><numerusform>لم تستجب الكاميرا منذ %n دقيقة. ربما ما زالت تثبّت؛ أبقِها موصولة بالكهرباء وتحقّق لاحقًا.</numerusform></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ReolinkClient.cpp" line="1180"/>
+        <location filename="../src/ReolinkClient.cpp" line="1187"/>
         <source>The camera still reports %1 after %n minute(s).</source>
         <translation><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد أقل من دقيقة.</numerusform><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد دقيقة.</numerusform><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد دقيقتين.</numerusform><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد %n دقائق.</numerusform><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد %n دقيقة.</numerusform><numerusform>ما زالت الكاميرا تُبلغ عن %1 بعد %n دقيقة.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1292"/>
+        <location filename="../src/ReolinkClient.cpp" line="1299"/>
         <source>Snapshots from %1 need its web server, which it does not have.</source>
         <translation>تحتاج اللقطات من %1 إلى خادم الويب الخاص بها، وهو غير موجود.</translation>
     </message>
     <message>
-        <location filename="../src/ReolinkClient.cpp" line="1312"/>
+        <location filename="../src/ReolinkClient.cpp" line="1319"/>
         <source>Snapshot failed.</source>
         <translation>أخفقت اللقطة.</translation>
     </message>
@@ -3765,22 +3776,23 @@ If the picture is broken, try the others in turn. “Software only” always wor
     </message>
     <message>
         <location filename="../src/SegmentBuffer.cpp" line="93"/>
-        <location filename="../src/SegmentBuffer.cpp" line="284"/>
+        <location filename="../src/SegmentBuffer.cpp" line="294"/>
         <source>Cannot write to %1.</source>
         <translation>تعذّرت الكتابة إلى %1.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="260"/>
+        <location filename="../src/SegmentBuffer.cpp" line="268"/>
         <source>Nothing had been buffered yet.</source>
         <translation>لم يكن قد خُزِّن شيء بعد.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="275"/>
+        <location filename="../src/SegmentBuffer.cpp" line="284"/>
         <source>That moment is no longer in the buffer.</source>
         <translation>تلك اللحظة لم تعد في المخزن المؤقت.</translation>
     </message>
     <message>
-        <location filename="../src/SegmentBuffer.cpp" line="330"/>
+        <location filename="../src/SegmentBuffer.cpp" line="341"/>
+        <location filename="../src/SegmentBuffer.cpp" line="357"/>
         <source>The recording could not be cut out of the buffer.</source>
         <translation>تعذّر اقتطاع التسجيل من المخزن المؤقت.</translation>
     </message>
@@ -4062,7 +4074,7 @@ Baichuan is what Reolink&apos;s own app speaks. It is the answer for cameras tha
     </message>
     <message>
         <location filename="../src/SettingsDialog.cpp" line="494"/>
-        <location filename="../src/SettingsDialog.cpp" line="722"/>
+        <location filename="../src/SettingsDialog.cpp" line="720"/>
         <source>New camera</source>
         <translation>كاميرا جديدة</translation>
     </message>
@@ -4077,98 +4089,98 @@ Baichuan is what Reolink&apos;s own app speaks. It is the answer for cameras tha
         <translation>أتريد إزالة «%1» من القائمة؟</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="541"/>
+        <location filename="../src/SettingsDialog.cpp" line="539"/>
         <source>type it once; it moves to the keyring when you save</source>
         <translation>اكتبها مرة واحدة؛ وتنتقل إلى حلقة المفاتيح عند الحفظ</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="542"/>
+        <location filename="../src/SettingsDialog.cpp" line="540"/>
         <source>no keyring is answering — it will stay in the file</source>
         <translation>لا حلقة مفاتيح تجيب — ستبقى في الملف</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="556"/>
+        <location filename="../src/SettingsDialog.cpp" line="554"/>
         <source>Enter a host first.</source>
         <translation>أدخل عنواناً أولاً.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="563"/>
+        <location filename="../src/SettingsDialog.cpp" line="561"/>
         <source>Contacting %1…</source>
         <translation>يجري الاتصال بـ %1…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="646"/>
+        <location filename="../src/SettingsDialog.cpp" line="644"/>
         <source>Cameras on this recorder</source>
         <translation>الكاميرات على هذا المسجل</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="649"/>
+        <location filename="../src/SettingsDialog.cpp" line="647"/>
         <source>%1 answers for %n channel(s). Which of them should be added?</source>
         <translation><numerusform>%1 لا يجيب عن أي قناة.</numerusform><numerusform>%1 يجيب عن قناة واحدة. أتريد إضافتها؟</numerusform><numerusform>%1 يجيب عن قناتين. أيهما تريد إضافته؟</numerusform><numerusform>%1 يجيب عن %n قنوات. أيها تريد إضافته؟</numerusform><numerusform>%1 يجيب عن %n قناة. أيها تريد إضافته؟</numerusform><numerusform>%1 يجيب عن %n قناة. أيها تريد إضافته؟</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="668"/>
-        <location filename="../src/SettingsDialog.cpp" line="739"/>
+        <location filename="../src/SettingsDialog.cpp" line="666"/>
+        <location filename="../src/SettingsDialog.cpp" line="744"/>
         <source>Channel %1</source>
         <translation>القناة %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="670"/>
+        <location filename="../src/SettingsDialog.cpp" line="668"/>
         <source>%1 — %2</source>
         <translation>%1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="672"/>
+        <location filename="../src/SettingsDialog.cpp" line="670"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="674"/>
+        <location filename="../src/SettingsDialog.cpp" line="672"/>
         <source>%1 — already in the list</source>
         <translation>%1 — موجودة في القائمة بالفعل</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="676"/>
+        <location filename="../src/SettingsDialog.cpp" line="674"/>
         <source>%1 — nothing connected</source>
         <translation>%1 — لا شيء موصول</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="688"/>
+        <location filename="../src/SettingsDialog.cpp" line="686"/>
         <source>All</source>
         <translation>الكل</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="689"/>
+        <location filename="../src/SettingsDialog.cpp" line="687"/>
         <source>None</source>
         <translation>لا شيء</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="767"/>
+        <location filename="../src/SettingsDialog.cpp" line="774"/>
         <source>Added %n camera(s) from this recorder.</source>
         <translation><numerusform>لم تُضف أي كاميرا من هذا المسجل.</numerusform><numerusform>أُضيفت كاميرا واحدة من هذا المسجل.</numerusform><numerusform>أُضيفت كاميرتان من هذا المسجل.</numerusform><numerusform>أُضيفت %n كاميرات من هذا المسجل.</numerusform><numerusform>أُضيفت %n كاميرا من هذا المسجل.</numerusform><numerusform>أُضيفت %n كاميرا من هذا المسجل.</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="776"/>
+        <location filename="../src/SettingsDialog.cpp" line="783"/>
         <source>Looking for cameras…</source>
         <translation>يجري البحث عن كاميرات…</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="776"/>
+        <location filename="../src/SettingsDialog.cpp" line="783"/>
         <source>Stop</source>
         <translation>أوقف</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/SettingsDialog.cpp" line="790"/>
+        <location filename="../src/SettingsDialog.cpp" line="797"/>
         <source>Found %n device(s)…</source>
         <translation><numerusform>لم تُوجد أجهزة…</numerusform><numerusform>وُجد جهاز واحد…</numerusform><numerusform>وُجد جهازان…</numerusform><numerusform>وُجدت %n أجهزة…</numerusform><numerusform>وُجد %n جهازاً…</numerusform><numerusform>وُجد %n جهاز…</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="800"/>
+        <location filename="../src/SettingsDialog.cpp" line="807"/>
         <source>No cameras found</source>
         <translation>لم تُوجد كاميرات</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="801"/>
+        <location filename="../src/SettingsDialog.cpp" line="808"/>
         <source>No ONVIF device answered.
 
 Cameras only reply if ONVIF is switched on, and the probe does not cross routers or most VPNs. You can still add a camera by typing its address.</source>
@@ -4177,47 +4189,47 @@ Cameras only reply if ONVIF is switched on, and the probe does not cross routers
 لا تجيب الكاميرات إلا إذا كان ONVIF مشغَّلاً، والاستعلام لا يعبر الموجّهات ولا معظم الشبكات الخاصة الافتراضية. وما زال بإمكانك إضافة كاميرا بكتابة عنوانها.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="827"/>
+        <location filename="../src/SettingsDialog.cpp" line="834"/>
         <source>unnamed device</source>
         <translation>جهاز بلا اسم</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="828"/>
+        <location filename="../src/SettingsDialog.cpp" line="835"/>
         <source> (Reolink)</source>
         <translation> ‏(Reolink)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="829"/>
+        <location filename="../src/SettingsDialog.cpp" line="836"/>
         <source>  · already added</source>
         <translation>  · مضافة من قبل</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="835"/>
+        <location filename="../src/SettingsDialog.cpp" line="842"/>
         <source>Cameras found</source>
         <translation>وُجدت كاميرات</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="836"/>
+        <location filename="../src/SettingsDialog.cpp" line="843"/>
         <source>Add which one?</source>
         <translation>أيها تضيف؟</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="880"/>
+        <location filename="../src/SettingsDialog.cpp" line="887"/>
         <source>Incomplete camera</source>
         <translation>كاميرا ناقصة</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="881"/>
+        <location filename="../src/SettingsDialog.cpp" line="888"/>
         <source>“%1” has no host address.</source>
         <translation>‏«%1» بلا عنوان.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="897"/>
+        <location filename="../src/SettingsDialog.cpp" line="904"/>
         <source>The keyring would not take it</source>
         <translation>لم تقبلها حلقة المفاتيح</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDialog.cpp" line="898"/>
+        <location filename="../src/SettingsDialog.cpp" line="905"/>
         <source>“%1” could not be saved in the system keyring: %2
 
 Its password has been left in the configuration file.</source>
@@ -4337,7 +4349,7 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="300"/>
-        <location filename="../src/VideoTile.cpp" line="760"/>
+        <location filename="../src/VideoTile.cpp" line="759"/>
         <source>Mute this camera</source>
         <translation>اكتم هذه الكاميرا</translation>
     </message>
@@ -4348,13 +4360,13 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="316"/>
-        <location filename="../src/VideoTile.cpp" line="1087"/>
+        <location filename="../src/VideoTile.cpp" line="1086"/>
         <source>Record this camera</source>
         <translation>سجّل هذه الكاميرا</translation>
     </message>
     <message>
         <location filename="../src/VideoTile.cpp" line="327"/>
-        <location filename="../src/VideoTile.cpp" line="1065"/>
+        <location filename="../src/VideoTile.cpp" line="1064"/>
         <source>Speak through the camera</source>
         <translation>تحدّث عبر الكاميرا</translation>
     </message>
@@ -4369,81 +4381,81 @@ Usually a weak Wi-Fi signal, or a bitrate set too low for the resolution. leolin
         <translation>إعدادات الكاميرا</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="477"/>
+        <location filename="../src/VideoTile.cpp" line="482"/>
         <source>no host configured</source>
         <translation>لا عنوان مضبوط</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="563"/>
+        <location filename="../src/VideoTile.cpp" line="568"/>
         <source>connecting over Baichuan…</source>
         <translation>يجري الاتصال عبر Baichuan…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="587"/>
-        <location filename="../src/VideoTile.cpp" line="1007"/>
+        <location filename="../src/VideoTile.cpp" line="592"/>
+        <location filename="../src/VideoTile.cpp" line="1006"/>
         <source>custom stream</source>
         <translation>بث مخصص</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="589"/>
-        <location filename="../src/VideoTile.cpp" line="1009"/>
+        <location filename="../src/VideoTile.cpp" line="594"/>
+        <location filename="../src/VideoTile.cpp" line="1008"/>
         <source>main stream</source>
         <translation>البث الرئيسي</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="590"/>
-        <location filename="../src/VideoTile.cpp" line="1010"/>
+        <location filename="../src/VideoTile.cpp" line="595"/>
+        <location filename="../src/VideoTile.cpp" line="1009"/>
         <source>sub stream</source>
         <translation>البث الفرعي</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="759"/>
+        <location filename="../src/VideoTile.cpp" line="758"/>
         <source>Unmute this camera</source>
         <translation>ألغِ كتم هذه الكاميرا</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="777"/>
+        <location filename="../src/VideoTile.cpp" line="776"/>
         <source>MOTION</source>
         <translation>حركة</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="895"/>
-        <location filename="../src/VideoTile.cpp" line="915"/>
+        <location filename="../src/VideoTile.cpp" line="894"/>
+        <location filename="../src/VideoTile.cpp" line="914"/>
         <source>camera is reconfiguring… %1 s</source>
         <translation>الكاميرا تعيد ضبط نفسها… %1 ث</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="917"/>
+        <location filename="../src/VideoTile.cpp" line="916"/>
         <source>camera is reconfiguring…</source>
         <translation>الكاميرا تعيد ضبط نفسها…</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="982"/>
+        <location filename="../src/VideoTile.cpp" line="981"/>
         <source>stream lost — reconnecting (%1)</source>
         <translation>انقطع البث — تجري إعادة الاتصال (%1)</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1013"/>
+        <location filename="../src/VideoTile.cpp" line="1012"/>
         <source>%1 fps</source>
         <translation>%1 إطار/ث</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1016"/>
+        <location filename="../src/VideoTile.cpp" line="1015"/>
         <source>%1 Mbit/s</source>
         <translation>%1 Mbit/s</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1017"/>
+        <location filename="../src/VideoTile.cpp" line="1016"/>
         <source>%1 kbit/s</source>
         <translation>%1 kbit/s</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1064"/>
+        <location filename="../src/VideoTile.cpp" line="1063"/>
         <source>Stop speaking</source>
         <translation>أوقف التحدث</translation>
     </message>
     <message>
-        <location filename="../src/VideoTile.cpp" line="1086"/>
+        <location filename="../src/VideoTile.cpp" line="1085"/>
         <source>Stop recording</source>
         <translation>أوقف التسجيل</translation>
     </message>

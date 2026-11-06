@@ -28,6 +28,8 @@ QString ffmpegPath()
 /// Segments are named by the moment they start, which is the only reason the
 /// buffer can answer "what did you have at 21:42" without opening a file.
 const char *kStamp = "yyyyMMdd-HHmmss";
+/// Bounds the disk an event that never ends can use.
+constexpr qint64 kMaxHoldSeconds = 3600;
 QString kPattern() { return QStringLiteral("seg-*.mkv"); }
 
 } // namespace
@@ -230,8 +232,10 @@ void SegmentBuffer::prune()
     if (m_settings.retentionSeconds <= 0 || m_settings.directory.isEmpty())
         return;
 
-    const QDateTime cutoff =
-        QDateTime::currentDateTime().addSecs(-m_settings.retentionSeconds);
+    const QDateTime now = QDateTime::currentDateTime();
+    QDateTime cutoff = now.addSecs(-m_settings.retentionSeconds);
+    for (const QDateTime &hold : std::as_const(m_holds))
+        cutoff = qMin(cutoff, qMax(hold, now.addSecs(-kMaxHoldSeconds)));
     const QList<Segment> all = segments();
     int removed = 0;
     for (int i = 0; i < all.size(); ++i) {
@@ -252,11 +256,17 @@ void SegmentBuffer::prune()
                   QStringLiteral("Dropped %1 expired segment(s)").arg(removed));
 }
 
+void SegmentBuffer::holdFrom(const QDateTime &from)
+{
+    m_holds.append(from);
+}
+
 void SegmentBuffer::extract(const QDateTime &from, const QDateTime &to,
                             const QString &outPath)
 {
     const QList<Segment> all = segments();
     if (all.isEmpty()) {
+        m_holds.removeOne(from);
         emit failed(tr("Nothing had been buffered yet."));
         return;
     }
@@ -272,6 +282,7 @@ void SegmentBuffer::extract(const QDateTime &from, const QDateTime &to,
             wanted.append(all.at(i));
     }
     if (wanted.isEmpty()) {
+        m_holds.removeOne(from);
         emit failed(tr("That moment is no longer in the buffer."));
         return;
     }
@@ -281,6 +292,7 @@ void SegmentBuffer::extract(const QDateTime &from, const QDateTime &to,
     auto *list = new QTemporaryFile(
         QDir::tempPath() + QStringLiteral("/leolink-concat-XXXXXX.txt"), this);
     if (!list->open()) {
+        m_holds.removeOne(from);
         emit failed(tr("Cannot write to %1.").arg(QDir::tempPath()));
         delete list;
         return;
@@ -315,7 +327,8 @@ void SegmentBuffer::extract(const QDateTime &from, const QDateTime &to,
     auto *cut = new QProcess(this);
     dieWithParent(cut);
     connect(cut, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, [this, cut, list, outPath](int code, QProcess::ExitStatus) {
+            this, [this, cut, list, from, outPath](int code, QProcess::ExitStatus) {
+                m_holds.removeOne(from);
                 const QString errors =
                     QString::fromUtf8(cut->readAllStandardError()).trimmed();
                 cut->deleteLater();
@@ -335,6 +348,16 @@ void SegmentBuffer::extract(const QDateTime &from, const QDateTime &to,
                          QStringLiteral("Wrote %1 (%2 KiB) from the buffer")
                              .arg(outPath).arg(info.size() / 1024));
                 emit extracted(outPath);
+            });
+    connect(cut, &QProcess::errorOccurred, this,
+            [this, cut, list, from](QProcess::ProcessError error) {
+                if (error != QProcess::FailedToStart)
+                    return;
+                m_holds.removeOne(from);
+                cut->deleteLater();
+                list->deleteLater();
+                emit failed(tr("The recording could not be cut out of the "
+                               "buffer."));
             });
     cut->start(ffmpegPath(), args);
 }

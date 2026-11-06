@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
@@ -101,6 +102,16 @@ QString CameraConfig::label() const
     // because this is a plain struct with no Q_OBJECT of its own.
     return QCoreApplication::translate("leolink::CameraConfig", "Camera");
 }
+
+namespace {
+
+QString &setAsidePath()
+{
+    static QString path;
+    return path;
+}
+
+} // namespace
 
 QString CameraConfig::secret() const
 {
@@ -213,18 +224,34 @@ QString Config::newId()
     return QUuid::createUuid().toString(QUuid::WithoutBraces).left(8);
 }
 
+QString Config::setAsideFile()
+{
+    return setAsidePath();
+}
+
 Config Config::load()
 {
     Config cfg;
 
     QFile file(path());
-    if (!file.open(QIODevice::ReadOnly))
+    if (!file.exists())
         return cfg;
 
-    QJsonParseError err{};
-    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject())
+    const QJsonDocument doc = file.open(QIODevice::ReadOnly)
+                                  ? QJsonDocument::fromJson(file.readAll())
+                                  : QJsonDocument();
+    if (!doc.isObject()) {
+        file.close();
+        const QString aside =
+            path() + QStringLiteral(".broken-") +
+            QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss"));
+        if (file.rename(aside))
+            setAsidePath() = aside;
+        LEO_ERROR(App, QString(),
+                  QStringLiteral("Cannot read %1, moved to: %2")
+                      .arg(path(), setAsidePath()));
         return cfg;
+    }
 
     const QJsonObject root = doc.object();
     // "columns" is the older key; keep reading it so existing setups survive.

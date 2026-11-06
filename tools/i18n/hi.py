@@ -5,6 +5,9 @@ from __future__ import annotations
 # Source string -> Hindi. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Configuration not readable": "कॉन्फ़िगरेशन पढ़ा नहीं जा सका",
+    "%1 could not be read. It was kept as %2, and leolink started without it.":
+        "%1 पढ़ा नहीं जा सका। इसे %2 के रूप में रखा गया है, और leolink इसके बिना शुरू हुआ।",
     "Diagnostics": "निदान",
     "&Diagnostics…": "निदान (&D)…",
     "What leolink and the cameras have been doing — and a report to attach to "

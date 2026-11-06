@@ -258,6 +258,9 @@ notify-send "Motion at %n" "%t"
 curl -X POST https://home.example/hook -d "camera=%n"
 ```
 
+In a command, values reach the shell as quoted variables (`$LEOLINK_CAMERA`,
+`$LEOLINK_TIME` …), so a camera name can't run as code.
+
 With no webhook body or MQTT payload given, leolink sends JSON:
 
 ```json
@@ -446,6 +449,10 @@ back and reports which build it is running.
 ---
 
 ## When something goes wrong
+
+A configuration file that can't be read is kept as
+`~/.config/leolink/config.json.broken-<time>`, and leolink starts without it. Fix
+it and rename it back.
 
 **Help ▸ Diagnostics** (Ctrl+D) is the first place to look. It shows what
 leolink and the cameras have actually been doing, filtered by area — video, the

@@ -150,9 +150,6 @@ struct CameraConfig {
     bool effectiveHttps() const;
 };
 
-/// Whole configuration. Load/save are total: a broken file yields defaults
-/// rather than an exception, because losing the camera list to a stray byte
-/// is worse than starting empty.
 /// A camera together with the cell it occupies.
 struct Placement {
     QString cameraId;
@@ -239,7 +236,10 @@ public:
     QString effectiveSoundFile() const;
 
     static QString path();
+    /// An unreadable file is renamed, not overwritten by the next save.
     static Config load();
+    /// Where load() put an unreadable file this run; empty if it didn't.
+    static QString setAsideFile();
     bool save() const;
 
     QList<CameraConfig> active() const;

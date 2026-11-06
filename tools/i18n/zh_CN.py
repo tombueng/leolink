@@ -5,6 +5,9 @@ from __future__ import annotations
 # Source string -> Simplified Chinese. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Configuration not readable": "无法读取配置",
+    "%1 could not be read. It was kept as %2, and leolink started without it.":
+        "无法读取 %1。该文件已保留为 %2,leolink 已在没有它的情况下启动。",
     "Diagnostics": "诊断",
     "&Diagnostics…": "诊断(&D)…",
     "What leolink and the cameras have been doing — and a report to attach to "
