@@ -156,6 +156,11 @@ private slots:
 
     void togglingTheFrameLeavesEverythingRunning()
     {
+#if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
+        // Qt 6.4 crashes in rhiFlush() showing a GL widget offscreen. 6.10 doesn't.
+        if (QGuiApplication::platformName() == QLatin1String("offscreen"))
+            QSKIP("needs a display on this Qt");
+#endif
         if (!leolink::MotionDetector::available())
             QSKIP("no ffmpeg");
         writeConfig();
