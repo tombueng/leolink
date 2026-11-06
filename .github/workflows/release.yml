@@ -139,7 +139,7 @@ jobs:
         with:
           path: artifacts
 
-      - name: Collect and checksum
+      - name: Collect the packages
         run: |
           mkdir -p release
           find artifacts -type f \
@@ -147,19 +147,35 @@ jobs:
                -o -name 'leolink*.tar.gz' -o -name 'leolink*.AppImage' \
                -o -name 'leolink*.AppImage.zsync' \) \
             -exec cp {} release/ \;
-          # The PKGBUILD in the tag's own tree cannot carry the checksum of the
-          # tarball it is part of, so it is always a release behind. The tag
-          # exists now, and so does its tarball: this one is set from it, and
-          # it is the PKGBUILD the release offers.
-          python3 tools/check_arch_package.py --set-checksum
+
+      # A tag's tree can't hold its own tarball's checksum, so the PKGBUILD the
+      # release offers is set here. Failing costs only the PKGBUILD; the last
+      # step reports it.
+      - name: Add the PKGBUILD
+        id: arch
+        continue-on-error: true
+        env:
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          python3 tools/check_arch_package.py --set-checksum --tag "$TAG"
           cp packaging/arch/PKGBUILD release/PKGBUILD
-          # Checksums so anyone can tell that what they downloaded is what was
-          # built. Generated here, from the artefacts themselves.
+
+      # Checksums so anyone can tell that what they downloaded is what was
+      # built. Generated here, from the artefacts themselves.
+      - name: Checksum
+        run: |
           (cd release && sha256sum * > SHA256SUMS)
           ls -la release
 
       - name: Create release
         uses: softprops/action-gh-release@v2
+        env:
+          ARCH_NOTES: |
+            **Arch Linux** — the `PKGBUILD` attached here, in an empty folder:
+            ```bash
+            curl -LO https://github.com/tombueng/leolink/releases/download/${{ github.event.inputs.tag || github.ref_name }}/PKGBUILD
+            makepkg -si
+            ```
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           generate_release_notes: true
@@ -179,11 +195,7 @@ jobs:
             sudo dnf install ./leolink-*.rpm
             ```
 
-            **Arch Linux** — the `PKGBUILD` attached here, in an empty folder:
-            ```bash
-            curl -LO https://github.com/tombueng/leolink/releases/download/${{ github.event.inputs.tag || github.ref_name }}/PKGBUILD
-            makepkg -si
-            ```
+            ${{ steps.arch.outcome == 'success' && env.ARCH_NOTES || '' }}
 
             **Anywhere else**
             ```bash
@@ -207,3 +219,10 @@ jobs:
             than assuming — but that is reasoning, not testing. Playback from an
             SD card, the P2P path and mobile data are implemented from the
             protocol and have never run against hardware that has them.
+
+      # Re-running this job adds the PKGBUILD if the download was what failed.
+      - name: Say so if the release has no PKGBUILD
+        if: steps.arch.outcome == 'failure'
+        run: |
+          echo "::error::This release has no PKGBUILD, see the step that adds it"
+          exit 1

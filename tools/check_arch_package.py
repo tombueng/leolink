@@ -24,20 +24,25 @@ source is one release behind by necessity, and the release workflow instead
 runs --set-checksum once the tag exists and attaches the PKGBUILD it writes to
 the release, which is the one to build from.
 
-The download is skipped silently when there is no network and when the tag has
-not been pushed yet — before a release there is nothing to compare against, and
-a check that cannot run is not a failure.
+--download passes when there is no network or no tag yet. --set-checksum stops
+instead, and takes only a whole tarball made from the tag's commit.
 """
 
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
+import http.client
+import io
 import re
 import subprocess
 import sys
+import tarfile
+import time
 import urllib.error
 import urllib.request
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -53,6 +58,9 @@ FIELDS = ["pkgdesc", "pkgver", "pkgrel", "url", "arch", "license", "makedepends"
           "depends", "optdepends", "source", "sha256sums"]
 ARRAYS = {"license", "arch", "makedepends", "depends", "optdepends", "source",
           "sha256sums"}
+
+FETCH_ATTEMPTS = 3
+FETCH_PAUSE_SECONDS = 5
 
 
 def from_pkgbuild() -> dict[str, list[str]]:
@@ -109,22 +117,35 @@ def project_version() -> str:
     return match.group(1)
 
 
-def released_tarball_sha256(url: str) -> str | None:
-    try:
-        with urllib.request.urlopen(url, timeout=60) as response:
-            digest = hashlib.sha256()
-            for block in iter(lambda: response.read(1 << 16), b""):
-                digest.update(block)
-            return digest.hexdigest()
-    except urllib.error.HTTPError as error:
-        if error.code == 404:
-            print(f"note: {url} is not there yet — tag not pushed, skipping")
-            return None
-        print(f"note: could not fetch the tarball ({error}) — skipping")
-        return None
-    except OSError as error:
-        print(f"note: could not fetch the tarball ({error}) — skipping")
-        return None
+def released_tarball(url: str) -> tuple[str, str | None] | None:
+    """The tarball's sha256 and the commit GitHub made it from, from its tar header.
+
+    None if it can't be had whole. read() raises on a short body; read(n) would
+    just stop early.
+    """
+    for attempt in range(FETCH_ATTEMPTS):
+        if attempt:
+            time.sleep(FETCH_PAUSE_SECONDS)
+        try:
+            with urllib.request.urlopen(url, timeout=60) as response:
+                data = response.read()
+            with tarfile.open(fileobj=io.BytesIO(gzip.decompress(data))) as tar:
+                return hashlib.sha256(data).hexdigest(), tar.pax_headers.get("comment")
+        except urllib.error.HTTPError as error:
+            if error.code == 404:
+                print(f"note: {url} is not there, so the tag has not been pushed")
+                return None
+            print(f"note: could not fetch the tarball ({error})")
+        except (OSError, EOFError, zlib.error, http.client.HTTPException,
+                tarfile.TarError) as error:
+            print(f"note: could not fetch the tarball ({error})")
+    return None
+
+
+def tagged_commit(tag: str) -> str:
+    """The commit a tag points at here, or nothing if there is no such tag."""
+    return subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{tag}^{{commit}}"],
+                          cwd=ROOT, capture_output=True, text=True).stdout.strip()
 
 
 def main() -> int:
@@ -137,14 +158,27 @@ def main() -> int:
     parser.add_argument("--set-checksum", action="store_true",
                         help="download the released tarball, write its sha256 "
                              "into the PKGBUILD and rewrite .SRCINFO")
+    parser.add_argument("--tag",
+                        help="with --set-checksum: the tag being released, which "
+                             "has to be the one the PKGBUILD builds")
     args = parser.parse_args()
 
     pkgbuild = from_pkgbuild()
     if args.set_checksum:
+        tag = f"v{pkgbuild['pkgver'][0]}"
+        if args.tag and args.tag != tag:
+            print(f"error: releasing {args.tag}, but the PKGBUILD builds {tag}")
+            return 1
         url = pkgbuild["source"][0].split("::", 1)[-1]
-        actual = released_tarball_sha256(url)
-        if actual is None:
+        tarball = released_tarball(url)
+        if tarball is None:
             print("error: the checksum cannot be set without the tarball")
+            return 1
+        actual, commit = tarball
+        tagged = tagged_commit(tag)
+        if commit != tagged:
+            print(f"error: {url} was made from {commit}, "
+                  f"but {tag} here is {tagged or 'no tag'}")
             return 1
         text = PKGBUILD.read_text()
         text, count = re.subn(r"^sha256sums=\('[^']*'\)", f"sha256sums=('{actual}')",
@@ -178,8 +212,11 @@ def main() -> int:
 
     if args.download and pkgbuild["source"] and pkgbuild["sha256sums"]:
         url = pkgbuild["source"][0].split("::", 1)[-1]
-        actual = released_tarball_sha256(url)
-        if actual is not None:
+        tarball = released_tarball(url)
+        if tarball is None:
+            print("note: the checksum was not checked")
+        else:
+            actual, _ = tarball
             declared = pkgbuild["sha256sums"][0]
             print(f"tarball : {url}\n          {actual}")
             if declared == "SKIP":
@@ -191,8 +228,10 @@ def main() -> int:
         print("\nthe Arch packaging does not match:")
         for problem in problems:
             print(f"   {problem}")
-        print("\nUpdate packaging/arch/PKGBUILD, then regenerate .SRCINFO with\n"
-              "   makepkg --printsrcinfo > .SRCINFO")
+        print("\nAfter a release, this sets the new tag's checksum and rewrites .SRCINFO:\n"
+              "   python3 tools/check_arch_package.py --set-checksum\n"
+              "After any other change to packaging/arch/PKGBUILD, this rewrites .SRCINFO:\n"
+              "   python3 tools/check_arch_package.py --write-srcinfo")
         return 1
 
     print("ARCH PACKAGING OK")
