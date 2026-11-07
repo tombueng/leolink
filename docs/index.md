@@ -246,7 +246,7 @@ Placeholders work in every template:
 | `%i` | camera id |
 | `%h` | host |
 | `%t` | ISO 8601 timestamp |
-| `%e` | event type |
+| `%e` | `motion` or `sound` |
 | `%s` | `on` or `off` |
 | `%f` | recording file, if one was started |
 | `%p` | still image |

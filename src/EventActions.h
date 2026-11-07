@@ -47,7 +47,7 @@ struct EventContext {
     QString cameraId;
     QString host;
     QString timestamp;    ///< ISO 8601
-    QString eventType;    ///< "motion"
+    QString eventType;    ///< "motion" or "sound"
     bool active{true};
     QString recordingPath;
     QString imagePath;

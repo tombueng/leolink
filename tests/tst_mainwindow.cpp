@@ -154,6 +154,27 @@ private slots:
         QTRY_VERIFY_WITH_TIMEOUT(!window.isRecording(a), 12000);
     }
 
+    void actionsAreToldWhichEvent()
+    {
+        writeConfig();
+        MainWindow window;
+        const QString log = m_dir.filePath(QStringLiteral("events"));
+        window.m_config.actions.runCommand = true;
+        window.m_config.actions.command = QStringLiteral("echo %e %s >> '%1'").arg(log);
+        const auto logged = [&log] {
+            QFile f(log);
+            return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray();
+        };
+        const CameraConfig &camera = *window.cameraById(QStringLiteral("a"));
+
+        window.raiseEvent(camera, QStringLiteral("sound"), QString(), true);
+        QTRY_COMPARE_WITH_TIMEOUT(logged(), QByteArray("sound on\n"), 5000);
+        window.raiseEvent(camera, QStringLiteral("sound"), QString(), false);
+        QTRY_COMPARE_WITH_TIMEOUT(logged(), QByteArray("sound on\nsound off\n"), 5000);
+        window.raiseEvent(camera, QStringLiteral("motion"), QString(), true);
+        QTRY_COMPARE_WITH_TIMEOUT(logged(), QByteArray("sound on\nsound off\nmotion on\n"), 5000);
+    }
+
     void togglingTheFrameLeavesEverythingRunning()
     {
 #if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)

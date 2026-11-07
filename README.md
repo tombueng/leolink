@@ -285,7 +285,7 @@ Available in commands, webhook bodies, MQTT topics and payloads:
 | `%i` | camera id |
 | `%h` | host |
 | `%t` | ISO 8601 timestamp |
-| `%e` | event type |
+| `%e` | `motion` or `sound` |
 | `%s` | `on` / `off` |
 | `%f` | recording file, if one was started |
 | `%p` | still image file |

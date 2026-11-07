@@ -183,7 +183,7 @@ private:
     void startWindowDrag();
 
     /// Fires the camera's event actions — command, webhook, MQTT.
-    void dispatchActions(const CameraConfig &camera, bool active,
+    void dispatchActions(const CameraConfig &camera, const QString &type, bool active,
                          const QString &recording, const QString &still);
     void beginMotionRecording(const CameraConfig &camera);
     /// Starts, restarts or stops each camera's buffer to match the

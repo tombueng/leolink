@@ -279,7 +279,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     const QString selfTest = qEnvironmentVariable("LEOLINK_SELFTEST");
-    std::fprintf(stderr, "selftest env = '%s'\n", qPrintable(selfTest));
     if (!selfTest.isEmpty()) {
         // Delay is adjustable so the self-test can be pointed at a specific
         // moment — after a camera has been reconfigured, for instance.
@@ -1353,7 +1352,7 @@ void MainWindow::showFullscreenHint(const QString &text)
 
 // ── events ──────────────────────────────────────────────────────────────────
 
-void MainWindow::dispatchActions(const CameraConfig &camera, bool active,
+void MainWindow::dispatchActions(const CameraConfig &camera, const QString &type, bool active,
                                  const QString &recording, const QString &still)
 {
     // A camera either follows the house rule or replaces it — see CameraConfig.
@@ -1367,7 +1366,7 @@ void MainWindow::dispatchActions(const CameraConfig &camera, bool active,
     context.cameraId = camera.id;
     context.host = camera.host;
     context.timestamp = QDateTime::currentDateTime().toString(Qt::ISODate);
-    context.eventType = QStringLiteral("motion");
+    context.eventType = type;
     context.active = active;
     context.recordingPath = recording;
     context.imagePath = still;
@@ -1724,7 +1723,7 @@ void MainWindow::raiseEvent(const CameraConfig &camera, const QString &type,
     if (!active) {
         // Tell the outside world it is over: a webhook or MQTT consumer needs
         // the falling edge to close its own state.
-        dispatchActions(camera, false, QString(), QString());
+        dispatchActions(camera, type, false, QString(), QString());
         if (camera.recordOnMotion)
             scheduleRecordingStop(camera);
         return;
@@ -1756,7 +1755,7 @@ void MainWindow::raiseEvent(const CameraConfig &camera, const QString &type,
         m_sound->play(m_config.effectiveSoundFile());
 
     // Actions last, so they can refer to the still and the recording.
-    dispatchActions(camera, true, recording, entry.imagePath);
+    dispatchActions(camera, type, true, recording, entry.imagePath);
 
     statusBar()->showMessage(tr("%1 at %2").arg(message, camera.label()), 8000);
     if (m_tray && !isVisible())
