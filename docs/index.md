@@ -159,7 +159,8 @@ cameras that report nothing: older firmware, other makers, or a camera whose
 own detection is off. It opens a second connection to the sub stream — over
 Baichuan, it shares the one the tile has — and compares successive frames at
 160x90 — small enough to watch many cameras at
-once, and quite enough to notice a person.
+once, and quite enough to notice a person. On Fedora, `ffmpeg-free` can't decode
+H.265; for an H.265 stream, install `ffmpeg` from RPM Fusion.
 
 *Either of the two* accepts whichever speaks first.
 

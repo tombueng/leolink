@@ -114,6 +114,8 @@ cannot do something simply does not show it.
 
 Qt 6.4 or newer and libmpv. `ffmpeg` on PATH is needed for recording — without
 it everything else still works and recording reports that it is unavailable.
+Fedora's own `ffmpeg-free` can't decode H.265, so leolink's motion detection
+fails on an H.265 stream there; `ffmpeg` from RPM Fusion can.
 
 A graphics stack with VA-API or VDPAU is optional but worth having for
 main-stream resolutions.

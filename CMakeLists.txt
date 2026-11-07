@@ -271,7 +271,9 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Multimedia")
 set(CPACK_RPM_PACKAGE_URL "${PROJECT_HOMEPAGE_URL}")
 set(CPACK_RPM_PACKAGE_AUTOREQ ON)
-set(CPACK_RPM_PACKAGE_REQUIRES_POST "ffmpeg")
+# A path: Fedora's ffmpeg-free doesn't provide "ffmpeg". In the spec directly:
+# CMake 3.28 has no CPACK_RPM_PACKAGE_RECOMMENDS.
+set(CPACK_RPM_SPEC_MORE_DEFINE "Recommends: /usr/bin/ffmpeg")
 # The same plugin the .deb asks for, and invisible to the automatic requirements
 # for the same reason. Named by soname rather than by package, which is what
 # makes the rest of this file's requirements portable between RPM distributions:
