@@ -5,6 +5,7 @@ from __future__ import annotations
 # Source string -> Japanese. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Show the whole picture": "映像全体を表示",
     "Configuration not readable": "設定を読み込めません",
     "%1 could not be read. It was kept as %2, and leolink started without it.":
         "%1 を読み込めませんでした。%2 として保管し、leolink はこのファイルなしで起動しました。",

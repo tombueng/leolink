@@ -408,6 +408,14 @@ int MpvWidget::videoWidth() const
     return int(value);
 }
 
+double MpvWidget::videoAspect() const
+{
+    double value = 0.0;
+    if (!m_mpv || mpv_get_property(m_mpv, "video-params/aspect", MPV_FORMAT_DOUBLE, &value) < 0)
+        return 0.0;
+    return value;
+}
+
 MpvWidget::StreamInfo MpvWidget::streamInfo() const
 {
     StreamInfo info;

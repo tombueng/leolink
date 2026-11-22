@@ -49,6 +49,8 @@ public:
 
     /// Video width as mpv reports it, 0 before the first frame.
     int videoWidth() const;
+    /// Display aspect of the picture, 0 before the first frame.
+    double videoAspect() const;
 
     /// Whether an OpenGL renderer string names one that runs on the CPU:
     /// llvmpipe, softpipe, or a driver that says "software". Those get mpv's

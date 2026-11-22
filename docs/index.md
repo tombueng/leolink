@@ -108,6 +108,20 @@ the camera.
 
 ---
 
+## Zooming in
+
+Drag a rectangle over a picture and that part fills the tile. The mouse wheel
+zooms in and out at the pointer. Drag a zoomed picture to move it. The button in
+the top right corner shows the zoom and goes back to the whole picture.
+
+A zoomed tile plays the camera's main stream, which has the detail the sub
+stream lacks. It goes back to the sub stream ten seconds after zooming out. A
+tile set to the main stream, or to a URL of your own, stays as it is. If the
+main stream shows nothing within 15 seconds, the zoom stays on the sub stream.
+
+The zoom is the picture's, not the camera's: recordings and motion detection
+are not affected. For the lens of a camera that has one, see below.
+
 ## Turning the camera
 
 A camera with a motor — an E1, E1 Pro or E1 Zoom — gets a **Turn the camera**

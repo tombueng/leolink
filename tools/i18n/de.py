@@ -4,6 +4,7 @@ from __future__ import annotations
 
 # Source string -> German. Plain text, no XML escaping: that is applied on write.
 STRINGS: dict[str, str] = {
+    "Show the whole picture": "Ganzes Bild zeigen",
     "Configuration not readable": "Konfiguration nicht lesbar",
     "%1 could not be read. It was kept as %2, and leolink started without it.":
         "%1 konnte nicht gelesen werden. Die Datei wurde als %2 aufbewahrt, und leolink wurde ohne sie gestartet.",
