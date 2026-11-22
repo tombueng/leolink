@@ -6,11 +6,14 @@
 #include <QWidget>
 
 #include "Config.h"
+#include "ZoomView.h"
 
 class QLabel;
+class QRubberBand;
 class QSlider;
 class QTimer;
 class QToolButton;
+class TestZoom;
 
 namespace leolink {
 
@@ -121,7 +124,12 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     /// Keeps the connecting overlay on top of the video surface.
     void resizeEvent(QResizeEvent *event) override;
+    /// On the picture: drag a rectangle to zoom to it, or drag a zoomed
+    /// picture around. The wheel zooms at the pointer.
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     /// libmpv is handed this widget's native window id. That id is only usable
     /// once the widget has actually been realised, so playback starts here
@@ -133,6 +141,8 @@ private slots:
     void onMuteToggled();
 
 private:
+    friend class ::TestZoom;
+
     void buildUi();
     void createPlayer();
     void destroyPlayer();
@@ -153,7 +163,30 @@ private:
     void updateStatusLabel();
     void checkAlive();
 
+    /// What is played: the camera's configuration, with the main stream while
+    /// zoomed in.
+    CameraConfig shownConfig() const;
+    bool canZoomToMain() const;
+    /// Hands the zoom to mpv and picks the stream for it.
+    void applyZoom();
+    void pushZoom();
+    void setZoomStream(bool on);
+    void layoutZoomButton();
+
     CameraConfig m_config;
+
+    ZoomView m_zoom;
+    enum class Drag { None, Select, Pan };
+    Drag m_drag{Drag::None};
+    QPoint m_dragFrom;
+    QRubberBand *m_rubberBand{nullptr};
+    QToolButton *m_zoomButton{nullptr};
+    /// Playing the main stream for the zoom.
+    bool m_zoomStream{false};
+    /// The main stream showed nothing; zoom stays on the configured stream.
+    bool m_zoomStreamFailed{false};
+    /// Back to the configured stream a while after zooming out.
+    QTimer *m_zoomStreamTimer{nullptr};
 
     bool m_wantPlayback{false};
     QString m_hwdec;

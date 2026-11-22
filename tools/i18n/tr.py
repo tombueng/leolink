@@ -5,6 +5,7 @@ from __future__ import annotations
 # Source string -> Turkish. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Show the whole picture": "Görüntünün tamamını göster",
     "Configuration not readable": "Yapılandırma okunamıyor",
     "%1 could not be read. It was kept as %2, and leolink started without it.":
         "%1 okunamadı. Dosya %2 olarak saklandı ve leolink onsuz başlatıldı.",

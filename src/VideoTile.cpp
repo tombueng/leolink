@@ -4,6 +4,8 @@
 #include "PtzPad.h"
 #include "Log.h"
 
+#include <cmath>
+
 #include <QFrame>
 #include <QTimer>
 #include <QGuiApplication>
@@ -12,9 +14,11 @@
 #include <QMouseEvent>
 #include <QIcon>
 #include <QPainter>
+#include <QRubberBand>
 #include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QWheelEvent>
 
 #include "MpvWidget.h"
 #include "SignalIndicator.h"
@@ -34,6 +38,14 @@ constexpr int kAlertBorder = 6;
 /// on: about forty-five seconds, enough for a camera that is merely slow to
 /// open a stream, short of leaving a black tile for minutes.
 constexpr int kFallbackAttempts = 3;
+
+/// A drag shorter than this on either side is a click, not a selection.
+constexpr int kMinSelection = 12;
+/// Zoom per wheel notch.
+constexpr double kWheelStep = 1.25;
+/// How long the main stream stays after zooming out, so zooming straight back
+/// in doesn't reload it.
+constexpr int kZoomStreamHoldMs = 10000;
 
 QString motionStyle()
 {
@@ -227,6 +239,26 @@ void VideoTile::buildUi()
     m_spinner = new Spinner(this);
     m_spinner->setText(tr("connecting…"));
     m_spinner->raise();
+
+    m_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+    // Opaque like the PTZ pad: over mpv's picture, translucency shows garbage.
+    m_zoomButton = stripButton(this, QStringLiteral("zoom-original"), QStringLiteral("⤢"),
+                               tr("Show the whole picture"));
+    m_zoomButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    m_zoomButton->setAutoFillBackground(true);
+    m_zoomButton->setBackgroundRole(QPalette::Window);
+    m_zoomButton->hide();
+    connect(m_zoomButton, &QToolButton::clicked, this, [this] {
+        m_zoom.reset();
+        applyZoom();
+    });
+    m_zoomStreamTimer = new QTimer(this);
+    m_zoomStreamTimer->setSingleShot(true);
+    m_zoomStreamTimer->setInterval(kZoomStreamHoldMs);
+    connect(m_zoomStreamTimer, &QTimer::timeout, this, [this] {
+        if (!m_zoom.isZoomed())
+            setZoomStream(false);
+    });
 
     // libmpv gives no Qt signal for "first frame". Polling the video width a
     // few times a second is far simpler than wiring up its wakeup callback,
@@ -503,7 +535,7 @@ QString VideoTile::playbackUrl() const
     // so the address only exists once that connection is up.
     if (m_config.effectiveTransport() == QLatin1String("baichuan"))
         return m_baichuanUrl;
-    return m_config.streamUrl();
+    return shownConfig().streamUrl();
 }
 
 void VideoTile::startBaichuan()
@@ -513,7 +545,7 @@ void VideoTile::startBaichuan()
 
     // Shared with whatever else is reading this camera — a recording, motion
     // detection — so the camera gives up one session for all of them.
-    m_baichuan = BaichuanStream::shared(m_config);
+    m_baichuan = BaichuanStream::shared(shownConfig());
     if (m_baichuan->announcedFps() > 0)
         m_baichuanFps = m_baichuan->announcedFps();
     connect(m_baichuan, &BaichuanStream::formatKnown, this,
@@ -581,16 +613,17 @@ void VideoTile::beginPlayback()
     // The URL is the single most useful line in the log: it says which
     // transport, which stream and which channel were asked for, and a
     // surprising number of reports come down to the wrong one of the three.
+    const QString stream = shownConfig().stream;
     LEO_INFO(Stream, m_config.label(),
              QStringLiteral("Opening %1 (transport=%2, stream=%3, decoder=%4, "
                             "low latency=%5)")
-                 .arg(playbackUrl(), m_config.effectiveTransport(), m_config.stream,
+                 .arg(playbackUrl(), m_config.effectiveTransport(), stream,
                       m_hwdec.isEmpty() ? QStringLiteral("vaapi,nvdec,no") : m_hwdec,
                       m_lowLatency ? QStringLiteral("yes") : QStringLiteral("no")));
     m_surface->play(playbackUrl());
     setStatusText(m_config.transport == QLatin1String("custom")
                       ? tr("custom stream")
-                      : (m_config.stream == QLatin1String("main")
+                      : (stream == QLatin1String("main")
                              ? tr("main stream")
                              : tr("sub stream")));
     m_infoTimer->start();
@@ -611,6 +644,10 @@ void VideoTile::resizeEvent(QResizeEvent *event)
     if (m_spinner && m_spinner->isVisible())
         m_spinner->setGeometry(m_surface->geometry());
     layoutStrip();
+    if (m_zoom.isZoomed()) {
+        m_zoom.clamp(QSizeF(m_surface->size()), m_surface->videoAspect());
+        pushZoom();
+    }
 }
 
 void VideoTile::setImmersive(bool on)
@@ -711,6 +748,11 @@ void VideoTile::applyConfig(const CameraConfig &config)
 {
     const bool streamChanged = !config.sameStream(m_config);
     m_config = config;
+    if (streamChanged) {
+        m_zoomStreamFailed = false;
+        if (!canZoomToMain())
+            m_zoomStream = false;
+    }
 
     m_title->setText(m_config.label());
     m_volumeSlider->setValue(m_config.volume);
@@ -952,6 +994,17 @@ void VideoTile::checkAlive()
         return;
     m_stalledChecks = 0;
 
+    // Not the transport's fault: the main stream may be more than this machine
+    // or link manages.
+    if (m_zoomStream && !m_everDecoded) {
+        LEO_WARN(Stream, m_config.label(),
+                 QStringLiteral("The main stream showed nothing in 15 s; zooming on "
+                                "the %1 stream").arg(m_config.stream));
+        m_zoomStreamFailed = true;
+        setZoomStream(false);
+        return;
+    }
+
     ++m_reconnectAttempts;
     if (m_config.transport == QLatin1String("auto") && !m_everDecoded &&
         m_reconnectAttempts >= kFallbackAttempts) {
@@ -997,6 +1050,12 @@ void VideoTile::refreshStreamInfo()
     if (info.width <= 0)
         return;   // nothing playing yet; leave the "connecting" text alone
 
+    // The aspect can change with the stream.
+    if (m_zoom.isZoomed()) {
+        m_zoom.clamp(QSizeF(m_surface->size()), m_surface->videoAspect());
+        pushZoom();
+    }
+
     // The stream name stays first: it is the one thing that says *which*
     // stream this is, and the numbers underneath mean little without it. A
     // camera reached by a URL of one's own has no main or sub stream to speak
@@ -1005,8 +1064,8 @@ void VideoTile::refreshStreamInfo()
     if (m_config.transport == QLatin1String("custom"))
         parts << tr("custom stream");
     else
-        parts << (m_config.stream == QLatin1String("main") ? tr("main stream")
-                                                           : tr("sub stream"));
+        parts << (shownConfig().stream == QLatin1String("main") ? tr("main stream")
+                                                                : tr("sub stream"));
     parts << QStringLiteral("%1×%2").arg(info.width).arg(info.height);
     if (info.fps > 0.0)
         parts << tr("%1 fps").arg(info.fps, 0, 'f', info.fps < 10 ? 1 : 0);
@@ -1099,7 +1158,146 @@ void VideoTile::mousePressEvent(QMouseEvent *event)
         event->accept();
         return;
     }
+    if (event->button() == Qt::LeftButton && m_surface->videoAspect() > 0 &&
+        m_surface->geometry().contains(event->position().toPoint())) {
+        m_drag = m_zoom.isZoomed() ? Drag::Pan : Drag::Select;
+        m_dragFrom = event->position().toPoint();
+        if (m_drag == Drag::Pan)
+            m_surface->setCursor(Qt::ClosedHandCursor);
+        event->accept();
+        return;
+    }
     QWidget::mousePressEvent(event);
+}
+
+void VideoTile::mouseMoveEvent(QMouseEvent *event)
+{
+    const QPoint at = event->position().toPoint();
+    if (m_drag == Drag::Select) {
+        const QRect band = QRect(m_dragFrom, at).normalized() & m_surface->geometry();
+        if (band.width() >= kMinSelection || band.height() >= kMinSelection) {
+            m_rubberBand->setGeometry(band);
+            m_rubberBand->show();
+            m_rubberBand->raise();
+        }
+        event->accept();
+        return;
+    }
+    if (m_drag == Drag::Pan) {
+        m_zoom.panBy(at - m_dragFrom, QSizeF(m_surface->size()), m_surface->videoAspect());
+        m_dragFrom = at;
+        pushZoom();
+        event->accept();
+        return;
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
+void VideoTile::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (m_drag == Drag::None || event->button() != Qt::LeftButton) {
+        QWidget::mouseReleaseEvent(event);
+        return;
+    }
+    if (m_drag == Drag::Select) {
+        m_rubberBand->hide();
+        const QRect band =
+            QRect(m_dragFrom, event->position().toPoint()).normalized() & m_surface->geometry();
+        if (band.width() >= kMinSelection && band.height() >= kMinSelection) {
+            m_zoom.zoomTo(QRectF(band.translated(-m_surface->geometry().topLeft())),
+                          QSizeF(m_surface->size()), m_surface->videoAspect());
+            applyZoom();
+        }
+    } else {
+        m_surface->setCursor(Qt::OpenHandCursor);
+    }
+    m_drag = Drag::None;
+    event->accept();
+}
+
+void VideoTile::wheelEvent(QWheelEvent *event)
+{
+    const QPointF at = event->position() - QPointF(m_surface->geometry().topLeft());
+    const double aspect = m_surface->videoAspect();
+    const int delta = event->angleDelta().y();
+    if (aspect <= 0 || delta == 0 || !QRectF(m_surface->rect()).contains(at)) {
+        QWidget::wheelEvent(event);
+        return;
+    }
+    m_zoom.zoomBy(std::pow(kWheelStep, delta / 120.0), at, QSizeF(m_surface->size()), aspect);
+    applyZoom();
+    event->accept();
+}
+
+// ── digital zoom ────────────────────────────────────────────────────────────
+
+CameraConfig VideoTile::shownConfig() const
+{
+    CameraConfig shown = m_config;
+    if (m_zoomStream)
+        shown.stream = QStringLiteral("main");
+    return shown;
+}
+
+bool VideoTile::canZoomToMain() const
+{
+    return m_config.stream != QLatin1String("main") &&
+           m_config.effectiveTransport() != QLatin1String("custom") && !m_zoomStreamFailed;
+}
+
+void VideoTile::applyZoom()
+{
+    pushZoom();
+    if (m_zoom.isZoomed()) {
+        m_zoomStreamTimer->stop();
+        if (canZoomToMain())
+            setZoomStream(true);
+    } else if (m_zoomStream) {
+        m_zoomStreamTimer->start();
+    }
+}
+
+void VideoTile::pushZoom()
+{
+    const QPointF pan = m_zoom.mpvPan();
+    m_surface->setPropertyDouble(QStringLiteral("video-zoom"), m_zoom.mpvZoom());
+    m_surface->setPropertyDouble(QStringLiteral("video-pan-x"), pan.x());
+    m_surface->setPropertyDouble(QStringLiteral("video-pan-y"), pan.y());
+
+    if (m_zoom.isZoomed()) {
+        const QString factor = QStringLiteral("%1×").arg(m_zoom.factor(), 0, 'f', 1);
+        m_zoomButton->setText(m_zoomButton->icon().isNull() ? QStringLiteral("⤢ ") + factor
+                                                            : factor);
+        m_zoomButton->adjustSize();
+        m_zoomButton->show();
+        layoutZoomButton();
+        if (m_drag != Drag::Pan)
+            m_surface->setCursor(Qt::OpenHandCursor);
+    } else {
+        m_zoomButton->hide();
+        m_surface->unsetCursor();
+    }
+}
+
+void VideoTile::setZoomStream(bool on)
+{
+    if (m_zoomStream == on)
+        return;
+    m_zoomStream = on;
+    LEO_INFO(Stream, m_config.label(),
+             on ? QStringLiteral("Zoomed in: switching to the main stream")
+                : QStringLiteral("Zoomed out: back to the %1 stream").arg(m_config.stream));
+    if (m_wantPlayback)
+        restart();
+}
+
+void VideoTile::layoutZoomButton()
+{
+    if (!m_zoomButton->isVisible())
+        return;
+    const QRect video = m_surface->geometry();
+    m_zoomButton->move(video.right() - 6 - m_zoomButton->width() + 1, video.top() + 6);
+    m_zoomButton->raise();
 }
 
 void VideoTile::mouseDoubleClickEvent(QMouseEvent *event)

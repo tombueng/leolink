@@ -25,6 +25,8 @@ camera and no vendor software is involved. See
   on cameras with no SD card, because the recording happens here. A separate
   ffmpeg process copies the stream through without re-encoding, so quality is
   untouched and the processor stays idle.
+- **Zooms into the picture**: drag a rectangle over it, or use the wheel. A
+  zoomed tile switches to the camera's main stream for the detail.
 - **Turns the camera**: buttons over the picture pan and tilt it for as long
   as they are held, and zoom it where it has a zoom lens. Offered only on a
   camera that says it has a motor.

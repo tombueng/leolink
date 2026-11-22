@@ -32,6 +32,7 @@ qt_standard_project_setup()
 set(LEOLINK_SOURCES
     src/MainWindow.cpp        src/MainWindow.h
     src/VideoTile.cpp         src/VideoTile.h
+    src/ZoomView.cpp          src/ZoomView.h
     src/Config.cpp            src/Config.h
     src/ReolinkClient.cpp     src/ReolinkClient.h
     src/MotionWatcher.cpp     src/MotionWatcher.h

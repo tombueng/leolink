@@ -5,6 +5,7 @@ from __future__ import annotations
 # Source string -> Arabic. Plain text, no XML escaping: that is
 # applied on write.
 STRINGS: dict[str, str] = {
+    "Show the whole picture": "عرض الصورة كاملة",
     "Configuration not readable": "تعذّرت قراءة الإعدادات",
     "%1 could not be read. It was kept as %2, and leolink started without it.":
         "تعذّرت قراءة %1. حُفظ الملف باسم %2، وبدأ leolink من دونه.",
