@@ -9,6 +9,7 @@
 #include <QGuiApplication>
 #include <QHostAddress>
 #include <QLocale>
+#include <QLoggingCategory>
 #include <QMap>
 #include <QMutex>
 #include <QMutexLocker>
@@ -140,6 +141,15 @@ void writeToStderr(const QString &line)
     std::fprintf(stderr, "%s\n", qPrintable(line));
 }
 
+/// Detailed logging also takes Qt's graphics categories: the EGL/GLX visual
+/// and the OpenGL context that composes the window. QT_LOGGING_RULES wins.
+void applyQtLogRules(bool debug)
+{
+    QLoggingCategory::setFilterRules(
+        debug ? QStringLiteral("qt.qpa.gl.debug=true\nqt.rhi.general.debug=true")
+              : QString());
+}
+
 } // namespace
 
 bool Log::s_debug = false;
@@ -181,6 +191,7 @@ void Log::start()
 
     if (qEnvironmentVariableIntValue("LEOLINK_DEBUG") > 0)
         s_debug = true;
+    applyQtLogRules(s_debug);
     s_running = true;
 
     // Qt, its platform plugins and the Wayland stack all complain through
@@ -207,11 +218,17 @@ void Log::start()
              QStringLiteral("──── leolink %1 started ────")
                  .arg(QStringLiteral(LEOLINK_VERSION)));
     LEO_INFO(App, QString(),
-             QStringLiteral("%1, Qt %2, %3")
+             QStringLiteral("%1, Qt %2, %3, GL integration %4, session %5 / %6")
                  .arg(osRelease(), QString::fromLatin1(qVersion()),
                       QGuiApplication::platformName().isEmpty()
                           ? QStringLiteral("no GUI")
-                          : QGuiApplication::platformName()));
+                          : QGuiApplication::platformName(),
+                      qEnvironmentVariable("QT_XCB_GL_INTEGRATION",
+                                           QStringLiteral("default")),
+                      qEnvironmentVariable("XDG_SESSION_TYPE",
+                                           QStringLiteral("unknown")),
+                      qEnvironmentVariable("XDG_CURRENT_DESKTOP",
+                                           QStringLiteral("unknown"))));
 }
 
 void Log::stop()
@@ -230,6 +247,7 @@ void Log::setDebugEnabled(bool enabled)
     if (enabled == s_debug)
         return;
     s_debug = enabled;
+    applyQtLogRules(enabled);
     LEO_INFO(App, QString(),
              enabled ? QStringLiteral("Detailed logging on")
                      : QStringLiteral("Detailed logging off"));

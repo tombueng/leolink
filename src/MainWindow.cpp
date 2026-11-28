@@ -17,6 +17,9 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMetaEnum>
+#include <QOpenGLContext>
+#include <QOpenGLWidget>
 #include <QProcess>
 #include <QPushButton>
 #include <QRegularExpression>
@@ -112,6 +115,15 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(QStringLiteral("leolink"));
     setWindowIcon(QIcon(QStringLiteral(":/icons/leolink.svg")));
     resize(1100, 700);
+
+    // Makes the window an OpenGL surface from the start. Without it Qt
+    // recreates the shown window when the first video tile arrives, which
+    // crashed or left it black on some systems (issue #33).
+    // Not without OpenGL: the window would stay black even with no camera.
+    if (QOpenGLContext().create())
+        (new QOpenGLWidget(this))->hide();
+    else
+        LEO_WARN(Ui, QString(), QStringLiteral("No OpenGL context; video cannot be shown"));
 
     m_central = new QWidget(this);
     m_grid = new QGridLayout(m_central);
@@ -2412,6 +2424,23 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return QMainWindow::eventFilter(watched, event);
+}
+
+bool MainWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::WinIdChange && internalWinId()) {
+        const QWindow *handle = windowHandle();
+        const char *surface =
+            handle ? QMetaEnum::fromType<QSurface::SurfaceType>().valueToKey(
+                         handle->surfaceType())
+                   : nullptr;
+        LEO_INFO(Ui, QString(),
+                 QStringLiteral("Main window %1, %2")
+                     .arg(m_nativeWindows++ ? QStringLiteral("recreated")
+                                            : QStringLiteral("created"),
+                          QString::fromLatin1(surface ? surface : "no surface")));
+    }
+    return QMainWindow::event(event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

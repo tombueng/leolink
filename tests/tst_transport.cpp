@@ -2,8 +2,10 @@
 
 #include <algorithm>
 
+#include <QDir>
 #include <QFile>
 #include <QSet>
+#include <QTemporaryDir>
 #include <QTest>
 
 #include "CameraProbe.h"
@@ -369,6 +371,45 @@ private slots:
         QFETCH(QString, renderer);
         QFETCH(bool, software);
         QCOMPARE(leolink::MpvWidget::isSoftwareRenderer(renderer), software);
+    }
+
+    /// NVIDIA on the boot GPU keeps Qt off EGL (issue #33). Each card is
+    /// "name:boot_vga:driver", "-" for no boot_vga file.
+    void primaryGpuDriver_data()
+    {
+        QTest::addColumn<QStringList>("cards");
+        QTest::addColumn<QString>("driver");
+        QTest::addRow("nvidia only") << QStringList{"card0:1:nvidia"} << "nvidia";
+        QTest::addRow("amd only") << QStringList{"card1:1:amdgpu"} << "amdgpu";
+        QTest::addRow("hybrid laptop") << QStringList{"card0:1:i915", "card1:0:nvidia"} << "i915";
+        QTest::addRow("nvidia listed first, not primary")
+            << QStringList{"card0:0:nvidia", "card1:1:amdgpu"} << "amdgpu";
+        QTest::addRow("connector entry ignored")
+            << QStringList{"card0-DP-1:1:nvidia", "card0:1:amdgpu"} << "amdgpu";
+        QTest::addRow("no boot_vga") << QStringList{"card0:-:nvidia"} << "";
+        QTest::addRow("no cards") << QStringList{} << "";
+    }
+
+    void primaryGpuDriver()
+    {
+        QFETCH(QStringList, cards);
+        QFETCH(QString, driver);
+        QTemporaryDir root;
+        QVERIFY(root.isValid());
+        for (const QString &spec : std::as_const(cards)) {
+            const QStringList part = spec.split(':');
+            const QString device = root.filePath(part[0] + "/device");
+            const QString target = root.filePath("drivers/" + part[2]);
+            QVERIFY(QDir().mkpath(device) && QDir().mkpath(target));
+            if (part[1] != "-") {
+                QFile bootVga(device + "/boot_vga");
+                QVERIFY(bootVga.open(QIODevice::WriteOnly));
+                bootVga.write(part[1].toLatin1() + '\n');
+            }
+            QVERIFY(QFile::link(target, device + "/driver"));
+        }
+        QCOMPARE(leolink::MpvWidget::primaryGpuDriver(root.path()), driver);
+        QCOMPARE(leolink::MpvWidget::primaryGpuDriver(root.filePath("missing")), QString());
     }
 };
 

@@ -1,8 +1,12 @@
 #include "MpvWidget.h"
 
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QGuiApplication>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
+#include <QRegularExpression>
 #include <QtGlobal>
 
 #include <mpv/client.h>
@@ -189,6 +193,25 @@ bool MpvWidget::isSoftwareRenderer(const QString &renderer)
            renderer.contains(QLatin1String("software"), Qt::CaseInsensitive);
 }
 
+QString MpvWidget::primaryGpuDriver(const QString &drmRoot)
+{
+    static const QRegularExpression card(QStringLiteral("^card\\d+$"));
+    const QDir drm(drmRoot);
+    const QStringList entries =
+        drm.entryList(QDir::AllEntries | QDir::System | QDir::NoDotAndDotDot, QDir::Name);
+    for (const QString &name : entries) {
+        if (!card.match(name).hasMatch())
+            continue;
+        const QString device = drm.filePath(name) + QStringLiteral("/device");
+        QFile bootVga(device + QStringLiteral("/boot_vga"));
+        if (!bootVga.open(QIODevice::ReadOnly) || bootVga.readAll().trimmed() != "1")
+            continue;
+        const QString driver = QFileInfo(device + QStringLiteral("/driver")).canonicalFilePath();
+        return driver.isEmpty() ? QString() : QFileInfo(driver).fileName();
+    }
+    return {};
+}
+
 void MpvWidget::initializeGL()
 {
     ensureCreated();
@@ -328,13 +351,15 @@ void MpvWidget::reportEnvironment()
             return value ? QString::fromUtf8(reinterpret_cast<const char *>(value))
                          : QStringLiteral("unknown");
         };
-        Log::setFact(QStringLiteral("OpenGL"),
-                     QStringLiteral("%1 — %2 (%3)")
-                         .arg(text(GL_RENDERER), text(GL_VERSION), text(GL_VENDOR)));
+        const QString renderer = QStringLiteral("%1 — %2 (%3)")
+                                     .arg(text(GL_RENDERER), text(GL_VERSION), text(GL_VENDOR));
+        Log::setFact(QStringLiteral("OpenGL"), renderer);
+        LEO_INFO(Stream, QString(), QStringLiteral("OpenGL: %1").arg(renderer));
     }
 
     if (char *version = mpv_get_property_string(m_mpv, "mpv-version")) {
         Log::setFact(QStringLiteral("mpv"), QString::fromUtf8(version));
+        LEO_INFO(Stream, QString(), QString::fromUtf8(version));
         mpv_free(version);
     }
     if (char *ffmpeg = mpv_get_property_string(m_mpv, "ffmpeg-version")) {

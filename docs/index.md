@@ -489,7 +489,9 @@ inside your own network are kept: they identify nothing outside the house and
 are usually the first clue.
 
 The log lives at `~/.local/share/leolink/leolink.log`, rotated at 2 MB (8 MB
-with detailed logging on), one previous file kept.
+with detailed logging on), one previous file kept. If the window can't be used,
+start leolink as `LEOLINK_DEBUG=1 leolink` for detailed logging and send that
+file.
 
 ### If the picture works but the processor is busy
 
@@ -514,8 +516,16 @@ leolink says this in the log when it happens, so it need not be worked out
 twice.
 
 If hardware decoding misbehaves on your driver, `QT_XCB_GL_INTEGRATION=xcb_glx`
-puts Qt back on GLX — hardware decoding then cannot work at all, but nor can it
+puts Qt back on GLX — VA-API decoding then cannot work at all, but nor can it
 cause trouble.
+
+### If the whole window is black
+
+On X11 and XWayland leolink asks Qt for EGL, which VA-API decoding needs. When
+NVIDIA's own driver runs the main graphics card, it leaves Qt on GLX instead:
+EGL there can turn the entire window black, menus and settings included. The log
+names the driver in `Primary GPU driver:`. To try the other way, start leolink
+with `QT_XCB_GL_INTEGRATION=xcb_glx` or `QT_XCB_GL_INTEGRATION=xcb_egl`.
 
 ### If a setting seems to be missing
 

@@ -57,6 +57,10 @@ public:
     /// plainest drawing path; see initializeGL().
     static bool isSoftwareRenderer(const QString &renderer);
 
+    /// Kernel driver of the boot GPU ("amdgpu", "i915", "nvidia" …), read
+    /// from sysfs; empty if unknown.
+    static QString primaryGpuDriver(const QString &drmRoot = QStringLiteral("/sys/class/drm"));
+
     /// What is actually being played, as opposed to what was configured. Empty
     /// or zero until the first frame has arrived.
     struct StreamInfo {

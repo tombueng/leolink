@@ -49,6 +49,8 @@ protected:
     /// Watches the whole application for signs of life while full screen, so
     /// the controls and the pointer can be taken away once there are none.
     bool eventFilter(QObject *watched, QEvent *event) override;
+    /// Logs each creation of the native window and its surface type.
+    bool event(QEvent *event) override;
 
 private slots:
     void openSettings();
@@ -264,6 +266,7 @@ private:
     /// The same way out, in the right-click menu. Only shown in full screen.
     QAction *m_leaveFullscreenAction{nullptr};
     QMenu *m_contextMenu{nullptr};
+    int m_nativeWindows{0};
 
     /// Camera filling the screen; empty while showing the grid.
     QString m_fullscreenId;

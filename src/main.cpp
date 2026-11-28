@@ -20,6 +20,7 @@
 #include "Config.h"
 #include "Log.h"
 #include "MainWindow.h"
+#include "MpvWidget.h"
 #include "TalkSession.h"
 
 namespace {
@@ -30,8 +31,8 @@ namespace {
 /// xcb platform and let XWayland bridge it.
 ///
 /// Anyone who has set QT_QPA_PLATFORM themselves keeps their choice; this only
-/// fills in a default.
-void selectPlatform()
+/// fills in a default. Returns the boot GPU's driver, for the log.
+QString selectPlatform()
 {
     if (!qEnvironmentVariableIsSet("QT_QPA_PLATFORM") &&
         qEnvironmentVariableIsSet("WAYLAND_DISPLAY") &&
@@ -49,8 +50,14 @@ void selectPlatform()
     //
     // Anyone who has chosen an integration themselves keeps it, and it can be
     // switched back with QT_XCB_GL_INTEGRATION=xcb_glx if a driver dislikes EGL.
-    if (!qEnvironmentVariableIsSet("QT_XCB_GL_INTEGRATION"))
+    //
+    // Not on NVIDIA's driver: EGL on X11 there can leave the whole window
+    // black (issue #33, mpc-qt#303). Qt then uses GLX.
+    const QString gpuDriver = leolink::MpvWidget::primaryGpuDriver();
+    if (!qEnvironmentVariableIsSet("QT_XCB_GL_INTEGRATION") &&
+        gpuDriver != QLatin1String("nvidia"))
         qputenv("QT_XCB_GL_INTEGRATION", "xcb_egl");
+    return gpuDriver;
 }
 
 /// Ends the program tidily when the desktop asks it to.
@@ -100,7 +107,7 @@ void installSignalHandling(QCoreApplication *app)
 
 int main(int argc, char *argv[])
 {
-    selectPlatform();
+    const QString gpuDriver = selectPlatform();
 
     // The language has to be settled before the QApplication exists. The
     // desktop's own Qt integration — KDE's, for one — installs translations
@@ -250,6 +257,9 @@ int main(int argc, char *argv[])
     }
     leolink::Log::addSecret(config.actions.mqttPassword);
     leolink::Log::start();
+    LEO_INFO(App, QString(),
+             QStringLiteral("Primary GPU driver: %1")
+                 .arg(gpuDriver.isEmpty() ? QStringLiteral("unknown") : gpuDriver));
 
     // Diagnostic modes: no window, just protocol output on the terminal.
     if (parser.isSet(bcTest)) {
